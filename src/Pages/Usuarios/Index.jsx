@@ -75,7 +75,7 @@ const Index = () => {
         <Titles
           name={<h2 align='center'>Usuarios</h2>}
         />
-        <Button variant="contained" disableElevation sx={{ color: "CC3C5C", my: 5, p: 2, borderRadius: 5 }} onClick={()=> redirectPages(navigate, '/Nuevo-usuario')}>
+        <Button variant="contained" disableElevation sx={{ color: "CC3C5C", my: 5, p: 1, borderRadius: 5 }} onClick={()=> redirectPages(navigate, '/Nuevo-usuario')}>
           Registrar nuevo usuario
         </Button>
       </ThemeProvider>
