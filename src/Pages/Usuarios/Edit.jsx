@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{ useEffect } from 'react'
 import DrawerIcons from '../../ui/DrawerIcons'
 import Titles from '../../ui/Titles'
 import UploadImage from '../../ui/UploadImage';
@@ -10,30 +10,47 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useDispatch } from 'react-redux';
+import { getOneUser } from '../../store/actions/userActions';
 
+import { useParams } from 'react-router-dom';
+
+import { useUsers } from '../../hooks/useUsers';
 
 const Edit = () => {
+
+  const { id } = useParams();
+  const { loadDataUser, user } = useUsers()
+
+  useEffect(() => {
+    loadDataUser(id);
+  },[])
+
+
   return (
     <DrawerIcons>
       <Titles
         name={<h2 align='center'>Editar servicio</h2>}
       />
-      <Box color='#F7BFBF' borderRadius={5} mt={3} sx={{ border: 3, p: 5 }}>
+      <code>
+        { JSON.stringify(user, null, 3)}
+      </code>
+      <Box color='#F7BFBF' borderRadius={5} mt={3} sx={{ border: 3,p: 5 }}>
         <Grid container spacing={2}>
-          <Grid item xs={12} backgroundColor="#D7B3C6" color="common.black" sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Grid item xs={12} backgroundColor="#D7B3C6" color="common.black" sx={{ display: 'flex',justifyContent: 'center' }}>
             <Typography variant='h5' align='center'>Datos Generales</Typography>
           </Grid>
-          <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Grid item xs={4} sx={{ display: 'flex',justifyContent: 'center' }}>
             <UploadImage />
           </Grid>
-          <Grid item xs={8} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
-            <TextField id="outlined-basic" label="Nombre" variant="outlined" fullWidth="true" />
-            <Grid item sx={{ display: 'flex', py: 2 }}>
+          <Grid item xs={8} sx={{ display: 'flex',flexDirection: 'column',justifyContent: 'flex-start' }}>
+            <TextField id="outlined-basic" label="Nombre" variant="outlined" fullWidth="true" value={user.fullname} />
+            <Grid item sx={{ display: 'flex',py: 2 }}>
               <TextField id="outlined-basic" label="Telefono" variant="outlined" fullWidth="true" sx={{ pr: 2 }} />
               <TextField id="outlined-basic" label="Correo" variant="outlined" fullWidth="true" />
             </Grid>
           </Grid>
-          <Grid item xs={12} backgroundColor="#D7B3C6" color="common.black" sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Grid item xs={12} backgroundColor="#D7B3C6" color="common.black" sx={{ display: 'flex',justifyContent: 'center' }}>
             <Typography variant='h5' align='center'>Dirección</Typography>
           </Grid>
           <Grid item xs={3}>
@@ -57,7 +74,7 @@ const Edit = () => {
           <Grid item xs={4}>
             <TextField id="outlined-basic" label="Ciudad" variant="outlined" fullWidth="true" />
           </Grid>
-          <Grid item xs={12} backgroundColor="#D7B3C6" color="common.black" sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+          <Grid item xs={12} backgroundColor="#D7B3C6" color="common.black" sx={{ display: 'flex',justifyContent: 'center',mt: 2 }}>
             <Typography variant='h5' align='center'>Documentos</Typography>
           </Grid>
           <Grid item xs={12}>

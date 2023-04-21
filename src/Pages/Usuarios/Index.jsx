@@ -1,11 +1,11 @@
-import React, {useEffect} from 'react'
+import React,{ useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import DrawerIcons from '../../ui/DrawerIcons';
 import Titles from '../../ui/Titles';
-import { styled, ThemeProvider, createTheme } from '@mui/material/styles';
+import { styled,ThemeProvider,createTheme } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableCell,{ tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
@@ -15,7 +15,7 @@ import Pagination from '@mui/material/Pagination';
 import { Box } from '@mui/material';
 import { redirectPages } from '../../helpers/helpers';
 import WarningAlert from '../../ui/WarningAlert';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch,useSelector } from 'react-redux';
 import { startLoadUsers } from '../../store/actions/userActions';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -38,8 +38,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function createData(nombre, telefono, correo) {
-  return { nombre, telefono, correo };
+function createData(nombre,telefono,correo) {
+  return { nombre,telefono,correo };
 }
 
 const themeColor = createTheme({
@@ -55,18 +55,15 @@ const Index = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const getUsers = async() => {
-    await dispatch(startLoadUsers()) 
+  const getUsers = async () => {
+    await dispatch(startLoadUsers())
   }
 
-  useEffect( () => {
+  useEffect(() => {
     getUsers();
-  },[]) 
+  },[])
 
-  const {users} = useSelector((state) => state.userReducer)
-
-  console.log(users);
-  console.log(process.env.REACT_APP_BACKEND_URL)
+  const { users } = useSelector((state) => state.userReducer);
 
   return (
 
@@ -75,7 +72,7 @@ const Index = () => {
         <Titles
           name={<h2 align='center'>Usuarios</h2>}
         />
-        <Button variant="contained" disableElevation sx={{ color: "CC3C5C", my: 5, p: 1, borderRadius: 5 }} onClick={()=> redirectPages(navigate, '/Nuevo-usuario')}>
+        <Button variant="contained" disableElevation sx={{ color: "CC3C5C",my: 5,p: 1,borderRadius: 5,px: 5 }} onClick={() => redirectPages(navigate,'/Nuevo-usuario')}>
           Registrar nuevo usuario
         </Button>
       </ThemeProvider>
@@ -97,7 +94,12 @@ const Index = () => {
                 </StyledTableCell>
                 <StyledTableCell align="center">{user?.phone?.phone_number || 'N/A'}</StyledTableCell>
                 <StyledTableCell align="center">{user?.email}</StyledTableCell>
-                <StyledTableCell sx={{display:'flex', justifyContent:'center'}}><WarningAlert route="/Editar-usuario" /></StyledTableCell>
+                <StyledTableCell sx={{ display: 'flex',justifyContent: 'center' }}>
+                  <WarningAlert
+                    route={`/Editar-usuario/${user._id}`}
+                    title="Estas seguro que deseas eliminar al usuario"
+                  />
+                </StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>

@@ -29,10 +29,10 @@ const Root = () => {
   };
 
   return (
-    <Box sx={{ bgcolor: '#CC3C5C', width: '100%', height: 860  }} >
-      <Grid container  >
-        <Grid item xs={2} md={5}>
-          <img src="/assets/Carwash1.png" className='my-auto' alt="" />
+    <Box sx={{ bgcolor: '#CC3C5C', width: '100%', minHeight: '100vh',   }} >
+      <Grid container sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}} >
+        <Grid item xs={12} md={5}>
+          <img src="/assets/Carwash1.png" className='my-auto' alt="Icon" height="100%" width="100%" />
         </Grid>
         <Grid item xs={12} md={7} mt={15} p={2}>
           <Item >
