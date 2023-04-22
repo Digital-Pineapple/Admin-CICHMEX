@@ -1,9 +1,11 @@
-import { configureStore, combineReducers, getDefaultMiddleware } from "@reduxjs/toolkit";
-import thunk from "redux-thunk";
-import userReducer from "./reducer/userReducer";
+import { configureStore, combineReducers, getDefaultMiddleware } from '@reduxjs/toolkit';
+import thunk from 'redux-thunk';
+import userReducer from './reducer/userReducer';
+import uiReducer from './reducer/uiReducer';
 
 const rootReducer = combineReducers({
-    userReducer: userReducer
+    users : userReducer,
+    ui    : uiReducer
 })
 
 export const store = configureStore({

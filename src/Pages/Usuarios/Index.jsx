@@ -63,7 +63,7 @@ const Index = () => {
     getUsers();
   },[])
 
-  const { users } = useSelector((state) => state.userReducer);
+  const { users } = useSelector((state) => state.users);
 
   return (
 

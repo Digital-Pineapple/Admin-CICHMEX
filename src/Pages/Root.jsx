@@ -1,7 +1,10 @@
-import React from 'react'
+import React from 'react';
 import { styled } from '@mui/material/styles';
-import { Box, Grid, Paper, Button, TextField, Typography } from '@mui/material';
+import { Box,Grid,Paper,Button,TextField,Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import LoadingScreen from '../ui/LoadingScreen';
+import { useSelector } from 'react-redux';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -14,6 +17,8 @@ const Item = styled(Paper)(({ theme }) => ({
 const Root = () => {
 
   const navigate = useNavigate();
+  const { login } = useAuth();
+  const { loading } = useSelector(state => state.ui);
 
   const onLogin = () => {
     navigate('/Usuarios');
@@ -22,15 +27,18 @@ const Root = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
+    login({
       email: data.get('email'),
       password: data.get('password'),
     });
   };
 
   return (
-    <Box sx={{ bgcolor: '#CC3C5C', width: '100%', minHeight: '100vh',   }} >
-      <Grid container sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}} >
+    <Box sx={{ bgcolor: '#CC3C5C',width: '100%',minHeight: '100vh' }} >
+
+      {loading && <LoadingScreen />}
+
+      <Grid container sx={{ minHeight: '100vh',display: 'flex',flexDirection: 'row',justifyContent: 'center',alignItems: 'center' }} >
         <Grid item xs={12} md={5}>
           <img src="/assets/Carwash1.png" className='my-auto' alt="Icon" height="100%" width="100%" />
         </Grid>
@@ -40,7 +48,7 @@ const Root = () => {
               Iniciar Sesión
             </Typography>
             <hr color='#CC3C5C' size='3px' />
-            <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 9, px: 4 }}>
+            <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 9,px: 4 }}>
               <TextField
                 margin="normal"
                 required
@@ -65,8 +73,7 @@ const Root = () => {
                 type="submit"
                 fullWidth
                 variant="contained"
-                onClick={onLogin}
-                sx={{ mt: 3, mb: 15 }}
+                sx={{ mt: 3,mb: 15 }}
               >
                 Sign In
               </Button>

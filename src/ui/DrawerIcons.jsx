@@ -1,6 +1,6 @@
-import React, { children } from 'react'
+import React,{ children } from 'react'
 
-import { styled, useTheme, ThemeProvider, createTheme } from '@mui/material/styles';
+import { styled,useTheme,ThemeProvider,createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
@@ -20,6 +20,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
+import { useSelector } from 'react-redux';
 
 
 const drawerWidth = 240;
@@ -34,7 +35,7 @@ const themeColor = createTheme({
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
-  transition: theme.transitions.create('width', {
+  transition: theme.transitions.create('width',{
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.enteringScreen,
   }),
@@ -42,7 +43,7 @@ const openedMixin = (theme) => ({
 });
 
 const closedMixin = (theme) => ({
-  transition: theme.transitions.create('width', {
+  transition: theme.transitions.create('width',{
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
@@ -57,31 +58,31 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'flex-end',
-  padding: theme.spacing(0, 1),
+  padding: theme.spacing(0,1),
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
 
-const AppBar = styled(MuiAppBar, {
+const AppBar = styled(MuiAppBar,{
   shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
+})(({ theme,open }) => ({
   zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
+  transition: theme.transitions.create(['width','margin'],{
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
+    transition: theme.transitions.create(['width','margin'],{
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
   }),
 }));
 
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme, open }) => ({
+const Drawer = styled(MuiDrawer,{ shouldForwardProp: (prop) => prop !== 'open' })(
+  ({ theme,open }) => ({
     width: drawerWidth,
     flexShrink: 0,
     whiteSpace: 'nowrap',
@@ -98,10 +99,10 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 
-const DrawerIcons = ({children}) => {
+const DrawerIcons = ({ children }) => {
 
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open,setOpen] = React.useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -110,6 +111,8 @@ const DrawerIcons = ({children}) => {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const { loading } = useSelector(state => state.ui);
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -139,14 +142,14 @@ const DrawerIcons = ({children}) => {
           }}>
           <DrawerHeader>
             <img src='/assets/CarWash1.png' width={180} height={100} alt="carwash"></img>
-            <IconButton onClick={handleDrawerClose} sx={{color:'white'}}>
+            <IconButton onClick={handleDrawerClose} sx={{ color: 'white' }}>
               {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
             </IconButton>
           </DrawerHeader>
           <Divider />
           <List >
             <Typography sx={{ color: "#FFFF" }}>
-              {['Inicio', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+              {['Inicio','Starred','Send email','Drafts'].map((text,index) => (
                 <ListItem key={text} disablePadding sx={{ display: 'block' }}>
                   <ListItemButton
                     sx={{
@@ -174,7 +177,7 @@ const DrawerIcons = ({children}) => {
           <Divider />
           <List>
             <Typography sx={{ color: "#FFFF" }}>
-              {['All mail', 'Trash', 'Spam'].map((text, index) => (
+              {['All mail','Trash','Spam'].map((text,index) => (
                 <ListItem key={text} disablePadding sx={{ display: 'block' }}>
                   <ListItemButton
                     sx={{
@@ -202,8 +205,8 @@ const DrawerIcons = ({children}) => {
           </List>
         </Drawer>
       </ThemeProvider>
-      <Box component="main" sx={{ flexGrow: 1, p: 5, mt:10}}>
-      {children}
+      <Box component="main" sx={{ flexGrow: 1,p: 5,mt: 10 }}>
+        {children}
       </Box>
     </Box>
 
