@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { BrowserRouter,createBrowserRouter,RouterProvider } from "react-router-dom";
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 import Root from './Pages/Root';
@@ -13,63 +13,15 @@ import Usuarios from './Pages/Usuarios/Index';
 import NewUser from './Pages/Usuarios/Create'
 import EditUser from './Pages/Usuarios/Edit';
 import TypeCar from './Pages/TypeCar/Index';
-import Alerta from './ui/SuccesAlert';
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Root/>,
-    errorElement: <ErrorPage/>
-  },
-  {
-    path: "Alerta",
-    element: <Alerta/>,
-  },
-
-
-  {
-    path: "Usuarios",
-    element: <Usuarios/>
-  },
-  {
-    path: "Nuevo-usuario",
-    element: <NewUser/>
-  },
-  {
-    path: "Editar-usuario/:id",
-    element: <EditUser/>
-  },
-
-
-  {
-    path: "Servicios",
-    element: <Servicios/>
-  },
-  {
-    path: "Nuevo-servicio",
-    element: <NewService/>
-  },
-  {
-    path: "Editar-servicio",
-    element: <EditService/>
-  },
-
-
-
-  {
-    path: "Tipo-de-carro",
-    element: <TypeCar/>
-  },
-
-
-
-]);
+import App from './components/App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <Provider store={ store }>
-      <RouterProvider router={router} />
-    </Provider>
+    <BrowserRouter>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </BrowserRouter>
   </React.StrictMode>
 );

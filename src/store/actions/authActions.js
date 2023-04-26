@@ -19,9 +19,20 @@ export const startLogin = (values) =>
                     success: false
                 }
             }
-            alert('Hubo un error xD');
             return {
                 success: false
             }
         }
     }
+
+    export const startRevalidateToken = () => 
+        async dispatch => {
+            try {
+                const { data } = await instanceApi.get('/auth/customer')
+                dispatch(login(data.data.user));
+                Cookies.set('session', data.data.token, { expires : 7 });
+            } catch (error) {
+                console.log(error)
+            }
+        }
+    

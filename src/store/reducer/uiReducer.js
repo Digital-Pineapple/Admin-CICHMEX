@@ -3,14 +3,14 @@ import { createSlice } from '@reduxjs/toolkit'
 export const uiReducer = createSlice({
   name: 'ui',
   initialState: {
-    loading: false,
+    loading: true,
   },
   reducers: {
     startLoading: (state) => {
       state.loading = true;
     },
     stopLoading: (state) => {
-      state.user = false;
+      state.loading = false;
     }
   },
 })

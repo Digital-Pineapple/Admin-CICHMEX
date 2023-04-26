@@ -1,7 +1,7 @@
 import React from 'react'
-import DrawerIcons from '../../ui/DrawerIcons'
-import Titles from '../../ui/Titles'
-import UploadImage from '../../ui/UploadImage';
+import DrawerIcons from '../../components/ui/DrawerIcons'
+import Titles from '../../components/ui/Titles'
+import UploadImage from '../../components/ui/UploadImage';
 import Grid from '@mui/material/Grid';
 import { TextField } from '@mui/material';
 import Box from '@mui/material/Box';

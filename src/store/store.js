@@ -1,10 +1,10 @@
 import { configureStore, combineReducers, getDefaultMiddleware } from '@reduxjs/toolkit';
 import thunk from 'redux-thunk';
-import userReducer from './reducer/userReducer';
+import authReducer from './reducer/authReducer';
 import uiReducer from './reducer/uiReducer';
 
 const rootReducer = combineReducers({
-    users : userReducer,
+    auth  : authReducer,
     ui    : uiReducer
 })
 

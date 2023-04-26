@@ -2,8 +2,7 @@ import React from 'react'
 import { ExclamationCircleFilled, DeleteTwoTone, EditTwoTone } from "@ant-design/icons";
 import { Button, Modal, Space } from "antd";
 import { useNavigate } from 'react-router-dom';
-import { redirectPages } from '../helpers/helpers';
-import Success from './SuccesAlert';
+import { redirectPages } from '../../helpers/helpers';
 const { confirm } = Modal;
 
 

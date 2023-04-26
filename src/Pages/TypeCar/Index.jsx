@@ -1,6 +1,6 @@
 import React from 'react'
-import DrawerIcons from '../../ui/DrawerIcons';
-import Titles from '../../ui/Titles';
+import DrawerIcons from '../../components/ui/DrawerIcons';
+import Titles from '../../components/ui/Titles';
 import { styled, ThemeProvider, createTheme } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
