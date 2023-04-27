@@ -1,4 +1,3 @@
-import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Usuarios from '../Pages/Usuarios/Index'
 import EditUser from '../Pages/Usuarios/Edit';
