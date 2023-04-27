@@ -1,12 +1,11 @@
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { startLogin,startRevalidateToken } from '../store/actions/authActions';
-import { startLoading,stopLoading } from '../store/reducer/uiReducer';
+import { startLogin, startRevalidateToken } from '../store/actions/authActions';
+import { startLoading, stopLoading } from '../store/reducer/uiReducer';
 
 export const useAuth = () => {
 
-    // const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const login = async values => {
@@ -14,7 +13,6 @@ export const useAuth = () => {
         const { success } = await dispatch(startLogin(values));
         if (!success) return dispatch(stopLoading());
         dispatch(stopLoading());
-        // navigate('/Usuarios', { replace: true });
     }
 
     const revalidateToken = async () => {
@@ -23,6 +21,6 @@ export const useAuth = () => {
         dispatch(stopLoading());
     }
 
-    return { login,revalidateToken }
+    return { login, revalidateToken }
 
 }

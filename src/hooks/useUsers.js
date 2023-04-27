@@ -1,16 +1,18 @@
 import { useSelector, useDispatch } from 'react-redux';
 
-import { getOneUser } from '../store/actions/userActions'; 
+import { getOneUser, startLoadUsers } from '../store/actions/userActions'; 
 
 export const useUsers = () => {
     
     const dispatch = useDispatch();
 
-    const { user } = useSelector(state => state.userReducer)
+    const { user, users } = useSelector(state => state.users)
 
-    const loadDataUser = async user_id => dispatch(getOneUser(user_id));
+    const loadUsers = async () => await dispatch(startLoadUsers());
 
-    return { loadDataUser, user }
+    const loadDataUser = async user_id => await dispatch(getOneUser(user_id));
+
+    return { loadDataUser, user, loadUsers, users }
 
 
 }

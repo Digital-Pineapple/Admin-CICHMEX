@@ -27,9 +27,9 @@ const Edit = () => {
 
 
   return (
-    <DrawerIcons>
+    <>
       <Titles
-        name={<h2 align='center'>Editar servicio</h2>}
+        name={<h2 align='center'>Editar usuario</h2>}
       />
       <code>
         { JSON.stringify(user, null, 3)}
@@ -111,7 +111,7 @@ const Edit = () => {
           </Grid>
         </Grid>
       </Box>
-    </DrawerIcons>
+    </>
   )
 }
 

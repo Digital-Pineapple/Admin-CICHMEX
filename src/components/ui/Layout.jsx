@@ -205,7 +205,7 @@ const Layout = ({ children }) => {
           </List>
         </Drawer>
       </ThemeProvider>
-      <Box component="main" sx={{ flexGrow: 1,p: 5,mt: 10 }}>
+      <Box component="main" sx={{ flexGrow: 1,mt: 10 }}>
         {children}
       </Box>
     </Box>

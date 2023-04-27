@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import LoadingScreen from './ui/LoadingScreen';
 
 import Usuarios from '../Pages/Usuarios/Index'
-import Layout from './ui/Layout';
+import UsersRoutes from '../routes/UsersRoutes';
 
 const App = () => {
 
@@ -37,7 +37,7 @@ const App = () => {
                                 element={
                                 <PrivateRoutes>
                                     <Routes>
-                                        <Route path="/usuarios" element={<Usuarios />} />
+                                        <Route path="/usuarios/*" element={<UsersRoutes />} />
                                         <Route path="/p" element={<h1>das</h1>} />
                                     </Routes>
                                 </PrivateRoutes>}
