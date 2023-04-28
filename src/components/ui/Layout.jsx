@@ -21,6 +21,7 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import { useSelector } from 'react-redux';
+import { Routes } from '../../routes/Routes';
 
 
 const drawerWidth = 240;
@@ -140,8 +141,8 @@ const Layout = ({ children }) => {
               backgroundColor: "#CC3C5C"
             }
           }}>
-          <DrawerHeader>
-            <img src='/assets/CarWash1.png' width={180} height={100} alt="carwash"></img>
+          <DrawerHeader sx={{paddingY: 2}}>
+            <img src='/assets/CarWash1.png' width={180} height={100} alt="carwash" />
             <IconButton onClick={handleDrawerClose} sx={{ color: 'white' }}>
               {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
             </IconButton>
@@ -149,8 +150,8 @@ const Layout = ({ children }) => {
           <Divider />
           <List >
             <Typography sx={{ color: "#FFFF" }}>
-              {['Inicio','Starred','Send email','Drafts'].map((text,index) => (
-                <ListItem key={text} disablePadding sx={{ display: 'block' }}>
+              {Routes.map(({icon, name, path}) => (
+                <ListItem key={path} disablePadding sx={{ display: 'block' }}>
                   <ListItemButton
                     sx={{
                       minHeight: 48,
@@ -166,46 +167,18 @@ const Layout = ({ children }) => {
                         color: 'white'
                       }}
                     >
-                      {index % 2 === 0 ? <HomeIcon /> : <MailIcon />}
+                      {icon}
                     </ListItemIcon>
-                    <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                    <ListItemText primary={name} sx={{ opacity: open ? 1 : 0 }} />
                   </ListItemButton>
                 </ListItem>
               ))}
             </Typography>
           </List>
           <Divider />
-          <List>
-            <Typography sx={{ color: "#FFFF" }}>
-              {['All mail','Trash','Spam'].map((text,index) => (
-                <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-                  <ListItemButton
-                    sx={{
-                      minHeight: 48,
-                      justifyContent: open ? 'initial' : 'center',
-                      px: 2.5,
-
-                    }}
-                  >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: open ? 3 : 'auto',
-                        justifyContent: 'center',
-                        color: 'white'
-                      }}
-                    >
-                      {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                    </ListItemIcon>
-                    <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </Typography>
-          </List>
         </Drawer>
       </ThemeProvider>
-      <Box component="main" sx={{ flexGrow: 1,mt: 10 }}>
+      <Box component="main" sx={{ flexGrow: 1,mt: 10, marginX: 2 }}>
         {children}
       </Box>
     </Box>

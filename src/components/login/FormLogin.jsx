@@ -20,7 +20,7 @@ const FormLogin = () => {
         onSubmit: (values) => login(values)
     })
     return (
-        <Grid item xs={12} md={7} mt={15} p={2} bgcolor={'white'}>
+        <Box mt={15} p={2} bgcolor={'white'}>
                 <Typography component="h1" variant="h5" sx={{ mt: 9,textAlign: 'center' }}>
                     Iniciar Sesión
                 </Typography>
@@ -51,7 +51,7 @@ const FormLogin = () => {
                         Iniciar Sesión
                     </Button>
                 </Box>
-        </Grid>
+        </Box>
     )
 }
 
