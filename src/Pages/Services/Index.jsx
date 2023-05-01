@@ -14,6 +14,9 @@ import Button from '@mui/material/Button';
 import Pagination from '@mui/material/Pagination';
 import { Box } from '@mui/material';
 import WarningAlert from '../../components/ui/WarningAlert';
+import { useEffect } from 'react';
+import { useCustomers } from '../../hooks/useCustomers';
+import { useServices } from '../../hooks/useServices';
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -36,16 +39,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-function createData(nombre, descripcion, precio) {
-    return { nombre, descripcion, precio };
-}
-
-const rows = [
-    createData('Autolavado express', 'Autolavado express', 150),
-    createData('Autolavado con aspiradora', 'Autolavado con aspiradora', 200),
-    createData('Autolavado con cera y espuma', 'Autolavado con cera y espuma', 250),
-];
-
 const themeColor = createTheme({
     palette: {
         primary: {
@@ -57,19 +50,19 @@ const themeColor = createTheme({
 const Index = () => {
 
     const navigate = useNavigate();
+    const { loadServices, services, deleteService } = useServices();
 
-    const serviceRegister = () => {
-      navigate('/Nuevo-servicio');
-    }
-
+    useEffect(() => {
+        loadServices();
+    }, [])
     return (
 
-        <DrawerIcons>
+        <>
             <ThemeProvider theme={themeColor}>
                 <Titles
                     name={<h2 align='center'>Servicios</h2>}
                 />
-                <Button variant="contained" disableElevation sx={{ color: "CC3C5C", my: 5, p: 2, borderRadius: 5 }} onClick={serviceRegister}>
+                <Button variant="contained" disableElevation sx={{ color: "CC3C5C", my: 5, p: 2, borderRadius: 5 }} onClick={() => console.log('xs')}>
                     Registrar nuevo servicio
                 </Button>
             </ThemeProvider>
@@ -79,19 +72,23 @@ const Index = () => {
                         <TableRow>
                             <StyledTableCell>Nombre</StyledTableCell>
                             <StyledTableCell align="center">Descripción</StyledTableCell>
-                            <StyledTableCell align="center">Precio&nbsp;($)</StyledTableCell>
                             <StyledTableCell align="center">Opciones</StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.map((row) => (
-                            <StyledTableRow key={row.nombre}>
+                        {services.map((service) => (
+                            <StyledTableRow key={service.name}>
                                 <StyledTableCell component="th" scope="row">
-                                    {row.nombre}
+                                    {service.name}
                                 </StyledTableCell>
-                                <StyledTableCell align="center">{row.descripcion}</StyledTableCell>
-                                <StyledTableCell align="center">{row.precio}</StyledTableCell>
-                                <StyledTableCell sx={{display:'flex', justifyContent:'center'}}><WarningAlert route="/Editar-servicio" title={<h4>¿Estas seguro de eliminar este usuario?</h4>} /></StyledTableCell>
+                                <StyledTableCell align="center">{service.description}</StyledTableCell>
+                                <StyledTableCell sx={{ display: 'flex', justifyContent: 'center' }}>
+                                    <WarningAlert
+                                        route="/Editar-servicio"
+                                        title={<h4>¿Estas seguro de eliminar este usuario?</h4>}
+                                        callbackToDeleteItem={() => deleteService(service._id)}
+                                    />
+                                </StyledTableCell>
                             </StyledTableRow>
                         ))}
                     </TableBody>
@@ -102,7 +99,7 @@ const Index = () => {
                     <Pagination count={10} color="primary" />
                 </Box>
             </ThemeProvider>
-        </DrawerIcons>
+        </>
 
     )
 }

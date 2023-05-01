@@ -10,19 +10,17 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useDispatch } from 'react-redux';
-import { getOneUser } from '../../store/actions/userActions';
 import { useParams } from 'react-router-dom';
 
-import { useUsers } from '../../hooks/useUsers';
+import { useCustomers } from '../../hooks/useCustomers';
 
 const Edit = () => {
 
   const { id } = useParams();
-  const { loadDataUser, user } = useUsers()
+  const { loadCustomer, customer } = useCustomers()
 
   useEffect(() => {
-    loadDataUser(id);
+    loadCustomer(id);
   },[])
 
 
@@ -32,7 +30,7 @@ const Edit = () => {
         name={<h2 align='center'>Editar usuario</h2>}
       />
       <code>
-        { JSON.stringify(user, null, 3)}
+        { JSON.stringify(customer, null, 3)}
       </code>
       <Box color='#F7BFBF' borderRadius={5} mt={3} sx={{ border: 3,p: 5 }}>
         <Grid container spacing={2}>
@@ -43,7 +41,7 @@ const Edit = () => {
             <UploadImage />
           </Grid>
           <Grid item xs={8} sx={{ display: 'flex',flexDirection: 'column',justifyContent: 'flex-start' }}>
-            <TextField id="outlined-basic" label="Nombre" variant="outlined" fullWidth="true" value={user.fullname} />
+            <TextField id="outlined-basic" label="Nombre" variant="outlined" fullWidth="true" value={customer.fullname} />
             <Grid item sx={{ display: 'flex',py: 2 }}>
               <TextField id="outlined-basic" label="Telefono" variant="outlined" fullWidth="true" sx={{ pr: 2 }} />
               <TextField id="outlined-basic" label="Correo" variant="outlined" fullWidth="true" />

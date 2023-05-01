@@ -8,12 +8,12 @@ const redirectPages = (navigate, route) => {
 }
 
 
-const alerConfirm = (title) => {
+const alerConfirm = (title, callbackToDeleteItem) => {
     confirm({
         title,
         icon: <ExclamationCircleFilled />,
-        onOk(){
-            alert("Ok")
+        onOk() {
+            callbackToDeleteItem()
         },
         onCancel() {
             console.log("Cancelar")

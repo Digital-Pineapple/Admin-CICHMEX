@@ -1,4 +1,4 @@
-import React,{ children } from 'react'
+import React from 'react'
 
 import { styled,useTheme,ThemeProvider,createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -22,6 +22,7 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import { useSelector } from 'react-redux';
 import { Routes } from '../../routes/Routes';
+import { useNavigate, useNavigation } from 'react-router-dom';
 
 
 const drawerWidth = 240;
@@ -115,11 +116,13 @@ const Layout = ({ children }) => {
 
   const { loading } = useSelector(state => state.ui);
 
+  const navigate = useNavigate();
+
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <ThemeProvider theme={themeColor}>
-        <AppBar position="fixed" open={open} color="primary" >
+        <AppBar position="fixed" open={open} color="primary" sx={{height: 80}}>
           <Toolbar>
             <IconButton
               color="inherit"
@@ -141,8 +144,8 @@ const Layout = ({ children }) => {
               backgroundColor: "#CC3C5C"
             }
           }}>
-          <DrawerHeader sx={{paddingY: 2}}>
-            <img src='/assets/CarWash1.png' width={180} height={100} alt="carwash" />
+          <DrawerHeader>
+            <img src='/assets/CarWash1.png' width={140} height={80} alt="carwash" />
             <IconButton onClick={handleDrawerClose} sx={{ color: 'white' }}>
               {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
             </IconButton>
@@ -151,7 +154,7 @@ const Layout = ({ children }) => {
           <List >
             <Typography sx={{ color: "#FFFF" }}>
               {Routes.map(({icon, name, path}) => (
-                <ListItem key={path} disablePadding sx={{ display: 'block' }}>
+                <ListItem key={path} disablePadding sx={{ display: 'block' }} onClick={()=> navigate(path)}>
                   <ListItemButton
                     sx={{
                       minHeight: 48,

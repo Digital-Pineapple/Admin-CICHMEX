@@ -1,28 +1,29 @@
-import { useEffect } from 'react';
+import { useEffect, memo } from 'react';
 
 import { Routes, Route } from 'react-router-dom';
 import PublicRoutes from '../routes/PublicRoutes';
 import PrivateRoutes from '../routes/PrivateRoutes';
+import LoadingScreen from './ui/LoadingScreen';
 import Root from '../Pages/Root';
 import { useAuth } from '../hooks/useAuth';
 import { useSelector } from 'react-redux';
-import LoadingScreen from './ui/LoadingScreen';
 
 import UsersRoutes from '../routes/UsersRoutes';
 import ServicesRoutes from '../routes/ServicesRoutes';
+import { useState } from 'react';
 
 const App = () => {
 
     const { revalidateToken } = useAuth();
-    const { loading } = useSelector(state => state.ui)
+    const { loading } = useSelector(state => state.ui);
 
     useEffect(() => {
         setTimeout(async () => {
             await revalidateToken();
-        }, 800)
+        }, 500);
     }, []);
 
-    
+
     return (
         <>
             {
@@ -53,4 +54,4 @@ const App = () => {
     )
 }
 
-export default App
+export default memo(App);

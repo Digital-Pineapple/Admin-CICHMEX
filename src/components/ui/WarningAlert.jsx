@@ -2,7 +2,7 @@ import React from 'react'
 import { ExclamationCircleFilled, DeleteTwoTone, EditTwoTone } from "@ant-design/icons";
 import { Button, Modal, Space } from "antd";
 import { useNavigate } from 'react-router-dom';
-import { redirectPages } from '../../helpers/helpers';
+import { redirectPages, alerConfirm } from '../../helpers/helpers';
 const { confirm } = Modal;
 
 
@@ -10,7 +10,7 @@ const showConfirm = (title) => {
     confirm({
         title,
         icon: <ExclamationCircleFilled />,
-        onOk(){
+        onOk() {
             alert("Ok")
         },
         onCancel() {
@@ -20,20 +20,20 @@ const showConfirm = (title) => {
 };
 
 
-const WarningAlert = ({route, title}) => {
+const WarningAlert = ({ route, title, callbackToDeleteItem}) => {
 
-    const navigate = useNavigate ();  
+    const navigate = useNavigate();
 
 
     return (
         <Space wrap>
             <Button
-                onClick={()=>redirectPages(navigate,route)}
+                onClick={() => redirectPages(navigate, route)}
                 icon={<EditTwoTone twoToneColor="#0000ff" />}
             />
             <Button
                 icon={<DeleteTwoTone twoToneColor="#FF0000" />}
-                onClick={()=>showConfirm(title)}
+                onClick={() => alerConfirm(title, callbackToDeleteItem)}
             />
         </Space>
     )

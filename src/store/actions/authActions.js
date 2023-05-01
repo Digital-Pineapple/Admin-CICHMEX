@@ -6,7 +6,7 @@ import { login } from '../reducer/authReducer';
 export const startLogin = (values) =>
     async dispatch => {
         try {
-            const { data } = await instanceApi.post('/auth/login', values)
+            const { data } = await instanceApi.post('/auth/admin/login', values)
             dispatch(login(data.data.user));
             Cookies.set('session', data.data.token, { expires : 7 });
             return {
@@ -28,7 +28,7 @@ export const startLogin = (values) =>
     export const startRevalidateToken = () => 
         async dispatch => {
             try {
-                const { data } = await instanceApi.get('/auth/customer')
+                const { data } = await instanceApi.get('/auth/admin/user')
                 dispatch(login(data.data.user));
                 Cookies.set('session', data.data.token, { expires : 7 });
             } catch (error) {

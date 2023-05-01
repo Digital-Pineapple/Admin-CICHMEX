@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Titles from '../../components/ui/Titles';
 import Table from '@mui/material/Table';
@@ -9,22 +9,20 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
-import Pagination from '@mui/material/Pagination';
-import { Box } from '@mui/material';
 import { redirectPages } from '../../helpers/helpers';
 import WarningAlert from '../../components/ui/WarningAlert';
 
-import { useUsers } from '../../hooks/useUsers';
+import { useCustomers } from '../../hooks/useCustomers';
 
 
 const Index = () => {
 
   const navigate = useNavigate();
 
-  const { loadUsers, users } = useUsers();
+  const { loadCustomers, customers, deleteCustomer } = useCustomers();
 
   useEffect(() => {
-    loadUsers();
+    loadCustomers();
   }, [])
 
 
@@ -49,17 +47,18 @@ const Index = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user) => (
-              <TableRow key={user._id}>
+            {customers.map((customer) => (
+              <TableRow key={customer._id}>
                 <TableCell component="th" scope="row">
-                  {user.fullname}
+                  {customer.fullname}
                 </TableCell>
-                <TableCell align="center">{user?.phone?.phone_number || 'N/A'}</TableCell>
-                <TableCell align="center">{user?.email}</TableCell>
+                <TableCell align="center">{customer?.phone?.phone_number || 'N/A'}</TableCell>
+                <TableCell align="center">{customer?.email}</TableCell>
                 <TableCell sx={{ display: 'flex', justifyContent: 'center' }}>
                   <WarningAlert
-                    route={`/Editar-usuario/${user._id}`}
+                    route={`/Editar-usuario/${customer._id}`}
                     title="Estas seguro que deseas eliminar al usuario"
+                    callbackToDeleteItem={() => deleteCustomer(customer._id)}
                   />
                 </TableCell>
               </TableRow>
