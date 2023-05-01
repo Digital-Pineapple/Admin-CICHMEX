@@ -1,6 +1,6 @@
 import { TextField } from '@mui/material';
 
-const Input = ({name, label, value, onChange, error, helperText}) => {
+const Input = ({name, label, value, onChange, error, helperText, type = "text"}) => {
     return (
         <TextField
             margin="normal"
@@ -11,6 +11,7 @@ const Input = ({name, label, value, onChange, error, helperText}) => {
             name={name}
             autoFocus
             value={value}
+            type={type}
             onChange={onChange}
             error={error}
             helperText={helperText}

@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 
 import { Input } from '../ui';
@@ -39,6 +39,7 @@ const FormLogin = () => {
                         label="Password"
                         value={formik.values.password}
                         onChange={formik.handleChange}
+                        type="password"
                         error={formik.touched.password && Boolean(formik.errors.password)}
                         helperText={formik.touched.password && formik.errors.password}
                     />

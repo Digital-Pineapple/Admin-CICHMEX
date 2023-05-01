@@ -1,6 +1,5 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
-import DrawerIcons from '../../components/ui/DrawerIcons';
 import Titles from '../../components/ui/Titles';
 import { styled, ThemeProvider, createTheme } from '@mui/material/styles';
 import Table from '@mui/material/Table';
@@ -11,11 +10,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
-import Pagination from '@mui/material/Pagination';
-import { Box } from '@mui/material';
 import WarningAlert from '../../components/ui/WarningAlert';
 import { useEffect } from 'react';
-import { useCustomers } from '../../hooks/useCustomers';
 import { useServices } from '../../hooks/useServices';
 
 
@@ -84,7 +80,7 @@ const Index = () => {
                                 <StyledTableCell align="center">{service.description}</StyledTableCell>
                                 <StyledTableCell sx={{ display: 'flex', justifyContent: 'center' }}>
                                     <WarningAlert
-                                        route="/Editar-servicio"
+                                        route={service._id}
                                         title={<h4>¿Estas seguro de eliminar este usuario?</h4>}
                                         callbackToDeleteItem={() => deleteService(service._id)}
                                     />
@@ -94,11 +90,6 @@ const Index = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <ThemeProvider theme={themeColor}>
-                <Box display="flex" justifyContent="center" py={10}>
-                    <Pagination count={10} color="primary" />
-                </Box>
-            </ThemeProvider>
         </>
 
     )

@@ -12,28 +12,41 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Typography from "@mui/material/Typography";
 import Button from '@mui/material/Button';
+import { useServices } from '../../hooks/useServices';
+import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
 
 
 const Edit = () => {
-  return (
-    <DrawerIcons>
-        <Titles
-          name={<h2 align='center'>Editar servicio</h2>}
-        />
+
+    const { id } = useParams();
+    const { loadService, service } = useServices()
+
+    useEffect(() => {
+        loadService(id);
+    }, [])
+
+
+
+    return (
+        <>
+            <Titles
+                name={<h2 align='center'>Editar servicio</h2>}
+            />
             <Box color='#F7BFBF' borderRadius={5} mt={3} sx={{ border: 3, p: 5 }}>
                 <Grid container spacing={2}>
                     <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center' }}>
                         <UploadImage />
                     </Grid>
                     <Grid item xs={8} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
-                        <TextField id="outlined-basic" label="Nombre" variant="outlined" fullWidth="true" />
+                        <TextField id="outlined-basic" label="Nombre" variant="outlined" fullWidth="true" value={service.name} />
                     </Grid>
                     <Grid item xs={4}>
-                        <TextField id="outlined-basic" label="Descripción" variant="outlined" fullWidth="true" />
+                        <TextField id="outlined-basic" label="Descripción" variant="outlined" fullWidth="true" value={service.description} />
                     </Grid>
-                    <Grid item xs={4}>
+                    {/* <Grid item xs={4}>
                         <TextField id="outlined-basic" label="Precio" variant="outlined" fullWidth="true" />
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={4}>
                         <FormControl>
                             <FormLabel id="demo-row-radio-buttons-group-label">Estatus</FormLabel>
@@ -55,8 +68,8 @@ const Edit = () => {
                 </Grid>
             </Box>
 
-    </DrawerIcons>
-  )
+        </>
+    )
 }
 
 export default Edit

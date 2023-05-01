@@ -1,5 +1,4 @@
 import React,{ useEffect } from 'react'
-import DrawerIcons from '../../components/ui/DrawerIcons'
 import Titles from '../../components/ui/Titles'
 import UploadImage from '../../components/ui/UploadImage';
 import Grid from '@mui/material/Grid';
@@ -29,9 +28,6 @@ const Edit = () => {
       <Titles
         name={<h2 align='center'>Editar usuario</h2>}
       />
-      <code>
-        { JSON.stringify(customer, null, 3)}
-      </code>
       <Box color='#F7BFBF' borderRadius={5} mt={3} sx={{ border: 3,p: 5 }}>
         <Grid container spacing={2}>
           <Grid item xs={12} backgroundColor="#D7B3C6" color="common.black" sx={{ display: 'flex',justifyContent: 'center' }}>
@@ -43,8 +39,8 @@ const Edit = () => {
           <Grid item xs={8} sx={{ display: 'flex',flexDirection: 'column',justifyContent: 'flex-start' }}>
             <TextField id="outlined-basic" label="Nombre" variant="outlined" fullWidth="true" value={customer.fullname} />
             <Grid item sx={{ display: 'flex',py: 2 }}>
-              <TextField id="outlined-basic" label="Telefono" variant="outlined" fullWidth="true" sx={{ pr: 2 }} />
-              <TextField id="outlined-basic" label="Correo" variant="outlined" fullWidth="true" />
+              <TextField id="outlined-basic" label="Telefono" variant="outlined" fullWidth="true" sx={{ pr: 2 }} value={customer?.phone?.phone_number || 'NA'}/>
+              <TextField id="outlined-basic" label="Correo" variant="outlined" fullWidth="true" value={customer?.email}  />
             </Grid>
           </Grid>
           <Grid item xs={12} backgroundColor="#D7B3C6" color="common.black" sx={{ display: 'flex',justifyContent: 'center' }}>
