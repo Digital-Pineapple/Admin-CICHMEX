@@ -1,29 +1,34 @@
-import React from 'react'
-import IconButton from "@mui/material/IconButton";
-import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
-import Avatar from '@mui/material/Avatar';
-import { grey } from '@mui/material/colors';
-import Typography from "@mui/material/Typography";
-
+import * as React from 'react';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
+import { Button, CardActionArea, CardActions } from '@mui/material';
+import imagen from '../../assets/Images/pulido.jpg'
 
 const UploadImage = () => {
-    return (
-        <div>
-            <Avatar
-                sx={{ width: 100, height: 100, bgcolor: grey[200] }}
-            >
-                <IconButton color="primary" aria-label="upload picture" component="label">
-                    <input hidden accept="image/*" type="file" />
-                    <AddPhotoAlternateIcon sx={{ fontSize: 40 }} />
-                </IconButton>
-            </Avatar>
-            <Typography variant="h8" color="black">
-                Elige una foto
-            </Typography>
-        </div>
-
-
-    )
+  return (
+    <Card sx={{ maxWidth: 345 }}>
+      <CardActionArea>
+        {
+             <CardMedia
+             component="img"
+             height="300"
+             image={imagen}
+             alt="servicios"
+           />
+        }
+       
+        <CardContent>
+        </CardContent>
+      </CardActionArea>
+      <CardActions>
+        <Button size="small" color="primary">
+          Elegir imagen
+        </Button>
+      </CardActions>
+    </Card>
+  );
 }
 
 export default UploadImage

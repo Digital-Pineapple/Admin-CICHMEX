@@ -1,3 +1,4 @@
+import { Satellite } from '@mui/icons-material';
 import { createSlice } from '@reduxjs/toolkit'
 
 export const servicesReducer = createSlice({
@@ -15,10 +16,13 @@ export const servicesReducer = createSlice({
         },
         deleteService: (state, { type, payload }) => {
             state.services = state.services.filter(service => service._id !== payload);
+        },
+        editService: (state, { type, payload }) => {
+            state.services = state.services.filter(service => service._id !== payload);
         }
     },
 })
 
-export const { loadServices, loadService, deleteService } = servicesReducer.actions;
+export const { loadServices, loadService, deleteService, editService } = servicesReducer.actions;
 
 export default servicesReducer.reducer;

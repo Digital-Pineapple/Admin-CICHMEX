@@ -1,13 +1,12 @@
-import { useSelector } from "react-redux"
-import { Navigate } from "react-router-dom";
-import Layout from "../components/ui/Layout";
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuthStore } from "../hooks";
+
 
 const PrivateRoutes = ({ children }) => {
+  const { logged } = useAuthStore();
+  
+  return logged ? children : <Navigate to={'/'}/>
+  
+};
 
-    const { logged } = useSelector(state => state.auth);
-
-    return logged ? <Layout>{ children }</Layout> : (<Navigate to="/" replace />)
-
-}
-
-export default PrivateRoutes
+export default PrivateRoutes;

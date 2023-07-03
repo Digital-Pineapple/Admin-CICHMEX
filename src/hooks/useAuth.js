@@ -1,6 +1,4 @@
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-
 import { startLogin, startRevalidateToken } from '../store/actions/authActions';
 import { stopLoading } from '../store/reducer/uiReducer';
 
@@ -8,7 +6,7 @@ export const useAuth = () => {
 
     const dispatch = useDispatch();
 
-    const login = async values =>  await dispatch(startLogin(values));
+    const login = async(email,password) =>  await dispatch(startLogin(email,password));
     
 
     const revalidateToken = async () => {

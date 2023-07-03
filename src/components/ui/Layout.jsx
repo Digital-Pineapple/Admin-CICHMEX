@@ -30,7 +30,7 @@ const drawerWidth = 240;
 const themeColor = createTheme({
   palette: {
     primary: {
-      main: '#CC3C5C',
+      main: '#0d2b6b',
     },
   },
 });
@@ -134,7 +134,7 @@ const Layout = ({ children }) => {
                 ...(open && { display: 'none' }),
               }}
             >
-              <MenuIcon />
+              <MenuIcon/>
             </IconButton>
           </Toolbar>
         </AppBar>
@@ -181,9 +181,6 @@ const Layout = ({ children }) => {
           <Divider />
         </Drawer>
       </ThemeProvider>
-      <Box component="main" sx={{ flexGrow: 1,mt: 10, marginX: 2 }}>
-        {children}
-      </Box>
     </Box>
 
   )

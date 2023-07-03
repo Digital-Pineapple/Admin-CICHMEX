@@ -7,13 +7,18 @@ export const userReducer = createSlice({
         logged  : false,
     },
     reducers: {
-        login: (state,{ type, payload }) => {
+        onLogin: (state,{ payload }) => {
             state.user   = payload;
             state.logged = true;
-        }
+        },
+        onLogout: ( state, { payload } ) => {
+            state.user   = {};
+            state.errorMessage = payload;
+            state.logged = false;
+        },
     },
 })
 
-export const { login } = userReducer.actions;
+export const { onLogin, onLogout } = userReducer.actions;
 
 export default userReducer.reducer;

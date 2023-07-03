@@ -1,15 +1,14 @@
 import React from 'react'
-import { ExclamationCircleFilled, DeleteTwoTone, EditTwoTone } from "@ant-design/icons";
+import { DeleteTwoTone, EditTwoTone, ExclamationCircleFilled } from "@ant-design/icons";
 import { Button, Modal, Space } from "antd";
 import { useNavigate } from 'react-router-dom';
-import { redirectPages, alerConfirm } from '../../helpers/helpers';
+import { redirectPages, alerConfirm } from '../../helpers/';
 const { confirm } = Modal;
 
 
 const showConfirm = (title) => {
     confirm({
         title,
-        icon: <ExclamationCircleFilled />,
         onOk() {
             alert("Ok")
         },

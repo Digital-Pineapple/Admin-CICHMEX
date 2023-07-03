@@ -15,10 +15,15 @@ export const customerReducer = createSlice({
     },
     deleteCustomer: (state, { type, payload }) => {
       state.customers = state.customers.filter(customer => customer._id !== payload);
+    },
+    verifyOneCustomer: (state, { type, payload }) => {
+      state.customers = state.customers.filter(customer => customer._id !== payload);
     }
+    
+    
   },
 })
 
-export const { loadCustomers, loadCustomer, deleteCustomer} = customerReducer.actions;
+export const { loadCustomers, loadCustomer, deleteCustomer,verifyOneCustomer} = customerReducer.actions;
 
 export default customerReducer.reducer;

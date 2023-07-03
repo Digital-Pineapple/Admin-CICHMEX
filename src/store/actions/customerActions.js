@@ -1,4 +1,4 @@
-import { instanceApi } from "../../config/configAxios"
+import { instanceApi } from "../../apis/configAxios"
 import { loadCustomers, loadCustomer, deleteCustomer } from "../reducer/customerReducer"
 
 export const startLoadCustomers = () => {
@@ -31,3 +31,19 @@ export const deleteOneCustomer = (customer_id) =>
             console.log(error);
         }
     }
+export const verifyOneCustomer = (customer_id, accountVerify) =>{
+    return console.log(customer_id, accountVerify);
+    async dispatch => {
+        try {
+            
+            await instanceApi.post(`/customer/${customer_id}`, accountVerify)
+            dispatch(startLoadCustomers());
+        } catch (error) {
+            console.log(error);
+        }
+}
+
+    
+    }
+
+    

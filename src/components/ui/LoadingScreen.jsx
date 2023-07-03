@@ -1,24 +1,38 @@
-import { Dna } from 'react-loader-spinner'
-
-import React from 'react'
-import { Box, CssBaseline } from '@mui/material'
+import { ColorRing, RotatingLines, ThreeCircles, ThreeDots, Vortex } from "react-loader-spinner";
+import { Box } from "@mui/material";
 
 const LoadingScreen = () => {
-    return (
-        <Box sx={{
-            width: '100%', zIndex: 99, position: 'fixed', display: 'flex', height: '100%',
-            alignItems: 'center', justifyContent: 'center', bgcolor: 'rgb(21, 21, 21)', flexDirection: 'column'
-        }}>
-            <CssBaseline />
-            <Dna
-                visible={true}
-                height="250"
-                width="250"
-                ariaLabel="dna-loading"
-                wrapperClass="dna-wrapper"
-            />
-        </Box>
-    )
-}
+  return (
+    <Box
+    component={'div'}
+    className="GradientItem"
+      sx={{
+        minHeight: "100vh",
+        width: "100vw",
+        position: "static",
+        zIndex: 10,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <ThreeCircles
+  height="200"
+  width="300"
+  color="##D7B3C6"
+  wrapperStyle={{}}
+  wrapperClass=""
+  visible={true}
+  ariaLabel="three-circles-rotating"
+  outerCircleColor="white"
+  innerCircleColor="#0d2b6b"
+  middleCircleColor="#D7B3C6"
+/>
+    
+   {/* '#00a399', '#cb5b55', '#00a399', '#382e73', '#c7c1e6' */}
 
-export default LoadingScreen
+    </Box>
+  );
+};
+
+export default LoadingScreen;

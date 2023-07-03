@@ -1,5 +1,5 @@
-import { instanceApi } from "../../config/configAxios"
-import { loadService, loadServices, deleteService } from "../reducer/servicesReducer"
+import { instanceApi } from "../../apis/configAxios"
+import { loadService, loadServices, deleteService, editService } from "../reducer/servicesReducer"
 
 export const startLoadServices = () => {
     return async dispatch => {
@@ -31,3 +31,15 @@ export const deleteOneServices = (service_id) =>
             console.log(error);
         }
     }
+
+    export const editOneService = service_id =>
+        async dispatch =>{
+            try {
+                const{ data } = await instanceApi.patch(`/services/${service_id}`)
+                dispatch(editService(service_id))
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    
+    
