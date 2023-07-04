@@ -5,6 +5,7 @@ import {
   loadCategory,
   deleteCategory,
   editCategory,
+  onAddNewCategory,
 } from "../reducer/categoryReducer";
 
 export const startLoadCategories = () => {
@@ -13,7 +14,11 @@ export const startLoadCategories = () => {
       const { data } = await instanceApi.get("/category");
       dispatch(loadCategories(data.data));
     } catch (error) {
-      console.log(error);
+      enqueueSnackbar(`Ocurrió un error al cargar las categorias + ${error}`,
+           {variant:'error', anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right'
+          }})
     }
   };
 };
@@ -23,7 +28,29 @@ export const getOneCategory = (category_id) => async (dispatch) => {
     const { data } = await instanceApi.get(`/category/${category_id}`);
     dispatch(loadCategory(data.data));
   } catch (error) {
+    enqueueSnackbar(`Ocurrió un error al cargar la categoria + ${error}`,
+           {variant:'error', anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right'
+          }})
+  }
+};
+export const addOneCategory = (values) => async (dispatch) => {
+  try {
+    const { data } = await instanceApi.post(`/category/`, values);
+    dispatch(onAddNewCategory(data.data));
+    enqueueSnackbar('Categoria creada con éxito', {variant:'success', anchorOrigin: {
+      vertical: 'top',
+      horizontal: 'right'
+    }})
+
+  } catch (error) {
     console.log(error);
+    enqueueSnackbar(`Ocurrió un error al agregar la categoria : ${error.response.data?.message}`,
+    {variant:'error', anchorOrigin: {
+     vertical: 'top',
+     horizontal: 'right'
+   }})
   }
 };
 
@@ -32,7 +59,11 @@ export const deleteOneCategory = (category_id) => async (dispatch) => {
     await instanceApi.delete(`/category/${category_id}`);
     dispatch(deleteCategory(category_id));
   } catch (error) {
-    console.log(error);
+    enqueueSnackbar(`Ocurrió un error al eliminar la categoria + ${error}`,
+           {variant:'error', anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right'
+          }})
   }
 };
 

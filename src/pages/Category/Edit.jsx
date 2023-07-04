@@ -54,6 +54,7 @@ const Edit = () => {
 
     },
   });
+  
   const outEdit = () => {
     navigate("/auth/CategoriaServicios", { replace: true });}
 

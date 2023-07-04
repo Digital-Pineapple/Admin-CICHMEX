@@ -8,6 +8,7 @@ import EditServices from '../pages/Services/Edit'
 import TypeCar from '../pages/TypeCar/TypeCar'
 import Categories from '../pages/Category/Categories'
 import EditCategory from '../pages/Category/Edit'
+import CreateCategory from '../pages/Category/Create'
 
 
 
@@ -24,5 +25,6 @@ export const AllRoutes = [
   { type: 1, path: '/servicios/:id', element: <EditServices/>},
   { type: 1, path: '/typesCar', element: <TypeCar/>},
   { type: 1, path: '/CategoriaServicios', element: <Categories/>},
+  { type: 1, path: '/CrearCategoria', element: <CreateCategory/>},
   { type: 1, path: '/CategoriaServicios/:id', element: <EditCategory/>},
 ]

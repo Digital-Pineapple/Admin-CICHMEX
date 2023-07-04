@@ -13,6 +13,9 @@ export const categoryReducer = createSlice({
     loadCategory: (state, { type, payload }) => {
       state.category = payload;
     },
+    onAddNewCategory: (state, { payload }) => {
+      state.category = payload;
+    },
     deleteCategory: (state, { type, payload }) => {
       state.categories = state.categories.filter(category => category._id !== payload);
     },
@@ -31,6 +34,6 @@ export const categoryReducer = createSlice({
       });
     }}})
 
-export const { loadCategories, loadCategory, deleteCategory, editCategory} = categoryReducer.actions;
+export const { loadCategories, loadCategory, deleteCategory, editCategory, onAddNewCategory } = categoryReducer.actions;
 
 export default categoryReducer.reducer;

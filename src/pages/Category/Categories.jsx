@@ -15,6 +15,7 @@ import { Pagination } from "antd";
 import InputSearch from "../../components/ui/InputSearch";
 import { useSelector } from "react-redux";
 import { useCategories } from "../../hooks/useCategories";
+import { useNavigate } from "react-router-dom";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -30,6 +31,7 @@ const Categories = () => {
   const { loadCategories,deleteCategory} = useCategories();
   const { categories } = useSelector((state) => state.categories);
   const [cat, setCat] = useState(categories);
+  const navigate = useNavigate();
   
   useEffect(() => {
     if (categories) {
@@ -40,7 +42,9 @@ const Categories = () => {
   useEffect(() => {
     loadCategories();
   }, []);
-
+const createCategory = () => {
+  navigate('/auth/CrearCategoria', {replace:true})
+}
   return (
     <>
       <Grid marginX={"240px"}>
@@ -48,8 +52,8 @@ const Categories = () => {
         <Button
           variant="contained"
           disableElevation
-          sx={{ color: "CC3C5C", my: 5, p: 2, borderRadius: 5 }}
-          onClick={() => console.log("xs")}
+          sx={{ color: "#CC3C5C", my: 5, p: 2, borderRadius: 5 }}
+          onClick={createCategory}
         >
           Registrar nueva categoria
         </Button>
