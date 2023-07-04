@@ -27,10 +27,12 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const Users = () => {
+  
   const { loadCustomers, deleteCustomer } = useCustomers();
   const { customers } = useSelector((state) => state.customers);
   const [filteredCustomers, setFilteredCustomers] = useState(customers);
   const [cus, setCus] = useState(customers);
+ 
   const handleUsuariosChange = (newUsuarios) => {
     setCus([]);
     setFilteredCustomers(newUsuarios);

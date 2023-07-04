@@ -27,25 +27,19 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const Categories = () => {
-
   const { loadCategories,deleteCategory} = useCategories();
   const { categories } = useSelector((state) => state.categories);
-  const [filteredCategories, setFilteredCategories] = useState(categories);
   const [cat, setCat] = useState(categories);
-    const handleCategoriesChange = (newCategories) => {
-    setCat([]);
-    setFilteredCategories(newCategories);
-  };
   
-  useEffect(() => {
-    loadCategories();
-  }, []);
-
   useEffect(() => {
     if (categories) {
       setCat(categories);
     }
   }, [categories]);
+  
+  useEffect(() => {
+    loadCategories();
+  }, []);
 
   return (
     <>
@@ -60,7 +54,6 @@ const Categories = () => {
           Registrar nueva categoria
         </Button>
         <InputSearch
-          onCategoriesChange={handleCategoriesChange}
           categories={categories}
         />
 
@@ -70,36 +63,18 @@ const Categories = () => {
               <TableRow>
                 <StyledTableCell>Nombre</StyledTableCell>
                 <StyledTableCell align="center">Descripcion</StyledTableCell>
+                <StyledTableCell align="center">Status</StyledTableCell>
                 <StyledTableCell align="center">Opciones</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredCategories.length != 0
-                ? filteredCategories.map((category) => (
+              {cat.map((category) => (
                     <TableRow key={category._id}>
                       <TableCell component="th" scope="row">
                         {category.name}
                       </TableCell>
                       <TableCell align="center">{category?.description}</TableCell>
-                      <TableCell
-                        sx={{ display: "flex", justifyContent: "center" }}
-                      >
-                        <WarningAlert
-                          route={category._id}
-                          title="Estas seguro que deseas eliminar al usuario"
-                          callbackToDeleteItem={() =>
-                            deleteCategory(category._id)
-                          }
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))
-                : cat.map((category) => (
-                    <TableRow key={category._id}>
-                      <TableCell component="th" scope="row">
-                        {category.name}
-                      </TableCell>
-                      <TableCell align="center">{category?.description}</TableCell>
+                      <TableCell component="th" scope="row" align="center">{category?.status === true ? 'Activo': 'Inactivo'}</TableCell>
                       <TableCell
                         sx={{ display: "flex", justifyContent: "center" }}
                       >
@@ -117,6 +92,7 @@ const Categories = () => {
           </Table>
         </TableContainer>
       </Grid>
+      
 
       <Box display="flex" justifyContent="center" py={10}>
         <Pagination count={10} color="primary" />

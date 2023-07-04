@@ -14,7 +14,7 @@ export const useCategories = () => {
 
     const deleteCategory = async category_id => await dispatch(deleteOneCategory(category_id));
 
-    const editCategory = async (category_id, values) => await dispatch(editOneCategory(category_id, values));
+    const editCategory = async (category_id, values) => await dispatch(editOneCategory(category_id,values));
 
     return { categories, category, loadCategories, loadCategory, deleteCategory, editCategory }
 

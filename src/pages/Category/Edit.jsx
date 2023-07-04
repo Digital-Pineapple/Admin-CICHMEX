@@ -11,17 +11,19 @@ import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useCategories } from "../../hooks/useCategories";
 import { useFormik } from "formik";
+import { enqueueSnackbar } from "notistack";
 
 const Edit = () => {
   const { id } = useParams();
-  const { loadCategory, category } = useCategories();
+  const { loadCategory, category, editCategory } = useCategories();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    loadCategory(id);
+     loadCategory(id);
   }, []);
 
   useEffect(() => {
@@ -39,11 +41,21 @@ const Edit = () => {
       status: "",
     },
     onSubmit: (values) => {
-      
-     console.log(values);
+      try {
+        editCategory(category._id, values)
+        navigate('/auth/CategoriaServicios', {replace:true})
+        
+      } catch (error) {
+        return enqueueSnackbar('Error al editar la categoria', {variant:'error', anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right'
+        }}, )
+      }
 
     },
   });
+  const outEdit = () => {
+    navigate("/auth/CategoriaServicios", { replace: true });}
 
   return (
     <Box component="form" onSubmit={formik.handleSubmit} marginX={"10%"}>
@@ -121,6 +133,9 @@ const Edit = () => {
             <Grid item sx={{ display: "flex", justifyContent: "center" }}>
               <Button type="submit" variant="contained">
                 Guardar
+              </Button>
+              <Button onClick={outEdit} variant="outlined" color="secondary">
+                Salir
               </Button>
             </Grid>
           </Grid>

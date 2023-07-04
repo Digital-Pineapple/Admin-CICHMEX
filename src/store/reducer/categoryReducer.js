@@ -16,11 +16,20 @@ export const categoryReducer = createSlice({
     deleteCategory: (state, { type, payload }) => {
       state.categories = state.categories.filter(category => category._id !== payload);
     },
-    editCategory: (state, { type, payload }) => {
-    state.categories = payload;
-    }
-  },
-})
+    editCategory: ( state, { payload } ) => {
+      state.categories = state.categories.map(category => {
+        if (category._id === payload._id) {
+          // Modificar los campos deseados del elemento
+          return {
+            ...category,
+            name: payload.name,
+            description: payload.description,
+            status: payload.status,
+          };
+        }
+        return category; // Mantener los elementos no modificados tal como están
+      });
+    }}})
 
 export const { loadCategories, loadCategory, deleteCategory, editCategory} = categoryReducer.actions;
 

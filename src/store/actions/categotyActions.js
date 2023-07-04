@@ -1,3 +1,4 @@
+import { enqueueSnackbar } from "notistack";
 import { instanceApi } from "../../apis/configAxios";
 import {
   loadCategories,
@@ -36,16 +37,22 @@ export const deleteOneCategory = (category_id) => async (dispatch) => {
 };
 
 export const editOneCategory = (category_id, values) => {
-    console.log(values, category_id);
     return async (dispatch) => {
         try {
         const { data } = await instanceApi.patch(
             `/category/${category_id}`,values
         );
-        dispatch(editCategory(data.data));
-        console.log(data);
+        dispatch(editCategory(category_id, data.data));
+        enqueueSnackbar('Categoria actualizada con exito', {variant:'success', anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right'
+        }})
         } catch (error) {
-        console.log(error);
+          enqueueSnackbar(`Ocurrió un error al actualizar la categoria + ${error}`,
+           {variant:'error', anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right'
+          }})
         }
     };
 
