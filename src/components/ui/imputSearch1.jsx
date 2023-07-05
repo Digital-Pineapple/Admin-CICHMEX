@@ -9,7 +9,7 @@ import DirectionsIcon from '@mui/icons-material/Directions';
 import { useState,useEffect, } from 'react';
 
 
-const InputSearch = ({onUsuariosChange, customers}) => {
+const InputSearch1 = ({categories, onCategoriesChange}) => {
 
   const [busqueda, setBusqueda]= useState("");
 
@@ -19,10 +19,10 @@ const InputSearch = ({onUsuariosChange, customers}) => {
     filtrar(e.target.value);
   }
   const filtrar = (terminoBusqueda) => {
-    const resultadosBusqueda = customers.filter ((customer) =>
-      customer.fullname.toString().toLowerCase().includes(terminoBusqueda.toLowerCase())
+    const resultadosBusqueda = categories.filter ((category) =>
+    category.name.toString().toLowerCase().includes(terminoBusqueda.toLowerCase())
     );
-    onUsuariosChange(resultadosBusqueda);
+    onCategoriesChange(resultadosBusqueda);
   };
   
   return (
@@ -33,8 +33,8 @@ const InputSearch = ({onUsuariosChange, customers}) => {
       <InputBase
         sx={{ ml: 1, flex: 1 }}
         value={busqueda}
-        placeholder="Buscar usuario"
-        inputProps={{ 'aria-label': 'Buscar usuario' }}
+        placeholder="Buscar categoria"
+        inputProps={{ 'aria-label': 'Buscar categoria' }}
         onChange={handleChange}
       />
       <IconButton type="button" sx={{ p: '20px' }} aria-label="search">
@@ -45,4 +45,4 @@ const InputSearch = ({onUsuariosChange, customers}) => {
   );
 }
 
-export default InputSearch
+export default InputSearch1

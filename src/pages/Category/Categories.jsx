@@ -12,7 +12,7 @@ import WarningAlert from "../../components/ui/WarningAlert";
 import { styled } from "@mui/system";
 import { Box, Grid } from "@mui/material";
 import { Pagination } from "antd";
-import InputSearch from "../../components/ui/InputSearch";
+import InputSearch1 from "../../components/ui/InputSearch";
 import { useSelector } from "react-redux";
 import { useCategories } from "../../hooks/useCategories";
 import { useNavigate } from "react-router-dom";
@@ -42,6 +42,7 @@ const Categories = () => {
   useEffect(() => {
     loadCategories();
   }, []);
+  
 const createCategory = () => {
   navigate('/auth/CrearCategoria', {replace:true})
 }
@@ -57,7 +58,7 @@ const createCategory = () => {
         >
           Registrar nueva categoria
         </Button>
-        <InputSearch
+        <InputSearch1
           categories={categories}
         />
 
@@ -78,7 +79,7 @@ const createCategory = () => {
                         {category.name}
                       </TableCell>
                       <TableCell align="center">{category?.description}</TableCell>
-                      <TableCell component="th" scope="row" align="center">{category?.status === true ? 'Activo': 'Inactivo'}</TableCell>
+                      <TableCell component="th" scope="row" align="center">{category?.services === true ? 'Activo': 'Inactivo'}</TableCell>
                       <TableCell
                         sx={{ display: "flex", justifyContent: "center" }}
                       >

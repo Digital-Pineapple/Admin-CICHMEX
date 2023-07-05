@@ -22,7 +22,6 @@ export const categoryReducer = createSlice({
     editCategory: ( state, { payload } ) => {
       state.categories = state.categories.map(category => {
         if (category._id === payload._id) {
-          // Modificar los campos deseados del elemento
           return {
             ...category,
             name: payload.name,

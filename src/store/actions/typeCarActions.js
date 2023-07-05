@@ -1,20 +1,20 @@
 import { enqueueSnackbar } from "notistack";
 import { instanceApi } from "../../apis/configAxios";
 import {
-  loadCategories,
-  loadCategory,
-  deleteCategory,
-  editCategory,
-  onAddNewCategory,
-} from "../reducer/categoryReducer";
+    loadTypeCars,
+    loadTypeCar,
+    onAddNewTypeCar,
+    deleteTypeCar,
+    editTypeCar,
+} from "../reducer/typeCarReducer";
 
-export const startLoadCategories = () => {
+export const startLoadTypeCars = () => {
   return async (dispatch) => {
     try {
-      const { data } = await instanceApi.get("/category");
-      dispatch(loadCategories(data.data));
+      const { data } = await instanceApi.get("/type-car");
+      dispatch(loadTypeCars(data.data));
     } catch (error) {
-      enqueueSnackbar(`Ocurrió un error al cargar las categorias + ${error}`,
+      enqueueSnackbar(`Ocurrió un error al cargar los tipo de autos + ${error}`,
            {variant:'error', anchorOrigin: {
             vertical: 'top',
             horizontal: 'right'
@@ -23,10 +23,10 @@ export const startLoadCategories = () => {
   };
 };
 
-export const getOneCategory = (category_id) => async (dispatch) => {
+export const getOneTypeCar = (category_id) => async (dispatch) => {
   try {
-    const { data } = await instanceApi.get(`/category/${category_id}`);
-    dispatch(loadCategory(data.data));
+    const { data } = await instanceApi.get(`/category/${typeCar_id}`);
+    dispatch(loadTypeCar(data.data));
   } catch (error) {
     enqueueSnackbar(`Ocurrió un error al cargar la categoria + ${error}`,
            {variant:'error', anchorOrigin: {
@@ -35,10 +35,10 @@ export const getOneCategory = (category_id) => async (dispatch) => {
           }})
   }
 };
-export const addOneCategory = (values) => async (dispatch) => {
+export const addOneTypeCar = (values) => async (dispatch) => {
   try {
     const { data } = await instanceApi.post(`/category/`, values);
-    dispatch(onAddNewCategory(data.data));
+    dispatch(onAddNewTypeCar(data.data));
     enqueueSnackbar('Categoria creada con éxito', {variant:'success', anchorOrigin: {
       vertical: 'top',
       horizontal: 'right'
@@ -54,10 +54,10 @@ export const addOneCategory = (values) => async (dispatch) => {
   }
 };
 
-export const deleteOneCategory = (category_id) => async (dispatch) => {
+export const deleteOneTypeCar = (typeCar_id) => async (dispatch) => {
   try {
-    await instanceApi.delete(`/category/${category_id}`);
-    dispatch(deleteCategory(category_id));
+    await instanceApi.delete(`/category/${typeCar_id}`);
+    dispatch(deleteTypeCar(category_id));
   } catch (error) {
     enqueueSnackbar(`Ocurrió un error al eliminar la categoria + ${error}`,
            {variant:'error', anchorOrigin: {
@@ -67,13 +67,13 @@ export const deleteOneCategory = (category_id) => async (dispatch) => {
   }
 };
 
-export const editOneCategory = (category_id, values) => {
+export const editOneTypeCar = (typeCar_id, values) => {
     return async (dispatch) => {
         try {
         const { data } = await instanceApi.patch(
             `/category/${category_id}`,values
         );
-        dispatch(editCategory(category_id, data.data));
+        dispatch(editTypeCar(typeCar_id, data.data));
         enqueueSnackbar('Categoria actualizada con exito', {variant:'success', anchorOrigin: {
           vertical: 'top',
           horizontal: 'right'
@@ -92,9 +92,9 @@ export const searchCategory = (name) => {
   return async (dispatch) => {
       try {
       const { data } = await instanceApi.get(
-          `/category/${category_id}`,values
+          `/category/${typeCar_id}`,name
       );
-      dispatch(editCategory(category_id, data.data));
+      dispatch(editCategory(typeCar_id, data.data));
       enqueueSnackbar('Categoria actualizada con exito', {variant:'success', anchorOrigin: {
         vertical: 'top',
         horizontal: 'right'

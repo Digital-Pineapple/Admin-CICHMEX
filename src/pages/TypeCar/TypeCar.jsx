@@ -1,98 +1,107 @@
-import React from 'react'
-import DrawerIcons from '../../components/ui/DrawerIcons';
-import Titles from '../../components/ui/Titles';
-import { styled, ThemeProvider, createTheme } from '@mui/material/styles';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
-import Pagination from '@mui/material/Pagination';
-import { Box } from '@mui/material';
+import { useEffect, useLayoutEffect, useState } from "react";
+import Titles from "../../components/ui/Titles";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
+import WarningAlert from "../../components/ui/WarningAlert";
+import { styled } from "@mui/system";
+import { Box, Grid } from "@mui/material";
+import { Pagination } from "antd";
+import InputSearch1 from "../../components/ui/InputSearch";
+import { useSelector } from "react-redux";
+import { useCategories } from "../../hooks/useCategories";
+import { useNavigate } from "react-router-dom";
+import { useTypeCars } from "../../hooks/UseTypeCars";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-        backgroundColor: "#CC3C5C",
-        color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-        fontSize: 14,
-    },
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: "#CC3C5C",
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
 }));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    '&:nth-of-type(odd)': {
-        backgroundColor: theme.palette.action.hover,
-    },
-    // hide last border
-    '&:last-child td, &:last-child th': {
-        border: 0,
-    },
-}));
-
-function createData(nombre, servicio, precio, estatus) {
-    return { nombre, servicio, precio, estatus };
-}
-
-const rows = [
-    createData('Motocicleta', 'Autolavado express', 150, 'activo'),
-    createData('Carro', 'Autolavado con aspiradora', 200, 'activo'),
-    createData('Camioneta', 'Autolavado con cera y espuma', 250, 'activo'),
-];
-
-const themeColor = createTheme({
-    palette: {
-        primary: {
-            main: '#CC3C5C',
-        },
-    },
-});
 
 const TypeCar = () => {
+  const { loadTypeCars,deleteTypeCar} = useTypeCars();
+  const { typeCars } = useSelector((state) => state.typeCars);
+  const [carx, setCarx] = useState(typeCars);
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (typeCars) {
+        setCarx(typeCars);
+    }
+  }, [typeCars]);
+  
+  useEffect(() => {
+    loadTypeCars();
+  }, []);
+  
+const createTypeCar = () => {
+  navigate('/auth/CrearCar', {replace:true})
+}
   return (
-    <DrawerIcons>
-    <ThemeProvider theme={themeColor}>
-        <Titles
-            name={<h2 align='center'>Tipos de carro</h2>}
-        />
-        <Button variant="contained" disableElevation sx={{ color: "CC3C5C", my: 5, p: 2, borderRadius: 5 }}>
-            Registrar nuevo tipo de carro 
+    <>
+      <Grid marginX={"240px"}>
+        <Titles name={<h2 align="center">Tipos de autos</h2>} />
+        <Button
+          variant="contained"
+          disableElevation
+          sx={{ color: "#CC3C5C", my: 5, p: 2, borderRadius: 5 }}
+          onClick={createTypeCar}
+        >
+          Registrar nuevo tipo de auto
         </Button>
-    </ThemeProvider>
-    <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 700 }} aria-label="tabla de autos">
             <TableHead>
-                <TableRow>
-                    <StyledTableCell>Nombre</StyledTableCell>
-                    <StyledTableCell align="center">Servicio</StyledTableCell>
-                    <StyledTableCell align="center">Precio</StyledTableCell>
-                    <StyledTableCell align="center">Estatus</StyledTableCell>
-                </TableRow>
+              <TableRow>
+                <StyledTableCell>Nombre</StyledTableCell>
+                <StyledTableCell align="center">Estado</StyledTableCell>
+                <StyledTableCell align="center">Precio</StyledTableCell>
+                <StyledTableCell align="center">Opciones</StyledTableCell>
+              </TableRow>
             </TableHead>
             <TableBody>
-                {rows.map((row) => (
-                    <StyledTableRow key={row.nombre}>
-                        <StyledTableCell component="th" scope="row">
-                            {row.nombre}
-                        </StyledTableCell>
-                        <StyledTableCell align="center">{row.servicio}</StyledTableCell>
-                        <StyledTableCell align="center">{row.precio}</StyledTableCell>
-                        <StyledTableCell align="center">{row.estatus}</StyledTableCell>
-                    </StyledTableRow>
-                ))}
+              {carx.map((typeCar) => (
+                    <TableRow key={typeCar._id}>
+                      <TableCell component="th" scope="row">
+                        {typeCar.name}
+                      </TableCell>
+                      <TableCell component="th" scope="row" align="center">{typeCar?.status === true ? 'Activo': 'Inactivo'}</TableCell>
+                      <TableCell component="th" scope="row" align="center">{typeCar.map?.services}</TableCell>
+                      <TableCell
+                        sx={{ display: "flex", justifyContent: "center" }}
+                      >
+                        <WarningAlert
+                          route={typeCar._id}
+                          title="¿Estas seguro que deseas eliminar a la categoria?"
+                          callbackToDeleteItem={() =>
+                            deleteTypeCar(typeCar._id)
+                          }
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
             </TableBody>
-        </Table>
-    </TableContainer>
-    <ThemeProvider theme={themeColor}>
-        <Box display="flex" justifyContent="center" py={10}>
-            <Pagination count={10} color="primary" />
-        </Box>
-    </ThemeProvider>
-</DrawerIcons>
-)
-}
+          </Table>
+        </TableContainer>
+      </Grid>
+      
 
-export default TypeCar
+      <Box display="flex" justifyContent="center" py={10}>
+        <Pagination count={10} color="primary" />
+      </Box>
+    </>
+  );
+};
+
+export default TypeCar;

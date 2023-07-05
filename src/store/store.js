@@ -5,6 +5,7 @@ import customerReducer from './reducer/customerReducer';
 import uiReducer from './reducer/uiReducer';
 import servicesReducer from './reducer/servicesReducer';
 import categoryReducer from './reducer/categoryReducer';
+import typeCarReducer from './reducer/typeCarReducer';
 
 const rootReducer = combineReducers({
     auth        : authReducer,
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
     customers   : customerReducer,
     services    : servicesReducer,
     categories  : categoryReducer,
+    typeCars    : typeCarReducer,
 })
 
 export const store = configureStore({
