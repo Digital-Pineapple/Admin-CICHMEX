@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 
-import { startLoadCategories, getOneCategory, deleteOneCategory, editOneCategory, addOneCategory  } from '../store/actions/categoryActions'; 
+import { startLoadCategories, getOneCategory, deleteOneCategory, editOneCategory, addOneCategory, searchCategories  } from '../store/actions/categoryActions'; 
 
 export const useCategories = () => {
     
@@ -18,7 +18,9 @@ export const useCategories = () => {
     
     const addCategory = async values => await dispatch(addOneCategory(values));
 
-    return { categories, category, loadCategories, loadCategory, deleteCategory, editCategory, addCategory }
+    const searchCategory = async value => await dispatch(searchCategories(value));
+
+    return { categories, category, loadCategories, loadCategory, deleteCategory, editCategory, addCategory, searchCategory }
 
 
 }

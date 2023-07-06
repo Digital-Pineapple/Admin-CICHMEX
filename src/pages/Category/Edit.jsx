@@ -108,7 +108,7 @@ const Edit = () => {
             justifyItems={"center"}
             alignItems={"center"}
           >
-            <Grid display="flex" flexDirection="column">
+            {/* <Grid display="flex" flexDirection="column">
               <FormControl>
                 <FormLabel id="status-label">Estatus</FormLabel>
                 <RadioGroup
@@ -129,7 +129,7 @@ const Edit = () => {
                   />
                 </RadioGroup>
               </FormControl>
-            </Grid>
+            </Grid> */}
 
             <Grid item sx={{ display: "flex", justifyContent: "center" }}>
               <Button type="submit" variant="contained">

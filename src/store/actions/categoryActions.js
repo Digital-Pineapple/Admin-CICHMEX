@@ -88,19 +88,20 @@ export const editOneCategory = (category_id, values) => {
     };
 
 };
-export const searchCategory = (name) => {
+export const searchCategories = ({value}) => {
   return async (dispatch) => {
       try {
       const { data } = await instanceApi.get(
-          `/category/${category_id}`,values
+          `/category/search/search${value ? `?search=${value}` : ''}`,
       );
-      dispatch(editCategory(category_id, data.data));
-      enqueueSnackbar('Categoria actualizada con exito', {variant:'success', anchorOrigin: {
+      console.log(data);
+      dispatch(loadCategories( data.data));
+      enqueueSnackbar('Categorias encontradas con exito', {variant:'success', anchorOrigin: {
         vertical: 'top',
         horizontal: 'right'
       }})
       } catch (error) {
-        enqueueSnackbar(`Ocurrió un error al actualizar la categoria + ${error}`,
+        enqueueSnackbar(`Ocurrió un error al buscar la categoria + ${error}`,
          {variant:'error', anchorOrigin: {
           vertical: 'top',
           horizontal: 'right'

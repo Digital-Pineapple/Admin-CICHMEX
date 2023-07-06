@@ -12,10 +12,10 @@ import WarningAlert from "../../components/ui/WarningAlert";
 import { styled } from "@mui/system";
 import { Box, Grid } from "@mui/material";
 import { Pagination } from "antd";
-import InputSearch1 from "../../components/ui/InputSearch";
 import { useSelector } from "react-redux";
 import { useCategories } from "../../hooks/useCategories";
 import { useNavigate } from "react-router-dom";
+import InputSearch1 from "../../components/ui/imputSearch1";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -30,9 +30,15 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 const Categories = () => {
   const { loadCategories,deleteCategory} = useCategories();
   const { categories } = useSelector((state) => state.categories);
+  const [filteredCategories, setFilteredCategories] = useState(categories);
   const [cat, setCat] = useState(categories);
   const navigate = useNavigate();
   
+  const handleCategoriesChange = (newCategories) => {
+    setCat([]);
+    setFilteredCategories(newCategories);
+  };
+
   useEffect(() => {
     if (categories) {
       setCat(categories);
@@ -42,6 +48,7 @@ const Categories = () => {
   useEffect(() => {
     loadCategories();
   }, []);
+
   
 const createCategory = () => {
   navigate('/auth/CrearCategoria', {replace:true})
@@ -60,6 +67,7 @@ const createCategory = () => {
         </Button>
         <InputSearch1
           categories={categories}
+          values={handleCategoriesChange}
         />
 
         <TableContainer component={Paper}>
@@ -73,7 +81,31 @@ const createCategory = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {cat.map((category) => (
+
+            {filteredCategories.length != 0
+                ? filteredCategories.map((category) => (
+                    <TableRow key={category._id}>
+                      <TableCell component="th" scope="row">
+                        {category.name}
+                      </TableCell>
+                      <TableCell align="center">{category?.description}</TableCell>
+                      <TableCell component="th" scope="row" align="center">{category?.services !== true ? 'Activo' : 'Inactivo'}</TableCell>
+                      <TableCell
+                        sx={{ display: "flex", justifyContent: "center" }}
+                      >
+                        <WarningAlert
+                          route={category._id}
+                          title="Estas seguro que deseas eliminar la categoria?"
+                          callbackToDeleteItem={() =>
+                            deleteCategory(category._id)
+                          }
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                : 
+
+              cat.map((category) => (
                     <TableRow key={category._id}>
                       <TableCell component="th" scope="row">
                         {category.name}
