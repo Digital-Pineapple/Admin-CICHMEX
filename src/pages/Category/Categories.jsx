@@ -79,7 +79,7 @@ const createCategory = () => {
                         {category.name}
                       </TableCell>
                       <TableCell align="center">{category?.description}</TableCell>
-                      <TableCell component="th" scope="row" align="center">{category?.services === true ? 'Activo': 'Inactivo'}</TableCell>
+                      <TableCell component="th" scope="row" align="center">{category?.services !== true ? 'Activo' : 'Inactivo'}</TableCell>
                       <TableCell
                         sx={{ display: "flex", justifyContent: "center" }}
                       >

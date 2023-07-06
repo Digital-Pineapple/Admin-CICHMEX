@@ -16,7 +16,7 @@ export const Links = [
   },
   {
     title: "Tipo de automovil",
-    path: "/auth/typesCar",
+    path: "/auth/typeCar",
     Icon: <DriveEtaIcon />,
   },
   {

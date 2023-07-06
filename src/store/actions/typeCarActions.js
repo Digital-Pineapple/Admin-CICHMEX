@@ -23,9 +23,9 @@ export const startLoadTypeCars = () => {
   };
 };
 
-export const getOneTypeCar = (category_id) => async (dispatch) => {
+export const getOneTypeCar = (typeCar_id) => async (dispatch) => {
   try {
-    const { data } = await instanceApi.get(`/category/${typeCar_id}`);
+    const { data } = await instanceApi.get(`/type-car/${typeCar_id}`);
     dispatch(loadTypeCar(data.data));
   } catch (error) {
     enqueueSnackbar(`Ocurrió un error al cargar la categoria + ${error}`,
@@ -37,16 +37,15 @@ export const getOneTypeCar = (category_id) => async (dispatch) => {
 };
 export const addOneTypeCar = (values) => async (dispatch) => {
   try {
-    const { data } = await instanceApi.post(`/category/`, values);
+    const { data } = await instanceApi.post(`/type-car/`, values);
     dispatch(onAddNewTypeCar(data.data));
-    enqueueSnackbar('Categoria creada con éxito', {variant:'success', anchorOrigin: {
+    enqueueSnackbar('Tipo de auto creado con éxito', {variant:'success', anchorOrigin: {
       vertical: 'top',
       horizontal: 'right'
     }})
 
   } catch (error) {
-    console.log(error);
-    enqueueSnackbar(`Ocurrió un error al agregar la categoria : ${error.response.data?.message}`,
+    enqueueSnackbar(`Ocurrió un error al agregar el tipo de auto : ${error.response.data?.message}`,
     {variant:'error', anchorOrigin: {
      vertical: 'top',
      horizontal: 'right'
@@ -56,8 +55,9 @@ export const addOneTypeCar = (values) => async (dispatch) => {
 
 export const deleteOneTypeCar = (typeCar_id) => async (dispatch) => {
   try {
-    await instanceApi.delete(`/category/${typeCar_id}`);
-    dispatch(deleteTypeCar(category_id));
+    await instanceApi.delete(`/type-car/${typeCar_id}`);
+    dispatch(deleteTypeCar(typeCar_id));
+    
   } catch (error) {
     enqueueSnackbar(`Ocurrió un error al eliminar la categoria + ${error}`,
            {variant:'error', anchorOrigin: {
@@ -71,7 +71,7 @@ export const editOneTypeCar = (typeCar_id, values) => {
     return async (dispatch) => {
         try {
         const { data } = await instanceApi.patch(
-            `/category/${category_id}`,values
+            `/type-car/${typeCar_id}`,values
         );
         dispatch(editTypeCar(typeCar_id, data.data));
         enqueueSnackbar('Categoria actualizada con exito', {variant:'success', anchorOrigin: {
@@ -92,7 +92,7 @@ export const searchCategory = (name) => {
   return async (dispatch) => {
       try {
       const { data } = await instanceApi.get(
-          `/category/${typeCar_id}`,name
+          `/type-car/${typeCar_id}`,name
       );
       dispatch(editCategory(typeCar_id, data.data));
       enqueueSnackbar('Categoria actualizada con exito', {variant:'success', anchorOrigin: {

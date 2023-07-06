@@ -45,7 +45,7 @@ const TypeCar = () => {
   }, []);
   
 const createTypeCar = () => {
-  navigate('/auth/CrearCar', {replace:true})
+  navigate('/auth/createTypeCar', {replace:true})
 }
   return (
     <>
@@ -66,7 +66,6 @@ const createTypeCar = () => {
               <TableRow>
                 <StyledTableCell>Nombre</StyledTableCell>
                 <StyledTableCell align="center">Estado</StyledTableCell>
-                <StyledTableCell align="center">Precio</StyledTableCell>
                 <StyledTableCell align="center">Opciones</StyledTableCell>
               </TableRow>
             </TableHead>
@@ -77,13 +76,12 @@ const createTypeCar = () => {
                         {typeCar.name}
                       </TableCell>
                       <TableCell component="th" scope="row" align="center">{typeCar?.status === true ? 'Activo': 'Inactivo'}</TableCell>
-                      <TableCell component="th" scope="row" align="center">{typeCar.map?.services}</TableCell>
                       <TableCell
                         sx={{ display: "flex", justifyContent: "center" }}
                       >
                         <WarningAlert
                           route={typeCar._id}
-                          title="¿Estas seguro que deseas eliminar a la categoria?"
+                          title="¿Estas seguro que deseas eliminar el tipo de auto?"
                           callbackToDeleteItem={() =>
                             deleteTypeCar(typeCar._id)
                           }

@@ -17,7 +17,7 @@ export const typeCarReducer = createSlice({
       state.typeCar = payload;
     },
     deleteTypeCar: (state, { type, payload }) => {
-      state.typeCars = state.typeCar.filter(typeCar => typeCar._id !== payload);
+      state.typeCars = state.typeCars.filter(typeCar => typeCar._id !== payload);
     },
     editTypeCar: ( state, { payload } ) => {
       state.typeCars = state.typeCars.map(typeCar => {
