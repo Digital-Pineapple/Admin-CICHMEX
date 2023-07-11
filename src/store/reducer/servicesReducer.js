@@ -14,15 +14,26 @@ export const servicesReducer = createSlice({
         loadService: (state, { type, payload }) => {
             state.service = payload;
         },
+        onAddNewService: (state, { payload }) => {
+            state.category = payload;
+        },
         deleteService: (state, { type, payload }) => {
             state.services = state.services.filter(service => service._id !== payload);
         },
-        editService: (state, { type, payload }) => {
-            state.services = state.services.filter(service => service._id !== payload);
-        }
-    },
-})
+        editService: ( state, { payload } ) => {
+            state.categories = state.categories.map(category => {
+              if (category._id === payload._id) {
+                return {
+                  ...category,
+                  name: payload.name,
+                  description: payload.description,
+                  status: payload.status,
+                };
+              }
+              return category; // Mantener los elementos no modificados tal como están
+            });
+          }}})
 
-export const { loadServices, loadService, deleteService, editService } = servicesReducer.actions;
+export const { loadServices, loadService, deleteService, editService, onAddNewService } = servicesReducer.actions;
 
 export default servicesReducer.reducer;

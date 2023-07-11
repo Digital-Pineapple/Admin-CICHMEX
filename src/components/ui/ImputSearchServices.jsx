@@ -5,11 +5,10 @@ import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
 import { useFormik } from "formik";
-import { enqueueSnackbar } from "notistack";
-import { useCategories } from "../../hooks/useCategories";
+import { useServices } from "../../hooks/useServices";
 
-const InputSearch1 = (value) => {
-const { searchCategory } = useCategories();
+export const ImputSearchServices = (value) => {
+const { searchService } = useServices();
 
   const formik = useFormik({
     initialValues: {
@@ -17,7 +16,7 @@ const { searchCategory } = useCategories();
     },
     onSubmit: (value) => {
       try {
-        searchCategory(value);
+        searchService(value);
       } catch (error) {
         console.log(error);
       }
@@ -37,8 +36,8 @@ const { searchCategory } = useCategories();
         name="value"
         value={formik.values.name}
         onChange={formik.handleChange}
-        placeholder="Buscar categoria"
-        inputProps={{ "aria-label": "Buscar categoria" }}
+        placeholder="Buscar servicio"
+        inputProps={{ "aria-label": "Buscar servicio" }}
       />
       <IconButton type='submit' sx={{ p: "20px" }} aria-label="search">
         <SearchIcon />
@@ -48,4 +47,3 @@ const { searchCategory } = useCategories();
   );
 };
 
-export default InputSearch1;

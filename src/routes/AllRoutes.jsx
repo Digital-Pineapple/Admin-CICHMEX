@@ -11,7 +11,7 @@ import EditCategory from '../pages/Category/Edit'
 import CreateCategory from '../pages/Category/Create'
 import CreateTypeCar from '../pages/TypeCar/Create'
 import EditTypeCar from '../pages/TypeCar/Edit'
-
+import CreateServices from '../pages/Services/Create'
 
 
 
@@ -19,6 +19,7 @@ import EditTypeCar from '../pages/TypeCar/Edit'
 export const AllRoutes = [
   { type: 0, path: '/*', element: <Login/>},
   { type: 0, path: '/pruebas', element: <Users/>},
+  
   { type: 1, path: '/', element: <Navigate to={"/Home"} /> },
   { type: 1, path: '/Home', element: <Principal/>},
   { type: 1, path: '/usuarios', element: <Users/>},
@@ -26,7 +27,9 @@ export const AllRoutes = [
 
   { type: 1, path: '/servicios', element: <Services/>},
   { type: 1, path: '/servicios/:id', element: <EditServices/>},
-  
+  { type: 1, path: '/createService', element: <CreateServices/>},
+
+
   { type: 1, path: '/typeCar', element: <TypeCar/>},
   { type: 1, path: '/createTypeCar', element: <CreateTypeCar/>},
   { type: 1, path: '/typeCar/:id', element: <EditTypeCar/>},

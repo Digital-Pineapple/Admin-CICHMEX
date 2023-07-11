@@ -92,7 +92,7 @@ export const searchCategories = ({value}) => {
   return async (dispatch) => {
       try {
       const { data } = await instanceApi.get(
-          `/category/search/search${value ? `?search=${value}` : ''}`,
+          `/category/search/search${value ? `?search=${value}` : `?search=${""}`}`,
       );
       console.log(data);
       dispatch(loadCategories( data.data));

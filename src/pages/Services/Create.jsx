@@ -1,61 +1,77 @@
-import React from 'react'
-import DrawerIcons from '../../components/ui/DrawerIcons';
-import Titles from '../../components/ui/Titles';
-import UploadImage from '../../components/ui/UploadImage';
-import Grid from '@mui/material/Grid';
-import { TextField } from '@mui/material';
-import Box from '@mui/material/Box';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
-import Typography from "@mui/material/Typography";
-import Button from '@mui/material/Button';
+import Titles from "../../components/ui/Titles";
 
+import Box from "@mui/material/Box";
 
-const Create = () => {
-    return (
-        <DrawerIcons>
-            <Titles
-                name={<h2 align='center'>Nuevo servicio</h2>}
-            />
-            <Box color='#F7BFBF' borderRadius={5} mt={3} sx={{ border: 3, p: 5 }}>
-                <Grid container spacing={2}>
-                    <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center' }}>
-                        <UploadImage />
-                    </Grid>
-                    <Grid item xs={8} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
-                        <TextField id="outlined-basic" label="Nombre" variant="outlined" fullWidth="true" />
-                    </Grid>
-                    <Grid item xs={4}>
-                        <TextField id="outlined-basic" label="Descripción" variant="outlined" fullWidth="true" />
-                    </Grid>
-                    <Grid item xs={4}>
-                        <TextField id="outlined-basic" label="Precio" variant="outlined" fullWidth="true" />
-                    </Grid>
-                    <Grid item xs={4}>
-                        <FormControl>
-                            <FormLabel id="demo-row-radio-buttons-group-label">Estatus</FormLabel>
-                            <RadioGroup
-                                row
-                                aria-labelledby="demo-row-radio-buttons-group-label"
-                                name="row-radio-buttons-group"
-                            >
-                                <Typography variant="h3" color="common.black">
-                                    <FormControlLabel value="female" control={<Radio />} label="Activo" />
-                                    <FormControlLabel value="male" control={<Radio />} label="Desactivado" />
-                                </Typography>
-                            </RadioGroup>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
-                        <Button variant="contained" >Guardar</Button>
-                    </Grid>
-                </Grid>
-            </Box>
-        </DrawerIcons>
-    )
-}
+import { useFormik } from "formik";
+import TextField from '@mui/material/TextField'
+import { Grid, TextareaAutosize, Button } from "@mui/material";
+import { Typography } from "antd";
+import { useNavigate } from "react-router-dom";
+import { useServices } from "../../hooks/useServices";
 
-export default Create
+const CreateService = () => {
+  const { addService }= useServices();
+  const navigate = useNavigate();
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      description: "",
+      status: 'true',
+    },
+    onSubmit: (values) => {
+      try {
+        addService(values)
+        navigate('/auth/servicios', {replace:true})
+        
+      } catch (error) {
+        return enqueueSnackbar('Error al crear el servicio', {variant:'error', anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right'
+        }}, )
+      }
+    },
+  });
+
+  return (
+    <Box component="form" onSubmit={formik.handleSubmit} marginX={"10%"}>
+      <Titles name={<h2 align="center">Crear Servicio</h2>} />
+      <Grid
+        color="#F7BFBF"
+        borderRadius={5}
+        mt={3}
+        sx={{ border: 10, p: 5 }}
+        container
+        spacing={4}
+      >
+        <TextField
+            focused
+            fullWidth
+            id="name"
+            name="name"
+            label="Nombre del servicio"
+            variant="outlined"
+            value={formik.values.name}
+            sx={{ margin: 2 }}
+            onChange={formik.handleChange}
+          />
+          <Typography>Descipcion del Servicio</Typography>
+          <TextareaAutosize
+            aria-label="Descripcion"
+            id="description"
+            name="description"
+            minRows={6}
+            label="Descripcion"
+            value={formik.values.description}
+            style={{ width: "100%", fontFamily: "BikoBold", marginBottom: 20 }}
+            onChange={formik.handleChange}
+          />
+      </Grid>
+      <Button type="submit" variant="contained" color="secondary">
+        Crear
+        
+      </Button>
+    </Box>
+  );
+};
+
+export default CreateService;

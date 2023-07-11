@@ -48,7 +48,7 @@ const CreateCategory = () => {
             fullWidth
             id="name"
             name="name"
-            label="Nombre del servicio"
+            label="Nombre de la categoria"
             variant="outlined"
             value={formik.values.name}
             sx={{ margin: 2 }}
