@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 
 import { useFormik } from "formik";
 import TextField from "@mui/material/TextField";
-import { Grid, TextareaAutosize, Button } from "@mui/material";
+import { Grid, TextareaAutosize, Button, FormControl, FormLabel, Select, MenuItem, FormHelperText } from "@mui/material";
 import { Typography } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useServices } from "../../hooks/useServices";
@@ -78,6 +78,23 @@ const CreateService = () => {
           style={{ width: "100%", fontFamily: "BikoBold", marginBottom: 20 }}
           onChange={formik.handleChange}
         />
+      <FormControl>
+          <FormLabel>subCategoria</FormLabel>
+          <Select
+            id="subCategory"
+            name="subCategory"
+            value={formik.values.subCategory}
+            label="subCategoria"
+            onChange={formik.handleChange}
+          >
+            {subCategories.map((subCategory) => (
+              <MenuItem key={subCategory._id} value={subCategory._id}>
+                {subCategory.name}
+              </MenuItem>
+            ))}
+          </Select>
+          <FormHelperText>Selecciona una sub-categoria</FormHelperText>
+        </FormControl>
       </Grid>
       <Button type="submit" variant="contained" color="secondary">
         Crear

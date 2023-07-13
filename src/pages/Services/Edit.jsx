@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Titles from "../../components/ui/Titles";
 import UploadImage from "../../components/ui/UploadImage";
 import Grid from "@mui/material/Grid";
-import { TextField, TextareaAutosize } from "@mui/material";
+import { FormControl, FormHelperText, FormLabel, MenuItem, Select, TextField, TextareaAutosize } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -107,6 +107,23 @@ const Edit = () => {
             style={{ width: "100%", fontFamily: "BikoBold", marginBottom: 20 }}
             onChange={formik.handleChange}
           />
+          <FormControl>
+            <FormLabel>Subcategoria</FormLabel>
+            <Select
+              id="subCategory"
+              name="subCategory"
+              value={formik.values.subCategory}
+              label="Categoria"
+              onChange={formik.handleChange}
+            >
+              {subCategories.map((subCategory) => (
+                <MenuItem key={subCategory._id} value={subCategory._id}>
+                  {subCategory.name}
+                </MenuItem>
+              ))}
+            </Select>
+            <FormHelperText>Selecciona una sub-categoria</FormHelperText>
+          </FormControl>
         
 
           <Grid
@@ -115,28 +132,6 @@ const Edit = () => {
             justifyItems={"center"}
             alignItems={"center"}
           >
-            {/* <Grid display="flex" flexDirection="column">
-              <FormControl>
-                <FormLabel id="status-label">Estatus</FormLabel>
-                <RadioGroup
-                  aria-labelledby="status-label"
-                  name="status"
-                  value={formik.values.status}
-                  onChange={formik.handleChange}
-                >
-                  <FormControlLabel
-                    value={true}
-                    control={<Radio />}
-                    label="Activo"
-                  />
-                  <FormControlLabel
-                    value={false}
-                    control={<Radio />}
-                    label="Desactivado"
-                  />
-                </RadioGroup>
-              </FormControl>
-            </Grid> */}
             <Grid item sx={{ display: "flex", justifyContent: "center" }}>
               <Button type="submit" variant="contained">
                 Guardar
@@ -148,9 +143,6 @@ const Edit = () => {
           </Grid>
         </Grid>
       </Grid>
-      {/* <code>
-        <pre>{JSON.stringify(formulario, null, 2)}</pre>
-      </code> */}
     </Box>
   );
 };

@@ -21,13 +21,14 @@ export const servicesReducer = createSlice({
             state.services = state.services.filter(service => service._id !== payload);
         },
         editService: ( state, { payload } ) => {
-            state.categories = state.categories.map(category => {
+            state.categories = state.services.map(category => {
               if (category._id === payload._id) {
                 return {
                   ...category,
                   name: payload.name,
                   description: payload.description,
                   status: payload.status,
+                  subCategory : payload.subCategory
                 };
               }
               return category; // Mantener los elementos no modificados tal como están
