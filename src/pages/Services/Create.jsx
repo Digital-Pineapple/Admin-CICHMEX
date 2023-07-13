@@ -3,31 +3,44 @@ import Titles from "../../components/ui/Titles";
 import Box from "@mui/material/Box";
 
 import { useFormik } from "formik";
-import TextField from '@mui/material/TextField'
+import TextField from "@mui/material/TextField";
 import { Grid, TextareaAutosize, Button } from "@mui/material";
 import { Typography } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useServices } from "../../hooks/useServices";
+import { useSubCategories } from "../../hooks/useSubCategories";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const CreateService = () => {
-  const { addService }= useServices();
+  const { addService } = useServices();
+  const { loadSubCategories } = useSubCategories();
   const navigate = useNavigate();
+  const subCategories = useSelector((state) => state.subCategories.subCategories);
+
+  useEffect(() => {
+    loadSubCategories();
+  }, []);
+
   const formik = useFormik({
     initialValues: {
       name: "",
       description: "",
-      status: 'true',
+      status: "true",
+      SubCategory: "",
     },
     onSubmit: (values) => {
       try {
-        addService(values)
-        navigate('/auth/servicios', {replace:true})
-        
+        addService(values);
+        navigate("/auth/servicios", { replace: true });
       } catch (error) {
-        return enqueueSnackbar('Error al crear el servicio', {variant:'error', anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right'
-        }}, )
+        return enqueueSnackbar("Error al crear el servicio", {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        });
       }
     },
   });
@@ -44,31 +57,30 @@ const CreateService = () => {
         spacing={4}
       >
         <TextField
-            focused
-            fullWidth
-            id="name"
-            name="name"
-            label="Nombre del servicio"
-            variant="outlined"
-            value={formik.values.name}
-            sx={{ margin: 2 }}
-            onChange={formik.handleChange}
-          />
-          <Typography>Descipcion del Servicio</Typography>
-          <TextareaAutosize
-            aria-label="Descripcion"
-            id="description"
-            name="description"
-            minRows={6}
-            label="Descripcion"
-            value={formik.values.description}
-            style={{ width: "100%", fontFamily: "BikoBold", marginBottom: 20 }}
-            onChange={formik.handleChange}
-          />
+          focused
+          fullWidth
+          id="name"
+          name="name"
+          label="Nombre del servicio"
+          variant="outlined"
+          value={formik.values.name}
+          sx={{ margin: 2 }}
+          onChange={formik.handleChange}
+        />
+        <Typography>Descipcion del Servicio</Typography>
+        <TextareaAutosize
+          aria-label="Descripcion"
+          id="description"
+          name="description"
+          minRows={6}
+          label="Descripcion"
+          value={formik.values.description}
+          style={{ width: "100%", fontFamily: "BikoBold", marginBottom: 20 }}
+          onChange={formik.handleChange}
+        />
       </Grid>
       <Button type="submit" variant="contained" color="secondary">
         Crear
-        
       </Button>
     </Box>
   );

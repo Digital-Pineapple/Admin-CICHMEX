@@ -12,6 +12,9 @@ import CreateCategory from '../pages/Category/Create'
 import CreateTypeCar from '../pages/TypeCar/Create'
 import EditTypeCar from '../pages/TypeCar/Edit'
 import CreateServices from '../pages/Services/Create'
+import SubCategories from '../pages/SubCategory/SubCategories'
+import CreateSubCategory from '../pages/SubCategory/Create'
+import EditSubCategory from '../pages/SubCategory/Edit'
 
 
 
@@ -21,6 +24,7 @@ export const AllRoutes = [
   { type: 0, path: '/pruebas', element: <Users/>},
   
   { type: 1, path: '/', element: <Navigate to={"/Home"} /> },
+
   { type: 1, path: '/Home', element: <Principal/>},
   { type: 1, path: '/usuarios', element: <Users/>},
   { type: 1, path: '/usuarios/:id', element: <EditUser/>},
@@ -37,4 +41,8 @@ export const AllRoutes = [
   { type: 1, path: '/CategoriaServicios', element: <Categories/>},
   { type: 1, path: '/CrearCategoria', element: <CreateCategory/>},
   { type: 1, path: '/CategoriaServicios/:id', element: <EditCategory/>},
+
+  { type: 1, path: '/SubCategorias', element: <SubCategories/>},
+  { type: 1, path: '/CrearSubCategoria', element: <CreateSubCategory/>},
+  { type: 1, path: '/SubCategorias/:id', element: <EditSubCategory/>},
 ]

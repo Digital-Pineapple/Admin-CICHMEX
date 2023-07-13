@@ -2,7 +2,8 @@ import Inbox from "@mui/icons-material/Inbox";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import DriveEtaIcon from '@mui/icons-material/DriveEta';
 import CategoryIcon from '@mui/icons-material/Category';
-
+import KeyboardTabIcon from '@mui/icons-material/KeyboardTab';
+import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
 export const Links = [
   {
     title: "Usuarios",
@@ -12,7 +13,7 @@ export const Links = [
   {
     title: "Servicios",
     path: "/auth/servicios",
-    Icon: <PeopleAltIcon />,
+    Icon: <CleaningServicesIcon />,
   },
   {
     title: "Tipo de automovil",
@@ -24,4 +25,9 @@ export const Links = [
     path: "/auth/CategoriaServicios",
     Icon: <CategoryIcon />,
   },
+  {
+    title: "Sub-Categorias",
+    path: "/auth/SubCategorias",
+    Icon: <KeyboardTabIcon />,
+  }
 ];

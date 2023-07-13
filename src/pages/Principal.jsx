@@ -1,4 +1,4 @@
-import { Grid} from '@mui/material'
+import { Grid, ButtonGroup, Button} from '@mui/material'
 import Carwash from '../assets/Images/icono1.png'
 import Image from 'mui-image'
 import { LogoutButton } from '../components/Buttons/LogoutButton'
@@ -7,17 +7,13 @@ import { LogoutButton } from '../components/Buttons/LogoutButton'
 export const Principal = () => {
   return (
     <>
-      <Grid >
-
-        <Image
-          src={Carwash}
-          fit="cover"
-          easing="linear"
-          duration={3000}
-          shift={null}
-          shiftDuration={500}
-          style={{minHeight:'850px', maxHeight:'100vh'}}
-        />
+      <Grid sx={{margin:'10%'}} >
+        <Grid container spacing={4}>
+            <Button>Usuarios</Button>
+            <Button>Lavadores independientes</Button>
+            <Button>Administradores</Button>
+            <Button></Button>
+        </Grid>
       <LogoutButton />
       </Grid>
       

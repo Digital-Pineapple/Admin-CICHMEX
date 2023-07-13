@@ -11,7 +11,7 @@ import Button from "@mui/material/Button";
 import WarningAlert from "../../components/ui/WarningAlert";
 import { useCustomers } from "../../hooks/useCustomers";
 import { styled } from "@mui/system";
-import { Box, Grid } from "@mui/material";
+import { Box, ButtonGroup, Grid } from "@mui/material";
 import { Pagination } from "antd";
 import InputSearch from "../../components/ui/InputSearch";
 import { useSelector } from "react-redux";
@@ -27,17 +27,16 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const Users = () => {
-  
   const { loadCustomers, deleteCustomer } = useCustomers();
   const { customers } = useSelector((state) => state.customers);
   const [filteredCustomers, setFilteredCustomers] = useState(customers);
   const [cus, setCus] = useState(customers);
- 
+
   const handleUsuariosChange = (newUsuarios) => {
     setCus([]);
     setFilteredCustomers(newUsuarios);
   };
-  
+
   useEffect(() => {
     loadCustomers();
   }, []);
@@ -52,6 +51,12 @@ const Users = () => {
     <>
       <Grid marginX={"240px"}>
         <Titles name={<h2 align="center">Usuarios</h2>} />
+        <ButtonGroup fullWidth  size='large' variant='contained' color="primary">
+          <Button>Usuarios</Button>
+          <Button>Lavadores independientes</Button>
+          <Button>Negocio Autolavado</Button>
+          <Button>Administradores</Button>
+        </ButtonGroup>
         <Button
           variant="contained"
           disableElevation

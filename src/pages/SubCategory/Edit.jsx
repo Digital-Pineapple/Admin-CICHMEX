@@ -1,55 +1,62 @@
 import React, { useState } from "react";
+import InputLabel from "@mui/material/InputLabel";
 import Titles from "../../components/ui/Titles";
 import UploadImage from "../../components/ui/UploadImage";
 import Grid from "@mui/material/Grid";
-import { TextField, TextareaAutosize } from "@mui/material";
+import {
+  Select,
+  TextField,
+  TextareaAutosize,
+  FormControl,
+  FormLabel,
+  FormHelperText,
+  MenuItem,
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
-import { useServices } from "../../hooks/useServices";
 import { useFormik } from "formik";
 import { enqueueSnackbar } from "notistack";
 import { useSubCategories } from "../../hooks/useSubCategories";
+import { useCategories } from "../../hooks/useCategories";
 import { useSelector } from "react-redux";
 
 const Edit = () => {
   const { id } = useParams();
-  const { loadService, service, editService } = useServices();
+  const { loadSubCategory, subCategory, editSubCategory } = useSubCategories();
+  const { loadCategories } = useCategories();
   const navigate = useNavigate();
-  const { loadSubCategories } = useSubCategories();
-  const subCategories = useSelector(
-    (state) => state.subCategories.subCategories
-  );
+  const categories = useSelector((state) => state.categories.categories);
 
   useEffect(() => {
-    loadService(id);
-    loadSubCategories();
+    loadSubCategory(id);
+    loadCategories();
   }, []);
 
   useEffect(() => {
     formik.setValues({
-      name: service.name,
-      description: service.description,
-      status: service.status,
-      subCategory: service.subCategory,
+      name: subCategory.name,
+      description: subCategory.description,
+      status: subCategory.status,
+      category: subCategory.category,
     });
-  }, [service]);
+  }, [subCategory]);
 
   const formik = useFormik({
     initialValues: {
       name: "",
       description: "",
       status: "",
-      subCategory: "",
+      category: "",
     },
     onSubmit: (values) => {
       try {
-        editService(service._id, values);
-        navigate("/auth/servicios", { replace: true });
+        editSubCategory(subCategory._id, values);
+        navigate("/auth/SubCategorias", { replace: true });
       } catch (error) {
-        return enqueueSnackbar("Error al editar el servicio", {
+        return enqueueSnackbar("Error al editar la subcategoria", {
           variant: "error",
           anchorOrigin: {
             vertical: "top",
@@ -61,12 +68,12 @@ const Edit = () => {
   });
 
   const outEdit = () => {
-    navigate("/auth/servicios", { replace: true });
+    navigate("/auth/SubCategorias", { replace: true });
   };
 
   return (
     <Box component="form" onSubmit={formik.handleSubmit} marginX={"10%"}>
-      <Titles name={<h2 align="center">Editar Servicio</h2>} />
+      <Titles name={<h2 align="center">Editar Sub-Categorias</h2>} />
       <Grid
         color="#F7BFBF"
         borderRadius={5}
@@ -90,13 +97,13 @@ const Edit = () => {
             fullWidth
             id="name"
             name="name"
-            label="Nombre del servicio"
+            label="Nombre de la subcategoria"
             variant="outlined"
             value={formik.values.name}
             sx={{ margin: 2 }}
             onChange={formik.handleChange}
           />
-          <Typography>Descipcion del servicio</Typography>
+          <Typography>Descipcion de la subcategoría</Typography>
           <TextareaAutosize
             aria-label="minimum height"
             id="description"
@@ -107,7 +114,23 @@ const Edit = () => {
             style={{ width: "100%", fontFamily: "BikoBold", marginBottom: 20 }}
             onChange={formik.handleChange}
           />
-        
+          <FormControl>
+            <FormLabel>Categoria</FormLabel>
+            <Select
+              id="category"
+              name="category"
+              value={formik.values.category}
+              label="Categoria"
+              onChange={formik.handleChange}
+            >
+              {categories.map((category) => (
+                <MenuItem key={category._id} value={category._id}>
+                  {category.name}
+                </MenuItem>
+              ))}
+            </Select>
+            <FormHelperText>Selecciona una categoria</FormHelperText>
+          </FormControl>
 
           <Grid
             container
@@ -115,28 +138,6 @@ const Edit = () => {
             justifyItems={"center"}
             alignItems={"center"}
           >
-            {/* <Grid display="flex" flexDirection="column">
-              <FormControl>
-                <FormLabel id="status-label">Estatus</FormLabel>
-                <RadioGroup
-                  aria-labelledby="status-label"
-                  name="status"
-                  value={formik.values.status}
-                  onChange={formik.handleChange}
-                >
-                  <FormControlLabel
-                    value={true}
-                    control={<Radio />}
-                    label="Activo"
-                  />
-                  <FormControlLabel
-                    value={false}
-                    control={<Radio />}
-                    label="Desactivado"
-                  />
-                </RadioGroup>
-              </FormControl>
-            </Grid> */}
             <Grid item sx={{ display: "flex", justifyContent: "center" }}>
               <Button type="submit" variant="contained">
                 Guardar
@@ -148,9 +149,6 @@ const Edit = () => {
           </Grid>
         </Grid>
       </Grid>
-      {/* <code>
-        <pre>{JSON.stringify(formulario, null, 2)}</pre>
-      </code> */}
     </Box>
   );
 };
