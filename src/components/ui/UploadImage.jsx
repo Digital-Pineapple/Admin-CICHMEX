@@ -1,34 +1,53 @@
-import * as React from 'react';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Typography from '@mui/material/Typography';
-import { Button, CardActionArea, CardActions } from '@mui/material';
-import imagen from '../../assets/Images/pulido.jpg'
+import {
+  Button,
+  Card,
+  CardActionArea,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Typography,
+} from "@mui/material";
+import { useEffect, useState } from "react";
 
-const UploadImage = () => {
+const UploadImage = (handleSubmit, id, name, initialImage) => {
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+
+
+  const handleImage = ({ target }) => {
+    setPreviewImage(URL.createObjectURL(target.files[0]));
+    setSelectedFile(target.files[0]);
+  };
+
   return (
-    <Card sx={{ maxWidth: 345 }}>
-      <CardActionArea>
-        {
-             <CardMedia
-             component="img"
-             height="300"
-             image={imagen}
-             alt="servicios"
-           />
-        }
-       
+    <>
+      <Card sx={{ maxWidth: 345 }}>
+        <CardActionArea>
+          <CardMedia
+            sx={{ height: 140 }}
+            image={selectedFile ? previewImage : initialImage}
+            title={selectedFile ? selectedFile.name : "Selecciona imagen"}
+            component={"input"}
+            type={"file"}
+            id={id}
+            name={name}
+            accept={"image/png, image/jpeg"}
+            onChange={handleImage}
+          />
+        </CardActionArea>
         <CardContent>
+          <Typography gutterBottom variant="h5" component="div">
+            {selectedFile ? selectedFile.name : "Select Image"}
+          </Typography>
         </CardContent>
-      </CardActionArea>
-      <CardActions>
-        <Button size="small" color="primary">
-          Elegir imagen
-        </Button>
-      </CardActions>
-    </Card>
+        <CardActions>
+          <Button onClick={() => handleSubmit()} color="primary">
+            Guardar
+          </Button>
+        </CardActions>
+      </Card>
+    </>
   );
-}
+};
 
-export default UploadImage
+export default UploadImage;

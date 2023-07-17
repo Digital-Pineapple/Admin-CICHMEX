@@ -27,6 +27,7 @@ export const categoryReducer = createSlice({
             name: payload.name,
             description: payload.description,
             status: payload.status,
+            category_image: payload.category_image,
           };
         }
         return category; // Mantener los elementos no modificados tal como están

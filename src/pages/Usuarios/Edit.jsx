@@ -16,8 +16,8 @@ const Edit = () => {
 
   useEffect(() => {
     loadCustomer(id);
+    console.log(customer.profile_image);
   }, [id]);
-console.log(customer);
 
   return (
     <>
@@ -84,35 +84,6 @@ console.log(customer);
               />
             </Grid>
           </Grid>
-          {/* <Grid item xs={12} backgroundColor="#CCC550" color="common.black" sx={{ display: 'flex',justifyContent: 'center' }}>
-            <Typography variant='h5' align='center'>Dirección</Typography>
-          </Grid>
-          <Grid item xs={3}>
-            <TextField focused  id="outlined-basic" label="Calle" variant='filled'fullWidth />
-          </Grid>
-          <Grid item xs={3}>
-            <TextField focused  id="outlined-basic" label="Numero interior" variant='filled'fullWidth />
-          </Grid>
-          <Grid item xs={3}>
-            <TextField focused  id="outlined-basic" label="Numero exterior" variant='filled' fullWidth />
-          </Grid>
-          <Grid item xs={3}>
-            <TextField focused  id="outlined-basic" label="Codigo postal" variant='filled' fullWidth />
-          </Grid>
-          <Grid item xs={4}>
-            <TextField focused  id="outlined-basic" label="Colonia" variant='filled' fullWidth />
-          </Grid>
-          <Grid item xs={4}>
-            <TextField focused  id="outlined-basic" label="Municipio" variant='filled' fullWidth />
-          </Grid>
-          <Grid item xs={4}>
-            <TextField focused  id="outlined-basic" label="Ciudad" variant='filled' fullWidth />
-          </Grid>
-          <Grid item xs={12} backgroundColor="#D7B3C6" color="common.black" sx={{ display: 'flex',justifyContent: 'center',mt: 2 }}>
-            
-            <Typography  variant='h5' align='center'>Documentos</Typography>
-          </Grid> */}
-
           <Grid container direction="row">
             <Grid display="flex" width="50%" flexDirection="column" gap={2}>
               <ModalDocuments

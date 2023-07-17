@@ -7,6 +7,7 @@ import {
   editCategory,
   onAddNewCategory,
 } from "../reducer/categoryReducer";
+import Cookies from "js-cookie";
 
 export const startLoadCategories = () => {
   return async (dispatch) => {
@@ -67,11 +68,22 @@ export const deleteOneCategory = (category_id) => async (dispatch) => {
   }
 };
 
-export const editOneCategory = (category_id, values) => {
+export const editOneCategory = (category_id, {name, description, category_image, status}) => {
+
     return async (dispatch) => {
         try {
-        const { data } = await instanceApi.patch(
-            `/category/${category_id}`,values
+          const formData = new FormData();
+          formData.append('name', name );
+          formData.append('description',description);
+          formData.append('image',category_image);
+          formData.append('status', status);
+        const { data } = await instanceApi.put(
+            `/category/${category_id}`,formData, {
+              headers: {
+                token: Cookies.get("session"),
+                "Content-Type": "multipart/form-data",
+              }
+            }
         );
         dispatch(editCategory(category_id, data.data));
         enqueueSnackbar('Categoria actualizada con exito', {variant:'success', anchorOrigin: {

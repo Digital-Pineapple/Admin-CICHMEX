@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import Titles from "../../components/ui/Titles";
-import UploadImage from "../../components/ui/UploadImage";
 import Grid from "@mui/material/Grid";
-import { TextField, TextareaAutosize } from "@mui/material";
+import {
+  Card,
+  CardActionArea,
+  CardContent,
+  CardMedia,
+  TextField,
+  TextareaAutosize,
+} from "@mui/material";
 import Box from "@mui/material/Box";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { useNavigate, useParams } from "react-router-dom";
@@ -16,14 +17,23 @@ import { useEffect } from "react";
 import { useCategories } from "../../hooks/useCategories";
 import { useFormik } from "formik";
 import { enqueueSnackbar } from "notistack";
+import UploadImage from "../../components/ui/UploadImage";
+import AddImage from "../../../public/images/add.png";
 
 const Edit = () => {
   const { id } = useParams();
   const { loadCategory, category, editCategory } = useCategories();
   const navigate = useNavigate();
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+
+  const handleImage = ({ target }) => {
+    setPreviewImage(URL.createObjectURL(target.files[0]));
+    setSelectedFile(target.files[0]);
+  };
 
   useEffect(() => {
-     loadCategory(id);
+    loadCategory(id);
   }, []);
 
   useEffect(() => {
@@ -31,7 +41,9 @@ const Edit = () => {
       name: category.name,
       description: category.description,
       status: category.status,
+      category_image: previewImage,
     });
+    console.log('xd');
   }, [category]);
 
   const formik = useFormik({
@@ -39,27 +51,31 @@ const Edit = () => {
       name: "",
       description: "",
       status: "",
+      category_image: "",
     },
     onSubmit: (values) => {
       try {
-        editCategory(category._id, values)
-        navigate('/auth/CategoriaServicios', {replace:true})
-        
+        values.category_image = selectedFile;
+        editCategory(category._id, values);
+        navigate("/auth/CategoriaServicios", { replace: true });
       } catch (error) {
-        return enqueueSnackbar('Error al editar la categoria', {variant:'error', anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right'
-        }}, )
+        return enqueueSnackbar("Error al editar la categoria", {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        });
       }
-
     },
   });
-  
+
   const outEdit = () => {
-    navigate("/auth/CategoriaServicios", { replace: true });}
+    navigate("/auth/CategoriaServicios", { replace: true });
+  };
 
   return (
-    <Box component="form" onSubmit={formik.handleSubmit} marginX={"10%"}>
+    <Box marginX={"10%"}>
       <Titles name={<h2 align="center">Editar Categoria</h2>} />
       <Grid
         color="#F7BFBF"
@@ -69,16 +85,42 @@ const Edit = () => {
         container
         spacing={4}
       >
-        <Grid item>
-          <UploadImage />
-        </Grid>
         <Grid
           item
           sm={8}
           display={"flex"}
           flexDirection={"column"}
           alignItems={"center"}
+          component="form"
+          onSubmit={formik.handleSubmit}
         >
+          <Grid item>
+            <Card sx={{ maxWidth: 345 }}>
+              <CardActionArea>
+                <CardMedia
+                  sx={{ height: 140 }}
+                  image={
+                    selectedFile
+                      ? previewImage
+                      : category.category_image || AddImage
+                  }
+                  title={selectedFile ? selectedFile.name : "Selecciona imagen"}
+                  component={"input"}
+                  type={"file"}
+                  id={"category_image"}
+                  name={"category_image"}
+                  accept={"image/png, image/jpeg"}
+                  value={formik.values.category_image}
+                  onChange={handleImage}
+                />
+              </CardActionArea>
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  {selectedFile ? selectedFile.name : "Selecciona una imagen"}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
           <TextField
             focused
             fullWidth
@@ -90,7 +132,7 @@ const Edit = () => {
             sx={{ margin: 2 }}
             onChange={formik.handleChange}
           />
-          <Typography>Descipcion de la categoría</Typography>
+          <Typography>Descripcion de la categoría</Typography>
           <TextareaAutosize
             aria-label="minimum height"
             id="description"
@@ -108,29 +150,6 @@ const Edit = () => {
             justifyItems={"center"}
             alignItems={"center"}
           >
-            {/* <Grid display="flex" flexDirection="column">
-              <FormControl>
-                <FormLabel id="status-label">Estatus</FormLabel>
-                <RadioGroup
-                  aria-labelledby="status-label"
-                  name="status"
-                  value={formik.values.status}
-                  onChange={formik.handleChange}
-                >
-                  <FormControlLabel
-                    value={true}
-                    control={<Radio />}
-                    label="Activo"
-                  />
-                  <FormControlLabel
-                    value={false}
-                    control={<Radio />}
-                    label="Desactivado"
-                  />
-                </RadioGroup>
-              </FormControl>
-            </Grid> */}
-
             <Grid item sx={{ display: "flex", justifyContent: "center" }}>
               <Button type="submit" variant="contained">
                 Guardar
@@ -142,9 +161,6 @@ const Edit = () => {
           </Grid>
         </Grid>
       </Grid>
-      {/* <code>
-        <pre>{JSON.stringify(formulario, null, 2)}</pre>
-      </code> */}
     </Box>
   );
 };
