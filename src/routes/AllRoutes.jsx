@@ -15,6 +15,9 @@ import CreateServices from '../pages/Services/Create'
 import SubCategories from '../pages/SubCategory/SubCategories'
 import CreateSubCategory from '../pages/SubCategory/Create'
 import EditSubCategory from '../pages/SubCategory/Edit'
+import Commissions from '../pages/Commission/Commissions'
+import CreateCommission from '../pages/Commission/Create'
+import EditCommission from '../pages/Commission/Edit'
 
 
 
@@ -45,4 +48,8 @@ export const AllRoutes = [
   { type: 1, path: '/SubCategorias', element: <SubCategories/>},
   { type: 1, path: '/CrearSubCategoria', element: <CreateSubCategory/>},
   { type: 1, path: '/SubCategorias/:id', element: <EditSubCategory/>},
+
+  { type: 1, path: '/Comisiones', element: <Commissions/>},
+  { type: 1, path: '/CrearComisiones', element: <CreateCommission/>},
+  { type: 1, path: '/Comisiones/:id', element: <EditCommission/>},
 ]

@@ -4,6 +4,7 @@ import DriveEtaIcon from '@mui/icons-material/DriveEta';
 import CategoryIcon from '@mui/icons-material/Category';
 import KeyboardTabIcon from '@mui/icons-material/KeyboardTab';
 import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
+import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 export const Links = [
   {
     title: "Usuarios",
@@ -29,5 +30,11 @@ export const Links = [
     title: "Sub-Categorias",
     path: "/auth/SubCategorias",
     Icon: <KeyboardTabIcon />,
+  },
+  {
+    title : "Comisiones",
+    path : "/auth/comisiones",
+    Icon : <CurrencyExchangeIcon/>
+
   }
 ];
