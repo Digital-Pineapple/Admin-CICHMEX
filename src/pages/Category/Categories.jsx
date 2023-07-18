@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import { useCategories } from "../../hooks/useCategories";
 import { useNavigate } from "react-router-dom";
 import InputSearch1 from "../../components/ui/imputSearch1";
+import AddImage from "../../assets/Images/add.png";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {

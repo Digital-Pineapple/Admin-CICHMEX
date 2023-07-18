@@ -7,6 +7,7 @@ import {
   editSubCategory,
   onAddNewSubCategory,
 } from "../reducer/subCategoryReducer";
+import Cookies from "js-cookie";
 
 export const startLoadSubCategories = () => {
   return async (dispatch) => {
@@ -70,8 +71,18 @@ export const deleteOneSubCategory = (subCategory_id) => async (dispatch) => {
 export const editOneSubCategory = (subCategory_id, values) => {
     return async (dispatch) => {
         try {
-        const { data } = await instanceApi.patch(
-            `/sub-category/${subCategory_id}`,values
+          const formData = new FormData();
+          formData.append('name', values.name );
+          formData.append('description',values.description);
+          formData.append('image',values.subCategory_image);
+          formData.append('status', values.status);
+        const { data } = await instanceApi.put(
+            `/sub-category/${subCategory_id}`,formData, {
+              headers: {
+                token: Cookies.get("session"),
+                "Content-Type": "multipart/form-data",
+              }
+            }
         );
         dispatch(editSubCategory(subCategory_id, data.data));
         enqueueSnackbar('Subategoria actualizada con exito', {variant:'success', anchorOrigin: {

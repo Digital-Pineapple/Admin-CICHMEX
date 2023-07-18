@@ -17,8 +17,7 @@ import { useEffect } from "react";
 import { useCategories } from "../../hooks/useCategories";
 import { useFormik } from "formik";
 import { enqueueSnackbar } from "notistack";
-import UploadImage from "../../components/ui/UploadImage";
-import AddImage from "../../../public/images/add.png";
+import AddImage from "../../assets/Images/add.png";
 
 const Edit = () => {
   const { id } = useParams();
@@ -43,7 +42,6 @@ const Edit = () => {
       status: category.status,
       category_image: previewImage,
     });
-    console.log('xd');
   }, [category]);
 
   const formik = useFormik({

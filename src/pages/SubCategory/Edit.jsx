@@ -11,6 +11,9 @@ import {
   FormLabel,
   FormHelperText,
   MenuItem,
+  CardActionArea,
+  CardMedia,
+  CardContent,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -22,6 +25,8 @@ import { enqueueSnackbar } from "notistack";
 import { useSubCategories } from "../../hooks/useSubCategories";
 import { useCategories } from "../../hooks/useCategories";
 import { useSelector } from "react-redux";
+import { Card } from "antd";
+import AddImage from "../../assets/Images/add.png";
 
 const Edit = () => {
   const { id } = useParams();
@@ -29,6 +34,13 @@ const Edit = () => {
   const { loadCategories } = useCategories();
   const navigate = useNavigate();
   const categories = useSelector((state) => state.categories.categories);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+
+  const handleImage = ({ target }) => {
+    setPreviewImage(URL.createObjectURL(target.files[0]));
+    setSelectedFile(target.files[0]);
+  };
 
   useEffect(() => {
     loadSubCategory(id);
@@ -41,6 +53,7 @@ const Edit = () => {
       description: subCategory.description,
       status: subCategory.status,
       category: subCategory.category,
+      subCategory_image : previewImage,
     });
   }, [subCategory]);
 
@@ -49,10 +62,12 @@ const Edit = () => {
       name: "",
       description: "",
       status: "",
+      subCategory_image: "",
       category: "",
     },
     onSubmit: (values) => {
       try {
+        values.subCategory_image = selectedFile;
         editSubCategory(subCategory._id, values);
         navigate("/auth/SubCategorias", { replace: true });
       } catch (error) {
@@ -82,9 +97,7 @@ const Edit = () => {
         container
         spacing={4}
       >
-        <Grid item>
-          <UploadImage />
-        </Grid>
+        
         <Grid
           item
           sm={8}
@@ -92,6 +105,33 @@ const Edit = () => {
           flexDirection={"column"}
           alignItems={"center"}
         >
+           <Grid item>
+            <Card sx={{ maxWidth: 345 }}>
+              <CardActionArea>
+                <CardMedia
+                  sx={{ height: 140 }}
+                  image={
+                    selectedFile
+                      ? previewImage
+                      : subCategory.subCategory_image || AddImage
+                  }
+                  title={selectedFile ? selectedFile.name : "Selecciona imagen"}
+                  component={"input"}
+                  type={"file"}
+                  id={"subCategory_image"}
+                  name={"subCategory_image"}
+                  accept={"image/png, image/jpeg"}
+                  value={formik.values.subCategory_image}
+                  onChange={handleImage}
+                />
+              </CardActionArea>
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  {selectedFile ? selectedFile.name : "Selecciona una imagen"}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
           <TextField
             focused
             fullWidth

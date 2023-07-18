@@ -65,10 +65,6 @@ const createSubCategory = () => {
         >
           Registrar nueva categoria
         </Button>
-        {/* <InputSearch1
-          subCategories={subCategories}
-          values={handleSubCategoriesChange}
-        /> */}
 
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">

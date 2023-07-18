@@ -1,6 +1,7 @@
 import { enqueueSnackbar } from "notistack"
 import { instanceApi } from "../../apis/configAxios"
 import { loadService, loadServices, deleteService, editService, onAddNewService } from "../reducer/servicesReducer"
+import Cookies from "js-cookie"
 
 export const startLoadServices = () => {
     return async dispatch => {
@@ -36,8 +37,18 @@ export const deleteOneServices = (service_id) =>
     export const editOneService = (service_id, values) => {
         return async (dispatch) => {
             try {
-            const { data } = await instanceApi.patch(
-                `/services/${service_id}`,values
+              const formData = new FormData();
+              formData.append('name', values.name );
+              formData.append('description',values.description);
+              formData.append('service_image',values.service_image);
+              formData.append('status', values.status);
+            const { data } = await instanceApi.put(
+                `/services/${service_id}`,formData, {
+                  headers: {
+                    token: Cookies.get("session"),
+                    "Content-Type": "multipart/form-data",
+                  }
+                }
             );
             dispatch(editService(service_id, data.data));
             enqueueSnackbar('Categoria actualizada con exito', {variant:'success', anchorOrigin: {

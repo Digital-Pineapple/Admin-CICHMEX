@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Titles from "../../components/ui/Titles";
 import UploadImage from "../../components/ui/UploadImage";
 import Grid from "@mui/material/Grid";
-import { TextField, TextareaAutosize } from "@mui/material";
+import { Card, CardActionArea, CardContent, CardMedia, TextField, TextareaAutosize, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
@@ -15,11 +15,19 @@ import { useEffect } from "react";
 import { useFormik } from "formik";
 import { enqueueSnackbar } from "notistack";
 import { useTypeCars } from "../../hooks/UseTypeCars";
+import AddImage from "../../../src/assets/Images/add.png";
 
 const Edit = () => {
   const { id } = useParams();
   const { loadTypeCar, editTypeCar,typeCar } = useTypeCars();
   const navigate = useNavigate();
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+
+  const handleImage = ({ target }) => {
+    setPreviewImage(URL.createObjectURL(target.files[0]));
+    setSelectedFile(target.files[0]);
+  };
 
   useEffect(() => {
     loadTypeCar(id);
@@ -29,6 +37,7 @@ const Edit = () => {
     formik.setValues({
       name: typeCar.name,
       status: typeCar.status,
+      typeCar_image : previewImage,
     });
   }, [typeCar]);
 
@@ -36,9 +45,11 @@ const Edit = () => {
     initialValues: {
       name: "",
       status: "",
+      typeCar_image: "",
     },
     onSubmit: (values) => {
       try {
+        values.typeCar_image = selectedFile;
         editTypeCar(typeCar._id, values)
         navigate('/auth/typeCar', {replace:true})
         
@@ -67,8 +78,32 @@ const Edit = () => {
         spacing={4}
       >
         <Grid item>
-          <UploadImage />
-        </Grid>
+            <Card sx={{ maxWidth: 345 }}>
+              <CardActionArea>
+                <CardMedia
+                  sx={{ height: 140 }}
+                  image={
+                    selectedFile
+                      ? previewImage
+                      : typeCar.typeCar_image || AddImage
+                  }
+                  title={selectedFile ? selectedFile.name : "Selecciona imagen"}
+                  component={"input"}
+                  type={"file"}
+                  id={"typeCar_image"}
+                  name={"typeCar_image"}
+                  accept={"image/png, image/jpeg"}
+                  value={formik.values.typeCar_image}
+                  onChange={handleImage}
+                />
+              </CardActionArea>
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  {selectedFile ? selectedFile.name : "Selecciona una imagen"}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
         <Grid
           item
           sm={8}

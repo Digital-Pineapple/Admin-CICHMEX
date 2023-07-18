@@ -7,6 +7,7 @@ import {
     deleteTypeCar,
     editTypeCar,
 } from "../reducer/typeCarReducer";
+import Cookies from "js-cookie";
 
 export const startLoadTypeCars = () => {
   return async (dispatch) => {
@@ -70,8 +71,16 @@ export const deleteOneTypeCar = (typeCar_id) => async (dispatch) => {
 export const editOneTypeCar = (typeCar_id, values) => {
     return async (dispatch) => {
         try {
-        const { data } = await instanceApi.patch(
-            `/type-car/${typeCar_id}`,values
+          const formData = new FormData();
+          formData.append('name', values.name );
+          formData.append('typeCar_image',values.typeCar_image);
+        const { data } = await instanceApi.put(
+            `/type-car/${typeCar_id}`,formData, {
+              headers: {
+                token: Cookies.get("session"),
+                "Content-Type": "multipart/form-data",
+              }
+            }
         );
         dispatch(editTypeCar(typeCar_id, data.data));
         enqueueSnackbar('Categoria actualizada con exito', {variant:'success', anchorOrigin: {
