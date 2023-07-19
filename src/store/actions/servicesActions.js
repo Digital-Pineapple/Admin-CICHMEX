@@ -35,6 +35,7 @@ export const deleteOneServices = (service_id) =>
     }
 
     export const editOneService = (service_id, values) => {
+      console.log(values);
         return async (dispatch) => {
             try {
               const formData = new FormData();
@@ -42,6 +43,7 @@ export const deleteOneServices = (service_id) =>
               formData.append('description',values.description);
               formData.append('service_image',values.service_image);
               formData.append('status', values.status);
+              formData.append('subCategory', values.subCategory)
             const { data } = await instanceApi.put(
                 `/services/${service_id}`,formData, {
                   headers: {

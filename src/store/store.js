@@ -1,4 +1,4 @@
-import { configureStore, combineReducers, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { configureStore, combineReducers, } from '@reduxjs/toolkit';
 import thunk from 'redux-thunk';
 import authReducer from './reducer/authReducer';
 import customerReducer from './reducer/customerReducer';

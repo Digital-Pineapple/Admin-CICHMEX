@@ -24,6 +24,7 @@ const Edit = () => {
       name: commission.name,
       status: commission.status,
       amount: commission.amount,
+      discount : commission.discount
     });
   }, [commission]);
 
@@ -31,7 +32,9 @@ const Edit = () => {
     initialValues: {
       name: "",
       status: "",
-      typeCar_image: "",
+      amount: "",
+      discount : "",
+
     },
     onSubmit: (values) => {
       try {
@@ -50,7 +53,7 @@ const Edit = () => {
   });
 
   const outEdit = () => {
-    navigate("/auth/typeCar", { replace: true });
+    navigate("/auth/comisiones", { replace: true });
   };
 
   return (
@@ -93,6 +96,20 @@ const Edit = () => {
             name="amount"
             variant="outlined"
             value={formik.values?.amount}
+            sx={{ margin: 2 }}
+            onChange={formik.handleChange}
+          />
+        </FormControl>
+        <FormControl fullWidth sx={{ m: 1 }}>
+          <InputLabel>Descuento</InputLabel>
+          <OutlinedInput
+            id="discount"
+            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+            label="Descuento"
+            focused
+            name="discount"
+            variant="outlined"
+            value={formik.values?.discount}
             sx={{ margin: 2 }}
             onChange={formik.handleChange}
           />

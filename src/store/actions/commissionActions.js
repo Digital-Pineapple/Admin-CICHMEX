@@ -82,6 +82,7 @@ export const deleteOneCommission = (commission_id) => async (dispatch) => {
 };
 
 export const editOneCommission = (commission_id, values) => {
+  console.log(values);
   return async (dispatch) => {
     try {
       const { data } = await instanceApi.put(

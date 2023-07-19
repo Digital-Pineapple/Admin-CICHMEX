@@ -27,6 +27,7 @@ export const commissionReducer = createSlice({
             name: payload.name,
             description: payload.description,
             status: payload.status,
+            discount : payload.discount,
           };
         }
         return commission; // Mantener los elementos no modificados tal como están

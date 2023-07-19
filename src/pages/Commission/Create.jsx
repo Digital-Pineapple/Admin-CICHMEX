@@ -2,7 +2,7 @@ import Titles from "../../components/ui/Titles";
 import Box from "@mui/material/Box";
 import { useFormik } from "formik";
 import TextField from "@mui/material/TextField";
-import { Grid, Button } from "@mui/material";
+import { Grid, Button, FormControl, InputLabel, OutlinedInput, InputAdornment } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useCommissions } from "../../hooks/useCommissions";
 
@@ -15,6 +15,7 @@ const CreateCommission = () => {
       name: "",
       amount :"",
       status: "true",
+      discount : "",
     },
     onSubmit: (values) => {
       try {
@@ -54,17 +55,32 @@ const CreateCommission = () => {
           sx={{ margin: 2 }}
           onChange={formik.handleChange}
         />
-        <TextField
-          focused
-          fullWidth
-          id="amount"
-          name="amount"
-          label="Precio de la comisión"
-          variant="outlined"
-          value={formik.values.amount}
-          sx={{ margin: 2 }}
-          onChange={formik.handleChange}
-        />
+       <FormControl fullWidth sx={{ m: 1 }}>
+          <InputLabel>Monto</InputLabel>
+          <OutlinedInput
+            id="amount"
+            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+            label="Monto"
+            name="amount"
+            variant="outlined"
+            value={formik.values?.amount}
+            sx={{ margin: 2 }}
+            onChange={formik.handleChange}
+          />
+        </FormControl>
+        <FormControl fullWidth sx={{ m: 1 }}>
+          <InputLabel>Descuento</InputLabel>
+          <OutlinedInput
+            id="discount"
+            startAdornment={<InputAdornment position="start">%</InputAdornment>}
+            label="Descuento"
+            name="discount"
+            variant="outlined"
+            value={formik.values?.discount}
+            sx={{ margin: 2 }}
+            onChange={formik.handleChange}
+          />
+        </FormControl>
       </Grid>
       <Button type="submit" variant="contained" color="secondary">
         Crear
