@@ -13,7 +13,7 @@ import { useState } from 'react';
 
 
 
-const CheckList = ({setVerify,sendVerify}) => {
+const CheckList = ({}) => {
   const [checked, setChecked] = useState([0]);
   const [isComplete, setIsComplete] = useState(false); // Variable de estado para el estado de completitud
 

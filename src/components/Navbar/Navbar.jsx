@@ -9,13 +9,14 @@ import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { NavLink } from "react-router-dom";
 import icono from "../../assets/Images/icono2.png";
-import { Button } from "@mui/material";
+import { Avatar, Button, Grid, Icon, Tooltip } from "@mui/material";
 import NavListDrawer from "./NavList";
 import { Links } from "../../routes/Links";
 import { useSelector } from "react-redux";
+import Image from "mui-image";
+import ImageAvatar from '../../assets/Images/Icono App.png'
+import AvatarCustom from "../ui/AvatarCustom";
 
 const drawerWidth = 240;
 
@@ -45,7 +46,7 @@ const closedMixin = (theme) => ({
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  justifyContent: "flex-end",
+  justifyContent: "center",
   padding: theme.spacing(0, 2),
   ...theme.mixins.toolbar,
 }));
@@ -104,7 +105,8 @@ export const Navbar = () => {
   return (
     <Box sx={{ display: "flex" }}>
       <AppBar sx={{backgroundColor:'white'}} position="fixed" open={open}>
-        <Toolbar sx={{justifyContent:'space-between'}} >
+        <Toolbar style={{justifyContent:'space-between'}} >
+         
           <IconButton
             color="black"
             aria-label="open drawer"
@@ -117,34 +119,44 @@ export const Navbar = () => {
           >
             <MenuIcon />
           </IconButton>
-          <NavLink to={"/"}>
-            <Button
-            >
-              <img alt="Icono Car Wash" width={70} src={icono} />
-            </Button>
-          </NavLink>
-            <Typography color="primary">Administrador</Typography>
-          <Typography color='primary' variant="h4" >Bienvenido:{" "} {user.fullname} </Typography>
+          <Typography color="GrayText" variant="h4" >Bienvenido:{" "} {user.fullname} </Typography>
           
+          <Grid item direction={"row"} >
+            
+          <AvatarCustom ProfileImage={user.profile_image}/>
+          
+          </Grid>
         </Toolbar>
       </AppBar>
       <Drawer
         PaperProps={{
           sx: {
-            backgroundColor: "#CC3C5C",
+            backgroundColor: "#0E2E73",
           },
         }}
         variant="permanent"
         open={open}
       >
-        <DrawerHeader sx={{ backgroundColor: '"#CC3C5C"' }}>
-          <IconButton onClick={handleDrawerClose}>
+        <DrawerHeader sx={{ backgroundColor: '"#0E2E73"' }}>
+          <Tooltip title="Cerrar">
+          <IconButton onClick={handleDrawerClose} >
+            <ChevronLeftIcon color="secondary" />
+            <Image width="50px" src={icono} />
+          </IconButton>
+          </Tooltip>
+          <Grid direction={'column'} >
+          <Typography variant="body1" color="white">Administrador</Typography>
+          <Typography variant="body2" fontFamily={"BikoBoldLight"} color="GrayText">Produccion</Typography>
+          </Grid>
+          {/* <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
+              <>
               <ChevronRightIcon />
+              </>
             ) : (
               <ChevronLeftIcon />
-            )}
-          </IconButton>
+              )}
+          </IconButton> */}
         </DrawerHeader>
         <Divider />
         <NavListDrawer navArrayLinks={Links} />

@@ -18,7 +18,7 @@ import EditSubCategory from '../pages/SubCategory/Edit'
 import Commissions from '../pages/Commission/Commissions'
 import CreateCommission from '../pages/Commission/Create'
 import EditCommission from '../pages/Commission/Edit'
-
+import Documentation from '../pages/Documentation/Documentations'
 
 
 
