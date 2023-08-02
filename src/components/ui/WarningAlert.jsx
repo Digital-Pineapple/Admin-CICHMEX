@@ -3,6 +3,9 @@ import { DeleteTwoTone, EditTwoTone, ExclamationCircleFilled } from "@ant-design
 import { Button, Modal, Space } from "antd";
 import { useNavigate } from 'react-router-dom';
 import { redirectPages, alerConfirm } from '../../helpers/';
+import { IconButton } from '@mui/material';
+import { GridActionsCellItem } from '@mui/x-data-grid';
+import { Edit } from '@mui/icons-material';
 const { confirm } = Modal;
 
 
@@ -25,16 +28,15 @@ const WarningAlert = ({ route, title, callbackToDeleteItem}) => {
 
 
     return (
-        <Space wrap>
-            <Button
-                onClick={() => redirectPages(navigate, route)}
-                icon={<EditTwoTone twoToneColor="#0000ff" />}
-            />
-            <Button
-                icon={<DeleteTwoTone twoToneColor="#FF0000" />}
+        <>
+                <IconButton
                 onClick={() => alerConfirm(title, callbackToDeleteItem)}
-            />
-        </Space>
+                >
+                <DeleteTwoTone/>
+                </IconButton>
+                <GridActionsCellItem icon={<Edit/>} label="Edit" showInMenu />,
+
+        </>
     )
 }
 

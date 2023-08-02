@@ -19,6 +19,7 @@ import Commissions from '../pages/Commission/Commissions'
 import CreateCommission from '../pages/Commission/Create'
 import EditCommission from '../pages/Commission/Edit'
 import Documentation from '../pages/Documentation/Documentations'
+import Validation from '../pages/Documentation/Validation'
 
 
 
@@ -52,4 +53,6 @@ export const AllRoutes = [
   { type: 1, path: '/Comisiones', element: <Commissions/>},
   { type: 1, path: '/CrearComisiones', element: <CreateCommission/>},
   { type: 1, path: '/Comisiones/:id', element: <EditCommission/>},
+
+  { type: 1, path: '/Validaciones', element: <Validation/>},
 ]

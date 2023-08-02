@@ -5,6 +5,7 @@ import CategoryIcon from '@mui/icons-material/Category';
 import KeyboardTabIcon from '@mui/icons-material/KeyboardTab';
 import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 export const Links = [
   {
     title: "Usuarios",
@@ -35,6 +36,12 @@ export const Links = [
     title : "Comisiones",
     path : "/auth/comisiones",
     Icon : <CurrencyExchangeIcon/>
+
+  },
+  {
+    title : "Validaciones",
+    path : "/auth/Validaciones",
+    Icon : <CheckCircleOutlineIcon/>
 
   }
 ];

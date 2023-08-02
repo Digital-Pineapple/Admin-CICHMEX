@@ -97,7 +97,7 @@ const createService = () => {
                       >
                         <WarningAlert
                           route={service._id}
-                          title="Estas seguro que deseas eliminar la categoria?"
+                          title="Estas seguro que deseas eliminar el servicio?"
                           callbackToDeleteItem={() =>
                             deleteService(service._id)
                           }
