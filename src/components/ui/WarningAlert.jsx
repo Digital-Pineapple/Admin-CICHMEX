@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { redirectPages, alerConfirm } from '../../helpers/';
 import { IconButton } from '@mui/material';
 import { GridActionsCellItem } from '@mui/x-data-grid';
-import { Edit } from '@mui/icons-material';
+import { Delete, Edit } from '@mui/icons-material';
 const { confirm } = Modal;
 
 
@@ -22,19 +22,19 @@ const showConfirm = (title) => {
 };
 
 
-const WarningAlert = ({ route, title, callbackToDeleteItem}) => {
+const WarningAlert = ({ title, callbackToDeleteItem}) => {
 
-    const navigate = useNavigate();
+    
 
 
     return (
         <>
-                <IconButton
+                <GridActionsCellItem
+                icon={<Delete/>}
                 onClick={() => alerConfirm(title, callbackToDeleteItem)}
-                >
-                <DeleteTwoTone/>
-                </IconButton>
-                <GridActionsCellItem icon={<Edit/>} label="Edit" showInMenu />,
+                />
+            
+                
 
         </>
     )

@@ -18,16 +18,15 @@ import { useDocumentations } from "../../hooks/useDocumentation";
 import ModalDocuments from "../../components/CheckDocument/ModalDocuments";
 import { useCustomers } from "../../hooks/useCustomers";
 
-const Edit = () => {
+const Documentation = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { loadDocumentation, editDocumentation } = useDocumentations();
-  const { loadCustomer, loadCustomers } = useCustomers();
+  const { loadCustomer } = useCustomers();
 
   useEffect(() => {
-    loadCustomers();
     loadDocumentation(id);
-    loadCustomer();
+    loadCustomer(id);
 
   }, []);
 
@@ -84,9 +83,7 @@ const Edit = () => {
           
               <ModalDocuments
                 name={"Comprobante de Domicilio"}
-      
               />
-          
               <ModalDocuments
                 name={"Antecedentes Penales"}
                
@@ -126,4 +123,4 @@ const Edit = () => {
   );
 };
 
-export default Edit;
+export default Documentation;

@@ -1,141 +1,211 @@
-import { useEffect, useLayoutEffect, useState } from "react";
-import Titles from "../../components/ui/Titles";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
-import WarningAlert from "../../components/ui/WarningAlert";
-import { useCustomers } from "../../hooks/useCustomers";
-import { styled } from "@mui/system";
-import { Box, ButtonGroup, Grid } from "@mui/material";
-import { Pagination } from "antd";
-import InputSearch from "../../components/ui/InputSearch";
+import * as React from "react";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import SortIcon from "@mui/icons-material/Sort";
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridPagination,
+  GridToolbar,
+  gridPageCountSelector,
+  useGridApiContext,
+  useGridSelector,
+} from "@mui/x-data-grid";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useCustomers } from "../../hooks/useCustomers";
+import MuiPagination from "@mui/material/Pagination";
+import { Chip } from "@mui/material";
+import PermIdentityIcon from "@mui/icons-material/PermIdentity";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import LocalCarWashIcon from "@mui/icons-material/LocalCarWash";
+import WashIcon from "@mui/icons-material/Wash";
+import { DoneAllOutlined, Edit } from "@mui/icons-material";
+import Title from "antd/es/typography/Title";
+import WarningAlert from "../../components/ui/WarningAlert";
+import { useNavigate } from "react-router-dom";
+import { redirectPages } from '../../helpers';
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#CC3C5C",
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
+function Pagination({ page, onPageChange, className }) {
+  const apiRef = useGridApiContext();
+  const pageCount = useGridSelector(apiRef, gridPageCountSelector);
 
-const Users = () => {
-  const { loadCustomers, deleteCustomer } = useCustomers();
+  return (
+    <MuiPagination
+      color="primary"
+      className={className}
+      count={pageCount}
+      page={page + 1}
+      onChange={(event, newPage) => {
+        onPageChange(event, newPage - 1);
+      }}
+    />
+  );
+}
+export function SortedDescendingIcon() {
+  return <ExpandMoreIcon className="icon" />;
+}
+
+export function SortedAscendingIcon() {
+  return <ExpandLessIcon className="icon" />;
+}
+
+export function UnsortedIcon() {
+  return <SortIcon className="icon" />;
+}
+
+function CustomPagination(props) {
+  return <GridPagination ActionsComponent={Pagination} {...props} />;
+}
+
+export default function Users() {
+  const { loadCustomers, deleteCustomer,  } = useCustomers();
   const { customers } = useSelector((state) => state.customers);
-  const [filteredCustomers, setFilteredCustomers] = useState(customers);
-  const [cus, setCus] = useState(customers);
-
-  const handleUsuariosChange = (newUsuarios) => {
-    setCus([]);
-    setFilteredCustomers(newUsuarios);
-  };
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadCustomers();
   }, []);
 
-  useEffect(() => {
-    if (customers) {
-      setCus(customers);
-    }
-  }, [customers]);
+  const rowsWithIds = customers.map((customer, _id) => ({
+    id: _id.toString(),
+    ...customer,
+  }));
+
 
   return (
-    <>
-      <Grid marginX={"240px"}>
-        <Titles name={<h2 align="center">Usuarios</h2>} />
-        <ButtonGroup fullWidth  size='large' variant='contained' color="primary">
-          <Button>Usuarios</Button>
-          <Button>Lavadores independientes</Button>
-          <Button>Negocio Autolavado</Button>
-          <Button>Administradores</Button>
-        </ButtonGroup>
-        <Button
-          variant="contained"
-          disableElevation
-          sx={{ color: "CC3C5C", my: 5, p: 2, borderRadius: 5 }}
-          onClick={() => console.log("xs")}
-        >
-          Registrar nuevo usuario
-        </Button>
-        <InputSearch
-          onUsuariosChange={handleUsuariosChange}
-          customers={customers}
-        />
+    <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
+      <Title>Usuarios</Title>
+      <DataGrid
+        sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
+        columns={[
+          {
+            field: "_id",
+            hideable: false,
+            headerName: "Id",
+            flex: 1,
+            sortable: "false",
+          },
+          {
+            field: "profile_image",
+            hideable: false,
+            headerName: "Foto de perfil",
+            flex: 0.2,
+            sortable: "false",
+            renderCell: (params) => params.value.profile_image ?<Avatar src={params.value.profile_image}/>: null
+          },
+          {
+            field: "fullname",
+            hideable: false,
+            headerName: "Nombre completo",
+            flex: 2,
+            sortable: false,
+          },
+          {
+            field: "type_customer",
+            headerName: "Tipo de usuario",
+            flex: 1,
+            align: "center",
+            renderCell: (params) =>
+              params.value === "0" ? (
+                <>
+                  <Chip
+                    icon={<PermIdentityIcon />}
+                    label="cliente"
+                    variant="outlined"
+                    color="primary"
+                  />
+                </>
+              ) : params.value === "1" ? (
+                <>
+                  <Chip
+                    icon={<WashIcon />}
+                    label="lavador independiente"
+                    variant="outlined"
+                    color="success"
+                  />
+                </>
+              ) : (
+                <>
+                  <Chip
+                    icon={<LocalCarWashIcon />}
+                    label="Establecimiento"
+                    variant="outlined"
+                    color="info"
+                  />
+                </>
+              ),
+          },
 
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 700 }} aria-label="customized table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell>Nombre</StyledTableCell>
-                <StyledTableCell align="center">Telefono</StyledTableCell>
-                <StyledTableCell align="center">Correo</StyledTableCell>
-                <StyledTableCell align="center">Opciones</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredCustomers.length != 0
-                ? filteredCustomers.map((customer) => (
-                    <TableRow key={customer._id}>
-                      <TableCell component="th" scope="row">
-                        {customer.fullname}
-                      </TableCell>
-                      <TableCell align="center">
-                        {customer?.phone?.phone_number || "N/A"}
-                      </TableCell>
-                      <TableCell align="center">{customer?.email}</TableCell>
-                      <TableCell
-                        sx={{ display: "flex", justifyContent: "center" }}
-                      >
-                        <WarningAlert
-                          route={customer._id}
-                          title="Estas seguro que deseas eliminar al usuario"
-                          callbackToDeleteItem={() =>
-                            deleteCustomer(customer._id)
-                          }
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))
-                : cus.map((customer) => (
-                    <TableRow key={customer._id}>
-                      <TableCell component="th" scope="row">
-                        {customer.fullname}
-                      </TableCell>
-                      <TableCell align="center">
-                        {customer?.phone?.phone_number || "N/A"}
-                      </TableCell>
-                      <TableCell align="center">{customer?.email}</TableCell>
-                      <TableCell
-                        sx={{ display: "flex", justifyContent: "center" }}
-                      >
-                        <WarningAlert
-                          route={customer._id}
-                          title="Estas seguro que deseas eliminar al usuario"
-                          callbackToDeleteItem={() =>
-                            deleteCustomer(customer._id)
-                          }
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Grid>
-
-      <Box display="flex" justifyContent="center" py={10}>
-        <Pagination count={10} color="primary" />
-      </Box>
-    </>
+          { field: "email", headerName: "Correo", flex: 1, sortable: false },
+          {
+            field: "accountVerify",
+            headerName: "Estatus de verificación",
+            align: "center",
+            flex: 1,
+            sortable: false,
+            renderCell: (params) =>
+              params.value === true ? (
+                <CheckCircleOutlineIcon />
+              ) : (
+                <HighlightOffIcon color="error" />
+              ),
+          },
+          {
+            field: "Opciones",
+            headerName: "Opciones",
+            align: "center",
+            flex: 1,
+            sortable: false,
+            type: "actions",
+            getActions: (params) => [
+              <WarningAlert
+                title="¿Estas seguro que deseas eliminar el usuario?"
+                callbackToDeleteItem={() => deleteCustomer(params.row._id)}
+                titleEdit="¿Quieres editar este usuario?"
+                callbackEditItem={()=> editUser(params.row._id)}
+              />,
+              <GridActionsCellItem icon={<Edit />} onClick={()=>redirectPages(navigate,(params.row._id))}  label="Editar usuario" showInMenu />,
+              <GridActionsCellItem
+                icon={< DoneAllOutlined />}
+                label="Verificar Usuario"
+                onClick={() => redirectPages(navigate, `validate/${params.row._id}`)}
+                showInMenu
+              />,
+                             
+            ],
+          },
+        ]}
+        initialState={{
+          sorting: {
+            sortModel: [{ field: "type_customer", sort: "desc" }],
+          },
+        }}
+        rows={rowsWithIds}
+        pagination
+        slots={{
+          pagination: CustomPagination,
+          toolbar: GridToolbar,
+          columnSortedDescendingIcon: SortedDescendingIcon,
+          columnSortedAscendingIcon: SortedAscendingIcon,
+          columnUnsortedIcon: UnsortedIcon,
+        }}
+        disableColumnFilter
+        disableColumnMenu
+        disableColumnSelector
+        disableDensitySelector
+        slotProps={{
+          toolbar: {
+            showQuickFilter: true,
+            quickFilterProps: { debounceMs: 500 },
+          },
+        }}
+        printOptions={{
+          hideFooter: true,
+          hideToolbar: true,
+        }}
+      />
+    </div>
   );
-};
-
-export default Users;
+}
