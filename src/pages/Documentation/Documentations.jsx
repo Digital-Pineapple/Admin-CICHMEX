@@ -6,6 +6,11 @@ import {
   FormHelperText,
   FormLabel,
   TextField,
+  Paper,
+  Typography,
+  Card,
+  CardContent,
+  CardActions, Avatar,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -21,24 +26,22 @@ import { useCustomers } from "../../hooks/useCustomers";
 const Documentation = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { loadDocumentation, editDocumentation } = useDocumentations();
-  const { loadCustomer } = useCustomers();
+  const { loadDocumentation, editDocumentation,  } = useDocumentations();
+  const { loadCustomer,customer } = useCustomers();
+  const { documentations } = useSelector((state)=> state.documentations)
 
   useEffect(() => {
-    loadDocumentation(id);
-    loadCustomer(id);
-
-  }, []);
-
+    loadCustomer(id)
+    loadDocumentation(id)
+  }, [id]);
   const formik = useFormik({
     initialValues: {
-            name : "" ,
-            message: ""  ,
-            status : ""  ,
-            url : "",
-            verify : "" ,
-            customer_id : ""  ,
-      
+      name: "",
+      message: "",
+      status: "",
+      url: "",
+      verify: "",
+      customer_id: "",
     },
     onSubmit: (values) => {
       try {
@@ -59,66 +62,70 @@ const Documentation = () => {
   const out = () => {
     navigate("/auth/usuarios", { replace: true });
   };
+ const findFile =(name, targetName) =>{
+  return documentations.find((documentations)=>documentations.name === targetName )
+ }
+ const pathIne = findFile((documentations.name),'ine')
+ 
+const pathProok_Address = findFile((documentations.name),'prook_address')
+
+const pathCurp = findFile((documentations.name),'curp')
+
+const pathCriminalRecord = findFile((documentations.name),'criminal_record')
+
+const pathRfc = findFile((documentations.name),'rfc')
+;
 
   return (
-    <Box component="form"  marginX={"10%"}>
+    <Box component="form" marginX={"10%"}>
       <Titles name={<h2 align="center">Verificar Documentos</h2>} />
-      <Grid
-        color="#F7BFBF"
-        borderRadius={5}
-        mt={3}
-        sx={{ border: 10, p: 5 }}
-        container
-        spacing={4}
-      >
-        <Grid
-          item
-          sm={8}
-          display={"flex"}
-          flexDirection={"column"}
-          alignItems={"center"}
-        >
-          <Grid container direction="row">
-            <Grid display="flex" width="50%" flexDirection="column" gap={2}>
-          
-              <ModalDocuments
-                name={"Comprobante de Domicilio"}
-              />
-              <ModalDocuments
-                name={"Antecedentes Penales"}
-               
-              />
-              <ModalDocuments name={"Curp"} />
-            </Grid>
-            <Grid>
-                <FormControl component="fieldset">
-              <ModalDocuments
-                name={"Identificacion Oficial"}
-               
-                
-              >
-              </ModalDocuments>
-                </FormControl>
-            </Grid>
-          </Grid>
 
-          <Grid
-            container
-            justifyContent={"center"}
-            justifyItems={"center"}
-            alignItems={"center"}
-          >
-            <Grid item sx={{ display: "flex", justifyContent: "center" }}>
-              <Button type="submit" variant="contained">
-                Terminar verificación
-              </Button>
-              <Button onClick={out} variant="outlined" color="secondary">
-                Salir
-              </Button>
-            </Grid>
-          </Grid>
+      <Grid container direction={'row'} >
+        <Grid item  >
+          <ModalDocuments pdfPath={pathIne?.url } success1={pathIne?.verify} name={"Identificacion Oficial"} />
+          <ModalDocuments pdfPath={pathProok_Address?.url} name={"Comprobante de domicilio"} />
+          <ModalDocuments pdfPath={pathCurp?.url} name={"Curp"} />
+          <ModalDocuments pdfPath={pathCriminalRecord?.url} name={"Antecedentes Penales"} />
+          <ModalDocuments pdfPath={pathRfc?.url} name={"RFC"}/>
         </Grid>
       </Grid>
+      <Grid item >
+        <Card sx={{ minWidth: "50%" }}>
+          <CardContent>
+            <Avatar variant="circular" src={customer?.profile_image} alt="foto de perfil" sx={{ width: '100px', height: '100px' }} />
+            <Typography
+              sx={{ fontSize: 14 }}
+              color="text.secondary"
+              gutterBottom
+            >
+              Usuario
+            </Typography>
+            <Typography variant="h5" component="div">
+              {customer?.fullname}
+            </Typography>
+            <Typography sx={{ mb: 1.5 }} color="text.secondary">
+              {customer?.email}
+            </Typography>
+            <Typography variant="body2">
+              Tipo de usuario:
+              <br />
+              {customer?.type_customer === "0" ? 'Cliente':
+              customer?.type_customer === "1" ? 'Lavador independiente':
+              customer?.type_customer === "2" ? 'Establecimiento':
+              'administrador'}
+            </Typography>
+            <Typography variant="body2">Numero de telefono:</Typography>
+
+            {customer.phone?.phone_number ? customer?.phone.phone_number : 'No hay telefono registrado' }
+          </CardContent>
+        </Card>
+      </Grid>
+      <Button type="submit" variant="contained">
+        Terminar verificación
+      </Button>
+      <Button onClick={out} variant="outlined" color="secondary">
+        Salir
+      </Button>
     </Box>
   );
 };

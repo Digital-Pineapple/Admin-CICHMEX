@@ -10,7 +10,7 @@ export const documentationReducer = createSlice({
     loadDocumentations: (state, action) => {
       state.documentations = action.payload;
     },
-    loadDocumentation: (state, { type, payload }) => {
+    loadDocumentation: (state, {  payload }) => {
       state.documentation = payload;
     },
     onAddNewDocumentation: (state, { payload }) => {

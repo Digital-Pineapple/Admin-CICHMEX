@@ -16,9 +16,7 @@ const Edit = () => {
 
   useEffect(() => {
     loadCustomer(id);
-    console.log(customer.profile_image);
   }, [id]);
-
   return (
     <>
       <Titles name={<h2 align="center">Editar usuario</h2>} />

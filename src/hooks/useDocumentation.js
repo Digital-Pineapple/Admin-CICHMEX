@@ -9,7 +9,7 @@ export const useDocumentations = () => {
 
     const loadDocumentations = async () => dispatch(startLoadDocumentations());
 
-    const loadDocumentation = async documentation_id => dispatch(getOneDocumentation(documentation_id));
+    const loadDocumentation = async customer_id => dispatch(getOneDocumentation(customer_id));
 
     const deleteDocumentation = async documentation_id => dispatch(deleteOneDocumentation(documentation_id))
 

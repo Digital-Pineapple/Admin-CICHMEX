@@ -21,7 +21,7 @@ export const startLoadDocumentations = () => {
 export const getOneDocumentation = (customer_id) => async (dispatch) => {
   try {
     const { data } = await instanceApi.get(`/documentation/documentation/${customer_id}`);
-    dispatch(loadDocumentation(data.data));
+    dispatch(loadDocumentations(data.data));
   } catch (error) {
     enqueueSnackbar(`Ocurrió un error al cargar la documentacion :  ${error}`,
            {variant:'error', anchorOrigin: {

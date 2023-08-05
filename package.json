@@ -17,7 +17,8 @@
     "@hookform/resolvers": "^3.1.0",
     "@mui/icons-material": "^5.11.11",
     "@mui/lab": "^5.0.0-alpha.127",
-    "@mui/material": "^5.14.2",
+    "@mui/material": "^5.14.3",
+    "@mui/styled-engine-sc": "^5.12.0",
     "@mui/x-data-grid": "^6.10.2",
     "@react-oauth/google": "^0.9.0",
     "@react-pdf/renderer": "^3.1.10",
@@ -50,6 +51,7 @@
     "react-router-dom": "^6.9.0",
     "react-scroll": "^1.8.9",
     "simplycountdown.js": "^1.7.0",
+    "styled-components": "^5.3.11",
     "sweetalert": "^2.1.2",
     "sweetalert2": "^11.7.10",
     "yup": "^1.2.0"
