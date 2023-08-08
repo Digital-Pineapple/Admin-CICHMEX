@@ -1,137 +1,161 @@
-import { useEffect, useLayoutEffect, useState } from "react";
-import Titles from "../../components/ui/Titles";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
-import WarningAlert from "../../components/ui/WarningAlert";
-import { styled } from "@mui/system";
-import { Box, Grid } from "@mui/material";
-import { Pagination } from "antd";
+import * as React from "react";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import SortIcon from "@mui/icons-material/Sort";
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridPagination,
+  GridToolbar,
+  gridPageCountSelector,
+  useGridApiContext,
+  useGridSelector,
+} from "@mui/x-data-grid";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useCustomers } from "../../hooks/useCustomers";
+import MuiPagination from "@mui/material/Pagination";
+import { Button, Chip } from "@mui/material";
+import PermIdentityIcon from "@mui/icons-material/PermIdentity";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import LocalCarWashIcon from "@mui/icons-material/LocalCarWash";
+import WashIcon from "@mui/icons-material/Wash";
+import { DoneAllOutlined, Edit } from "@mui/icons-material";
+import Title from "antd/es/typography/Title";
+import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
-import InputSearch1 from "../../components/ui/imputSearch1";
+import { redirectPages } from '../../helpers';
+import { useCategories } from "../../hooks/useCategories";
 import { useSubCategories } from "../../hooks/useSubCategories";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#CC3C5C",
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
+function Pagination({ page, onPageChange, className }) {
+  const apiRef = useGridApiContext();
+  const pageCount = useGridSelector(apiRef, gridPageCountSelector);
 
-export const SubCategories = () => {
-  const { loadSubCategories,deleteSubCategory} = useSubCategories();
+  return (
+    <MuiPagination
+      color="primary"
+      className={className}
+      count={pageCount}
+      page={page + 1}
+      onChange={(event, newPage) => {
+        onPageChange(event, newPage - 1);
+      }}
+    />
+  );
+}
+export function SortedDescendingIcon() {
+  return <ExpandMoreIcon className="icon" />;
+}
+
+export function SortedAscendingIcon() {
+  return <ExpandLessIcon className="icon" />;
+}
+
+export function UnsortedIcon() {
+  return <SortIcon className="icon" />;
+}
+
+function CustomPagination(props) {
+  return <GridPagination ActionsComponent={Pagination} {...props} />;
+}
+
+const SubCategories = () => {
+  const { loadSubCategories, deleteSubCategory  } = useSubCategories();
   const { subCategories } = useSelector((state) => state.subCategories);
-  const [filteredSubCategories, setFilteredSubCategories] = useState(subCategories);
-  const [subCat, setSubCat] = useState(subCategories);
   const navigate = useNavigate();
-  
-  const handleSubCategoriesChange = (newSubCategories) => {
-    setSubCat([]);
-    setFilteredSubCategories(newSubCategories);
-  };
 
   useEffect(() => {
-    if (subCategories) {
-      setSubCat(subCategories);
-    }
-  }, [subCategories]);
-  
-  useEffect(() => {
-    loadSubCategories();
+ loadSubCategories();
   }, []);
 
-  
-const createSubCategory = () => {
-  navigate('/auth/CrearSubCategoria', {replace:true})
-}
+  const rowsWithIds = subCategories.map((subCategory, _id) => ({
+    id: _id.toString(),
+    ...subCategory,
+  }));
+  const createSubCategory = () => {
+    navigate('/auth/CrearSubCategoria')
+  }
+
+
   return (
-    <>
-      <Grid marginX={"240px"}>
-        <Titles name={<h2 align="center">Sub-Categorias</h2>} />
-        <Button
+    <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
+      <Title>SubCategorias</Title>
+      <Button
           variant="contained"
           disableElevation
-          sx={{ color: "#CC3C5C", my: 5, p: 2, borderRadius: 5 }}
+          sx={{ color: "primary", my: 5, p: 2, borderRadius: 5 }}
           onClick={createSubCategory}
         >
-          Registrar nueva categoria
+          Registrar nuevo subcategoría
         </Button>
-
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 700 }} aria-label="customized table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell>Nombre</StyledTableCell>
-                <StyledTableCell align="center">Descripcion</StyledTableCell>
-                <StyledTableCell align="center">Status</StyledTableCell>
-                <StyledTableCell align="center">Opciones</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-
-            {filteredSubCategories.length != 0
-                ? filteredSubCategories.map((subCategory) => (
-                    <TableRow key={subCategory._id}>
-                      <TableCell component="th" scope="row">
-                        {subCategory.name}
-                      </TableCell>
-                      <TableCell align="center">{subCategory?.description}</TableCell>
-                      <TableCell component="th" scope="row" align="center">{subCategory?.services !== true ? 'Activo' : 'Inactivo'}</TableCell>
-                      <TableCell
-                        sx={{ display: "flex", justifyContent: "center" }}
-                      >
-                        <WarningAlert
-                          route={subCategory._id}
-                          title="Estas seguro que deseas eliminar la categoria?"
-                          callbackToDeleteItem={() =>
-                            deleteSubCategory(subCategory._id)
-                          }
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))
-                : 
-
-                subCat.map((subCategory) => (
-                    <TableRow key={subCategory._id}>
-                      <TableCell component="th" scope="row">
-                        {subCategory.name}
-                      </TableCell>
-                      <TableCell align="center">{subCategory?.description}</TableCell>
-                      <TableCell component="th" scope="row" align="center">{subCategory?.services !== true ? 'Activo' : 'Inactivo'}</TableCell>
-                      <TableCell
-                        sx={{ display: "flex", justifyContent: "center" }}
-                      >
-                        <WarningAlert
-                          route={subCategory._id}
-                          title="¿Estas seguro que deseas eliminar a la subCategoria?"
-                          callbackToDeleteItem={() =>
-                            deleteSubCategory(subCategory._id)
-                          }
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Grid>
-      
-
-      <Box display="flex" justifyContent="center" py={10}>
-        <Pagination count={10} color="primary" />
-      </Box>
-    </>
+      <DataGrid
+        sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
+        columns={[
+          {
+            field: "_id",
+            hideable: false,
+            headerName: "Id",
+            flex: 1,
+            sortable: "false",
+          },
+          {
+            field: "name",
+            hideable: false,
+            headerName: "Nombre de la categoria",
+            flex: 2,
+            sortable: false,
+          },
+          {
+            field: "description",
+            headerName: "Descripción",
+            flex: 1,
+          },
+          {
+            field: "Opciones",
+            headerName: "Opciones",
+            align: "center",
+            flex: 1,
+            sortable: false,
+            type: "actions",
+            getActions: (params) => [
+              <WarningAlert
+                title="¿Estas seguro que deseas eliminar la categoria?"
+                callbackToDeleteItem={() => deleteSubCategory(params.row._id)}
+              />,
+              <GridActionsCellItem icon={<Edit />} onClick={()=>redirectPages(navigate,(params.row._id))}  label="Editar Subcategoria" showInMenu />,
+                             
+            ],
+          },
+        ]}
+        rows={rowsWithIds}
+        pagination
+        slots={{
+          pagination: CustomPagination,
+          toolbar: GridToolbar,
+          columnSortedDescendingIcon: SortedDescendingIcon,
+          columnSortedAscendingIcon: SortedAscendingIcon,
+          columnUnsortedIcon: UnsortedIcon,
+        }}
+        disableColumnFilter
+        disableColumnMenu
+        disableColumnSelector
+        disableDensitySelector
+        slotProps={{
+          toolbar: {
+            showQuickFilter: true,
+            quickFilterProps: { debounceMs: 500 },
+          },
+        }}
+        printOptions={{
+          hideFooter: true,
+          hideToolbar: true,
+        }}
+      />
+    </div>
   );
-};
+}
 
-export default SubCategories;
+
+export default SubCategories

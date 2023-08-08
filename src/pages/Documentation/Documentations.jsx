@@ -2,15 +2,10 @@ import React, { useState } from "react";
 import Titles from "../../components/ui/Titles";
 import Grid from "@mui/material/Grid";
 import {
-  FormControl,
-  FormHelperText,
-  FormLabel,
-  TextField,
-  Paper,
   Typography,
   Card,
   CardContent,
-  CardActions, Avatar,
+   Avatar,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -22,6 +17,8 @@ import { useSelector } from "react-redux";
 import { useDocumentations } from "../../hooks/useDocumentation";
 import ModalDocuments from "../../components/CheckDocument/ModalDocuments";
 import { useCustomers } from "../../hooks/useCustomers";
+import VerifyButton from "../../components/Buttons/VerifyButton";
+import DeclineButton from "../../components/Buttons/DeclineButton";
 
 const Documentation = () => {
   const { id } = useParams();
@@ -66,7 +63,7 @@ const Documentation = () => {
   return documentations.find((documentations)=>documentations.name === targetName )
  }
  const pathIne = findFile((documentations.name),'ine')
- 
+
 const pathProok_Address = findFile((documentations.name),'prook_address')
 
 const pathCurp = findFile((documentations.name),'curp')
@@ -82,7 +79,9 @@ const pathRfc = findFile((documentations.name),'rfc')
 
       <Grid container direction={'row'} >
         <Grid item  >
-          <ModalDocuments pdfPath={pathIne?.url } success1={pathIne?.verify} name={"Identificacion Oficial"} />
+          <ModalDocuments pdfPath={pathIne?.url }  name={"Identificacion Oficial"} />
+          <VerifyButton pathFile={pathIne}/>
+          <DeclineButton/>
           <ModalDocuments pdfPath={pathProok_Address?.url} name={"Comprobante de domicilio"} />
           <ModalDocuments pdfPath={pathCurp?.url} name={"Curp"} />
           <ModalDocuments pdfPath={pathCriminalRecord?.url} name={"Antecedentes Penales"} />

@@ -23,7 +23,7 @@ export const Links = [
     Icon: <DriveEtaIcon />,
   },
   {
-    title: "Categoria de servicios",
+    title: "Categorías",
     path: "/auth/CategoriaServicios",
     Icon: <CategoryIcon />,
   },

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Titles from "../../components/ui/Titles";
-import UploadImage from "../../components/ui/UploadImage";
 import Grid from "@mui/material/Grid";
 import { Card, CardActionArea, CardContent, CardMedia, FormControl, FormHelperText, FormLabel, MenuItem, Select, TextField, TextareaAutosize } from "@mui/material";
 import Box from "@mui/material/Box";
@@ -61,6 +60,7 @@ const Edit = () => {
         values.service_image = selectedFile;
         editService(service._id, values);
         navigate("/auth/servicios", { replace: true });
+
       } catch (error) {
         return enqueueSnackbar("Error al editar el servicio", {
           variant: "error",

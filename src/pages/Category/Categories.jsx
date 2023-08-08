@@ -1,142 +1,158 @@
-import { useEffect, useLayoutEffect, useState } from "react";
-import Titles from "../../components/ui/Titles";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
-import WarningAlert from "../../components/ui/WarningAlert";
-import { styled } from "@mui/system";
-import { Box, Grid } from "@mui/material";
-import { Pagination } from "antd";
+import * as React from "react";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import SortIcon from "@mui/icons-material/Sort";
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridPagination,
+  GridToolbar,
+  gridPageCountSelector,
+  useGridApiContext,
+  useGridSelector,
+} from "@mui/x-data-grid";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useCategories } from "../../hooks/useCategories";
+import MuiPagination from "@mui/material/Pagination";
+import { Edit } from "@mui/icons-material";
+import Title from "antd/es/typography/Title";
+import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
-import InputSearch1 from "../../components/ui/imputSearch1";
-import AddImage from "../../assets/Images/add.png";
+import { redirectPages } from '../../helpers';
+import { useCategories } from "../../hooks/useCategories";
+import { Button } from "@mui/material";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#CC3C5C",
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
+function Pagination({ page, onPageChange, className }) {
+  const apiRef = useGridApiContext();
+  const pageCount = useGridSelector(apiRef, gridPageCountSelector);
+
+  return (
+    <MuiPagination
+      color="primary"
+      className={className}
+      count={pageCount}
+      page={page + 1}
+      onChange={(event, newPage) => {
+        onPageChange(event, newPage - 1);
+      }}
+    />
+  );
+}
+export function SortedDescendingIcon() {
+  return <ExpandMoreIcon className="icon" />;
+}
+
+export function SortedAscendingIcon() {
+  return <ExpandLessIcon className="icon" />;
+}
+
+export function UnsortedIcon() {
+  return <SortIcon className="icon" />;
+}
+
+function CustomPagination(props) {
+  return <GridPagination ActionsComponent={Pagination} {...props} />;
+}
 
 const Categories = () => {
-  const { loadCategories,deleteCategory} = useCategories();
+  const { loadCategories, deleteCategory  } = useCategories();
   const { categories } = useSelector((state) => state.categories);
-  const [filteredCategories, setFilteredCategories] = useState(categories);
-  const [cat, setCat] = useState(categories);
   const navigate = useNavigate();
-  
-  const handleCategoriesChange = (newCategories) => {
-    setCat([]);
-    setFilteredCategories(newCategories);
-  };
 
   useEffect(() => {
-    if (categories) {
-      setCat(categories);
-    }
-  }, [categories]);
-  
-  useEffect(() => {
-    loadCategories();
+   loadCategories()
   }, []);
 
-  
-const createCategory = () => {
-  navigate('/auth/CrearCategoria', {replace:true})
-}
+  const rowsWithIds = categories.map((category, _id) => ({
+    id: _id.toString(),
+    ...category,
+  }));
+  const createCategory = () => {
+    navigate('/auth/CrearCategoria')
+  }
+
   return (
-    <>
-      <Grid marginX={"240px"}>
-        <Titles name={<h2 align="center">Categorias</h2>} />
-        <Button
+    <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
+      <Title>Categorias</Title>
+      <Button
           variant="contained"
           disableElevation
-          sx={{ color: "#CC3C5C", my: 5, p: 2, borderRadius: 5 }}
+          sx={{ color: "primary", my: 5, p: 2, borderRadius: 5 }}
           onClick={createCategory}
         >
-          Registrar nueva categoria
+          Registrar nuevo Categoría
         </Button>
-        <InputSearch1
-          categories={categories}
-          values={handleCategoriesChange}
-        />
-
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 700 }} aria-label="customized table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell>Nombre</StyledTableCell>
-                <StyledTableCell align="center">Descripcion</StyledTableCell>
-                <StyledTableCell align="center">Status</StyledTableCell>
-                <StyledTableCell align="center">Opciones</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-
-            {filteredCategories.length != 0
-                ? filteredCategories.map((category) => (
-                    <TableRow key={category._id}>
-                      <TableCell component="th" scope="row">
-                        {category.name}
-                      </TableCell>
-                      <TableCell align="center">{category?.description}</TableCell>
-                      <TableCell component="th" scope="row" align="center">{category?.services !== true ? 'Activo' : 'Inactivo'}</TableCell>
-                      <TableCell
-                        sx={{ display: "flex", justifyContent: "center" }}
-                      >
-                        <WarningAlert
-                          route={category._id}
-                          title="Estas seguro que deseas eliminar la categoria?"
-                          callbackToDeleteItem={() =>
-                            deleteCategory(category._id)
-                          }
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))
-                : 
-
-              cat.map((category) => (
-                    <TableRow key={category._id}>
-                      <TableCell component="th" scope="row">
-                        {category.name}
-                      </TableCell>
-                      <TableCell align="center">{category?.description}</TableCell>
-                      <TableCell component="th" scope="row" align="center">{category?.services !== true ? 'Activo' : 'Inactivo'}</TableCell>
-                      <TableCell
-                        sx={{ display: "flex", justifyContent: "center" }}
-                      >
-                        <WarningAlert
-                          route={category._id}
-                          title="¿Estas seguro que deseas eliminar a la categoria?"
-                          callbackToDeleteItem={() =>
-                            deleteCategory(category._id)
-                          }
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Grid>
-      
-
-      <Box display="flex" justifyContent="center" py={10}>
-        <Pagination count={10} color="primary" />
-      </Box>
-    </>
+      <DataGrid
+        sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
+        columns={[
+          {
+            field: "_id",
+            hideable: false,
+            headerName: "Id",
+            flex: 1,
+            sortable: "false",
+          },
+          {
+            field: "name",
+            hideable: false,
+            headerName: "Nombre de la categoria",
+            flex: 2,
+            sortable: false,
+          },
+          {
+            field: "description",
+            headerName: "Descripción",
+            flex: 1,
+          },
+          {
+            field: "Opciones",
+            headerName: "Opciones",
+            align: "center",
+            flex: 1,
+            sortable: false,
+            type: "actions",
+            getActions: (params) => [
+              <WarningAlert
+                title="¿Estas seguro que deseas eliminar la categoria?"
+                callbackToDeleteItem={() => deleteCategory(params.row._id)}
+              />,
+              <GridActionsCellItem icon={<Edit />} onClick={()=>redirectPages(navigate,(params.row._id))}  label="Editar categoria" showInMenu />,
+                             
+            ],
+          },
+        ]}
+        initialState={{
+          sorting: {
+            sortModel: [{ field: "type_customer", sort: "desc" }],
+          },
+        }}
+        rows={rowsWithIds}
+        pagination
+        slots={{
+          pagination: CustomPagination,
+          toolbar: GridToolbar,
+          columnSortedDescendingIcon: SortedDescendingIcon,
+          columnSortedAscendingIcon: SortedAscendingIcon,
+          columnUnsortedIcon: UnsortedIcon,
+        }}
+        disableColumnFilter
+        disableColumnMenu
+        disableColumnSelector
+        disableDensitySelector
+        slotProps={{
+          toolbar: {
+            showQuickFilter: true,
+            quickFilterProps: { debounceMs: 500 },
+          },
+        }}
+        printOptions={{
+          hideFooter: true,
+          hideToolbar: true,
+        }}
+      />
+    </div>
   );
-};
+}
 
-export default Categories;
+
+export default Categories

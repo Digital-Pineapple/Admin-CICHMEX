@@ -49,10 +49,10 @@ const Edit = () => {
 
   useEffect(() => {
     formik.setValues({
-      name: subCategory.name,
-      description: subCategory.description,
-      status: subCategory.status,
-      category: subCategory.category,
+      name: subCategory?.name,
+      description: subCategory?.description,
+      status: subCategory?.status,
+      category: subCategory?.category,
       subCategory_image : previewImage,
     });
   }, [subCategory]);
@@ -113,7 +113,7 @@ const Edit = () => {
                   image={
                     selectedFile
                       ? previewImage
-                      : subCategory.subCategory_image || AddImage
+                      : subCategory?.subCategory_image || AddImage
                   }
                   title={selectedFile ? selectedFile.name : "Selecciona imagen"}
                   component={"input"}

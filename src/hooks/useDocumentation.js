@@ -19,5 +19,7 @@ export const useDocumentations = () => {
 
     const searchDocumentation = async value => await dispatch(searchDocumenation(value));
 
-    return { documentations, documentation, loadDocumentations, loadDocumentation, deleteDocumentation, editDocumentation, addDocumentation, searchDocumentation }
+    const varifyDocumentation = async values => await dispatch(verifyOneDocument(values));
+
+    return { documentations, documentation, loadDocumentations, loadDocumentation, deleteDocumentation, editDocumentation, addDocumentation, searchDocumentation, varifyDocumentation }
 }
