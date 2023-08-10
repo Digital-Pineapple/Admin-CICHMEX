@@ -1,7 +1,21 @@
 import React, { useState } from "react";
 import Titles from "../../components/ui/Titles";
 import Grid from "@mui/material/Grid";
-import { Card, CardActionArea, CardContent, CardMedia, FormControl, FormHelperText, FormLabel, MenuItem, Select, TextField, TextareaAutosize } from "@mui/material";
+import {
+  Card,
+  CardActionArea,
+  CardActions,
+  CardContent,
+  CardMedia,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Input,
+  MenuItem,
+  Select,
+  TextField,
+  TextareaAutosize,
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -25,12 +39,6 @@ const Edit = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
 
-  const handleImage = ({ target }) => {
-    setPreviewImage(URL.createObjectURL(target.files[0]));
-    setSelectedFile(target.files[0]);
-  };
-
-
   useEffect(() => {
     loadService(id);
     loadSubCategories();
@@ -42,10 +50,15 @@ const Edit = () => {
       description: service.description,
       status: service.status,
       subCategory: service.subCategory,
-      service_image : previewImage
-      
+      service_image: previewImage,
     });
+    setPreviewImage(service.service_image);
   }, [service]);
+
+  const handleImage = ({ target }) => {
+    setPreviewImage(URL.createObjectURL(target.files[0]));
+    setSelectedFile(target.files[0]);
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -60,7 +73,6 @@ const Edit = () => {
         values.service_image = selectedFile;
         editService(service._id, values);
         navigate("/auth/servicios", { replace: true });
-
       } catch (error) {
         return enqueueSnackbar("Error al editar el servicio", {
           variant: "error",
@@ -72,7 +84,6 @@ const Edit = () => {
       }
     },
   });
-
   const outEdit = () => {
     navigate("/auth/servicios", { replace: true });
   };
@@ -95,31 +106,37 @@ const Edit = () => {
           flexDirection={"column"}
           alignItems={"center"}
         >
-           <Grid item>
+          <Grid item>
             <Card sx={{ maxWidth: 345 }}>
-              <CardActionArea>
+              <CardContent>
                 <CardMedia
                   sx={{ height: 140 }}
                   image={
-                    selectedFile
+                    previewImage
                       ? previewImage
                       : service.service_image || AddImage
                   }
                   title={selectedFile ? selectedFile.name : "Selecciona imagen"}
-                  component={"input"}
-                  type={"file"}
-                  id={"service_image"}
-                  name={"service_image"}
-                  accept={"image/png, image/jpeg"}
-                  value={formik.values.service_image}
-                  onChange={handleImage}
                 />
-              </CardActionArea>
-              <CardContent>
+
                 <Typography gutterBottom variant="h5" component="div">
-                  {selectedFile ? selectedFile.name : "Selecciona una imagen"}
+                  {selectedFile
+                    ? selectedFile.name
+                    : previewImage
+                    ? "Cambiar imagen"
+                    : "Elige una imagen"}
                 </Typography>
               </CardContent>
+              <CardActions>
+                <input
+                  type="file"
+                  id="service_image"
+                  name="service_image"
+                  accept="image/png, image/jpeg"
+                  onChange={(e) => handleImage(e)}
+                  
+                />
+              </CardActions>
             </Card>
           </Grid>
           <TextField
@@ -161,7 +178,6 @@ const Edit = () => {
             </Select>
             <FormHelperText>Selecciona una sub-categoria</FormHelperText>
           </FormControl>
-        
 
           <Grid
             container

@@ -15,7 +15,7 @@ export const useCustomers = () => {
 
     const deleteCustomer = async customer_id => await dispatch(deleteOneCustomer(customer_id));
 
-    const verifyCustomer = async (customer_id, accountVerify) => await dispatch(verifyOneCustomer(customer_id, accountVerify));
+    const verifyCustomer = async (customer_id) => await dispatch(verifyOneCustomer(customer_id));
 
     return { loadCustomers, customer, loadCustomer, customers, deleteCustomer,verifyCustomer }
 

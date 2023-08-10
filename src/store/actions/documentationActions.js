@@ -159,13 +159,15 @@ export const searchDocumenation = ({ value }) => {
     }
   };
 };
-export const verifyOneDocument = (values) => {
+
+export const verifyOneDocument = (_id,verify,message) => {
+  
   return async (dispatch) => {
     try {
       const formData = new FormData();
-      formData.append("_id", values._id);
-      formData.append("verify", values.verify);
-      formData.append("message", values.message);
+      formData.append("_id", _id);
+      formData.append("verify", verify);
+      formData.append("message", message);
 
       const { data } = await instanceApi.post(
         `/documentation/validate`,
@@ -177,17 +179,10 @@ export const verifyOneDocument = (values) => {
           },
         }
       );
-      dispatch(editDocumentation(documentation_id, data.data));
-      enqueueSnackbar("Documentación validada con exito", {
-        variant: "success",
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "right",
-        },
-      });
+      dispatch(editDocumentation(_id, data.data));
     } catch (error) {
       enqueueSnackbar(
-        `Ocurrió un error al actualizar la documentación + ${error}`,
+        `Ocurrió un error al actualizar la documentación: ${error}`,
         {
           variant: "error",
           anchorOrigin: {

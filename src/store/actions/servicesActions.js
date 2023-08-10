@@ -44,7 +44,7 @@ export const deleteOneServices = (service_id) =>
               formData.append('service_image',values.service_image);
               formData.append('status', values.status);
               formData.append('subCategory', values.subCategory)
-            const { data } = await instanceApi.put(
+            const { data } = await instanceApi.post(
                 `/services/${service_id}`,formData, {
                   headers: {
                     token: Cookies.get("session"),
@@ -58,6 +58,7 @@ export const deleteOneServices = (service_id) =>
               horizontal: 'right'
             }})
             } catch (error) {
+              console.log(error);
               enqueueSnackbar(`Ocurrió un error al actualizar la categoria + ${error}`,
                {variant:'error', anchorOrigin: {
                 vertical: 'top',

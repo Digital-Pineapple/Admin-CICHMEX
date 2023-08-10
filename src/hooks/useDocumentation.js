@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux"
-import { addOneDocumentation, deleteOneDocumentation, editOneDocumentation, getOneDocumentation, searchDocumenation, startLoadDocumentations } from "../store/actions/documentationActions";
+import { addOneDocumentation, deleteOneDocumentation, editOneDocumentation, getOneDocumentation, searchDocumenation, startLoadDocumentations, verifyOneDocument } from "../store/actions/documentationActions";
 
 export const useDocumentations = () => {
 
@@ -19,7 +19,7 @@ export const useDocumentations = () => {
 
     const searchDocumentation = async value => await dispatch(searchDocumenation(value));
 
-    const varifyDocumentation = async values => await dispatch(verifyOneDocument(values));
+    const varifyDocumentation = async (_id,verify, message) => await dispatch(verifyOneDocument(_id,verify, message));
 
     return { documentations, documentation, loadDocumentations, loadDocumentation, deleteDocumentation, editDocumentation, addDocumentation, searchDocumentation, varifyDocumentation }
 }

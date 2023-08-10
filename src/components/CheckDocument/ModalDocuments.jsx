@@ -59,7 +59,7 @@ const ModalDocuments = ({name, pdfPath }) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} autoFocus>
-            Agree
+            Cerrar
           </Button>
         </DialogActions>
       </Dialog>
