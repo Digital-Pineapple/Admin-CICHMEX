@@ -69,12 +69,13 @@ export const deleteOneTypeCar = (typeCar_id) => async (dispatch) => {
 };
 
 export const editOneTypeCar = (typeCar_id, values) => {
+  console.log(values);
     return async (dispatch) => {
         try {
           const formData = new FormData();
           formData.append('name', values.name );
           formData.append('typeCar_image',values.typeCar_image);
-        const { data } = await instanceApi.put(
+        const { data } = await instanceApi.post(
             `/type-car/${typeCar_id}`,formData, {
               headers: {
                 token: Cookies.get("session"),
@@ -82,6 +83,7 @@ export const editOneTypeCar = (typeCar_id, values) => {
               }
             }
         );
+        console.log(data.data);
         dispatch(editTypeCar(typeCar_id, data.data));
         enqueueSnackbar('Categoria actualizada con exito', {variant:'success', anchorOrigin: {
           vertical: 'top',

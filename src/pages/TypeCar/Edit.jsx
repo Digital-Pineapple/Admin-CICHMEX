@@ -2,7 +2,16 @@ import React, { useState } from "react";
 import Titles from "../../components/ui/Titles";
 import UploadImage from "../../components/ui/UploadImage";
 import Grid from "@mui/material/Grid";
-import { Card, CardActionArea, CardContent, CardMedia, TextField, TextareaAutosize, Typography } from "@mui/material";
+import {
+  Card,
+  CardActionArea,
+  CardActions,
+  CardContent,
+  CardMedia,
+  TextField,
+  TextareaAutosize,
+  Typography,
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
@@ -19,7 +28,7 @@ import AddImage from "../../../src/assets/Images/add.png";
 
 const Edit = () => {
   const { id } = useParams();
-  const { loadTypeCar, editTypeCar,typeCar } = useTypeCars();
+  const { loadTypeCar, editTypeCar, typeCar } = useTypeCars();
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
@@ -37,34 +46,37 @@ const Edit = () => {
     formik.setValues({
       name: typeCar.name,
       status: typeCar.status,
-      typeCar_image : previewImage,
+      typeCar_image: previewImage,
     });
   }, [typeCar]);
 
   const formik = useFormik({
     initialValues: {
       name: "",
-      status: "",
+      status: true,
       typeCar_image: "",
     },
     onSubmit: (values) => {
       try {
         values.typeCar_image = selectedFile;
-        editTypeCar(typeCar._id, values)
-        navigate('/auth/typeCar', {replace:true})
-        
+        editTypeCar(typeCar._id, values);
+        navigate("/auth/typeCar", { replace: true });
       } catch (error) {
-        return enqueueSnackbar('Error al editar la categoria', {variant:'error', anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right'
-        }}, )
+        console.log(error);
+        return enqueueSnackbar("Error al editar la categoria", {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        });
       }
-
     },
   });
-  
+
   const outEdit = () => {
-    navigate("/auth/typeCar", { replace: true });}
+    navigate("/auth/typeCar", { replace: true });
+  };
 
   return (
     <Box component="form" onSubmit={formik.handleSubmit} marginX={"10%"}>
@@ -78,32 +90,37 @@ const Edit = () => {
         spacing={4}
       >
         <Grid item>
-            <Card sx={{ maxWidth: 345 }}>
-              <CardActionArea>
-                <CardMedia
-                  sx={{ height: 140 }}
-                  image={
-                    selectedFile
-                      ? previewImage
-                      : typeCar.typeCar_image || AddImage
-                  }
-                  title={selectedFile ? selectedFile.name : "Selecciona imagen"}
-                  component={"input"}
-                  type={"file"}
-                  id={"typeCar_image"}
-                  name={"typeCar_image"}
-                  accept={"image/png, image/jpeg"}
-                  value={formik.values.typeCar_image}
-                  onChange={handleImage}
-                />
-              </CardActionArea>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  {selectedFile ? selectedFile.name : "Selecciona una imagen"}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+          <Card sx={{ maxWidth: 345 }}>
+            <CardContent>
+              <CardMedia
+                sx={{ height: 140 }}
+                image={
+                  previewImage
+                    ? previewImage
+                    : typeCar.typeCar_image || AddImage
+                }
+                title={selectedFile ? selectedFile.name : "Selecciona imagen"}
+              />
+
+              <Typography gutterBottom variant="h5" component="div">
+                {selectedFile
+                  ? selectedFile.name
+                  : previewImage
+                  ? "Cambiar imagen"
+                  : "Elige una imagen"}
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <input
+                type="file"
+                id="typeCar_image"
+                name="typeCar_image"
+                accept="image/png, image/jpeg"
+                onChange={(e) => handleImage(e)}
+              />
+            </CardActions>
+          </Card>
+        </Grid>
         <Grid
           item
           sm={8}
@@ -116,7 +133,7 @@ const Edit = () => {
             fullWidth
             id="name"
             name="name"
-            label="Nombre del servicio"
+            label="Nombre del tipo de auto"
             variant="outlined"
             value={formik.values?.name}
             sx={{ margin: 2 }}
@@ -129,29 +146,6 @@ const Edit = () => {
             justifyItems={"center"}
             alignItems={"center"}
           >
-            {/* <Grid display="flex" flexDirection="column">
-              <FormControl>
-                <FormLabel id="status-label">Estatus</FormLabel>
-                <RadioGroup
-                  aria-labelledby="status-label"
-                  name="status"
-                  value={formik.values?.status}
-                  onChange={formik.handleChange}
-                >
-                  <FormControlLabel
-                    value={true}
-                    control={<Radio />}
-                    label="Activo"
-                  />
-                  <FormControlLabel
-                    value={false}
-                    control={<Radio />}
-                    label="Desactivado"
-                  />
-                </RadioGroup>
-              </FormControl>
-            </Grid> */}
-
             <Grid item sx={{ display: "flex", justifyContent: "center" }}>
               <Button type="submit" variant="contained">
                 Guardar
@@ -163,9 +157,6 @@ const Edit = () => {
           </Grid>
         </Grid>
       </Grid>
-      {/* <code>
-        <pre>{JSON.stringify(formulario, null, 2)}</pre>
-      </code> */}
     </Box>
   );
 };
