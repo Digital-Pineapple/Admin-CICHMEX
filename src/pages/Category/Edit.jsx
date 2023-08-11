@@ -48,7 +48,7 @@ const Edit = () => {
     initialValues: {
       name: "",
       description: "",
-      status: "",
+      status: true ,
       category_image: "",
     },
     onSubmit: (values) => {
@@ -57,6 +57,7 @@ const Edit = () => {
         editCategory(category._id, values);
         navigate("/auth/CategoriaServicios", { replace: true });
       } catch (error) {
+        console.log(error);
         return enqueueSnackbar("Error al editar la categoria", {
           variant: "error",
           anchorOrigin: {

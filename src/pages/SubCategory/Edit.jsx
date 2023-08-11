@@ -61,7 +61,7 @@ const Edit = () => {
     initialValues: {
       name: "",
       description: "",
-      status: "",
+      status: true,
       subCategory_image: "",
       category: "",
     },
@@ -71,6 +71,7 @@ const Edit = () => {
         editSubCategory(subCategory._id, values);
         navigate("/auth/SubCategorias", { replace: true });
       } catch (error) {
+        console.log(error);
         return enqueueSnackbar("Error al editar la subcategoria", {
           variant: "error",
           anchorOrigin: {

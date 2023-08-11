@@ -35,7 +35,6 @@ export const deleteOneServices = (service_id) =>
     }
 
     export const editOneService = (service_id, values) => {
-      console.log(values);
         return async (dispatch) => {
             try {
               const formData = new FormData();

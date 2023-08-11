@@ -64,7 +64,7 @@ const Edit = () => {
     initialValues: {
       name: "",
       description: "",
-      status: "",
+      status: true,
       subCategory: "",
       service_image: "",
     },
@@ -167,7 +167,7 @@ const Edit = () => {
               id="subCategory"
               name="subCategory"
               value={formik.values.subCategory}
-              label="Categoria"
+              label="Subcategoria"
               onChange={formik.handleChange}
             >
               {subCategories.map((subCategory) => (

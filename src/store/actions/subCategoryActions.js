@@ -76,7 +76,8 @@ export const editOneSubCategory = (subCategory_id, values) => {
           formData.append('description',values.description);
           formData.append('image',values.subCategory_image);
           formData.append('status', values.status);
-        const { data } = await instanceApi.put(
+          formData.append('category', values.category);
+        const { data } = await instanceApi.post(
             `/sub-category/${subCategory_id}`,formData, {
               headers: {
                 token: Cookies.get("session"),
