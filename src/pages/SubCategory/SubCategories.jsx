@@ -7,6 +7,8 @@ import {
   GridActionsCellItem,
   GridPagination,
   GridToolbar,
+  GridToolbarContainer,
+  GridToolbarQuickFilter,
   gridPageCountSelector,
   useGridApiContext,
   useGridSelector,
@@ -21,13 +23,14 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import LocalCarWashIcon from "@mui/icons-material/LocalCarWash";
 import WashIcon from "@mui/icons-material/Wash";
-import { DoneAllOutlined, Edit } from "@mui/icons-material";
+import { DoneAllOutlined, Download, Edit } from "@mui/icons-material";
 import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
 import { redirectPages } from '../../helpers';
 import { useCategories } from "../../hooks/useCategories";
 import { useSubCategories } from "../../hooks/useSubCategories";
+import { Workbook } from "exceljs";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -76,6 +79,56 @@ const SubCategories = () => {
   }));
   const createSubCategory = () => {
     navigate('/auth/CrearSubCategoria')
+  }
+  const exportToExcel = () => {
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet("Subcategorías");
+
+    // Agregar encabezados de columna
+    const headerRow = worksheet.addRow([
+      "ID",
+      "Nombre de la subcategoria",
+      "Descripción",
+    ]);
+    headerRow.eachCell((cell) => {
+      cell.font = { bold: true };
+    });
+
+    // Agregar datos de las filas
+    rowsWithIds.forEach((row) => {
+      worksheet.addRow([row._id, row.name, row.description]);
+    });
+
+    // Crear un Blob con el archivo Excel y guardarlo
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      saveAs(blob, "subCategorias.xlsx");
+    });
+  };
+
+  function CustomToolbar() {
+    const apiRef = useGridApiContext();
+  
+    const handleGoToPage1 = () => apiRef.current.setPage(1);
+  
+    return (
+      <GridToolbarContainer sx={{justifyContent:'space-between'}}>
+        <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
+        <GridToolbarQuickFilter/>
+        <Button
+        variant="text"
+        startIcon={<Download/>}
+        disableElevation
+        sx={{ color: "secondary" }}
+        onClick={exportToExcel}
+      >
+        Descargar Excel
+      </Button>
+      </GridToolbarContainer>
+    );
   }
 
 
@@ -133,7 +186,7 @@ const SubCategories = () => {
         pagination
         slots={{
           pagination: CustomPagination,
-          toolbar: GridToolbar,
+          toolbar: CustomToolbar,
           columnSortedDescendingIcon: SortedDescendingIcon,
           columnSortedAscendingIcon: SortedAscendingIcon,
           columnUnsortedIcon: UnsortedIcon,

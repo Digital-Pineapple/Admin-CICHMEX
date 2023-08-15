@@ -69,7 +69,6 @@ export const deleteOneTypeCar = (typeCar_id) => async (dispatch) => {
 };
 
 export const editOneTypeCar = (typeCar_id, values) => {
-  console.log(values);
     return async (dispatch) => {
         try {
           const formData = new FormData();
@@ -83,7 +82,6 @@ export const editOneTypeCar = (typeCar_id, values) => {
               }
             }
         );
-        console.log(data.data);
         dispatch(editTypeCar(typeCar_id, data.data));
         enqueueSnackbar('Categoria actualizada con exito', {variant:'success', anchorOrigin: {
           vertical: 'top',

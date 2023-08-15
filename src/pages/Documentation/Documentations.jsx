@@ -13,22 +13,21 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
-import { useFormik } from "formik";
-import { enqueueSnackbar } from "notistack";
 import { useSelector } from "react-redux";
 import { useDocumentations } from "../../hooks/useDocumentation";
 import ModalDocuments from "../../components/CheckDocument/ModalDocuments";
 import { useCustomers } from "../../hooks/useCustomers";
 import VerifyButton from "../../components/Buttons/VerifyButton";
 import DeclineButton from "../../components/Buttons/DeclineButton";
-
+import { ValidateContext } from '../../contexts/ValidateContext'
 const Documentation = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { loadDocumentation } = useDocumentations();
   const { loadCustomer, customer } = useCustomers();
   const { documentations } = useSelector((state) => state.documentations);
-
+const [validation, setValidation] = useState(false)
+  
   useEffect(() => {
     loadCustomer(id);
     loadDocumentation(id);
@@ -42,7 +41,7 @@ const Documentation = () => {
       (documentations) => documentations.name === targetName
     );
   };
-  console.log(documentations);
+
   const pathIne = findFile(documentations.name, "ine");
 
   const pathProok_Address = findFile(documentations.name, "prook_address");
@@ -55,6 +54,7 @@ const Documentation = () => {
 
   return (
     <Box component="form" marginX={"10%"}>
+      <ValidateContext.Provider value={{validation,setValidation}}>
       <Titles name={<h2 align="center">Verificar Documentos</h2>} />
 
       <Grid container spacing={2} columns={16}>
@@ -204,6 +204,7 @@ const Documentation = () => {
           Salir
         </Button>
       </Grid>
+      </ValidateContext.Provider>
     </Box>
   );
 };

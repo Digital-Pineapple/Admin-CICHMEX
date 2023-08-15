@@ -23,8 +23,6 @@ export const Principal = () => {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  console.log(user);
-
   React.useEffect(() => {
     formik.setValues({
       name: user.fullname,

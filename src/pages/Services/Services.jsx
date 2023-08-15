@@ -7,6 +7,8 @@ import {
   GridActionsCellItem,
   GridPagination,
   GridToolbar,
+  GridToolbarContainer,
+  GridToolbarQuickFilter,
   gridPageCountSelector,
   useGridApiContext,
   useGridSelector,
@@ -15,12 +17,13 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useServices } from "../../hooks/useServices";
 import MuiPagination from "@mui/material/Pagination";
-import { Edit } from "@mui/icons-material";
+import { Download, Edit } from "@mui/icons-material";
 import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
 import { redirectPages } from '../../helpers';
 import { Button } from "@mui/material";
+import { Workbook } from "exceljs";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -67,8 +70,60 @@ const Services = () => {
     id: _id.toString(),
     ...service,
   }));
+
   const createService = () => {
     navigate('/auth/createService')
+  }
+  
+  const exportToExcel = () => {
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet("Servicios");
+
+    // Agregar encabezados de columna
+    const headerRow = worksheet.addRow([
+      "ID",
+      "Nombre de la categoria",
+      "Descripción",
+    ]);
+    headerRow.eachCell((cell) => {
+      cell.font = { bold: true };
+    });
+
+    // Agregar datos de las filas
+    rowsWithIds.forEach((row) => {
+      worksheet.addRow([row._id, row.name, row.description]);
+    });
+
+    // Crear un Blob con el archivo Excel y guardarlo
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      saveAs(blob, "servicios.xlsx");
+    });
+  };
+
+  function CustomToolbar() {
+    const apiRef = useGridApiContext();
+  
+    const handleGoToPage1 = () => apiRef.current.setPage(1);
+  
+    return (
+      <GridToolbarContainer sx={{justifyContent:'space-between'}}>
+        <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
+        <GridToolbarQuickFilter/>
+        <Button
+        variant="text"
+        startIcon={<Download/>}
+        disableElevation
+        sx={{ color: "secondary" }}
+        onClick={exportToExcel}
+      >
+        Descargar Excel
+      </Button>
+      </GridToolbarContainer>
+    );
   }
 
 
@@ -117,6 +172,7 @@ const Services = () => {
               <WarningAlert
                 title="¿Estas seguro que deseas eliminar el servicio?"
                 callbackToDeleteItem={() => deleteService(params.row._id)}
+                callbackEditItem={()=> editService(params.row._id)}
               />,
               <GridActionsCellItem icon={<Edit />} onClick={()=>redirectPages(navigate,(params.row._id))}  label="Editar servicio" showInMenu />,
                              
@@ -128,7 +184,7 @@ const Services = () => {
         pagination
         slots={{
           pagination: CustomPagination,
-          toolbar: GridToolbar,
+          toolbar: CustomToolbar,
           columnSortedDescendingIcon: SortedDescendingIcon,
           columnSortedAscendingIcon: SortedAscendingIcon,
           columnUnsortedIcon: UnsortedIcon,

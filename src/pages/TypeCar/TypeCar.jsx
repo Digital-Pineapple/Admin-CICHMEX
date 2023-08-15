@@ -7,6 +7,8 @@ import {
   GridActionsCellItem,
   GridPagination,
   GridToolbar,
+  GridToolbarContainer,
+  GridToolbarQuickFilter,
   gridPageCountSelector,
   useGridApiContext,
   useGridSelector,
@@ -15,12 +17,13 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import MuiPagination from "@mui/material/Pagination";
 import { Button, Chip } from "@mui/material";
-import { Edit } from "@mui/icons-material";
+import { Download, Edit } from "@mui/icons-material";
 import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
 import { redirectPages } from '../../helpers';
 import { useTypeCars } from "../../hooks/UseTypeCars";
+import { Workbook } from "exceljs";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -72,7 +75,55 @@ const TypeCar = () => {
   const createTypeCar = () => {
     navigate('/auth/createTypeCar')
   }
+  const exportToExcel = () => {
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet("Tipos de autos");
 
+    // Agregar encabezados de columna
+    const headerRow = worksheet.addRow([
+      "ID",
+      "Nombre del tipo de auto",
+    ]);
+    headerRow.eachCell((cell) => {
+      cell.font = { bold: true };
+    });
+
+    // Agregar datos de las filas
+    rowsWithIds.forEach((row) => {
+      worksheet.addRow([row._id, row.name]);
+    });
+
+    // Crear un Blob con el archivo Excel y guardarlo
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      saveAs(blob, "tipos de autos.xlsx");
+    });
+  };
+
+  function CustomToolbar() {
+    const apiRef = useGridApiContext();
+  
+    const handleGoToPage1 = () => apiRef.current.setPage(1);
+  
+    return (
+      <GridToolbarContainer sx={{justifyContent:'space-between'}}>
+        <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
+        <GridToolbarQuickFilter/>
+        <Button
+        variant="text"
+        startIcon={<Download/>}
+        disableElevation
+        sx={{ color: "secondary" }}
+        onClick={exportToExcel}
+      >
+        Descargar Excel
+      </Button>
+      </GridToolbarContainer>
+    );
+  }
 
   return (
     <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
@@ -134,7 +185,7 @@ const TypeCar = () => {
         pagination
         slots={{
           pagination: CustomPagination,
-          toolbar: GridToolbar,
+          toolbar: CustomToolbar,
           columnSortedDescendingIcon: SortedDescendingIcon,
           columnSortedAscendingIcon: SortedAscendingIcon,
           columnUnsortedIcon: UnsortedIcon,

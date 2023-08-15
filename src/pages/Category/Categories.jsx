@@ -7,6 +7,8 @@ import {
   GridActionsCellItem,
   GridPagination,
   GridToolbar,
+  GridToolbarContainer,
+  GridToolbarQuickFilter,
   gridPageCountSelector,
   useGridApiContext,
   useGridSelector,
@@ -14,13 +16,16 @@ import {
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import MuiPagination from "@mui/material/Pagination";
-import { Edit } from "@mui/icons-material";
+import { Download, Edit } from "@mui/icons-material";
 import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
-import { redirectPages } from '../../helpers';
+import { redirectPages } from "../../helpers";
 import { useCategories } from "../../hooks/useCategories";
 import { Button } from "@mui/material";
+import { Workbook } from "exceljs";
+import { saveAs } from 'file-saver';
+
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -55,12 +60,12 @@ function CustomPagination(props) {
 }
 
 const Categories = () => {
-  const { loadCategories, deleteCategory  } = useCategories();
+  const { loadCategories, deleteCategory } = useCategories();
   const { categories } = useSelector((state) => state.categories);
   const navigate = useNavigate();
 
   useEffect(() => {
-   loadCategories()
+    loadCategories();
   }, []);
 
   const rowsWithIds = categories.map((category, _id) => ({
@@ -68,20 +73,73 @@ const Categories = () => {
     ...category,
   }));
   const createCategory = () => {
-    navigate('/auth/CrearCategoria')
+    navigate("/auth/CrearCategoria");
+  };
+
+  const exportToExcel = () => {
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet("Categorias");
+
+    // Agregar encabezados de columna
+    const headerRow = worksheet.addRow([
+      "ID",
+      "Nombre de la categoria",
+      "Descripción",
+    ]);
+    headerRow.eachCell((cell) => {
+      cell.font = { bold: true };
+    });
+
+    // Agregar datos de las filas
+    rowsWithIds.forEach((row) => {
+      worksheet.addRow([row._id, row.name, row.description]);
+    });
+
+    // Crear un Blob con el archivo Excel y guardarlo
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      saveAs(blob, "categorias.xlsx");
+    });
+  };
+
+  function CustomToolbar() {
+    const apiRef = useGridApiContext();
+  
+    const handleGoToPage1 = () => apiRef.current.setPage(1);
+  
+    return (
+      <GridToolbarContainer sx={{justifyContent:'space-between'}}>
+        <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
+        <GridToolbarQuickFilter/>
+        <Button
+        variant="text"
+        startIcon={<Download/>}
+        disableElevation
+        sx={{ color: "secondary" }}
+        onClick={exportToExcel}
+      >
+        Descargar Excel
+      </Button>
+      </GridToolbarContainer>
+    );
   }
 
   return (
     <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
       <Title>Categorias</Title>
       <Button
-          variant="contained"
-          disableElevation
-          sx={{ color: "primary", my: 5, p: 2, borderRadius: 5 }}
-          onClick={createCategory}
-        >
-          Registrar nuevo Categoría
-        </Button>
+        variant="contained"
+        disableElevation
+        sx={{ color: "primary", my: 5, p: 2, borderRadius: 5 }}
+        onClick={createCategory}
+      >
+        Registrar nuevo Categoría
+      </Button>
+     
+
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
@@ -116,8 +174,12 @@ const Categories = () => {
                 title="¿Estas seguro que deseas eliminar la categoria?"
                 callbackToDeleteItem={() => deleteCategory(params.row._id)}
               />,
-              <GridActionsCellItem icon={<Edit />} onClick={()=>redirectPages(navigate,(params.row._id))}  label="Editar categoria" showInMenu />,
-                             
+              <GridActionsCellItem
+                icon={<Edit />}
+                onClick={() => redirectPages(navigate, params.row._id)}
+                label="Editar categoria"
+                showInMenu
+              />,
             ],
           },
         ]}
@@ -130,7 +192,7 @@ const Categories = () => {
         pagination
         slots={{
           pagination: CustomPagination,
-          toolbar: GridToolbar,
+          toolbar: CustomToolbar ,
           columnSortedDescendingIcon: SortedDescendingIcon,
           columnSortedAscendingIcon: SortedAscendingIcon,
           columnUnsortedIcon: UnsortedIcon,
@@ -143,6 +205,7 @@ const Categories = () => {
           toolbar: {
             showQuickFilter: true,
             quickFilterProps: { debounceMs: 500 },
+            
           },
         }}
         printOptions={{
@@ -152,7 +215,6 @@ const Categories = () => {
       />
     </div>
   );
-}
+};
 
-
-export default Categories
+export default Categories;

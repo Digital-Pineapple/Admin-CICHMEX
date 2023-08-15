@@ -7,6 +7,8 @@ import {
   GridActionsCellItem,
   GridPagination,
   GridToolbar,
+  GridToolbarContainer,
+  GridToolbarQuickFilter,
   gridPageCountSelector,
   useGridApiContext,
   useGridSelector,
@@ -15,17 +17,20 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useCustomers } from "../../hooks/useCustomers";
 import MuiPagination from "@mui/material/Pagination";
-import { Chip } from "@mui/material";
+import { Avatar, Chip } from "@mui/material";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import LocalCarWashIcon from "@mui/icons-material/LocalCarWash";
 import WashIcon from "@mui/icons-material/Wash";
-import { DoneAllOutlined, Edit } from "@mui/icons-material";
+import { DoneAllOutlined, Download, Edit, Phone } from "@mui/icons-material";
 import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
-import { redirectPages } from '../../helpers';
+import { redirectPages } from "../../helpers";
+import CustomAvatar from "../../components/ui/CustomAvatar";
+import { Workbook } from "exceljs";
+import { Button } from "antd";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -33,7 +38,7 @@ function Pagination({ page, onPageChange, className }) {
 
   return (
     <MuiPagination
-      color="primary"
+      color="secondary"
       className={className}
       count={pageCount}
       page={page + 1}
@@ -60,7 +65,7 @@ function CustomPagination(props) {
 }
 
 export default function Users() {
-  const { loadCustomers, deleteCustomer,  } = useCustomers();
+  const { loadCustomers, deleteCustomer } = useCustomers();
   const { customers } = useSelector((state) => state.customers);
   const navigate = useNavigate();
 
@@ -72,7 +77,78 @@ export default function Users() {
     id: _id.toString(),
     ...customer,
   }));
+  console.log(rowsWithIds);
 
+  const exportToExcel = () => {
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet("Usuarios");
+
+    // Agregar encabezados de columna
+    const headerRow = worksheet.addRow([
+      "ID",
+      "Nombre",
+      "Correo",
+      "Tipo de usuario",
+      "Registro con Google",
+      "Telefono",
+      "cuenta Verificada",
+    ]);
+    headerRow.eachCell((cell) => {
+      cell.font = { bold: true };
+    });
+
+    // Agregar datos de las filas
+    rowsWithIds.forEach((row) => {
+      worksheet.addRow([
+        row._id,
+        row.fullname,
+        row.email,
+        row.type_customer === "1"
+          ? "Lavaodr"
+          : row.type_customer === "0"
+          ? "Cliente"
+          : row.type_customer === "3"
+          ? "Establecimiento"
+          : "usuario",
+        row.google === true 
+        ? "si":"no",
+        // row.phone,
+        row.accountVerify === true 
+        ? "si":"no",
+      ]);
+    });
+
+    // Crear un Blob con el archivo Excel y guardarlo
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      saveAs(blob, "categorias.xlsx");
+    });
+  };
+
+  function CustomToolbar() {
+    const apiRef = useGridApiContext();
+
+    const handleGoToPage1 = () => apiRef.current.setPage(1);
+
+    return (
+      <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
+        <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
+        <GridToolbarQuickFilter />
+        <Button
+          variant="text"
+          startIcon={<Download />}
+          disableElevation
+          sx={{ color: "secondary" }}
+          onClick={exportToExcel}
+        >
+          Descargar Excel
+        </Button>
+      </GridToolbarContainer>
+    );
+  }
 
   return (
     <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
@@ -91,9 +167,12 @@ export default function Users() {
             field: "profile_image",
             hideable: false,
             headerName: "Foto de perfil",
-            flex: 0.2,
+            flex: 1,
             sortable: "false",
-            renderCell: (params) => params.value.profile_image ?<Avatar src={params.value.profile_image}/>: null
+            renderCell: (params) =>
+              params?.value ? (
+                <Avatar alt={params.value} src={params.value} />
+              ) : null,
           },
           {
             field: "fullname",
@@ -164,16 +243,22 @@ export default function Users() {
                 title="¿Estas seguro que deseas eliminar el usuario?"
                 callbackToDeleteItem={() => deleteCustomer(params.row._id)}
                 titleEdit="¿Quieres editar este usuario?"
-                callbackEditItem={()=> editUser(params.row._id)}
+                callbackEditItem={() => editUser(params.row._id)}
               />,
-              <GridActionsCellItem icon={<Edit />} onClick={()=>redirectPages(navigate,(params.row._id))}  label="Editar usuario" showInMenu />,
               <GridActionsCellItem
-                icon={< DoneAllOutlined />}
-                label="Verificar Usuario"
-                onClick={() => redirectPages(navigate, `validate/${params.row._id}`)}
+                icon={<Edit />}
+                onClick={() => redirectPages(navigate, params.row._id)}
+                label="Editar usuario"
                 showInMenu
               />,
-                             
+              <GridActionsCellItem
+                icon={<DoneAllOutlined />}
+                label="Verificar Usuario"
+                onClick={() =>
+                  redirectPages(navigate, `validate/${params.row._id}`)
+                }
+                showInMenu
+              />,
             ],
           },
         ]}
@@ -186,7 +271,7 @@ export default function Users() {
         pagination
         slots={{
           pagination: CustomPagination,
-          toolbar: GridToolbar,
+          toolbar: CustomToolbar,
           columnSortedDescendingIcon: SortedDescendingIcon,
           columnSortedAscendingIcon: SortedAscendingIcon,
           columnUnsortedIcon: UnsortedIcon,
@@ -195,6 +280,7 @@ export default function Users() {
         disableColumnMenu
         disableColumnSelector
         disableDensitySelector
+        disableRowSelectionOnClick
         slotProps={{
           toolbar: {
             showQuickFilter: true,

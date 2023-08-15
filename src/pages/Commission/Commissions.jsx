@@ -7,6 +7,8 @@ import {
   GridActionsCellItem,
   GridPagination,
   GridToolbar,
+  GridToolbarContainer,
+  GridToolbarQuickFilter,
   gridPageCountSelector,
   useGridApiContext,
   useGridSelector,
@@ -15,12 +17,13 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import MuiPagination from "@mui/material/Pagination";
 import { Button } from "@mui/material";
-import { Edit } from "@mui/icons-material";
+import { Download, Edit } from "@mui/icons-material";
 import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
 import { redirectPages } from '../../helpers';
 import { useCommissions } from "../../hooks/useCommissions";
+import { Workbook } from "exceljs";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -70,6 +73,57 @@ const Commissions = () => {
   const createCommission = () => {
     navigate('/auth/CrearComisiones')
   }
+  const exportToExcel = () => {
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet("Comisiones");
+
+    // Agregar encabezados de columna
+    const headerRow = worksheet.addRow([
+      "ID",
+      "Nombre de la comisión",
+      "Cantidad",
+      'Descuento'
+    ]);
+    headerRow.eachCell((cell) => {
+      cell.font = { bold: true };
+    });
+
+    // Agregar datos de las filas
+    rowsWithIds.forEach((row) => {
+      worksheet.addRow([row._id, row.name, row.amount, row.discount]);
+    });
+
+    // Crear un Blob con el archivo Excel y guardarlo
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      saveAs(blob, "comisiones.xlsx");
+    });
+  };
+
+  function CustomToolbar() {
+    const apiRef = useGridApiContext();
+  
+    const handleGoToPage1 = () => apiRef.current.setPage(1);
+  
+    return (
+      <GridToolbarContainer sx={{justifyContent:'space-between'}}>
+        <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
+        <GridToolbarQuickFilter/>
+        <Button
+        variant="text"
+        startIcon={<Download/>}
+        disableElevation
+        sx={{ color: "secondary" }}
+        onClick={exportToExcel}
+      >
+        Descargar Excel
+      </Button>
+      </GridToolbarContainer>
+    );
+  }
 
 
   return (
@@ -96,17 +150,17 @@ const Commissions = () => {
           {
             field: "name",
             hideable: false,
-            headerName: "Nombre de la categoria",
+            headerName: "Nombre de la comisión",
             flex: 2,
             sortable: false,
           },
           {
-            field: "acount",
+            field: "amount",
             headerName: "Cantidad",
             flex: 1,
           },
           {
-            field: "discunt",
+            field: "discount",
             headerName: "Descuento",
             flex: 1,
           },
@@ -131,7 +185,7 @@ const Commissions = () => {
         pagination
         slots={{
           pagination: CustomPagination,
-          toolbar: GridToolbar,
+          toolbar: CustomToolbar,
           columnSortedDescendingIcon: SortedDescendingIcon,
           columnSortedAscendingIcon: SortedAscendingIcon,
           columnUnsortedIcon: UnsortedIcon,

@@ -33,11 +33,16 @@ const Edit = () => {
   const { loadService, service, editService } = useServices();
   const navigate = useNavigate();
   const { loadSubCategories } = useSubCategories();
-  const subCategories = useSelector(
-    (state) => state.subCategories.subCategories
-  );
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
+  const subCategories = useSelector(
+    (state) => state.subCategories.subCategories
+    );
+    
+    const handleImage = ({ target }) => {
+      setPreviewImage(URL.createObjectURL(target.files[0]));
+      setSelectedFile(target.files[0]);
+    };
 
   useEffect(() => {
     loadService(id);
@@ -55,10 +60,6 @@ const Edit = () => {
     setPreviewImage(service.service_image);
   }, [service]);
 
-  const handleImage = ({ target }) => {
-    setPreviewImage(URL.createObjectURL(target.files[0]));
-    setSelectedFile(target.files[0]);
-  };
 
   const formik = useFormik({
     initialValues: {

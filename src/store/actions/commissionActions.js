@@ -52,7 +52,6 @@ export const addOneCommission = (values) => async (dispatch) => {
       },
     });
   } catch (error) {
-    console.log(error);
     enqueueSnackbar(
       `Ocurrió un error al agregar la categoria : ${error.response.data?.message}`,
       {

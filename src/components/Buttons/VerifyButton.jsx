@@ -6,16 +6,13 @@ import { green } from "@mui/material/colors";
 import { useDocumentations } from "../../hooks/useDocumentation";
 import { enqueueSnackbar } from "notistack";
 
-import { red } from "@mui/material/colors";
-import ClearIcon from '@mui/icons-material/Clear';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-
 const VerifyButton = ({pathFile}) => {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(pathFile?.verify | '' )
     const {varifyDocumentation}= useDocumentations();
     useEffect(() => {
       setSuccess(pathFile?.verify)
+
     }, [pathFile])
 
     const onVerify = () => {
