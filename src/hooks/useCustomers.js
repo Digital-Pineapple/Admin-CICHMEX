@@ -1,7 +1,7 @@
 
 import { useSelector, useDispatch } from 'react-redux';
 
-import { deleteOneCustomer, getOneCustomer, startLoadCustomers,verifyOneCustomer } from '../store/actions/customerActions'; 
+import { deleteOneCustomer, getOneCustomer, startLoadCustomers,verifyOneCustomer, editOneCustomer } from '../store/actions/customerActions'; 
 
 export const useCustomers = () => {
     
@@ -17,7 +17,9 @@ export const useCustomers = () => {
 
     const verifyCustomer = async (customer_id) => await dispatch(verifyOneCustomer(customer_id));
 
-    return { loadCustomers, customer, loadCustomer, customers, deleteCustomer,verifyCustomer }
+    const editCustomer = async (customer_id, values) => await dispatch(editOneCustomer(customer_id,values))
+
+    return { loadCustomers, customer, loadCustomer, customers, deleteCustomer,verifyCustomer, editCustomer }
 
 
 }

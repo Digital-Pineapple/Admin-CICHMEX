@@ -77,7 +77,6 @@ export default function Users() {
     id: _id.toString(),
     ...customer,
   }));
-  console.log(rowsWithIds);
 
   const exportToExcel = () => {
     const workbook = new Workbook();
@@ -112,7 +111,8 @@ export default function Users() {
           : "usuario",
         row.google === true 
         ? "si":"no",
-        // row.phone,
+        row.phone?.phone_number ? row.phone?.phone_number: 
+        row.phone?.phone_number === undefined ? 'no tiene numero': null,
         row.accountVerify === true 
         ? "si":"no",
       ]);
@@ -276,11 +276,6 @@ export default function Users() {
           columnSortedAscendingIcon: SortedAscendingIcon,
           columnUnsortedIcon: UnsortedIcon,
         }}
-        disableColumnFilter
-        disableColumnMenu
-        disableColumnSelector
-        disableDensitySelector
-        disableRowSelectionOnClick
         slotProps={{
           toolbar: {
             showQuickFilter: true,

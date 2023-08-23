@@ -7,7 +7,7 @@ import { enqueueSnackbar } from "notistack";
 
 import { red } from "@mui/material/colors";
 import ClearIcon from '@mui/icons-material/Clear';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+;
 import { useFormik } from "formik";
 import { message } from "antd";
 
@@ -87,7 +87,7 @@ useEffect(() => {
           aria-label="save"
           color="primary"
           sx={buttonSx}
-          onClick={handleClickOpen}
+          onChange={handleClickOpen}
           >
           {success? <ClearIcon /> : <HighlightOffIcon />}
         </Fab>

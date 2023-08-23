@@ -47,7 +47,7 @@ const Edit = () => {
   useEffect(() => {
     loadService(id);
     loadSubCategories();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     formik.setValues({

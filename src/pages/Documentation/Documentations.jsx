@@ -8,6 +8,11 @@ import {
   Avatar,
   Paper,
   CardActions,
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  DialogTitle,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -18,29 +23,40 @@ import { useDocumentations } from "../../hooks/useDocumentation";
 import ModalDocuments from "../../components/CheckDocument/ModalDocuments";
 import { useCustomers } from "../../hooks/useCustomers";
 import VerifyButton from "../../components/Buttons/VerifyButton";
-import DeclineButton from "../../components/Buttons/DeclineButton";
-import { ValidateContext } from '../../contexts/ValidateContext'
 const Documentation = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { loadDocumentation } = useDocumentations();
-  const { loadCustomer, customer } = useCustomers();
+  const { loadCustomer, customer, verifyCustomer } = useCustomers();
   const { documentations } = useSelector((state) => state.documentations);
-const [validation, setValidation] = useState(false)
+  const [open, setOpen] = useState(false)
   
   useEffect(() => {
     loadCustomer(id);
     loadDocumentation(id);
   }, [id]);
 
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  
+
   const out = () => {
     navigate("/auth/usuarios", { replace: true });
   };
   const findFile = (name, targetName) => {
     return documentations.find(
-      (documentations) => documentations.name === targetName
+      (documentations) => documentations.name === targetName 
     );
   };
+  const verification = () =>{
+    verifyCustomer(id)
+  }
 
   const pathIne = findFile(documentations.name, "ine");
 
@@ -53,8 +69,8 @@ const [validation, setValidation] = useState(false)
   const pathRfc = findFile(documentations.name, "rfc");
 
   return (
-    <Box component="form" marginX={"10%"}>
-      <ValidateContext.Provider value={{validation,setValidation}}>
+    <Box marginX={"10%"}>
+    
       <Titles name={<h2 align="center">Verificar Documentos</h2>} />
 
       <Grid container spacing={2} columns={16}>
@@ -72,7 +88,7 @@ const [validation, setValidation] = useState(false)
                 color="text.secondary"
                 gutterBottom
               >
-                Usuario
+                Usuario : {customer._id}
               </Typography>
               <Typography variant="h5" component="div">
                 {customer?.fullname}
@@ -99,7 +115,7 @@ const [validation, setValidation] = useState(false)
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={8} direction={"row"}>
+        <Grid item xs={4} direction={"row"}>
           <CardContent>
             <ModalDocuments
               pdfPath={pathIne?.url}
@@ -115,10 +131,10 @@ const [validation, setValidation] = useState(false)
             ) : null}
             <CardActions>
               <VerifyButton pathFile={pathIne} />
-              <DeclineButton pathFile={pathIne} />
             </CardActions>
           </CardContent>
           <CardContent>
+
             <ModalDocuments
               pdfPath={pathProok_Address?.url}
               name={"Comprobante de domicilio"}
@@ -133,7 +149,6 @@ const [validation, setValidation] = useState(false)
             ) : null}
             <CardActions>
               <VerifyButton pathFile={pathProok_Address} />
-              <DeclineButton pathFile={pathProok_Address} />
             </CardActions>
           </CardContent>
           <CardContent>
@@ -147,10 +162,10 @@ const [validation, setValidation] = useState(false)
             ) : null}
             <CardActions>
               <VerifyButton pathFile={pathCurp} />
-              <DeclineButton pathFile={pathCurp} />
             </CardActions>
           </CardContent>
-
+          </Grid>
+          <Grid item xs={4} direction={"row"}>
           <CardContent>
             <ModalDocuments
               pdfPath={pathCriminalRecord?.url}
@@ -166,7 +181,6 @@ const [validation, setValidation] = useState(false)
             ) : null}
             <CardActions>
               <VerifyButton pathFile={pathCriminalRecord} />
-              <DeclineButton pathFile={pathCriminalRecord} />
             </CardActions>
           </CardContent>
 
@@ -181,7 +195,6 @@ const [validation, setValidation] = useState(false)
             ) : null}
             <CardActions>
               <VerifyButton pathFile={pathRfc} />
-              <DeclineButton pathFile={pathRfc} />
             </CardActions>
           </CardContent>
         </Grid>
@@ -189,14 +202,14 @@ const [validation, setValidation] = useState(false)
       <Grid justifyContent={"center"} width="100%">
         {pathIne?.verify === true &&
         pathCurp?.verify === true &&
-        pathProok_Address === true &&
-        pathCriminalRecord === true &&
-        pathRfc === true ? (
+        pathProok_Address?.verify === true &&
+        pathCriminalRecord?.verify === true &&
+        pathRfc?.verify === true ? (
           <Button type="submit" variant="contained">
             Verificar cuenta
           </Button>
         ) : (
-          <Button disabled type="submit" variant="contained">
+          <Button disabled onClick={handleClickOpen} variant="contained">
             Verificar cuenta
           </Button>
         )}
@@ -204,7 +217,27 @@ const [validation, setValidation] = useState(false)
           Salir
         </Button>
       </Grid>
-      </ValidateContext.Provider>
+      
+      <Dialog
+        open={open}
+        onClose={handleClose}
+      >
+        <DialogTitle>
+          {"¿Estas seguro(a) de verificar la cuenta?"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Recuerda que verificar la documentacion correcta es tu responsabilidad+
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button onClick={verification} autoFocus>
+            Verificar
+          </Button>
+        </DialogActions>
+      </Dialog>
+    
     </Box>
   );
 };

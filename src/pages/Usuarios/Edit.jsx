@@ -1,110 +1,185 @@
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Titles from "../../components/ui/Titles";
 import Grid from "@mui/material/Grid";
-import { TextField } from "@mui/material";
+import {
+  Card,
+  CardActionArea,
+  CardActions,
+  CardContent,
+  CardMedia,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Input,
+  MenuItem,
+  Select,
+  TextField,
+  TextareaAutosize,
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { useParams } from "react-router-dom";
+import Button from "@mui/material/Button";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect } from "react";
 import { useCustomers } from "../../hooks/useCustomers";
-import ModalDocuments from "../../components/CheckDocument/ModalDocuments";
-import CheckList from "../../components/CheckDocument/CheckList";
-import Image from "mui-image";
+import { useFormik } from "formik";
+import { enqueueSnackbar } from "notistack";
+import { useSubCategories } from "../../hooks/useSubCategories";
+import { useSelector } from "react-redux";
+import AddImage from "../../assets/Images/add.png";
+import { editCustomer } from "../../store/reducer/customerReducer";
 
 const Edit = () => {
   const { id } = useParams();
-  const { loadCustomer, customer } = useCustomers();
-
+  const { loadCustomer, customer, editCustomer } = useCustomers();
+  const navigate = useNavigate();
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+  
+  
+  const handleImage = ({ target }) => {
+    setPreviewImage(URL.createObjectURL(target.files[0]));
+    setSelectedFile(target.files[0]);
+  };
+  
+  
   useEffect(() => {
     loadCustomer(id);
   }, [id]);
+
+
+  useEffect(() => {
+    formik.setValues({
+      fullname: customer.fullname,
+      type_customer: customer.type_customer,
+      profile_image: previewImage,
+    });
+    setPreviewImage(customer.profile_image);
+  }, [customer]);
+
+  const formik = useFormik({
+    initialValues: {
+      fullname: "",
+      type_customer: "",
+      profile_image: "",
+    },
+    onSubmit: (values) => {
+      try {
+        values.profile_image = selectedFile;
+        editCustomer(customer._id, values);
+        navigate("/auth/usuarios", { replace: true });
+      } catch (error) {
+        return enqueueSnackbar("Error al editar el usuario", {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        });
+      }
+    },
+  });
+  const outEdit = () => {
+    navigate("/auth/usuarios", { replace: true });
+  };
+
   return (
-    <>
-      <Titles name={<h2 align="center">Editar usuario</h2>} />
-      <Box
-        marginX={"10%"}
+    <Box component="form" onSubmit={formik.handleSubmit} marginX={"10%"}>
+      <Titles name={<h2 align="center">Editar Usuario</h2>} />
+      <Grid
         color="#F7BFBF"
         borderRadius={5}
         mt={3}
-        sx={{ border: 3, p: 5 }}
+        sx={{ border: 10, p: 5 }}
+        container
+        spacing={4}
       >
-        <Grid container spacing={2}>
+        <Grid
+          item
+          sm={8}
+          display={"flex"}
+          flexDirection={"column"}
+          alignItems={"center"}
+        >
+          <Grid item>
+            <Card sx={{ maxWidth: 345 }}>
+              <CardContent>
+                <CardMedia
+                  sx={{ height: 140 }}
+                  image={
+                    previewImage
+                      ? previewImage
+                      : customer.profile_image || AddImage
+                  }
+                  title={selectedFile ? selectedFile.name : "Selecciona imagen"}
+                />
+
+                <Typography gutterBottom variant="h5" component="div">
+                  {selectedFile
+                    ? selectedFile.name
+                    : previewImage
+                    ? "Cambiar imagen"
+                    : "Elige una imagen"}
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <input
+                  type="file"
+                  id="profile_image"
+                  name="profile_image"
+                  accept="image/png, image/jpeg"
+                  onChange={(e) => handleImage(e)}
+                />
+              </CardActions>
+            </Card>
+          </Grid>
+          <TextField
+            focused
+            fullWidth
+            id="fullname"
+            name="fullname"
+            label="Nombre"
+            variant="outlined"
+            value={formik.values.fullname}
+            sx={{ margin: 2 }}
+            onChange={formik.handleChange}
+          />
+
+          <FormControl>
+            <FormLabel>TIpo de usuario</FormLabel>
+            <Select
+          id="type_customer"
+          type='text'
+          name="type_customer"
+          value={formik.values.type_customer}
+          label="Tipo de usuario"
+          onChange={formik.handleChange}
+        >
+          <MenuItem value={"1"}>Lavador independiente</MenuItem>
+          <MenuItem value={"2"}>Establecimiento</MenuItem>
+          <MenuItem value={"0"}>Usuario</MenuItem>
+        </Select>
+            <FormHelperText>Selecciona un tipo de usuario</FormHelperText>
+          </FormControl>
+
           <Grid
-            item
-            xs={12}
-            backgroundColor="#1F6580"
-            color="common.black"
-            sx={{ display: "flex", justifyContent: "center" }}
+            container
+            justifyContent={"center"}
+            justifyItems={"center"}
+            alignItems={"center"}
           >
-            <Typography variant="h5">Datos Generales</Typography>
-          </Grid>
-          <Grid item xs={4} sx={{ display: "flex", justifyContent: "center" }}>
-            <Image
-              width={"200px"}
-              style={{ borderRadius: 100 }}
-              src={customer?.profile_image || ''}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={8}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-start",
-            }}
-          >
-            <TextField
-              aria-readonly
-              focused
-              id="outlined-basic"
-              label="Nombre"
-              variant="filled"
-              fullWidth
-              value={customer?.fullname}
-            />
-            <Grid item sx={{ display: "flex", py: 2 }}>
-              <TextField
-                focused
-                id="outlined-basic"
-                label="Telefono"
-                variant="filled"
-                fullWidth
-                sx={{ pr: 2 }}
-                value={customer?.phone?.phone_number || "NA"}
-              />
-              <TextField
-                focused
-                id="outlined-basic"
-                label="Correo"
-                variant="filled"
-                fullWidth
-                value={customer?.email}
-              />
-            </Grid>
-          </Grid>
-          <Grid container direction="row">
-            <Grid display="flex" width="50%" flexDirection="column" gap={2}>
-              <ModalDocuments
-                name={"Identificacion Oficial"}
-                pdfPath={customer?.ine}
-              />
-              <ModalDocuments
-                name={"Comprobante de Domicilio"}
-                pdfPath={customer?.prook_address}
-              />
-              <ModalDocuments
-                name={"Antecedentes Penales"}
-                pdfPath={customer?.criminal_record}
-              />
-              <ModalDocuments name={"Curp"} pdfPath={customer?.curp} />
-            </Grid>
-            <Grid>
-              <CheckList />
+            <Grid item sx={{ display: "flex", justifyContent: "center" }}>
+              <Button type="submit" variant="contained">
+                Guardar
+              </Button>
+              <Button onClick={outEdit} variant="outlined" color="secondary">
+                Salir
+              </Button>
             </Grid>
           </Grid>
         </Grid>
-      </Box>
-    </>
+      </Grid>
+    </Box>
   );
 };
 
