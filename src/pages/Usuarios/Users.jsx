@@ -23,7 +23,7 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import LocalCarWashIcon from "@mui/icons-material/LocalCarWash";
 import WashIcon from "@mui/icons-material/Wash";
-import { DoneAllOutlined, Download, Edit, Phone } from "@mui/icons-material";
+import { ControlPointDuplicateOutlined, DoneAllOutlined, Download, Edit, Phone } from "@mui/icons-material";
 import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
@@ -256,6 +256,14 @@ export default function Users() {
                 label="Verificar Usuario"
                 onClick={() =>
                   redirectPages(navigate, `validate/${params.row._id}`)
+                }
+                showInMenu
+              />,
+              <GridActionsCellItem
+                icon={<ControlPointDuplicateOutlined />}
+                label="Servicios"
+                onClick={() =>
+                  redirectPages(navigate, `services/${params.row._id}`)
                 }
                 showInMenu
               />,

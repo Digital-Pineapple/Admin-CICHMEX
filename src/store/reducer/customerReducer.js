@@ -16,7 +16,7 @@ export const customerReducer = createSlice({
     deleteCustomer: (state, { type, payload }) => {
       state.customers = state.customers.filter(customer => customer._id !== payload);
     },
-    verifyOneCustomer: (state, { type, payload }) => {
+    verifyCustomerRedux: (state, { type, payload }) => {
       state.customers = state.customers.filter(customer => customer._id !== payload);
     },
     editCustomer: ( state, { payload } ) => {
@@ -37,6 +37,6 @@ export const customerReducer = createSlice({
   },
 })
 
-export const { loadCustomers, loadCustomer, deleteCustomer,verifyOneCustomer,editCustomer} = customerReducer.actions;
+export const { loadCustomers, loadCustomer, deleteCustomer,verifyCustomerRedux,editCustomer} = customerReducer.actions;
 
 export default customerReducer.reducer;

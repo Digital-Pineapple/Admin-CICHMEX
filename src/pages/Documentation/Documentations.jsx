@@ -23,6 +23,7 @@ import { useDocumentations } from "../../hooks/useDocumentation";
 import ModalDocuments from "../../components/CheckDocument/ModalDocuments";
 import { useCustomers } from "../../hooks/useCustomers";
 import VerifyButton from "../../components/Buttons/VerifyButton";
+import { enqueueSnackbar } from "notistack";
 const Documentation = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -55,17 +56,16 @@ const Documentation = () => {
     );
   };
   const verification = () =>{
-    console.log(id);
     try { 
       verifyCustomer(id)
       navigate("/auth/usuarios", { replace: true });
-      // return enqueueSnackbar("Se verificó con éxito", {
-      //   variant: "success",
-      //   anchorOrigin: {
-      //     vertical: "top",
-      //     horizontal: "right",
-      //   },
-      // });
+      return enqueueSnackbar("Se verificó con éxito", {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
     } catch (error) {
       console.log(error);
       return enqueueSnackbar("Error al verificar el usuario", {

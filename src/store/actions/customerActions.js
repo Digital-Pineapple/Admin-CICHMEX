@@ -1,6 +1,6 @@
 import Cookies from "js-cookie"
 import { instanceApi } from "../../apis/configAxios"
-import { loadCustomers, loadCustomer, deleteCustomer, editCustomer } from "../reducer/customerReducer"
+import { loadCustomers, loadCustomer, deleteCustomer, editCustomer, verifyCustomerRedux } from "../reducer/customerReducer"
 import { enqueueSnackbar } from "notistack"
 
 export const startLoadCustomers = () => {
@@ -36,10 +36,11 @@ export const deleteOneCustomer = (customer_id) =>
 
 export const verifyOneCustomer = (customer_id) =>{
    
-    async dispatch => {
+   return async (dispatch) => {
         try {
-            await instanceApi.post(`/customer/validate/${customer_id}`)
-           dispatch(verifyOneCustomer(customer_id))
+          const{data} = await instanceApi.post(`/customer/validate/${customer_id}`)
+          console.log(data);
+           dispatch(verifyCustomerRedux(customer_id))
         } catch (error) {
             console.log(error);
         }
