@@ -55,7 +55,27 @@ const Documentation = () => {
     );
   };
   const verification = () =>{
-    verifyCustomer(id)
+    console.log(id);
+    try { 
+      verifyCustomer(id)
+      navigate("/auth/usuarios", { replace: true });
+      // return enqueueSnackbar("Se verificó con éxito", {
+      //   variant: "success",
+      //   anchorOrigin: {
+      //     vertical: "top",
+      //     horizontal: "right",
+      //   },
+      // });
+    } catch (error) {
+      console.log(error);
+      return enqueueSnackbar("Error al verificar el usuario", {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    }
   }
 
   const pathIne = findFile(documentations.name, "ine");
@@ -205,7 +225,7 @@ const Documentation = () => {
         pathProok_Address?.verify === true &&
         pathCriminalRecord?.verify === true &&
         pathRfc?.verify === true ? (
-          <Button type="submit" variant="contained">
+          <Button onClick={handleClickOpen} variant="contained">
             Verificar cuenta
           </Button>
         ) : (
@@ -227,7 +247,7 @@ const Documentation = () => {
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Recuerda que verificar la documentacion correcta es tu responsabilidad+
+            Recuerda que verificar la documentacion correcta es tu responsabilidad
           </DialogContentText>
         </DialogContent>
         <DialogActions>

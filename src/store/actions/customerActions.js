@@ -34,12 +34,12 @@ export const deleteOneCustomer = (customer_id) =>
         }
     }
 
-export const verifyOneCustomer = (customer_id, accountVerify) =>{
+export const verifyOneCustomer = (customer_id) =>{
+   
     async dispatch => {
         try {
-            
-            await instanceApi.post(`/customer/validate/${customer_id}`, {accountVerify:true})
-           
+            await instanceApi.post(`/customer/validate/${customer_id}`)
+           dispatch(verifyOneCustomer(customer_id))
         } catch (error) {
             console.log(error);
         }
