@@ -1,20 +1,16 @@
 import {
   Cancel,
-  Check,
-  Clear,
   DoneAll,
   HighlightOff,
-  Verified,
   VerifiedOutlined,
 } from "@mui/icons-material";
 import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
 import { useEffect, useRef, useState } from "react";
 import { useDocumentations } from "../../hooks/useDocumentation";
 import { enqueueSnackbar } from "notistack";
 import { green, red } from "@mui/material/colors";
 import { Box, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fab, TextField, Tooltip } from "@mui/material";
-import { set } from "react-hook-form";
+
 
 const VerifyButton = ({ pathFile }) => {
   const { varifyDocumentation } = useDocumentations();

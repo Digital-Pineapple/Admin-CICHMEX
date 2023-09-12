@@ -19,7 +19,7 @@ import Commissions from '../pages/Commission/Commissions'
 import CreateCommission from '../pages/Commission/Create'
 import EditCommission from '../pages/Commission/Edit'
 import Documentation from '../pages/Documentation/Documentations'
-import EditCustomerServices from '../pages/Usuarios/EditCustomerServices'
+import ServicesCustomer from '../pages/Usuarios/ServicesCustomer'
 
 
 
@@ -33,7 +33,7 @@ export const AllRoutes = [
   { type: 1, path: '/usuarios', element: <Users/>},
   { type: 1, path: '/usuarios/:id', element: <EditUser/>},
   { type: 1, path: '/usuarios/validate/:id', element: <Documentation/>},
-  { type: 1, path: '/usuarios/services/:id', element: <EditCustomerServices/>},
+  { type: 1, path: '/usuarios/services/:id', element: <ServicesCustomer/>},
 
   { type: 1, path: '/servicios', element: <Services/>},
   { type: 1, path: '/servicios/:id', element: <EditServices/>},

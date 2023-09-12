@@ -38,10 +38,4 @@ export const Links = [
     Icon : <CurrencyExchangeIcon/>
 
   },
-  {
-    title : "Validaciones",
-    path : "/auth/Validaciones",
-    Icon : <CheckCircleOutlineIcon/>
-
-  }
 ];

@@ -1,6 +1,7 @@
 import { enqueueSnackbar } from "notistack"
 import { instanceApi } from "../../apis/configAxios"
 import { loadService, loadServices, deleteService, editService, onAddNewService } from "../reducer/servicesReducer"
+import {loadOneServiceCustomer, onAddNewServiceCustomer} from "../reducer/servicesCustomerReducer"
 import Cookies from "js-cookie"
 
 export const startLoadServices = () => {
@@ -107,4 +108,57 @@ export const deleteOneServices = (service_id) =>
         };
       
       };
+      export const Services = ({value}) => {
+        return async (dispatch) => {
+            try {
+            const { data } = await instanceApi.get(
+                `/services/search/search${value ? `?search=${value}` : `?search=${""}`}`,
+            );
+            console.log(data);
+            dispatch(loadServices( data.data));
+            enqueueSnackbar('Buesqueda realizada con exito', {variant:'success', anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right'
+            }})
+            } catch (error) {
+              enqueueSnackbar(`Ocurrió un error al buscar el servicio + ${error}`,
+               {variant:'error', anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right'
+              }})
+            }
+        };
       
+      };
+
+      export const startLoadCuServ = (id) => {
+        return async dispatch => {
+            try {
+                const { data } = await instanceApi.get(`/service-customer/customer/${id}`)
+                dispatch(loadOneServiceCustomer(data.data))
+            } catch (error) {
+                console.log(error)
+            }
+        }
+    }
+
+    export const addOneCustomerService = (id, values) => async (dispatch) => {
+      try {
+        const { data } = await instanceApi.post(`/service-customer/edit/${id}`, values);
+        dispatch(onAddNewServiceCustomer(data.data));
+        enqueueSnackbar('Servicio agregado con éxito', {variant:'success', anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right'
+        }})
+    
+      } catch (error) {
+        console.log(error);
+        enqueueSnackbar(`Ocurrió un error al agregar : ${error.response.data?.message}`,
+        {variant:'error', anchorOrigin: {
+         vertical: 'top',
+         horizontal: 'right'
+       }})
+      }
+    };
+
+   

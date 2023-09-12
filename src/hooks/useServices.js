@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux"
-import { startLoadServices, deleteOneServices, getOneService, editOneService, addOneService, searchServices } from "../store/actions/servicesActions";
+import { startLoadServices, deleteOneServices, getOneService, editOneService, addOneService, searchServices, startLoadCuServ, addOneCustomerService } from "../store/actions/servicesActions";
 
 export const useServices = () => {
 
@@ -18,6 +18,7 @@ export const useServices = () => {
     const addService = async values => await dispatch(addOneService(values));
 
     const searchService = async value => await dispatch(searchServices(value));
+
 
     return { loadServices, services, deleteService, loadService, service, editService, addService, searchService }
 }
