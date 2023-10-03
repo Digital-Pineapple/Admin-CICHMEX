@@ -24,6 +24,7 @@ import ModalDocuments from "../../components/CheckDocument/ModalDocuments";
 import { useCustomers } from "../../hooks/useCustomers";
 import VerifyButton from "../../components/Buttons/VerifyButton";
 import { enqueueSnackbar } from "notistack";
+import CustomBreadcrumb from "../../components/ui/CustomBreadcrumb";
 const Documentation = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -90,6 +91,7 @@ const Documentation = () => {
 
   return (
     <Box marginX={"10%"}>
+       <CustomBreadcrumb id={id} />
     
       <Titles name={<h2 align="center">Verificar Documentos</h2>} />
 

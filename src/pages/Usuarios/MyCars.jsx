@@ -7,6 +7,7 @@ import { enqueueSnackbar } from "notistack";
 import { Typography, Button, Fab } from "@mui/material";
 import { Add, Try } from "@mui/icons-material";
 import FormModal from "../../components/Forms/FormModal";
+import CustomBreadcrumb from "../../components/ui/CustomBreadcrumb";
 
 const MyCars = () => {
   const { loadMyCars, myCars, deleteMyCar, addMyCar } = useMyCars();
@@ -40,7 +41,10 @@ useEffect(() => {
 
   return (
     <>
-      <Grid m="10%" container spacing={0}>
+    <Grid container mx={'10%'} spacing={0}>
+        <CustomBreadcrumb id={id} />
+    </Grid>
+      <Grid mx="10%" container spacing={0}>
         <Typography
           variant="h2"
           color="primary"

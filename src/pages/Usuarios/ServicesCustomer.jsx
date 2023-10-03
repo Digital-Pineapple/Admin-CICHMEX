@@ -30,6 +30,7 @@ import { number } from "yup";
 import ListCheck from "../../components/ui/ListCheck";
 import SaveButton from "../../components/Buttons/SaveButton";
 import { SafetyCertificateFilled } from "@ant-design/icons";
+import CustomBreadcrumb from "../../components/ui/CustomBreadcrumb";
 
 const ServicesCustomer = () => {
   const { id } = useParams();
@@ -169,6 +170,12 @@ const ServicesCustomer = () => {
   };
 
   return (
+    
+   <>
+  
+       <Grid container mx={'10%'} spacing={0}>
+        <CustomBreadcrumb id={id} />
+    </Grid>
     <Grid
       container
       paddingX="10%"
@@ -255,6 +262,7 @@ const ServicesCustomer = () => {
         </Grid>
       </Grid>
     </Grid>
+    </>
   );
 };
 
