@@ -28,6 +28,7 @@ import { useSubCategories } from "../../hooks/useSubCategories";
 import { useSelector } from "react-redux";
 import AddImage from "../../assets/Images/add.png";
 import { editCustomer } from "../../store/reducer/customerReducer";
+import CustomBreadcrumb from "../../components/ui/CustomBreadcrumb";
 
 const Edit = () => {
   const { id } = useParams();
@@ -94,6 +95,7 @@ const Edit = () => {
         container
         spacing={4}
       >
+        <CustomBreadcrumb id={id}/>
         <Grid
           item
           sm={8}

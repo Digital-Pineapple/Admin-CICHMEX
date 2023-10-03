@@ -18,7 +18,7 @@ export const theme = createTheme({
     
   },
   typography:{
-  fontFamily:'DosisExtraBold',
+  fontFamily:'sans-serif',
   },
 
   

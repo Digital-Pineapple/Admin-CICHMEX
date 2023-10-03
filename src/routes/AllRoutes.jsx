@@ -20,6 +20,7 @@ import CreateCommission from '../pages/Commission/Create'
 import EditCommission from '../pages/Commission/Edit'
 import Documentation from '../pages/Documentation/Documentations'
 import ServicesCustomer from '../pages/Usuarios/ServicesCustomer'
+import MyCars from '../pages/Usuarios/MyCars'
 
 
 
@@ -34,6 +35,7 @@ export const AllRoutes = [
   { type: 1, path: '/usuarios/:id', element: <EditUser/>},
   { type: 1, path: '/usuarios/validate/:id', element: <Documentation/>},
   { type: 1, path: '/usuarios/services/:id', element: <ServicesCustomer/>},
+  { type: 1, path: '/usuarios/myCars/:id', element: <MyCars/>},
 
   { type: 1, path: '/servicios', element: <Services/>},
   { type: 1, path: '/servicios/:id', element: <EditServices/>},

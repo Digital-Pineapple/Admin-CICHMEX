@@ -22,6 +22,7 @@ const ListCheck = ({values, setDelete}) => {
     setInfo(values)
   }, [values])
 
+
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value._id);
     const newChecked = [...checked];

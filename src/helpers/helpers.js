@@ -8,6 +8,7 @@ const redirectPages = (navigate, route) => {
 }
 
 
+
 const alerConfirm = (title, callbackToDeleteItem) => {
     confirm({
         title,

@@ -22,6 +22,7 @@ import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import LocalCarWashIcon from "@mui/icons-material/LocalCarWash";
+import NoCrashIcon from '@mui/icons-material/NoCrash';
 import WashIcon from "@mui/icons-material/Wash";
 import { ControlPointDuplicateOutlined, DoneAllOutlined, Download, Edit, Phone } from "@mui/icons-material";
 import Title from "antd/es/typography/Title";
@@ -264,6 +265,14 @@ export default function Users() {
                 label="Servicios"
                 onClick={() =>
                   redirectPages(navigate, `services/${params.row._id}`)
+                }
+                showInMenu
+              />,
+              <GridActionsCellItem
+                icon={<NoCrashIcon />}
+                label="Mis autos"
+                onClick={() =>
+                  redirectPages(navigate, `myCars/${params.row._id}`)
                 }
                 showInMenu
               />,

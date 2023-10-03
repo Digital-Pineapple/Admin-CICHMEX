@@ -46,12 +46,6 @@ const ServicesCard = ({item, setNew}) => {
   const [add, setAdd] = useState('')
   const [open, setOpen] = useState(false)
   const timer = useRef();
-  const {addServiceCustomer }=useServices();
-
-  
-
- 
-  
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -72,42 +66,55 @@ const ServicesCard = ({item, setNew}) => {
   }
 })
   }
-  const formik = useFormik({
-    initialValues: {
-      ...item,
-      price:'', 
-    },
-    validate,
-    onSubmit: (values) => {
-      try {
-        setNew(values)
-        setOpen(false)
-        if (!loadingb) {
-          setLoadingb(true);
-          timer.current = window.setTimeout(() => {
-            setLoadingb(false)
-          }, 2000);
-        }
-      } catch (error) {
-        return enqueueSnackbar("Error al editar el servicio", {
-          variant: "error",
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "right",
-          },
-        });
-      }
-    },
-  });
+  // const formik = useFormik({
+  //   initialValues: {
+  //     ...item,
+  //   },
+  //   validate,
+  //   onSubmit: (values) => {
+  //     try {
+  //       setNew(values)
+  //       setOpen(false)
+  //       if (!loadingb) {
+  //         setLoadingb(true);
+  //         timer.current = window.setTimeout(() => {
+  //           setLoadingb(false)
+  //         }, 2000);
+  //       }
+  //     } catch (error) {
+  //       return enqueueSnackbar("Error al editar el servicio", {
+  //         variant: "error",
+  //         anchorOrigin: {
+  //           vertical: "top",
+  //           horizontal: "right",
+  //         },
+  //       });
+  //     }
+  //   },
+  // });
+  const handleAdd = () => {
+try {
+  setNew(item)
+  setAdd(true)
+  setOpen(false)
+  enqueueSnackbar("Servicio agregado", { variant: "success", anchorOrigin: {
+    vertical: "top",
+    horizontal: "right",
+  }})
+} catch (error) {
+  
+}
+  }
 
   return (
-    <Card sx={{ minWidth:40 }}>
+    <Card sx={{ maxWidth:250 }}>
         
       <CardHeader
         title={item.name}
         subheader={<Chip label={item._id}/>}
         action={
-          <Box sx={{ m: 2, position: "relative" }}>
+          <Box sx={{ position: "relative" }}>
+            <Tooltip title="Agregar servicio">
           <Fab
             aria-label="agregar"
             color="primary"
@@ -116,6 +123,7 @@ const ServicesCard = ({item, setNew}) => {
           >
             <Add/>
           </Fab>
+            </Tooltip>
           {loadingb && (
             <CircularProgress
               size={68}
@@ -134,7 +142,7 @@ const ServicesCard = ({item, setNew}) => {
       </CardHeader>
       <CardMedia
         component="img"
-        height="194"
+        height="150"
         image={item.service_image}
         alt={item.name}
       />
@@ -166,12 +174,12 @@ const ServicesCard = ({item, setNew}) => {
           </Typography>
         </CardContent>
       </Collapse>
-      <Dialog open={open} onClose={handleClickclose}>
+      {/* <Dialog open={open} onClose={handleClickclose}>
         <DialogTitle>Precio del servicio</DialogTitle>
           <form onSubmit={formik.handleSubmit}>
         <DialogContent>
           <DialogContentText>
-            Proporciona el precio para el servicio
+            Activa los tipos de autos para este servicio
           </DialogContentText>
 
           <TextField
@@ -196,7 +204,16 @@ const ServicesCard = ({item, setNew}) => {
           <Button onClick={handleClickclose}>Cancelar</Button>
         </DialogActions>
           </form>
+      </Dialog>  */}
+      <Dialog open={open} onClose={handleClickclose}>
+        <DialogTitle>¿Estas seguro de agregar este servicio?</DialogTitle>
+        <DialogActions>
+          <Button onClick={handleAdd}>Agregar</Button>
+          <Button onClick={handleClickclose}>Cancelar</Button>
+        </DialogActions>
+        
       </Dialog> 
+
       
     </Card>
   );
