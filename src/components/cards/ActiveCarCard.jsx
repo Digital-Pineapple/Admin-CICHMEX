@@ -39,12 +39,13 @@ const validate = values => {
 
   return errors;
 };
-const ServicesCard = ({item, setNew}) => {
- 
+const ActiveCarCard = ({item}) => {
+  
   const [expanded, setExpanded] = useState(false);
   const [loadingb, setLoadingb] = useState(false);
   const [add, setAdd] = useState('')
   const [open, setOpen] = useState(false)
+  
   const timer = useRef();
 
   const handleExpandClick = () => {
@@ -66,32 +67,7 @@ const ServicesCard = ({item, setNew}) => {
   }
 })
   }
-  // const formik = useFormik({
-  //   initialValues: {
-  //     ...item,
-  //   },
-  //   validate,
-  //   onSubmit: (values) => {
-  //     try {
-  //       setNew(values)
-  //       setOpen(false)
-  //       if (!loadingb) {
-  //         setLoadingb(true);
-  //         timer.current = window.setTimeout(() => {
-  //           setLoadingb(false)
-  //         }, 2000);
-  //       }
-  //     } catch (error) {
-  //       return enqueueSnackbar("Error al editar el servicio", {
-  //         variant: "error",
-  //         anchorOrigin: {
-  //           vertical: "top",
-  //           horizontal: "right",
-  //         },
-  //       });
-  //     }
-  //   },
-  // });
+
   const handleAdd = () => {
 try {
   setNew(item)
@@ -174,37 +150,7 @@ try {
           </Typography>
         </CardContent>
       </Collapse>
-      {/* <Dialog open={open} onClose={handleClickclose}>
-        <DialogTitle>Precio del servicio</DialogTitle>
-          <form onSubmit={formik.handleSubmit}>
-        <DialogContent>
-          <DialogContentText>
-            Activa los tipos de autos para este servicio
-          </DialogContentText>
-
-          <TextField
-           InputProps={{
-            startAdornment: <InputAdornment position="start">$</InputAdornment>,
-          }}   
-            autoFocus
-            margin="dense"
-            id="price"
-            name="price"
-            label="precio"
-            type="number"
-            fullWidth
-            variant='filled'
-            value={formik.values.price}
-            onChange={formik.handleChange}
-          />
-           {formik.errors.price ? <div>{formik.errors.price}</div> : null}
-        </DialogContent>
-        <DialogActions>
-          <Button  type='submit'>Agregar</Button>
-          <Button onClick={handleClickclose}>Cancelar</Button>
-        </DialogActions>
-          </form>
-      </Dialog>  */}
+     
       <Dialog open={open} onClose={handleClickclose}>
         <DialogTitle>¿Estas seguro de agregar este servicio?</DialogTitle>
         <DialogActions>
@@ -220,4 +166,4 @@ try {
 }
 
 
-export default ServicesCard
+export default ActiveCarCard
