@@ -3,66 +3,78 @@ import Box from '@mui/material/Box';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import Paper from '@mui/material/Paper';
-import { Grid} from '@mui/material';
+import { Grid, Typography, Button} from '@mui/material';
 import ServicesCard from '../cards/ServicesCard';
 import { useState, useRef, useEffect } from 'react';
 import { AutoAwesomeMosaicTwoTone, HomeWorkOutlined, RemoveCircleOutline } from '@mui/icons-material';
+import { useServiceAdd } from '../../providers/ServicesProvider';
+import ListCheck from '../ui/ListCheck';
+import ModalAdd from '../ui/ModalAdd';
+import ActiveCarCard from '../cards/ActiveCarCard';
 
-
-
-
-const CustomButtonNavigation = ({available}) => {
+const CustomButtonNavigation = ({available, myServices, id}) => {
 
   const [value, setValue] = useState(0);
-const [refresh, setRefresh] = useState('')
 
   const ref = useRef(null);
+  
+  const services = useServiceAdd()
 
-  useEffect(() => {
-    ref.current.ownerDocument.body.scrollTop = 0;
-    const renderInfo ={
-     0: ()=>{setRefresh(available)},
-     1: ()=>{setRefresh(available)},
-     2: ()=>{setRefresh(available
-      )}
-    }
-    const defaultRender = setRefresh('Error al cargar los servicios...')
-  const infoCard = renderInfo[value] || defaultRender
-    infoCard()
-  }, [value]);
   return (
-    <Box  sx={{ pb: 7, mx:'10%' }} borderColor={'red'} ref={ref}>
+    <Box  ref={ref}>
+       
       { value === 0 ? (
-        <Grid item xs={200} md={10} lg={6} xl={4}>
-        {refresh? refresh.map((item)=>{
+        <>
+        <Typography variant="h3" textAlign="center" color="primary">Mis servicios</Typography>
+        <Grid sx={{backgroundColor:'ButtonHighlight'}}  width={'100%'} container columns={18}>
+
+    
+          {myServices? myServices.map((item)=>{
           return(
-            <ServicesCard
+          <>
+            <ActiveCarCard
               item={item}
               key={item._id}
               services_id={item?._id}
+              info={available}
               
             />
+          </>
             )
             
-          }) :'Sin servicios disponibles' }
-      </Grid>)
+          }): 'Sin servicios disponibles' }
+      </Grid>
+        </>
+      
+      )
       : value === 1 ? (
-        <Grid item xs={200} md={10} lg={6} xl={4}>
-        {refresh? refresh.map((item)=>{
+        <>
+        <Grid  container columns={20}>
+        {available? available.map((item)=>{
           return(
-            <ServicesCard
-              item={item}
-              key={item._id}
-              services_id={item?._id}
-              // setNew={setNewValues}
-            />
+           
+              <ServicesCard
+                item={item}
+                key={item._id}
+                services_id={item?._id}
+                // setNew={setNewValues}
+              />
+            
             )
             
           }) :'Sin servicios disponibles' }
-          </Grid>)
+          </Grid>
+          <Typography variant="h4" color="inherit">
+        Servicios a agregar
+       </Typography>
+      <ListCheck  items={services?.newValues}/>
+      <ModalAdd setValue={setValue} items={services?.newValues} myServices={myServices} id={id}/> 
+        </>
+          
+          )
       : value === 2 ? (
-        <Grid item xs={200} md={10} lg={6} xl={4}>
-        {refresh? refresh.map((item)=>{
+        <Grid container columns={20}>
+        {myServices? myServices.map((item)=>{
           return(
             <ServicesCard
               item={item}
@@ -85,8 +97,8 @@ const [refresh, setRefresh] = useState('')
             setValue(newValue);
           }}
         >
-          <BottomNavigationAction label="Servicios disponibles" icon={<HomeWorkOutlined />} />
           <BottomNavigationAction label="Mis servicios" icon={<AutoAwesomeMosaicTwoTone />} />
+          <BottomNavigationAction label="Servicios disponibles" icon={<HomeWorkOutlined />} />
           <BottomNavigationAction label="Eliminar servicios" icon={<RemoveCircleOutline />} />
         </BottomNavigation>
       </Paper>

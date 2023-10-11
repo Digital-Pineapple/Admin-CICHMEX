@@ -6,19 +6,20 @@ import { useSubCategories } from "../../hooks/useSubCategories";
 import { useCategories } from "../../hooks/useCategories";
 import Typography from "@mui/material/Typography";
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { enqueueSnackbar } from "notistack";
 import CustomBreadcrumb from "../../components/ui/CustomBreadcrumb";
 import CustomButtonNavigation from "../../components/Buttons/CustomButtonNavigation";
-import ServicesProvider from "../../providers/ServicesProvider";
 import { useLayoutEffect } from "react";
+import { useTypeCars } from "../../hooks/UseTypeCars";
+
 
 const ServicesCustomer = () => {
   const { id } = useParams();
-  const { services, loadServices  } = useServices();
-  const {servicesCustomer, loadCuServ} = useServicesCustomer();
-  const {  subCategories, loadSubCategories } = useSubCategories();
+  const { services, loadServices } = useServices();
+  const { serviceCustomer, loadCuServ } = useServicesCustomer();
+  const { subCategories, loadSubCategories } = useSubCategories();
   const { categories, loadCategories } = useCategories();
+  const {loadTypeCars} =  useTypeCars()
+  
 
   useLayoutEffect(() => {
     if (id) {
@@ -26,6 +27,8 @@ const ServicesCustomer = () => {
       loadSubCategories();
       loadCategories();
       loadCuServ(id);
+      loadTypeCars()
+
     }
   }, [id]);
 
@@ -42,32 +45,28 @@ const ServicesCustomer = () => {
       nameCategory: Category ? Category.name : "",
       ...service,
     };
-  });;
+  });
   const CardInfoAvailable = CardIn1?.filter((item) => {
-    const match = servicesCustomer?.find((item2) => item2._id === item._id);
+    const match = serviceCustomer?.services?.find(
+      (item2) => item2._id === item._id
+    );
     return !match;
   });
 
   return (
     <>
-    <ServicesProvider>
       <Grid container mx={"10%"}>
         <CustomBreadcrumb id={id} />
       </Grid>
 
-      <Grid container paddingX="10%">
+      <Grid paddingX="10%">
         <Typography variant="h2" color="secondary">
           Administración de servicios
         </Typography>
-        <Grid container spacing={2} columns={20}>
-          <Grid item xs={20}>
-            
-            <CustomButtonNavigation available={CardInfoAvailable}
-            />
-          </Grid>
-        </Grid>
+        <>
+          <CustomButtonNavigation myServices ={serviceCustomer?.services} available={CardInfoAvailable} id={id} />
+        </>
       </Grid>
-    </ServicesProvider>
     </>
   );
 };

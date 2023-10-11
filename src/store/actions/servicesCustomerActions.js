@@ -24,7 +24,6 @@ export const startLoadCuServ = (id) => {
 
 export const addOneCustomerService = (services_id, values) => async (dispatch) => {
   try {
-    console.log(services_id);
     const { data } = await instanceApi.post(
       `/service-customer/edit/${services_id}`,
       values,

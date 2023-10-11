@@ -4,34 +4,33 @@ import { useState } from 'react';
 import { createContext } from 'react';
 
 const ServiceAddContext = createContext()
-const AvailableContext = createContext()
-const OppenContext = createContext()
 
 export const useServiceAdd = () => {
   return useContext(ServiceAddContext)
 }
-export const useAvailable = () => {
-  return useContext(AvailableContext)
-}
-export const useOppen = () => {
-  return useContext(OppenContext)
-}
 
 const ServicesProvider = ({children}) => {
 
-  const [addServices, setAddServices] = useState([])
-  const [open, setOpen] = useState(false)
+  let newValues = []
 
-
-  const handleAdd = () => {
-    setAddServices('Agregado')
+  const handleAdd = (item) => {
+    const match = newValues?.find((item2)=> item2._id === item._id)
+    if (!match) {
+      newValues.push(item)
+      enqueueSnackbar('Servicio agregado', {
+        variant: 'success',
+        anchorOrigin: {
+          vertical: 'bottom',
+          horizontal: 'center',
+        },
+      });
+    } else {return enqueueSnackbar('Servicio ya agregado', {variant: 'error',anchorOrigin: {vertical: 'bottom',horizontal: 'center',},})}
+    return newValues
       }
-      
-
-
+  
   return (
    
-    <ServiceAddContext.Provider value={{handleAdd, addServices}}>
+    <ServiceAddContext.Provider value={{handleAdd, newValues}}>
         {children}
     </ServiceAddContext.Provider>
 

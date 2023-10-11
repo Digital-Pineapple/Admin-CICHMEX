@@ -1,5 +1,6 @@
 
 import { styled } from '@mui/material/styles';
+import Grid from "@mui/material/Grid";
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
@@ -12,11 +13,8 @@ import { green, red } from '@mui/material/colors';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Box, Button, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fab, InputAdornment, TextField, Tooltip, imageListItemBarClasses } from '@mui/material';
 import { Add } from '@mui/icons-material';
-import { useRef } from 'react';
 import { useState } from 'react';
-import { enqueueSnackbar } from 'notistack';
-import { useOppen, useServiceAdd } from '../../providers/ServicesProvider';
-
+import { useServiceAdd } from '../../providers/ServicesProvider';
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
   return <IconButton {...other} />;
@@ -38,13 +36,9 @@ const ServicesCard = ({item}) => {
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
-  const handleClickOpen = () => {
-    setOpen(true)
-  }
-  const handleClickclose = () => {
-    setOpen(false)
-  }
- 
+  const handleClickOpen = ()=> {setOpen(true)} 
+  const handleClickclose = () => {setOpen(false)}
+
 
   const styleAdd ={
 ...(add && {
@@ -54,11 +48,18 @@ const ServicesCard = ({item}) => {
   }
 })
   }
-  const handleAdd = useServiceAdd()
+  const setAddServices = useServiceAdd()
 
+  const handleAdd = () => {
+    setAddServices.handleAdd(item)
+    setAdd(true)
+    setOpen(false)
+  
+  }
+  
   return (
-    <Card sx={{ maxWidth:250 }}>
-        
+    <Grid item xs={18} md={9} lg={6}  width={'100%'} >
+    <Card sx={{ minWidth:300, m:2}}> 
       <CardHeader
         title={item.name}
         subheader={<Chip label={item._id}/>}
@@ -132,9 +133,8 @@ const ServicesCard = ({item}) => {
           <Button onClick={handleClickclose}>Cancelar</Button>
         </DialogActions>
       </Dialog> 
-
-      
     </Card>
+    </Grid>
   );
 }
 

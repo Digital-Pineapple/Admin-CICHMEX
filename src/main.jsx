@@ -9,6 +9,7 @@ import { store } from "./store/store";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import {theme} from './theme'
 import { SnackbarProvider } from "notistack";
+import ServicesProvider from "./providers/ServicesProvider";
 
 
 
@@ -20,7 +21,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <CssBaseline />
             <SnackbarProvider  hideIconVariant  maxSnack={3} autoHideDuration={3000}>
             <GoogleOAuthProvider clientId="31469844821-jbunp9ilg10vvla8ojd6ihr79ogu12ve.apps.googleusercontent.com">
+             <ServicesProvider>
               <App  />
+             </ServicesProvider>
             </GoogleOAuthProvider>
             </SnackbarProvider>
         </BrowserRouter>
