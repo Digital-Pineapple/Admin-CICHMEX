@@ -7,14 +7,13 @@ import CardActions from "@mui/material/CardActions";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import { green, red } from "@mui/material/colors";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
 import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
+import * as Yup from "yup";
+
 import FormHelperText from "@mui/material/FormHelperText";
-import Switch from "@mui/material/Switch";
 
 import {
   Box,
@@ -25,14 +24,13 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
-  InputAdornment,
-  TextField,
   Tooltip,
-  imageListItemBarClasses,
 } from "@mui/material";
 import { Add, Info } from "@mui/icons-material";
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import TextfieldAndSwitch from "../Forms/TextfieldAndSwitch";
+import { useFormik } from "formik";
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -52,12 +50,10 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
-
 const ActiveCarCard = ({ item }) => {
   const [expanded, setExpanded] = useState(false);
-  const [add, setAdd] = useState("");
   const [open, setOpen] = useState(false);
-  const [state, setState] = useState('');
+  const [values, setValues] = useState([]);
 
   const subCategory = useSelector((state) =>
     state.subCategories.subCategories?.find(
@@ -80,111 +76,103 @@ const ActiveCarCard = ({ item }) => {
   const handleClickclose = () => {
     setOpen(false);
   };
-  const handleChange = (event) => {
-    setState({
-      ...state,
-      [event.target.value]: event.target.checked,
-    });
-  };
-const addCars = () => {
-  const matchAdd = typeCars.filter(element => state[element._id] === true);
-  console.log(matchAdd);
-}
+  const onAddClick = () => {
+    console.log("values", values);
+  }
 
   return (
-    <Grid item xs={18} md={9} lg={6}  width={'100%'} >
-    <Card sx={{  minWidth:300, m:2 }}>
-      <CardHeader
-        title={item.name}
-        subheader={<Chip label={item._id} />}
-        action={
-          <Box sx={{ position: "relative" }}>
-            <Tooltip title="Informacion">
-              <IconButton
-                size="large"
-                aria-label="información"
-                color="primary"
-                onClick={handleClickInfo}
-              >
-                <Info />
-              </IconButton>
-            </Tooltip>
-          </Box>
-        }
-      ></CardHeader>
-      <CardMedia
-        component="img"
-        height="150"
-        image={item.service_image}
-        alt={item.name}
-      />
-
-      <CardActions disableSpacing>
-        <ExpandMore
-          expand={expanded}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="Ver más"
-        >
-          <ExpandMoreIcon />
-        </ExpandMore>
-      </CardActions>
-
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <FormControl component="fieldset" variant="standard">
-          <FormLabel component="legend">Activar tipo de auto</FormLabel>
-          <FormGroup>
-            {typeCars?.map((item2, index) => {
-              return (
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={state[index]}
-                      onChange={handleChange}
-                      name={item2.name}
-                      value={item2._id}
-                    />
-                  }
-                  label={item2.name}
+    <Grid item xs={18} md={9} lg={6} width={"100%"}>
+      <Card sx={{ minWidth: 300, m: 2 }}>
+        <CardHeader
+          title={item.name}
+          subheader={<Chip label={item._id} />}
+          action={
+            <Box sx={{ position: "relative" }}>
+              <Tooltip title="Informacion">
+                <IconButton
+                  size="large"
+                  aria-label="información"
+                  color="primary"
+                  onClick={handleClickInfo}
                 >
-                </FormControlLabel>)
+                  <Info />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          }
+        ></CardHeader>
+        <CardMedia
+          component="img"
+          height="150"
+          image={item.service_image}
+          alt={item.name}
+        />
 
-            })}
-            {state.length !== 0 ? <Button onClick={addCars} variant="contained" color="success">Guardar</Button> : null }
+        <CardActions disableSpacing>
+          <ExpandMore
+            expand={expanded}
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label="Ver más"
+          >
+            <ExpandMoreIcon />
+          </ExpandMore>
+        </CardActions>
 
-          </FormGroup>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+         
+            <FormControl component="fieldset" variant="outlined">
+              <FormLabel component="legend">Activar tipo de auto</FormLabel>
+              <FormGroup>
+                {typeCars?.map((item2, index) => {
+                  return (
+                    <TextfieldAndSwitch
+                      item={item2}
+                      id={item2._id}
+                      setValues={setValues}
+                      values={values}
+                    />
+                  );
+                })}
+                {values ? (
+                  <Button onClick={onAddClick} variant="contained" color="success">
+                    Guardar
+                  </Button>
+                ) : null}
+              </FormGroup>
 
-          <FormHelperText>Be careful</FormHelperText>
-        </FormControl>
-      </Collapse>
+              <FormHelperText>Be careful</FormHelperText>
+            </FormControl>
+          
+        </Collapse>
 
-      <Dialog open={open} onClose={handleClickclose}>
-        <DialogTitle>{`Información de: ${item.name}`}</DialogTitle>
-        <DialogContent>
-          <Typography variant="h4" paragraph>
-            Detalle:
-          </Typography>
-
-          <Typography paragraph>SubCategoría: {subCategory?.name}</Typography>
-          <Typography paragraph>
-            Descripcion de la subcategoria: {subCategory?.description}
-          </Typography>
-          <Typography paragraph>
-            Categoria: {category?.name}
-            <Typography paragraph>
-              Descripcion de la categoria: {category?.description}
+        <Dialog open={open} onClose={handleClickclose}>
+          <DialogTitle>{`Información de: ${item.name}`}</DialogTitle>
+          <DialogContent>
+            <Typography variant="h4" paragraph>
+              Detalle:
             </Typography>
-          </Typography>
-          <Typography variant="h5" paragraph>
-            Descripcion del servicio:
-          </Typography>
-          <Typography>{item.description}</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClickclose}>Cerrar</Button>
-        </DialogActions>
-      </Dialog>
-    </Card>
+
+            <Typography paragraph>SubCategoría: {subCategory?.name}</Typography>
+            <Typography paragraph>
+              Descripcion de la subcategoria: {subCategory?.description}
+            </Typography>
+            <Typography paragraph>
+              Categoria: {category?.name}
+              <Typography paragraph>
+                Descripcion de la categoria: {category?.description}
+              </Typography>
+            </Typography>
+            <Typography variant="h5" paragraph>
+              Descripcion del servicio:
+            </Typography>
+            <Typography>{item.description}</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClickclose}>Cerrar</Button>
+          </DialogActions>
+        </Dialog>
+      </Card>
     </Grid>
   );
 };
