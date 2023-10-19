@@ -31,6 +31,7 @@ const ServicesCustomer = () => {
 
     }
   }, [id]);
+const services_id = serviceCustomer?._id
 
   const CardIn1 = services?.map((service) => {
     const subCategory = subCategories?.find(
@@ -48,14 +49,14 @@ const ServicesCustomer = () => {
   });
   const CardInfoAvailable = CardIn1?.filter((item) => {
     const match = serviceCustomer?.services?.find(
-      (item2) => item2._id === item._id
+      (item2) => item2?._id === item._id,
     );
     return !match;
   });
 
   return (
     <>
-      <Grid container mx={"10%"}>
+      <Grid container mx={"10%"} minHeight={'100%'}>
         <CustomBreadcrumb id={id} />
       </Grid>
 
@@ -64,7 +65,12 @@ const ServicesCustomer = () => {
           Administración de servicios
         </Typography>
         <>
-          <CustomButtonNavigation myServices ={serviceCustomer?.services} available={CardInfoAvailable} id={id} />
+          <CustomButtonNavigation 
+           myServices ={serviceCustomer?.services} 
+           available={CardInfoAvailable} 
+           id={id}
+           services_id={services_id}
+           />
         </>
       </Grid>
     </>

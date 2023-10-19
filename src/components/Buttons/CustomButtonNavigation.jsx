@@ -12,13 +12,17 @@ import ListCheck from '../ui/ListCheck';
 import ModalAdd from '../ui/ModalAdd';
 import ActiveCarCard from '../cards/ActiveCarCard';
 
-const CustomButtonNavigation = ({available, myServices, id}) => {
+const CustomButtonNavigation = ({available, myServices, id, services_id }) => {
 
-  const [value, setValue] = useState(0);
+
+  const [value, setValue] = useState(0)
+  const ok = async()=>{
+
+  }
 
   const ref = useRef(null);
   
-  const services = useServiceAdd()
+
 
   return (
     <Box  ref={ref}>
@@ -34,7 +38,7 @@ const CustomButtonNavigation = ({available, myServices, id}) => {
           <>
             <ActiveCarCard
               item={item}
-              key={item._id}
+              key={item?._id}
               services_id={item?._id}
               info={available}
               
@@ -55,9 +59,8 @@ const CustomButtonNavigation = ({available, myServices, id}) => {
            
               <ServicesCard
                 item={item}
-                key={item._id}
-                services_id={item?._id}
-                // setNew={setNewValues}
+                key={item?._id}
+                services_id={services_id}
               />
             
             )
@@ -67,8 +70,7 @@ const CustomButtonNavigation = ({available, myServices, id}) => {
           <Typography variant="h4" color="inherit">
         Servicios a agregar
        </Typography>
-      <ListCheck  items={services?.newValues}/>
-      <ModalAdd setValue={setValue} items={services?.newValues} myServices={myServices} id={id}/> 
+      <ModalAdd setValue={setValue} myServices={myServices} id={id}/> 
         </>
           
           )

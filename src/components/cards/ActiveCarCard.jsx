@@ -2,7 +2,6 @@ import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
@@ -11,7 +10,6 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
 import FormGroup from "@mui/material/FormGroup";
-import * as Yup from "yup";
 
 import FormHelperText from "@mui/material/FormHelperText";
 
@@ -26,11 +24,10 @@ import {
   Grid,
   Tooltip,
 } from "@mui/material";
-import { Add, Info } from "@mui/icons-material";
+import { Info } from "@mui/icons-material";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import TextfieldAndSwitch from "../Forms/TextfieldAndSwitch";
-import { useFormik } from "formik";
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -57,7 +54,7 @@ const ActiveCarCard = ({ item }) => {
 
   const subCategory = useSelector((state) =>
     state.subCategories.subCategories?.find(
-      (item2) => item2._id === item.SubCategory
+      (item2) => item2?._id === item?.SubCategory
     )
   );
   const category = useSelector((state) =>
@@ -77,15 +74,15 @@ const ActiveCarCard = ({ item }) => {
     setOpen(false);
   };
   const onAddClick = () => {
-    console.log("values", values);
-  }
+    
+  };
 
   return (
     <Grid item xs={18} md={9} lg={6} width={"100%"}>
       <Card sx={{ minWidth: 300, m: 2 }}>
         <CardHeader
-          title={item.name}
-          subheader={<Chip label={item._id} />}
+          title={item?.name}
+          subheader={<Chip label={item?._id} />}
           action={
             <Box sx={{ position: "relative" }}>
               <Tooltip title="Informacion">
@@ -104,8 +101,8 @@ const ActiveCarCard = ({ item }) => {
         <CardMedia
           component="img"
           height="150"
-          image={item.service_image}
-          alt={item.name}
+          image={item?.service_image}
+          alt={item?.name}
         />
 
         <CardActions disableSpacing>
@@ -120,34 +117,36 @@ const ActiveCarCard = ({ item }) => {
         </CardActions>
 
         <Collapse in={expanded} timeout="auto" unmountOnExit>
-         
-            <FormControl component="fieldset" variant="outlined">
-              <FormLabel component="legend">Activar tipo de auto</FormLabel>
-              <FormGroup>
-                {typeCars?.map((item2, index) => {
-                  return (
-                    <TextfieldAndSwitch
-                      item={item2}
-                      id={item2._id}
-                      setValues={setValues}
-                      values={values}
-                    />
-                  );
-                })}
-                {values ? (
-                  <Button onClick={onAddClick} variant="contained" color="success">
-                    Guardar
-                  </Button>
-                ) : null}
-              </FormGroup>
+          <FormControl component="fieldset" variant="outlined">
+            <FormLabel component="legend">Activar tipo de auto</FormLabel>
+            <FormGroup>
+              {typeCars?.map((item2, index) => {
+                return (
+                  <TextfieldAndSwitch
+                    item={item2}
+                    id={item2._id}
+                    setValues={setValues}
+                    values={values}
+                  />
+                );
+              })}
+              {values ? (
+                <Button
+                  onClick={onAddClick}
+                  variant="contained"
+                  color="success"
+                >
+                  Guardar
+                </Button>
+              ) : null}
+            </FormGroup>
 
-              <FormHelperText>Be careful</FormHelperText>
-            </FormControl>
-          
+            <FormHelperText>Be careful</FormHelperText>
+          </FormControl>
         </Collapse>
 
         <Dialog open={open} onClose={handleClickclose}>
-          <DialogTitle>{`Información de: ${item.name}`}</DialogTitle>
+          <DialogTitle>{`Información de: ${item?.name}`}</DialogTitle>
           <DialogContent>
             <Typography variant="h4" paragraph>
               Detalle:
@@ -166,7 +165,7 @@ const ActiveCarCard = ({ item }) => {
             <Typography variant="h5" paragraph>
               Descripcion del servicio:
             </Typography>
-            <Typography>{item.description}</Typography>
+            <Typography>{item?.description}</Typography>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClickclose}>Cerrar</Button>

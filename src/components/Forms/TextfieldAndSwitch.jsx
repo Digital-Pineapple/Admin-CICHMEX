@@ -1,4 +1,3 @@
-import { useState } from "react";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import TextField from "@mui/material/TextField";
@@ -7,29 +6,43 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 const TextfieldAndSwitch = ({ item, setValues, values }) => {
-  const [switchValue, setSwitchValue] = useState(false);
-  const [textFieldValue, setTextFieldValue] = useState([]);
+  const formik = useFormik({
+    initialValues: {
+      switchValue: false,
+      textFieldValue: "",
+      error: true,
+    },
+    validationSchema: Yup.object().shape({
+      textFieldValue: Yup.number()
+        .typeError("Debe ser un número")
+        .positive("Debe ser un número positivo")
+        .required("Campo requerido")
+        .min(50, "Debe ser mayor a 50")
+        // .max(500, "Debe ser menor a 500"),
+    }),
+  });
 
   const handleSwitchChange = () => {
-    const updatedSwitchValue = !switchValue;
-    
-    if (updatedSwitchValue) {
+    const updatedSwitchValue = !formik.values.switchValue;
+    if (updatedSwitchValue && formik.values.textFieldValue !== "") {
       const newValueItem = {
         id: item._id,
         name: item.name,
-        price: textFieldValue,
+        price: formik.values.textFieldValue,
       };
       setValues([...values, newValueItem]);
+      formik.setValues({
+        ...formik.values,
+        switchValue: formik.errors.textFieldValue ? false : true,
+      });
     } else {
       const newValues = values.filter((value) => value.id !== item._id);
       setValues(newValues);
+      formik.setValues({
+        ...formik.values,
+        switchValue: false,
+      });
     }
-
-    setSwitchValue(updatedSwitchValue);
-  };
-  const handleTextFieldChange = (e) => {
-    const newValue = e.target.value;
-    setTextFieldValue(newValue);
   };
 
   return (
@@ -39,7 +52,7 @@ const TextfieldAndSwitch = ({ item, setValues, values }) => {
           <>
             <Switch
               id={item._id}
-              checked={switchValue}
+              checked={formik.values.switchValue}
               onChange={handleSwitchChange}
               value={item.id}
               item={item}
@@ -54,11 +67,23 @@ const TextfieldAndSwitch = ({ item, setValues, values }) => {
                   <InputAdornment position="start">$</InputAdornment>
                 ),
               }}
-              value={textFieldValue}
-              onChange={handleTextFieldChange}
-              disabled={switchValue}
+              value={formik.values.textFieldValue}
+              onChange={formik.handleChange("textFieldValue")}
+              onBlur={formik.handleBlur}
+              disabled={formik.values.switchValue}
+              name={`price.textFieldValue`}
               label="Precio del servicio"
               variant="standard"
+              error={
+                 formik.errors.textFieldValue
+                  ? true
+                  : false
+              }
+              helperText={
+                formik.errors.textFieldValue && formik.errors.textFieldValue
+                  ? formik.errors.textFieldValue
+                  : null
+              }
             />
           </>
         }

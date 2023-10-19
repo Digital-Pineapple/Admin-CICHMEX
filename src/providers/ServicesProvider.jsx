@@ -26,7 +26,8 @@ const ServicesProvider = ({children}) => {
       });
     } else {return enqueueSnackbar('Servicio ya agregado', {variant: 'error',anchorOrigin: {vertical: 'bottom',horizontal: 'center',},})}
     return newValues
-      }
+    
+  }
   
   return (
    

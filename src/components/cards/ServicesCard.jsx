@@ -15,6 +15,7 @@ import { Box, Button, Chip, CircularProgress, Dialog, DialogActions, DialogConte
 import { Add } from '@mui/icons-material';
 import { useState } from 'react';
 import { useServiceAdd } from '../../providers/ServicesProvider';
+import { useServicesCustomer } from '../../hooks/useServicesCustomer';
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
   return <IconButton {...other} />;
@@ -26,12 +27,13 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
-const ServicesCard = ({item}) => {
+const ServicesCard = ({item, services_id}) => {
   
   const [expanded, setExpanded] = useState(false);
   const [loadingb, setLoadingb] = useState(false);
   const [add, setAdd] = useState('')
   const [open, setOpen] = useState(false)
+  const {addOneSCustomer} =useServicesCustomer()
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -48,10 +50,14 @@ const ServicesCard = ({item}) => {
   }
 })
   }
-  const setAddServices = useServiceAdd()
 
   const handleAdd = () => {
-    setAddServices.handleAdd(item)
+    console.log(services_id);
+    try {
+      addOneSCustomer(services_id, item)
+    } catch (error) {
+      
+    }
     setAdd(true)
     setOpen(false)
   
