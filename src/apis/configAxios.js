@@ -6,6 +6,6 @@ export const instanceApi = axios.create({
   baseURL: "http://localhost:3001/api",
   responseType: 'json',
   headers: {
-    "token": Cookies.get('session') || ''
+    "token": localStorage.getItem('token') || ''
   }
 });

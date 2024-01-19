@@ -15,9 +15,12 @@ import IconoAvatar2 from '../../assets/Images/Icono App2.png'
 import { useNavigate } from 'react-router-dom';
 import { Logout } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
+import { useAuthStore } from '../../hooks';
 
 const AvatarCustom = ({ProfileImage}) => {
   const navigate = useNavigate();
+  const {startLogout}= useAuthStore()
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const {user} = useSelector(
     (state) => state.auth
@@ -34,7 +37,7 @@ const AvatarCustom = ({ProfileImage}) => {
     navigate('/Home', {replace :true})
   }
   const CloseSession = () => {
-    Cookies.remove('session')
+    startLogout()
   }
 
   return (

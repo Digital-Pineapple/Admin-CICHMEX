@@ -34,15 +34,14 @@ export const useAuthStore = () => {
 
   const RevalidateToken = async () => {
     try {
-      const { data } = await instanceApi.get('/auth/admin/user')
-      dispatch(onLogin(data.data.user))
-      Cookies.set('session', data.data.token, { expires : 7 });
+      const token = localStorage.getItem("token");
+      const { data } = await instanceApi.get("/auth/user", {
+        headers: {
+          Token: token,
+        },
+      });
       
-      // if (data.data.user.type_customer !== "3" ){
-      //   navigate("/", {replace:true} )
-      //   dispatch(onLogout(error.response.data?.message || error.response.data.errors[0].message))
-      // } 
-
+      dispatch(onLogin(data.data.user))
     } catch (error) {
       dispatch(onLogout());
       setTimeout(() => {
@@ -55,7 +54,7 @@ export const useAuthStore = () => {
 
 
   const startLogout = () => {
-    Cookies.remove('session')
+    localStorage.clear()
     dispatch(onLogout());
   };
 
