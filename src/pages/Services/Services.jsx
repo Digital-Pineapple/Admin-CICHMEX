@@ -129,7 +129,7 @@ const Services = () => {
 
   return (
     <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-      <Title>Servicios</Title>
+      <Title>Servicios Globales</Title>
       <Button
           variant="contained"
           disableElevation

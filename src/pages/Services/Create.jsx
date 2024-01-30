@@ -14,10 +14,9 @@ import { useSelector } from "react-redux";
 
 const CreateService = () => {
   const { addService } = useServices();
-  const { loadSubCategories } = useSubCategories();
+  const { loadSubCategories, subCategories } = useSubCategories();
   const navigate = useNavigate();
-  const subCategories = useSelector((state) => state.subCategories.subCategories);
-
+  
   useEffect(() => {
     loadSubCategories();
   }, []);
@@ -26,7 +25,6 @@ const CreateService = () => {
     initialValues: {
       name: "",
       description: "",
-      status: "true",
       SubCategory: "",
     },
     onSubmit: (values) => {
@@ -47,7 +45,7 @@ const CreateService = () => {
 
   return (
     <Box component="form" onSubmit={formik.handleSubmit} marginX={"10%"}>
-      <Titles name={<h2 align="center">Crear Servicio</h2>} />
+      <Titles name={<h2 align="center">Crear Servicio Global</h2>} />
       <Grid
         color="#F7BFBF"
         borderRadius={5}

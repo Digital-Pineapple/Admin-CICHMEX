@@ -6,7 +6,6 @@ import {
   DataGrid,
   GridActionsCellItem,
   GridPagination,
-  GridToolbar,
   GridToolbarContainer,
   GridToolbarQuickFilter,
   gridPageCountSelector,
@@ -14,13 +13,10 @@ import {
   useGridSelector,
 } from "@mui/x-data-grid";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
 import { useCustomers } from "../../hooks/useCustomers";
 import MuiPagination from "@mui/material/Pagination";
 import { Avatar, Chip } from "@mui/material";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import LocalCarWashIcon from "@mui/icons-material/LocalCarWash";
 import NoCrashIcon from '@mui/icons-material/NoCrash';
 import WashIcon from "@mui/icons-material/Wash";
@@ -29,10 +25,8 @@ import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
 import { redirectPages } from "../../helpers";
-import CustomAvatar from "../../components/ui/CustomAvatar";
 import { Workbook } from "exceljs";
 import { Button } from "antd";
-import { useTypeUser } from "../../hooks/useTypeUser";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -79,8 +73,6 @@ export default function Users() {
     typeUser : customer.type_user?.type,
     ...customer,
   }));
-  console.log(rowsWithIds, 'user');
- 
 
   const exportToExcel = () => {
     const workbook = new Workbook();
@@ -94,7 +86,7 @@ export default function Users() {
       "Tipo de usuario",
       "Registro con Google",
       "Telefono",
-      "cuenta Verificada",
+      // "cuenta Verificada",
     ]);
     headerRow.eachCell((cell) => {
       cell.font = { bold: true };
@@ -116,8 +108,8 @@ export default function Users() {
         ? "si":"no",
         row.phone?.phone_number ? row.phone?.phone_number: 
         row.phone?.phone_number === undefined ? 'no tiene numero': null,
-        row.accountVerify === true 
-        ? "si":"no",
+        // row.accountVerify === true 
+        // ? "si":"no",
       ]);
     });
 
@@ -230,19 +222,19 @@ export default function Users() {
           },
 
           { field: "email", headerName: "Correo", flex: 1, sortable: false },
-          {
-            field: "accountVerify",
-            headerName: "Estatus de verificación",
-            align: "center",
-            flex: 1,
-            sortable: false,
-            renderCell: (params) =>
-              params.value === true ? (
-                <CheckCircleOutlineIcon />
-              ) : (
-                <HighlightOffIcon color="error" />
-              ),
-          },
+          // {
+          //   field: "accountVerify",
+          //   headerName: "Estatus de verificación",
+          //   align: "center",
+          //   flex: 1,
+          //   sortable: false,
+          //   renderCell: (params) =>
+          //     params.value === true ? (
+          //       <CheckCircleOutlineIcon />
+          //     ) : (
+          //       <HighlightOffIcon color="error" />
+          //     ),
+          // },
           {
             field: "Opciones",
             headerName: "Opciones",
@@ -259,7 +251,7 @@ export default function Users() {
               />,
               <GridActionsCellItem
                 icon={<Edit />}
-                onClick={() => redirectPages(navigate, params.row._id)}
+                onClick={() => redirectPages(navigate, params.row._id )}
                 label="Editar usuario"
                 showInMenu
               />,

@@ -30,6 +30,9 @@ export const deleteOneServices = (service_id) =>
         try {
             await instanceApi.delete(`/services/${service_id}`)
             dispatch(deleteService(service_id));
+            enqueueSnackbar('Se eliminó correctamente', {variant:'success',anchorOrigin:{
+              horizontal:'center',vertical:'top'
+            }})
         } catch (error) {
             console.log(error);
         }

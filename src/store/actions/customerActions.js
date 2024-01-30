@@ -22,7 +22,7 @@ export const startLoadCustomers = () => {
 
 export const getOneCustomer = (customer_id) => async (dispatch) => {
   try {
-    const { data } = await instanceApi.get(`/customer/${customer_id}`);
+    const { data } = await instanceApi.get(`/user/${customer_id}`);
     dispatch(loadCustomer(data.data));
   } catch (error) {
     console.log(error);
@@ -32,6 +32,7 @@ export const getOneCustomer = (customer_id) => async (dispatch) => {
 export const deleteOneCustomer = (_id) => async (dispatch) => {
   try {
     const response = await instanceApi.delete(`/user/delete-user/${_id}`);
+    dispatch(deleteCustomer(_id))
     enqueueSnackbar(
       `Se elimino de manera correcta el usuario:${
         response.data?.fullname || ""
