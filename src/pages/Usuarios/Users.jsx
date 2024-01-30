@@ -32,6 +32,7 @@ import { redirectPages } from "../../helpers";
 import CustomAvatar from "../../components/ui/CustomAvatar";
 import { Workbook } from "exceljs";
 import { Button } from "antd";
+import { useTypeUser } from "../../hooks/useTypeUser";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -66,8 +67,7 @@ function CustomPagination(props) {
 }
 
 export default function Users() {
-  const { loadCustomers, deleteCustomer } = useCustomers();
-  const { customers } = useSelector((state) => state.customers);
+  const { loadCustomers, deleteCustomer, customers } = useCustomers();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -76,8 +76,11 @@ export default function Users() {
 
   const rowsWithIds = customers.map((customer, _id) => ({
     id: _id.toString(),
+    typeUser : customer.type_user?.type,
     ...customer,
   }));
+  console.log(rowsWithIds, 'user');
+ 
 
   const exportToExcel = () => {
     const workbook = new Workbook();
@@ -96,18 +99,17 @@ export default function Users() {
     headerRow.eachCell((cell) => {
       cell.font = { bold: true };
     });
-
     // Agregar datos de las filas
     rowsWithIds.forEach((row) => {
       worksheet.addRow([
         row._id,
         row.fullname,
         row.email,
-        row.type_customer === "1"
-          ? "Lavaodr"
-          : row.type_customer === "0"
+        row.typeUser == 1
+          ? "Lavador"
+          : row.type_user2 == 0
           ? "Cliente"
-          : row.type_customer === "3"
+          : row.type_user2  == 2
           ? "Establecimiento"
           : "usuario",
         row.google === true 
@@ -183,12 +185,12 @@ export default function Users() {
             sortable: false,
           },
           {
-            field: "type_customer",
+            field: "typeUser",
             headerName: "Tipo de usuario",
             flex: 1,
             align: "center",
             renderCell: (params) =>
-              params.value === "0" ? (
+              params.value === 0 ? (
                 <>
                   <Chip
                     icon={<PermIdentityIcon />}
@@ -197,7 +199,7 @@ export default function Users() {
                     color="primary"
                   />
                 </>
-              ) : params.value === "1" ? (
+              ) : params.value === 1 ? (
                 <>
                   <Chip
                     icon={<WashIcon />}
@@ -206,7 +208,7 @@ export default function Users() {
                     color="success"
                   />
                 </>
-              ) : (
+              ) : params.value ===  2? (
                 <>
                   <Chip
                     icon={<LocalCarWashIcon />}
@@ -215,7 +217,16 @@ export default function Users() {
                     color="info"
                   />
                 </>
-              ),
+              ):params.value === 3  ?(
+                <>
+                  <Chip
+                    icon={<LocalCarWashIcon />}
+                    label="Administrador principal"
+                    variant="outlined"
+                    color="info"
+                  />
+                </>
+              ):'',
           },
 
           { field: "email", headerName: "Correo", flex: 1, sortable: false },
