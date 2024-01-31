@@ -12,7 +12,7 @@ export const useSubCategories = () => {
 
     const loadSubCategory = async subCategory_id => await dispatch(getOneSubCategory(subCategory_id));
 
-    const deleteSubCategory = async subCategory_id => await dispatch(deleteOneSubCategory(subCategory_id));
+    const deleteSubCategory = async id => await dispatch(deleteOneSubCategory(id));
     
     const editSubCategory = async (subCategory_id, values) => await dispatch(editOneSubCategory(subCategory_id,values));
     

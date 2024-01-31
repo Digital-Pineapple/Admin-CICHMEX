@@ -69,23 +69,24 @@ export const editOneCustomer = (customer_id, values) => {
       formData.append("type_customer", values.type_customer);
       formData.append("profile_image", values.profile_image);
       const { data } = await instanceApi.post(
-        `/customer/update/${customer_id}`,
+        `/user/update/${customer_id}`,
         formData,
         {
           headers: {
-            token: Cookies.get("session"),
+            token: localStorage.getItem('token'),
             "Content-Type": "multipart/form-data",
           },
         }
       );
       dispatch(editCustomer(customer_id, data.data));
-      enqueueSnackbar("Usuario actualizada con exito", {
+      enqueueSnackbar("Editado con exito", {
         variant: "success",
         anchorOrigin: {
           vertical: "top",
           horizontal: "right",
         },
       });
+      return(data.data)
     } catch (error) {
       console.log(error);
       enqueueSnackbar(

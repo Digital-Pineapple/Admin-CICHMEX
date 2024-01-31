@@ -9,22 +9,21 @@ import { Typography } from "antd";
 import { useCategories } from "../../hooks/useCategories";
 import { useNavigate } from "react-router-dom";
 
+
 const CreateCategory = () => {
-  const { addCategory }= useCategories();
+  const { addCategory, loadCategories }= useCategories();
   const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
       name: "",
-      description: "",
-      status: 'true',
     },
     onSubmit: (values) => {
       try {
         addCategory(values)
         navigate('/auth/CategoriaServicios', {replace:true})
-        
+        loadCategories()
       } catch (error) {
-        return enqueueSnackbar('Error al crear la categoria', {variant:'error', anchorOrigin: {
+        return enqueueSnackbar(`Error: ${error.response}`, {variant:'error', anchorOrigin: {
           vertical: 'top',
           horizontal: 'right'
         }}, )
@@ -52,17 +51,6 @@ const CreateCategory = () => {
             variant="outlined"
             value={formik.values.name}
             sx={{ margin: 2 }}
-            onChange={formik.handleChange}
-          />
-          <Typography>Descipcion de la categoría</Typography>
-          <TextareaAutosize
-            aria-label="Descripcion"
-            id="description"
-            name="description"
-            minRows={6}
-            label="Descripcion"
-            value={formik.values.description}
-            style={{ width: "100%", fontFamily: "BikoBold", marginBottom: 20 }}
             onChange={formik.handleChange}
           />
       </Grid>

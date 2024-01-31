@@ -6,7 +6,6 @@ import {
   DataGrid,
   GridActionsCellItem,
   GridPagination,
-  GridToolbar,
   GridToolbarContainer,
   GridToolbarQuickFilter,
   gridPageCountSelector,
@@ -22,7 +21,7 @@ import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
 import { redirectPages } from "../../helpers";
 import { useCategories } from "../../hooks/useCategories";
-import { Button } from "@mui/material";
+import { Button, Avatar } from "@mui/material";
 import { Workbook } from "exceljs";
 import { saveAs } from 'file-saver';
 
@@ -84,7 +83,7 @@ const Categories = () => {
     const headerRow = worksheet.addRow([
       "ID",
       "Nombre de la categoria",
-      "Descripción",
+      "Imagen",
     ]);
     headerRow.eachCell((cell) => {
       cell.font = { bold: true };
@@ -92,7 +91,7 @@ const Categories = () => {
 
     // Agregar datos de las filas
     rowsWithIds.forEach((row) => {
-      worksheet.addRow([row._id, row.name, row.description]);
+      worksheet.addRow([row._id, row.name]);
     });
 
     // Crear un Blob con el archivo Excel y guardarlo
@@ -158,9 +157,15 @@ const Categories = () => {
             sortable: false,
           },
           {
-            field: "description",
-            headerName: "Descripción",
+            field: "category_image",
+            hideable: false,
+            headerName: "Imagen",
             flex: 1,
+            sortable: "false",
+            renderCell: (params) =>
+              params?.value ? (
+                <Avatar alt={params.value} src={params.value} />
+              ) : null,
           },
           {
             field: "Opciones",
