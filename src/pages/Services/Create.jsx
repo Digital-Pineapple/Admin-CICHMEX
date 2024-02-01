@@ -15,7 +15,6 @@ import { useSelector } from "react-redux";
 const CreateService = () => {
   const { addService } = useServices();
   const { loadSubCategories, subCategories } = useSubCategories();
-  const navigate = useNavigate();
   
   useEffect(() => {
     loadSubCategories();
@@ -25,14 +24,13 @@ const CreateService = () => {
     initialValues: {
       name: "",
       description: "",
-      SubCategory: "",
+      subCategory: "",
     },
     onSubmit: (values) => {
       try {
         addService(values);
-        navigate("/auth/servicios", { replace: true });
       } catch (error) {
-        return enqueueSnackbar("Error al crear el servicio", {
+        return enqueueSnackbar(`Error: ${error.data.response?.message}`, {
           variant: "error",
           anchorOrigin: {
             vertical: "top",

@@ -6,7 +6,6 @@ import {
   DataGrid,
   GridActionsCellItem,
   GridPagination,
-  GridToolbar,
   GridToolbarContainer,
   GridToolbarQuickFilter,
   gridPageCountSelector,
@@ -15,20 +14,13 @@ import {
 } from "@mui/x-data-grid";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useCustomers } from "../../hooks/useCustomers";
 import MuiPagination from "@mui/material/Pagination";
-import { Button, Chip } from "@mui/material";
-import PermIdentityIcon from "@mui/icons-material/PermIdentity";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import LocalCarWashIcon from "@mui/icons-material/LocalCarWash";
-import WashIcon from "@mui/icons-material/Wash";
-import { DoneAllOutlined, Download, Edit } from "@mui/icons-material";
+import { Button, Avatar } from "@mui/material";
+import { Download, Edit } from "@mui/icons-material";
 import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
 import { redirectPages } from '../../helpers';
-import { useCategories } from "../../hooks/useCategories";
 import { useSubCategories } from "../../hooks/useSubCategories";
 import { Workbook } from "exceljs";
 
@@ -88,7 +80,7 @@ const SubCategories = () => {
     const headerRow = worksheet.addRow([
       "ID",
       "Nombre de la subcategoria",
-      "Descripción",
+      "Imagen",
     ]);
     headerRow.eachCell((cell) => {
       cell.font = { bold: true };
@@ -161,9 +153,15 @@ const SubCategories = () => {
             sortable: false,
           },
           {
-            field: "description",
-            headerName: "Descripción",
+            field: "subCategory_image",
+            hideable: false,
+            headerName: "Imagen",
             flex: 1,
+            sortable: "false",
+            renderCell: (params) =>
+              params?.value ? (
+                <Avatar alt={params.value} src={params.value} />
+              ) : null,
           },
           {
             field: "Opciones",

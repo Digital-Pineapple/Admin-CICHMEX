@@ -17,6 +17,7 @@ const CreateTypeCar = () => {
     },
     onSubmit: (values) => {
       try {
+        console.log(values, 'crear');
         addTypeCar(values);
         navigate("/auth/typeCar", { replace: true });
       } catch (error) {

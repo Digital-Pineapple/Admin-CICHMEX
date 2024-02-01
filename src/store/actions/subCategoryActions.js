@@ -70,7 +70,7 @@ export const addOneSubCategory = (values) => async (dispatch) => {
 
 export const deleteOneSubCategory = (id) => async (dispatch) => {
   try {
-    await instanceApi.delete(`/sub-category/${id}`);
+   const {data} =  await instanceApi.delete(`/sub-category/${id}`);
     enqueueSnackbar("Se eliminó con éxito", {
       variant: "success",
       anchorOrigin: {
@@ -79,6 +79,7 @@ export const deleteOneSubCategory = (id) => async (dispatch) => {
       },
     });
     dispatch(deleteSubCategory(id));
+    return data
   } catch (error) {
     enqueueSnackbar(`Ocurrió un error al eliminar la subcategoria + ${error}`, {
       variant: "error",
@@ -95,31 +96,30 @@ export const editOneSubCategory = (subCategory_id, values) => {
     try {
       const formData = new FormData();
       formData.append("name", values.name);
-      formData.append("description", values.description);
       formData.append("image", values.subCategory_image);
-      formData.append("status", values.status);
       formData.append("category", values.category);
       const { data } = await instanceApi.post(
         `/sub-category/${subCategory_id}`,
         formData,
         {
           headers: {
-            token: Cookies.get("session"),
+            token: localStorage.getItem('token'),
             "Content-Type": "multipart/form-data",
           },
         }
       );
       dispatch(editSubCategory(subCategory_id, data.data));
-      enqueueSnackbar("Subategoria actualizada con exito", {
+      enqueueSnackbar("Editado con éxito con exito", {
         variant: "success",
         anchorOrigin: {
           vertical: "top",
           horizontal: "right",
         },
       });
+      return data
     } catch (error) {
       enqueueSnackbar(
-        `Ocurrió un error al actualizar la subcategoria + ${error}`,
+        `Error:  ${error.data.response?.message}`,
         {
           variant: "error",
           anchorOrigin: {

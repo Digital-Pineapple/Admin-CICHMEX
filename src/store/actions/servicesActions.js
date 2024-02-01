@@ -79,6 +79,7 @@ export const deleteOneServices = (service_id) =>
             vertical: 'top',
             horizontal: 'right'
           }})
+          return data.data
       
         } catch (error) {
           console.log(error);
