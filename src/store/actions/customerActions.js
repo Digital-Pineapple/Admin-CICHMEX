@@ -6,7 +6,7 @@ import { enqueueSnackbar } from "notistack"
 export const startLoadCustomers = () => {
     return async (dispatch) => {
         try {
-            const { data } = await instanceApi.get('/customer')
+            const { data } = await instanceApi.get('/user')
             dispatch(loadCustomers(data.data))
         } catch (error) {
             console.log(error)

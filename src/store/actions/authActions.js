@@ -7,13 +7,13 @@ import { onLogin } from '../reducer/authReducer'
 export const startLogin = ({ email, password }) => async (dispatch) => {
  
   try {
-    const { data } = await instanceApi.post("/auth/admin/login", {
+    const { data } = await instanceApi.post("/auth/login/admin", {
       email,
       password,
     });
     console.log(email,password);
     dispatch(onLogin(data.data.user));
-    Cookies.set("session", data.data.token, { expires: 7 });
+    localStorage.setItem("TokenAdmin", data.data.token, { expires: 7 });
     return {
       success: true,
     };
@@ -37,7 +37,7 @@ export const startRevalidateToken = () => async (dispatch) => {
   try {
     const { data } = await instanceApi.get("/auth/admin/user");
     dispatch(onLogin(data.data.user));
-    Cookies.set("session", data.data.token, { expires: 7 });
+    localStorage.getItem("TokenAdmin", data.data.token, { expires: 7 });
   } catch (error) {
     console.log(error);
   }

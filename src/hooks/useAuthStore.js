@@ -3,6 +3,7 @@ import { clearErrorMessage, onLogin, onLogout } from "../store";
 import { useNavigate } from "react-router-dom";
 import { instanceApi } from "../apis/configAxios";
 import Cookies from "js-cookie";
+import userApi from "../apis/userApi";
 
 export const useAuthStore = () => {
   const { status, user, errorMessage, logged} = useSelector(
@@ -34,9 +35,13 @@ export const useAuthStore = () => {
 
   const RevalidateToken = async () => {
     try {
-      const { data } = await instanceApi.get('/auth/admin/user')
-      dispatch(onLogin(data.data.user))
-      Cookies.set('session', data.data.token, { expires : 7 });
+      const token1 = localStorage.getItem('TokenAdmin');
+      const { data } = await userApi.get("/auth/user", {
+        headers: {
+          token: token1,
+        },
+      });
+      dispatch (onLogin(data.data))
       
       // if (data.data.user.type_customer !== "3" ){
       //   navigate("/", {replace:true} )
@@ -44,6 +49,7 @@ export const useAuthStore = () => {
       // } 
 
     } catch (error) {
+      console.log(error);
       dispatch(onLogout());
       setTimeout(() => {
         onLogout(
@@ -55,7 +61,7 @@ export const useAuthStore = () => {
 
 
   const startLogout = () => {
-    Cookies.remove('session')
+    localStorage.removeItem("TokenAdmin");
     dispatch(onLogout());
   };
 

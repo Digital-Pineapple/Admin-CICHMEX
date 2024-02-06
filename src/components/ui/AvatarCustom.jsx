@@ -34,7 +34,7 @@ const AvatarCustom = ({ProfileImage}) => {
     navigate('/Home', {replace :true})
   }
   const CloseSession = () => {
-    Cookies.remove('session')
+    localStorage.removeItem('TokenAdmin')
   }
 
   return (
