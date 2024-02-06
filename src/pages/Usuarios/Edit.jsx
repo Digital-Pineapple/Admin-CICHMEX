@@ -29,30 +29,30 @@ import { useSelector } from "react-redux";
 import AddImage from "../../assets/Images/add.png";
 import { editCustomer } from "../../store/reducer/customerReducer";
 import CustomBreadcrumb from "../../components/ui/CustomBreadcrumb";
+import { useTypeUser } from '../../hooks/useTypeUser'
 
 const Edit = () => {
   const { id } = useParams();
   const { loadCustomer, customer, editCustomer } = useCustomers();
+  const {loadTypeUsers, typeUsers} = useTypeUser()
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
-  
-  
+
   const handleImage = ({ target }) => {
     setPreviewImage(URL.createObjectURL(target.files[0]));
     setSelectedFile(target.files[0]);
   };
-  
-  
+
   useEffect(() => {
     loadCustomer(id);
+    loadTypeUsers()
   }, [id]);
-
 
   useEffect(() => {
     formik.setValues({
       fullname: customer.fullname,
-      type_customer: customer.type_customer,
+      type_customer: customer.type_user?.name,
       profile_image: previewImage,
     });
     setPreviewImage(customer.profile_image);
@@ -61,16 +61,16 @@ const Edit = () => {
   const formik = useFormik({
     initialValues: {
       fullname: "",
-      type_customer: "",
+      type_customer: customer.type_user?.name,
       profile_image: "",
     },
     onSubmit: (values) => {
       try {
         values.profile_image = selectedFile;
+        console.log(values,'edit');
         editCustomer(customer._id, values);
-        navigate("/auth/usuarios", { replace: true });
       } catch (error) {
-        return enqueueSnackbar("Error al editar el usuario", {
+        return enqueueSnackbar(`Error: ${error.response.data?.message}`, {
           variant: "error",
           anchorOrigin: {
             vertical: "top",
@@ -95,7 +95,7 @@ const Edit = () => {
         container
         spacing={4}
       >
-        <CustomBreadcrumb id={id}/>
+        <CustomBreadcrumb id={id} />
         <Grid
           item
           sm={8}
@@ -150,17 +150,17 @@ const Edit = () => {
           <FormControl>
             <FormLabel>TIpo de usuario</FormLabel>
             <Select
-          id="type_customer"
-          type='text'
-          name="type_customer"
-          value={formik.values.type_customer}
-          label="Tipo de usuario"
-          onChange={formik.handleChange}
-        >
-          <MenuItem value={"1"}>Lavador independiente</MenuItem>
-          <MenuItem value={"2"}>Establecimiento</MenuItem>
-          <MenuItem value={"0"}>Usuario</MenuItem>
-        </Select>
+              id="type_customer"
+              type="text"
+              name="type_customer"
+              value={formik.values.type_customer}
+              label="Tipo de usuario"
+              onChange={formik.handleChange}
+            >
+              {typeUsers? typeUsers.map((item, index)=>{return(
+                <MenuItem key={index} value={item?._id}>{item.name}</MenuItem>
+              )}):''}
+            </Select>
             <FormHelperText>Selecciona un tipo de usuario</FormHelperText>
           </FormControl>
 

@@ -69,7 +69,6 @@ const Edit = () => {
       try {
         values.subCategory_image = selectedFile;
         editSubCategory(subCategory._id, values);
-        navigate("/auth/SubCategorias", { replace: true });
       } catch (error) {
         console.log(error);
         return enqueueSnackbar("Error al editar la subcategoria", {
@@ -106,7 +105,7 @@ const Edit = () => {
           flexDirection={"column"}
           alignItems={"center"}
         >
-           <Grid item>
+             <Grid item>
             <Card sx={{ maxWidth: 345 }}>
               <CardActionArea>
                 <CardMedia
@@ -114,7 +113,7 @@ const Edit = () => {
                   image={
                     selectedFile
                       ? previewImage
-                      : subCategory?.subCategory_image || AddImage
+                      : subCategory.subCategory_image || AddImage
                   }
                   title={selectedFile ? selectedFile.name : "Selecciona imagen"}
                   component={"input"}
@@ -142,17 +141,6 @@ const Edit = () => {
             variant="outlined"
             value={formik.values.name}
             sx={{ margin: 2 }}
-            onChange={formik.handleChange}
-          />
-          <Typography>Descipcion de la subcategoría</Typography>
-          <TextareaAutosize
-            aria-label="minimum height"
-            id="description"
-            name="description"
-            minRows={6}
-            label="Descripcion"
-            value={formik.values.description}
-            style={{ width: "100%", fontFamily: "BikoBold", marginBottom: 20 }}
             onChange={formik.handleChange}
           />
           <FormControl>

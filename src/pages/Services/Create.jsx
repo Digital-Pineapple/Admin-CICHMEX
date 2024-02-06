@@ -14,10 +14,8 @@ import { useSelector } from "react-redux";
 
 const CreateService = () => {
   const { addService } = useServices();
-  const { loadSubCategories } = useSubCategories();
-  const navigate = useNavigate();
-  const subCategories = useSelector((state) => state.subCategories.subCategories);
-
+  const { loadSubCategories, subCategories } = useSubCategories();
+  
   useEffect(() => {
     loadSubCategories();
   }, []);
@@ -26,15 +24,13 @@ const CreateService = () => {
     initialValues: {
       name: "",
       description: "",
-      status: "true",
-      SubCategory: "",
+      subCategory: "",
     },
     onSubmit: (values) => {
       try {
         addService(values);
-        navigate("/auth/servicios", { replace: true });
       } catch (error) {
-        return enqueueSnackbar("Error al crear el servicio", {
+        return enqueueSnackbar(`Error: ${error.data.response?.message}`, {
           variant: "error",
           anchorOrigin: {
             vertical: "top",
@@ -47,7 +43,7 @@ const CreateService = () => {
 
   return (
     <Box component="form" onSubmit={formik.handleSubmit} marginX={"10%"}>
-      <Titles name={<h2 align="center">Crear Servicio</h2>} />
+      <Titles name={<h2 align="center">Crear Servicio Global</h2>} />
       <Grid
         color="#F7BFBF"
         borderRadius={5}

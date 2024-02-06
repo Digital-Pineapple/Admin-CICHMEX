@@ -15,11 +15,16 @@ export const startLoadSubCategories = () => {
       const { data } = await instanceApi.get("/sub-category");
       dispatch(loadSubCategories(data.data));
     } catch (error) {
-      enqueueSnackbar(`Ocurrió un error al cargar las sub-categorias + ${error}`,
-           {variant:'error', anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right'
-          }})
+      enqueueSnackbar(
+        `Ocurrió un error al cargar las sub-categorias + ${error}`,
+        {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        }
+      );
     }
   };
 };
@@ -29,96 +34,128 @@ export const getOneSubCategory = (subCategory_id) => async (dispatch) => {
     const { data } = await instanceApi.get(`/sub-category/${subCategory_id}`);
     dispatch(loadSubCategory(data.data));
   } catch (error) {
-    enqueueSnackbar(`Ocurrió un error al cargar la sub-categoria + ${error}`,
-           {variant:'error', anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right'
-          }})
+    enqueueSnackbar(`Ocurrió un error al cargar la sub-categoria + ${error}`, {
+      variant: "error",
+      anchorOrigin: {
+        vertical: "top",
+        horizontal: "right",
+      },
+    });
   }
 };
 export const addOneSubCategory = (values) => async (dispatch) => {
   try {
     const { data } = await instanceApi.post(`/sub-category/`, values);
     dispatch(onAddNewSubCategory(data.data));
-    enqueueSnackbar('Subcategoria creada con éxito', {variant:'success', anchorOrigin: {
-      vertical: 'top',
-      horizontal: 'right'
-    }})
-
+    enqueueSnackbar("Subcategoria creada con éxito", {
+      variant: "success",
+      anchorOrigin: {
+        vertical: "top",
+        horizontal: "right",
+      },
+    });
   } catch (error) {
-    console.log(error);
-    enqueueSnackbar(`Ocurrió un error al agregar la subcategoria : ${error.response.data?.message}`,
-    {variant:'error', anchorOrigin: {
-     vertical: 'top',
-     horizontal: 'right'
-   }})
+    enqueueSnackbar(
+      `Error: ${error.response.data?.message}`,
+      {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      }
+    );
   }
 };
 
-export const deleteOneSubCategory = (subCategory_id) => async (dispatch) => {
+export const deleteOneSubCategory = (id) => async (dispatch) => {
   try {
-    await instanceApi.delete(`/sub-category/${subCategory_id}`);
-    dispatch(deleteSubCategory(subCategory_id));
+   const {data} =  await instanceApi.delete(`/sub-category/${id}`);
+    enqueueSnackbar("Se eliminó con éxito", {
+      variant: "success",
+      anchorOrigin: {
+        horizontal: "right",
+        vertical: "top",
+      },
+    });
+    dispatch(deleteSubCategory(id));
+    return data
   } catch (error) {
-    enqueueSnackbar(`Ocurrió un error al eliminar la subcategoria + ${error}`,
-           {variant:'error', anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right'
-          }})
+    enqueueSnackbar(`Ocurrió un error al eliminar la subcategoria + ${error}`, {
+      variant: "error",
+      anchorOrigin: {
+        vertical: "top",
+        horizontal: "right",
+      },
+    });
   }
 };
 
 export const editOneSubCategory = (subCategory_id, values) => {
-    return async (dispatch) => {
-        try {
-          const formData = new FormData();
-          formData.append('name', values.name );
-          formData.append('description',values.description);
-          formData.append('image',values.subCategory_image);
-          formData.append('status', values.status);
-          formData.append('category', values.category);
-        const { data } = await instanceApi.post(
-            `/sub-category/${subCategory_id}`,formData, {
-              headers: {
-                token: Cookies.get("session"),
-                "Content-Type": "multipart/form-data",
-              }
-            }
-        );
-        dispatch(editSubCategory(subCategory_id, data.data));
-        enqueueSnackbar('Subategoria actualizada con exito', {variant:'success', anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right'
-        }})
-        } catch (error) {
-          enqueueSnackbar(`Ocurrió un error al actualizar la subcategoria + ${error}`,
-           {variant:'error', anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right'
-          }})
-        }
-    };
-
-};
-export const searchSubCategories = ({value}) => {
   return async (dispatch) => {
-      try {
+    try {
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("image", values.subCategory_image);
+      formData.append("category", values.category);
+      const { data } = await instanceApi.post(
+        `/sub-category/${subCategory_id}`,
+        formData,
+        {
+          headers: {
+            token: localStorage.getItem('token'),
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      dispatch(editSubCategory(subCategory_id, data.data));
+      enqueueSnackbar("Editado con éxito con exito", {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+      return data
+    } catch (error) {
+      enqueueSnackbar(
+        `Error:  ${error.data.response?.message}`,
+        {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        }
+      );
+    }
+  };
+};
+export const searchSubCategories = ({ value }) => {
+  return async (dispatch) => {
+    try {
       const { data } = await instanceApi.get(
-          `/sub-category/search/search${value ? `?search=${value}` : `?search=${""}`}`,
+        `/sub-category/search/search${
+          value ? `?search=${value}` : `?search=${""}`
+        }`
       );
       console.log(data);
-      dispatch(loadSubCategories( data.data));
-      enqueueSnackbar('Categorias encontradas con exito', {variant:'success', anchorOrigin: {
-        vertical: 'top',
-        horizontal: 'right'
-      }})
-      } catch (error) {
-        enqueueSnackbar(`Ocurrió un error al buscar la categoria + ${error}`,
-         {variant:'error', anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right'
-        }})
-      }
+      dispatch(loadSubCategories(data.data));
+      enqueueSnackbar("Categorias encontradas con exito", {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    } catch (error) {
+      enqueueSnackbar(`Ocurrió un error al buscar la categoria + ${error}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    }
   };
-
 };

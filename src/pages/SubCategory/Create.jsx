@@ -33,8 +33,6 @@ const CreateSubCategory = () => {
   const formik = useFormik({
     initialValues: {
       name: "",
-      description: "",
-      status: "true",
       category: "",
     },
     onSubmit: (values) => {
@@ -42,7 +40,7 @@ const CreateSubCategory = () => {
         addSubCategory(values);
         navigate("/auth/SubCategorias", { replace: true });
       } catch (error) {
-        return enqueueSnackbar("Error al crear la subcategoria", {
+        return enqueueSnackbar(`Error:${error.response}`, {
           variant: "error",
           anchorOrigin: {
             vertical: "top",
@@ -73,17 +71,6 @@ const CreateSubCategory = () => {
           variant="outlined"
           value={formik.values.name}
           sx={{ margin: 2 }}
-          onChange={formik.handleChange}
-        />
-        <Typography>Descipcion de la subcategoría</Typography>
-        <TextareaAutosize
-          aria-label="Descripcion"
-          id="description"
-          name="description"
-          minRows={6}
-          label="Descripcion"
-          value={formik.values.description}
-          style={{ width: "100%", fontFamily: "BikoBold", marginBottom: 20 }}
           onChange={formik.handleChange}
         />
         <FormControl>

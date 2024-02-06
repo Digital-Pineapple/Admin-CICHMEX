@@ -25,8 +25,6 @@ export const categoryReducer = createSlice({
           return {
             ...category,
             name: payload.name,
-            description: payload.description,
-            status: payload.status,
             category_image: payload.category_image,
           };
         }

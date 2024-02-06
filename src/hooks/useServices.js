@@ -1,9 +1,11 @@
 import { useDispatch, useSelector } from "react-redux"
 import { startLoadServices, deleteOneServices, getOneService, editOneService, addOneService, searchServices, startLoadCuServ, addOneCustomerService } from "../store/actions/servicesActions";
+import { useNavigate } from "react-router-dom";
 
 export const useServices = () => {
 
     const dispatch = useDispatch();
+    const navigate = useNavigate()
 
     const { services, service } = useSelector(state => state.services);
 
@@ -15,7 +17,14 @@ export const useServices = () => {
 
     const editService = async (service_id, values) => dispatch(editOneService(service_id, values))
 
-    const addService = async values => await dispatch(addOneService(values));
+    const addService = async values => 
+    {
+        const response  = await dispatch(addOneService(values));
+        if (response) {
+            navigate('/auth/servicios')
+        }
+
+    }
 
     const searchService = async value => await dispatch(searchServices(value));
 

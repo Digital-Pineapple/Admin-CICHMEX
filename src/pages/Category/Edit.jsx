@@ -38,8 +38,6 @@ const Edit = () => {
   useEffect(() => {
     formik.setValues({
       name: category.name,
-      description: category.description,
-      status: category.status,
       category_image: previewImage,
     });
   }, [category]);
@@ -47,8 +45,6 @@ const Edit = () => {
   const formik = useFormik({
     initialValues: {
       name: "",
-      description: "",
-      status: true ,
       category_image: "",
     },
     onSubmit: (values) => {
@@ -131,18 +127,6 @@ const Edit = () => {
             sx={{ margin: 2 }}
             onChange={formik.handleChange}
           />
-          <Typography>Descripcion de la categoría</Typography>
-          <TextareaAutosize
-            aria-label="minimum height"
-            id="description"
-            name="description"
-            minRows={6}
-            label="Descripcion"
-            value={formik.values.description}
-            style={{ width: "100%", fontFamily: "BikoBold", marginBottom: 20 }}
-            onChange={formik.handleChange}
-          />
-
           <Grid
             container
             justifyContent={"center"}

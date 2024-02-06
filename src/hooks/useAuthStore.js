@@ -35,6 +35,7 @@ export const useAuthStore = () => {
 
   const RevalidateToken = async () => {
     try {
+<<<<<<< HEAD
       const token1 = localStorage.getItem('TokenAdmin');
       const { data } = await userApi.get("/auth/user", {
         headers: {
@@ -42,12 +43,16 @@ export const useAuthStore = () => {
         },
       });
       dispatch (onLogin(data.data))
+=======
+      const token = localStorage.getItem("token");
+      const { data } = await instanceApi.get("/auth/user", {
+        headers: {
+          Token: token,
+        },
+      });
+>>>>>>> 51f92ccf0726bf9bcec9bee579e196ab2d6180c5
       
-      // if (data.data.user.type_customer !== "3" ){
-      //   navigate("/", {replace:true} )
-      //   dispatch(onLogout(error.response.data?.message || error.response.data.errors[0].message))
-      // } 
-
+      dispatch(onLogin(data.data.user))
     } catch (error) {
       console.log(error);
       dispatch(onLogout());
@@ -61,7 +66,11 @@ export const useAuthStore = () => {
 
 
   const startLogout = () => {
+<<<<<<< HEAD
     localStorage.removeItem("TokenAdmin");
+=======
+    localStorage.clear()
+>>>>>>> 51f92ccf0726bf9bcec9bee579e196ab2d6180c5
     dispatch(onLogout());
   };
 

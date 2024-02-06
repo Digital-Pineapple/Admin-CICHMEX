@@ -6,7 +6,6 @@ import {
   DataGrid,
   GridActionsCellItem,
   GridPagination,
-  GridToolbar,
   GridToolbarContainer,
   GridToolbarQuickFilter,
   gridPageCountSelector,
@@ -14,22 +13,18 @@ import {
   useGridSelector,
 } from "@mui/x-data-grid";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
 import { useCustomers } from "../../hooks/useCustomers";
 import MuiPagination from "@mui/material/Pagination";
 import { Avatar, Chip } from "@mui/material";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import LocalCarWashIcon from "@mui/icons-material/LocalCarWash";
 import NoCrashIcon from '@mui/icons-material/NoCrash';
 import WashIcon from "@mui/icons-material/Wash";
-import { ControlPointDuplicateOutlined, DoneAllOutlined, Download, Edit, Phone } from "@mui/icons-material";
+import { ControlPointDuplicateOutlined, DoneAllOutlined, Download, Edit, Phone, SupervisorAccount } from "@mui/icons-material";
 import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
 import { redirectPages } from "../../helpers";
-import CustomAvatar from "../../components/ui/CustomAvatar";
 import { Workbook } from "exceljs";
 import { Button } from "antd";
 
@@ -66,8 +61,7 @@ function CustomPagination(props) {
 }
 
 export default function Users() {
-  const { loadCustomers, deleteCustomer } = useCustomers();
-  const { customers } = useSelector((state) => state.customers);
+  const { loadCustomers, deleteCustomer, customers } = useCustomers();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -76,6 +70,7 @@ export default function Users() {
 
   const rowsWithIds = customers.map((customer, _id) => ({
     id: _id.toString(),
+    typeUser : customer.type_user?.type,
     ...customer,
   }));
 
@@ -91,31 +86,30 @@ export default function Users() {
       "Tipo de usuario",
       "Registro con Google",
       "Telefono",
-      "cuenta Verificada",
+      // "cuenta Verificada",
     ]);
     headerRow.eachCell((cell) => {
       cell.font = { bold: true };
     });
-
     // Agregar datos de las filas
     rowsWithIds.forEach((row) => {
       worksheet.addRow([
         row._id,
         row.fullname,
         row.email,
-        row.type_customer === "1"
-          ? "Lavaodr"
-          : row.type_customer === "0"
+        row.typeUser == 1
+          ? "Lavador"
+          : row.type_user2 == 0
           ? "Cliente"
-          : row.type_customer === "3"
+          : row.type_user2  == 2
           ? "Establecimiento"
           : "usuario",
         row.google === true 
         ? "si":"no",
         row.phone?.phone_number ? row.phone?.phone_number: 
         row.phone?.phone_number === undefined ? 'no tiene numero': null,
-        row.accountVerify === true 
-        ? "si":"no",
+        // row.accountVerify === true 
+        // ? "si":"no",
       ]);
     });
 
@@ -183,12 +177,12 @@ export default function Users() {
             sortable: false,
           },
           {
-            field: "type_customer",
+            field: "typeUser",
             headerName: "Tipo de usuario",
             flex: 1,
             align: "center",
             renderCell: (params) =>
-              params.value === "0" ? (
+              params.value === 0 ? (
                 <>
                   <Chip
                     icon={<PermIdentityIcon />}
@@ -197,7 +191,7 @@ export default function Users() {
                     color="primary"
                   />
                 </>
-              ) : params.value === "1" ? (
+              ) : params.value === 1 ? (
                 <>
                   <Chip
                     icon={<WashIcon />}
@@ -206,7 +200,7 @@ export default function Users() {
                     color="success"
                   />
                 </>
-              ) : (
+              ) : params.value ===  2? (
                 <>
                   <Chip
                     icon={<LocalCarWashIcon />}
@@ -215,23 +209,32 @@ export default function Users() {
                     color="info"
                   />
                 </>
-              ),
+              ):params.value === 3  ?(
+                <>
+                  <Chip
+                    icon={<SupervisorAccount />}
+                    label="Administrador principal"
+                    variant="outlined"
+                    color="info"
+                  />
+                </>
+              ):'',
           },
 
           { field: "email", headerName: "Correo", flex: 1, sortable: false },
-          {
-            field: "accountVerify",
-            headerName: "Estatus de verificación",
-            align: "center",
-            flex: 1,
-            sortable: false,
-            renderCell: (params) =>
-              params.value === true ? (
-                <CheckCircleOutlineIcon />
-              ) : (
-                <HighlightOffIcon color="error" />
-              ),
-          },
+          // {
+          //   field: "accountVerify",
+          //   headerName: "Estatus de verificación",
+          //   align: "center",
+          //   flex: 1,
+          //   sortable: false,
+          //   renderCell: (params) =>
+          //     params.value === true ? (
+          //       <CheckCircleOutlineIcon />
+          //     ) : (
+          //       <HighlightOffIcon color="error" />
+          //     ),
+          // },
           {
             field: "Opciones",
             headerName: "Opciones",
@@ -248,7 +251,7 @@ export default function Users() {
               />,
               <GridActionsCellItem
                 icon={<Edit />}
-                onClick={() => redirectPages(navigate, params.row._id)}
+                onClick={() => redirectPages(navigate, params.row._id )}
                 label="Editar usuario"
                 showInMenu
               />,
