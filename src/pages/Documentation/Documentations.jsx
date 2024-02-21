@@ -25,16 +25,17 @@ import { useCustomers } from "../../hooks/useCustomers";
 import VerifyButton from "../../components/Buttons/VerifyButton";
 import { enqueueSnackbar } from "notistack";
 import CustomBreadcrumb from "../../components/ui/CustomBreadcrumb";
+
 const Documentation = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { loadDocumentation } = useDocumentations();
-  const { loadCustomer, customer, verifyCustomer } = useCustomers();
-  const { documentations } = useSelector((state) => state.documentations);
-  const [open, setOpen] = useState(false)
-  
+  const { loadDocumentation, documentations } = useDocumentations();
+  const { loadUser, customer, verifyCustomer } = useCustomers();
+
+  const [open, setOpen] = useState(false);
+
   useEffect(() => {
-    loadCustomer(id);
+    loadUser(id);
     loadDocumentation(id);
   }, [id]);
 
@@ -46,27 +47,17 @@ const Documentation = () => {
     setOpen(false);
   };
 
-  
-
   const out = () => {
     navigate("/auth/usuarios", { replace: true });
   };
   const findFile = (name, targetName) => {
     return documentations.find(
-      (documentations) => documentations.name === targetName 
+      (documentations) => documentations.name === targetName
     );
   };
-  const verification = () =>{
-    try { 
-      verifyCustomer(id)
-      navigate("/auth/usuarios", { replace: true });
-      return enqueueSnackbar("Se verificó con éxito", {
-        variant: "success",
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "right",
-        },
-      });
+  const verification = () => {
+    try {
+      verifyCustomer(id);
     } catch (error) {
       console.log(error);
       return enqueueSnackbar("Error al verificar el usuario", {
@@ -77,13 +68,13 @@ const Documentation = () => {
         },
       });
     }
-  }
+  };
 
   const pathIne = findFile(documentations.name, "ine");
 
   const pathProok_Address = findFile(documentations.name, "prook_address");
 
-  const pathCurp = findFile(documentations.name, "curp");
+  // const pathCurp = findFile(documentations.name, "curp");
 
   const pathCriminalRecord = findFile(documentations.name, "criminal_record");
 
@@ -91,12 +82,13 @@ const Documentation = () => {
 
   return (
     <Box marginX={"10%"}>
-       <CustomBreadcrumb id={id} />
-    
+      <CustomBreadcrumb id={id} />
+
       <Titles name={<h2 align="center">Verificar Documentos</h2>} />
 
-      <Grid container spacing={2} columns={16}>
-        <Grid item xs={8}>
+        {/* Informacion de usuario */}
+      
+        <Grid container display={'block'} justifyContent={'center'} alignContent={'center'}>
           <Card sx={{ minWidth: "50%" }}>
             <CardContent>
               <Avatar
@@ -137,15 +129,20 @@ const Documentation = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={4} direction={"row"}>
+        {/* Documentos */}
+
+  
+
+        <Grid container display={'flex'} minHeight={'50vh'} justifyContent={'center'} alignContent={'center'} direction={"row"}>
+        {/* Componente ine */}
+
           <CardContent>
             <ModalDocuments
               pdfPath={pathIne?.url}
               name={"Identificacion Oficial"}
             />
-            {pathProok_Address?.message === undefined ||
-            pathIne?.message.length > 0 &&
-            pathIne?.verify === false ? (
+            {pathIne?.message === undefined ||
+            (pathIne?.message.length > 0 && pathIne?.verify === false) ? (
               <Paper elevation={5} sx={{ padding: "20px" }}>
                 <Typography variant="h5">Motivo de rechazo:</Typography>
                 {pathIne?.message}
@@ -155,15 +152,15 @@ const Documentation = () => {
               <VerifyButton pathFile={pathIne} />
             </CardActions>
           </CardContent>
+{/* Componente Comprobante de domicilio */}
           <CardContent>
-
             <ModalDocuments
               pdfPath={pathProok_Address?.url}
               name={"Comprobante de domicilio"}
             />
             {pathProok_Address?.message === undefined ||
-            pathProok_Address?.message.length >= 0 &&
-            pathProok_Address?.verify === false ? (
+            (pathProok_Address?.message.length >= 0 &&
+              pathProok_Address?.verify === false) ? (
               <Paper elevation={5} sx={{ padding: "20px" }}>
                 <Typography variant="h5">Motivo de rechazo:</Typography>
                 {pathProok_Address?.message}
@@ -173,10 +170,11 @@ const Documentation = () => {
               <VerifyButton pathFile={pathProok_Address} />
             </CardActions>
           </CardContent>
-          <CardContent>
+{/* Componente curp */}
+          {/* <CardContent>
             <ModalDocuments pdfPath={pathCurp?.url} name={"Curp"} />
             {pathCurp?.message === undefined ||
-            pathCurp?.message.length > 0 && pathCurp?.verify === false ? (
+            (pathCurp?.message.length > 0 && pathCurp?.verify === false) ? (
               <Paper elevation={5} sx={{ padding: "20px" }}>
                 <Typography variant="h5">Motivo de rechazo:</Typography>
                 {pathCurp?.message}
@@ -185,17 +183,18 @@ const Documentation = () => {
             <CardActions>
               <VerifyButton pathFile={pathCurp} />
             </CardActions>
-          </CardContent>
-          </Grid>
-          <Grid item xs={4} direction={"row"}>
+          </CardContent> */}
+
+        {/* Componente antecedentes penales */}
+
           <CardContent>
             <ModalDocuments
               pdfPath={pathCriminalRecord?.url}
               name={"Antecedentes Penales"}
             />
             {pathCriminalRecord?.message === undefined ||
-            pathCriminalRecord?.message.length > 0 &&
-            pathCriminalRecord?.verify === false ? (
+            (pathCriminalRecord?.message.length > 0 &&
+              pathCriminalRecord?.verify === false) ? (
               <Paper elevation={5} sx={{ padding: "20px" }}>
                 <Typography variant="h5">Motivo de rechazo:</Typography>
                 {pathCriminalRecord?.message}
@@ -205,11 +204,11 @@ const Documentation = () => {
               <VerifyButton pathFile={pathCriminalRecord} />
             </CardActions>
           </CardContent>
-
+{/* Componente RFC */}
           <CardContent>
             <ModalDocuments pdfPath={pathRfc?.url} name={"RFC"} />
-            { pathRfc?.message === undefined || 
-            pathRfc?.message.length > 0 && pathRfc?.verify === false ? (
+            {pathRfc?.message === undefined ||
+            (pathRfc?.message.length > 0 && pathRfc?.verify === false) ? (
               <Paper elevation={5} sx={{ padding: "20px" }}>
                 <Typography variant="h5">Motivo de rechazo:</Typography>
                 {pathRfc?.message}
@@ -219,11 +218,11 @@ const Documentation = () => {
               <VerifyButton pathFile={pathRfc} />
             </CardActions>
           </CardContent>
+
         </Grid>
-      </Grid>
-      <Grid justifyContent={"center"} width="100%">
+
+      <Grid display={'flex'}  justifyContent={"center"} marginBottom={'3rem'}  minHeight={'5vh'} width="100%">
         {pathIne?.verify === true &&
-        pathCurp?.verify === true &&
         pathProok_Address?.verify === true &&
         pathCriminalRecord?.verify === true &&
         pathRfc?.verify === true ? (
@@ -239,17 +238,13 @@ const Documentation = () => {
           Salir
         </Button>
       </Grid>
-      
-      <Dialog
-        open={open}
-        onClose={handleClose}
-      >
-        <DialogTitle>
-          {"¿Estas seguro(a) de verificar la cuenta?"}
-        </DialogTitle>
+
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>{"¿Estas seguro(a) de verificar la cuenta?"}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Recuerda que verificar la documentacion correcta es tu responsabilidad
+            Recuerda que verificar la documentacion correcta es tu
+            responsabilidad
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -259,7 +254,6 @@ const Documentation = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    
     </Box>
   );
 };

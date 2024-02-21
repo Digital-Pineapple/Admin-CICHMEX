@@ -19,7 +19,10 @@ export const useDocumentations = () => {
 
     const searchDocumentation = async value => await dispatch(searchDocumenation(value));
 
-    const varifyDocumentation = async (_id,verify, message) => await dispatch(verifyOneDocument(_id,verify, message));
+    const varifyDocumentation = async (_id,verify, message) => {
+    const ok =   await dispatch(verifyOneDocument(_id,verify, message))
+    return ok
+    }
 
     return { documentations, documentation, loadDocumentations, loadDocumentation, deleteDocumentation, editDocumentation, addDocumentation, searchDocumentation, varifyDocumentation }
 }

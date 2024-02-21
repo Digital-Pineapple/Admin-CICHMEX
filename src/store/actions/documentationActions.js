@@ -31,7 +31,7 @@ export const startLoadDocumentations = () => {
 export const getOneDocumentation = (customer_id) => async (dispatch) => {
   try {
     const { data } = await instanceApi.get(
-      `/documentation/customer/${customer_id}`
+      `/documentation/user/${customer_id}`
     );
     dispatch(loadDocumentations(data.data));
   } catch (error) {
@@ -160,29 +160,29 @@ export const searchDocumenation = ({ value }) => {
   };
 };
 
-export const verifyOneDocument = (_id,verify,message) => {
-  
+export const verifyOneDocument = (id,verify,message) => {
   return async (dispatch) => {
     try {
       const formData = new FormData();
-      formData.append("_id", _id);
-      formData.append("verify", verify);
+      formData.append("id", id);
+      formData.append("verify", JSON.parse(verify));
       formData.append("message", message);
 
-      const { data } = await instanceApi.post(
-        `/documentation/validate`,
+      const { data } = await instanceApi.put(
+        `/documentation/verify`,
         formData,
         {
           headers: {
-            token: Cookies.get("session"),
+            token: localStorage.getItem('token'),
             "Content-Type": "appllication/x-www-form-urlencoded",
           },
         }
       );
-      dispatch(editDocumentation(_id, data.data));
+      dispatch(editDocumentation(data.data));
+      return data.data.verify
     } catch (error) {
       enqueueSnackbar(
-        `Ocurrió un error al actualizar la documentación: ${error}`,
+        `Ocurrió un error al validar la documentación: ${error}`,
         {
           variant: "error",
           anchorOrigin: {

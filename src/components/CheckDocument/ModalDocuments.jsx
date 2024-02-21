@@ -25,6 +25,7 @@ const style = {
 };
 
 const ModalDocuments = ({name, pdfPath }) => {
+
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);

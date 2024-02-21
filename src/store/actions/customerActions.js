@@ -30,9 +30,9 @@ export const startLoadCustomers = () => {
   };
 };
 
-export const getOneCustomer = (customer_id) => async (dispatch) => {
+export const getOneUser = (_id) => async (dispatch) => {
   try {
-    const { data } = await instanceApi.get(`/user/${customer_id}`);
+    const { data } = await instanceApi.get(`/user/${_id}`);
     dispatch(loadCustomer(data.data));
   } catch (error) {
     console.log(error);

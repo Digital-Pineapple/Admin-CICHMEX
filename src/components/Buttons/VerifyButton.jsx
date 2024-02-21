@@ -57,7 +57,7 @@ const VerifyButton = ({ pathFile }) => {
         setLoading(false)
         setValidate(true)
         try {
-          varifyDocumentation(pathFile._id, true);
+         varifyDocumentation(pathFile._id, true);
           return enqueueSnackbar("Se verificó con exito", {
             variant: "success",
             anchorOrigin: {

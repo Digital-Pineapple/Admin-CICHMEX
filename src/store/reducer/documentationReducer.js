@@ -25,11 +25,8 @@ export const documentationReducer = createSlice({
           return {
             ...documentation,
             name : payload.name,
-            message: payload.message,
-            status : payload.status,
-            url : payload.url,
             verify: payload.verify,
-            customer_id : payload.customer_id,
+            message: payload.message,
           };
         }
         return documentation; // Mantener los elementos no modificados tal como están

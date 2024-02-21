@@ -1,7 +1,7 @@
 
 import { useSelector, useDispatch } from 'react-redux';
 
-import { deleteOneCustomer, getOneCustomer, startLoadCustomers,verifyOneCustomer, editOneCustomer } from '../store/actions/customerActions'; 
+import { deleteOneCustomer, startLoadCustomers,verifyOneCustomer, editOneCustomer, getOneUser } from '../store/actions/customerActions'; 
 import { useNavigate } from 'react-router-dom';
 import { replace } from 'formik';
 
@@ -13,11 +13,14 @@ export const useCustomers = () => {
 
     const loadCustomers = async () => await dispatch(startLoadCustomers());
 
-    const loadCustomer = async customer_id => await dispatch(getOneCustomer(customer_id));
+    const loadUser = async user_id => await dispatch(getOneUser(user_id));
 
     const deleteCustomer = async customer_id => await dispatch(deleteOneCustomer(customer_id));
 
-    const verifyCustomer = async (customer_id) => await dispatch(verifyOneCustomer(customer_id));
+    const verifyCustomer = async (customer_id) => {
+     await dispatch(verifyOneCustomer(customer_id))
+   
+    }
 
     const editCustomer = async (customer_id, values) => 
     {
@@ -27,7 +30,7 @@ export const useCustomers = () => {
         }
     }
 
-    return { loadCustomers, customer, loadCustomer, customers, deleteCustomer,verifyCustomer, editCustomer }
+    return { loadCustomers, customer, loadUser, customers, deleteCustomer,verifyCustomer, editCustomer }
 
 
 }
