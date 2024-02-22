@@ -56,11 +56,7 @@ export const useAuthStore = () => {
 
 
   const startLogout = () => {
-<<<<<<< HEAD
-    localStorage.removeItem("TokenAdmin");
-=======
     localStorage.clear()
->>>>>>> 51f92ccf0726bf9bcec9bee579e196ab2d6180c5
     dispatch(onLogout());
   };
 

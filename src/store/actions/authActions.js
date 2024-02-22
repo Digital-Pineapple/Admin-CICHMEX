@@ -35,11 +35,6 @@ export const startLogin = ({ email, password }) => async (dispatch) => {
 
 export const startRevalidateToken = () => async (dispatch) => {
   try {
-<<<<<<< HEAD
-    const { data } = await instanceApi.get("/auth/admin/user");
-    dispatch(onLogin(data.data.user));
-    localStorage.getItem("TokenAdmin", data.data.token, { expires: 7 });
-=======
     const token = localStorage.getItem("token");
     const { data } = await userApi.get("/auth/user", {
       headers: {
@@ -47,7 +42,6 @@ export const startRevalidateToken = () => async (dispatch) => {
       },
     });
     dispatch(onLogin(data.data.user))
->>>>>>> 51f92ccf0726bf9bcec9bee579e196ab2d6180c5
   } catch (error) {
     console.log(error);
   }
