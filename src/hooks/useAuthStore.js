@@ -35,22 +35,12 @@ export const useAuthStore = () => {
 
   const RevalidateToken = async () => {
     try {
-<<<<<<< HEAD
-      const token1 = localStorage.getItem('TokenAdmin');
-      const { data } = await userApi.get("/auth/user", {
-        headers: {
-          token: token1,
-        },
-      });
-      dispatch (onLogin(data.data))
-=======
       const token = localStorage.getItem("token");
       const { data } = await instanceApi.get("/auth/user", {
         headers: {
           Token: token,
         },
       });
->>>>>>> 51f92ccf0726bf9bcec9bee579e196ab2d6180c5
       
       dispatch(onLogin(data.data.user))
     } catch (error) {

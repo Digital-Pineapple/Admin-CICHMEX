@@ -37,11 +37,7 @@ const AvatarCustom = ({ProfileImage}) => {
     navigate('/Home', {replace :true})
   }
   const CloseSession = () => {
-<<<<<<< HEAD
-    localStorage.removeItem('TokenAdmin')
-=======
     startLogout()
->>>>>>> 51f92ccf0726bf9bcec9bee579e196ab2d6180c5
   }
 
   return (

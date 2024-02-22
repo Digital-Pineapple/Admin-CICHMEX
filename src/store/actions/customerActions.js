@@ -10,22 +10,12 @@ import {
 import { enqueueSnackbar } from "notistack";
 
 export const startLoadCustomers = () => {
-<<<<<<< HEAD
-    return async (dispatch) => {
-        try {
-            const { data } = await instanceApi.get('/user')
-            dispatch(loadCustomers(data.data))
-        } catch (error) {
-            console.log(error)
-        }
-=======
   return async (dispatch) => {
     try {
       const { data } = await instanceApi.get("/user");
       dispatch(loadCustomers(data.data));
     } catch (error) {
       enqueueSnackbar(`Error: ${data.data.response?.message}`);
->>>>>>> 51f92ccf0726bf9bcec9bee579e196ab2d6180c5
     }
   };
 };
