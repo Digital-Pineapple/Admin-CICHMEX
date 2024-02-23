@@ -33,7 +33,7 @@ import { useTypeUser } from '../../hooks/useTypeUser'
 
 const Edit = () => {
   const { id } = useParams();
-  const { loadCustomer, customer, editCustomer } = useCustomers();
+  const {  customer, editCustomer, loadUser } = useCustomers();
   const {loadTypeUsers, typeUsers} = useTypeUser()
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState(null);
@@ -45,7 +45,7 @@ const Edit = () => {
   };
 
   useEffect(() => {
-    loadCustomer(id);
+    loadUser(id);
     loadTypeUsers()
   }, [id]);
 

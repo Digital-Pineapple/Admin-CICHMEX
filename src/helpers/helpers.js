@@ -4,7 +4,7 @@ import { Modal } from 'antd';
 const { confirm } = Modal;
 
 const redirectPages = (navigate, route) => {
-    navigate(route)
+    navigate(route,{replace:true})
 }
 
 

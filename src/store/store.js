@@ -12,6 +12,7 @@ import documentationReducer from './reducer/documentationReducer';
 import  servicesCustomerReducer  from './reducer/servicesCustomerReducer';
 import myCarReducer from './reducer/myCarReducer';
 import typeUserReducer from './reducer/typeUserReducer';
+import branchReducer from './reducer/branchReducer';
 
 const rootReducer = combineReducers({
     auth        : authReducer,
@@ -25,7 +26,8 @@ const rootReducer = combineReducers({
     commissions : commissionReducer,
     documentations : documentationReducer,
     servicesCustomer : servicesCustomerReducer,
-    myCars      : myCarReducer
+    myCars      : myCarReducer,
+    branches   : branchReducer
 
 })
 

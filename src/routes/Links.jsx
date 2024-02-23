@@ -5,8 +5,14 @@ import CategoryIcon from '@mui/icons-material/Category';
 import KeyboardTabIcon from '@mui/icons-material/KeyboardTab';
 import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import StoreIcon from '@mui/icons-material/Store';
 export const Links = [
+  {
+    title : "Sucursales",
+    path : "/auth/Sucursales",
+    Icon : <StoreIcon/>
+
+  },
   {
     title: "Usuarios",
     path: "/auth/usuarios",
@@ -38,5 +44,6 @@ export const Links = [
     Icon : <CurrencyExchangeIcon/>
 
   },
+
  
 ];

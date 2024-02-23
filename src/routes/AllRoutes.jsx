@@ -21,6 +21,9 @@ import EditCommission from '../pages/Commission/Edit'
 import Documentation from '../pages/Documentation/Documentations'
 import ServicesCustomer from '../pages/Usuarios/ServicesCustomer'
 import MyCars from '../pages/Usuarios/MyCars'
+import { Branches } from '../pages/Branches/Branches'
+import { BranchesToVerified } from '../pages/Branches/BranchesToVerified'
+import { BranchDetail } from '../pages/Branches/BranchDetail'
 
 
 
@@ -58,5 +61,9 @@ export const AllRoutes = [
   { type: 1, path: '/Comisiones', element: <Commissions/>},
   { type: 1, path: '/CrearComisiones', element: <CreateCommission/>},
   { type: 1, path: '/Comisiones/:id', element: <EditCommission/>},
+
+  { type: 1, path: '/Sucursales', element: <Branches/>},
+  { type: 1, path: '/Sucursales/pending', element: <BranchesToVerified/>},
+  { type: 1, path: '/Sucursales/:id', element: <BranchDetail/>},
 
 ]

@@ -1,28 +1,46 @@
 import GoogleMapReact from 'google-map-react';
+import { Icon, Grid } from '@mui/material';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import { useState } from 'react';
 
-const AnyReactComponent = ({ text }) => <div>{text}</div>;
-
-export const GoogleMap = () => {
-    const defaultProps = {
-      center: {
-        lat: 19.275857672079727, 
-        lng: -99.66041675424353
-      },
-      zoom: 18
-    };
+const AnyReactComponent = ({ text }) => {
   return (
-    <div style={{height: '40vh' }}>
+    <div >
+        <LocationOnIcon color='primary'  />
+    </div>
+  );
+};
+
+export const GoogleMap = ({ location }) => {
+
+  const defaultProps = {
+    center: {
+      lat: location?.lat,
+      lng: location?.lgt
+    },
+    zoom: 18
+  };
+
+  return (
+    <div style={{width:'500px', height:'500px'}} >
       <GoogleMapReact
-      key={"388732565456-lup0fl535o3f07ja29ha5cl2sqjkl3kd.apps.googleusercontent.com"}
+         bootstrapURLKeys={{
+          key: import.meta.env.VITE_REACT_APP_MAP_KEY,
+        }}
         defaultCenter={defaultProps.center}
         defaultZoom={defaultProps.zoom}
+      
+      //  yesIWantToUseGoogleMapApiInternals
+      
       >
-        <AnyReactComponent
-          lat={19.275857672079727}
-          lng={-99.66041675424353}
-          text="CarWash autolavado y más "
-        />
+          <AnyReactComponent
+            lat={defaultProps.center.lat}
+            lng={defaultProps.center.lng}
+            draggable={false}
+           
+          />
+      
       </GoogleMapReact>
     </div>
-  )
-}
+  );
+};
