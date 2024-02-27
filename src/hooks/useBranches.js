@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 
-import {  startLoadBranch, startLoadBranches } from '../store/actions/branchActions'; 
+import {  startLoadBranch, startLoadBranches, startVerifyBranch } from '../store/actions/branchActions'; 
 import { useNavigate } from 'react-router-dom';
 
 export const useBranches = () => {
@@ -13,6 +13,8 @@ export const useBranches = () => {
     const loadBranches = async () => await dispatch(startLoadBranches());
 
     const loadOneBranch = async (id) => await dispatch(startLoadBranch(id));
+
+    const verifyOneBranch = async (id, user_id) => await dispatch(startVerifyBranch(id, user_id, navigate));
 
     const pendingToVerify = (branches) => {
         let num = branches.filter((item) => item.activated === false);
@@ -32,7 +34,7 @@ export const useBranches = () => {
 
 
 
-    return { branch, branches, loadBranches, pendingToVerify, activeBranches, navigate, pendingBranches, loadOneBranch }
+    return { branch, branches, loadBranches, pendingToVerify, activeBranches, navigate, pendingBranches, loadOneBranch, verifyOneBranch }
 
 
 }

@@ -169,14 +169,9 @@ export const BranchesToVerified = () => {
                     <Edit />
                   </IconButton>
                 </Tooltip> */}
-                <Tooltip title="Información">
-                  <IconButton onClick={()=>{navigate(`/auth/Sucursales/${params.row?._id}`, {replace:true})}} aria-label="Info" color="info">
+                <Tooltip title="Verificar">
+                  <IconButton onClick={()=>{navigate(`/auth/Sucursales/${params.row?._id}`, {replace:true})}} aria-label="Info" color="success">
                     <InfoRounded />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Productos">
-                  <IconButton aria-label="Products" color="success">
-                    <ProductionQuantityLimits />
                   </IconButton>
                 </Tooltip>
               </Stack>,

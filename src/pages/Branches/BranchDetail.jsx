@@ -6,7 +6,7 @@ import { GoogleMap } from '../../components/Google/GoogleMap'
 
 export const BranchDetail = () => {
     const { id,  } = useParams();
-    const {loadOneBranch, branch}=  useBranches()
+    const {loadOneBranch, branch, verifyOneBranch}=  useBranches()
 
     useEffect(() => {
      loadOneBranch(id)
@@ -48,6 +48,9 @@ export const BranchDetail = () => {
         </Typography>
         <br />
         <Typography variant="body1">
+            id:{branch.user_id?._id}
+        </Typography>
+        <Typography variant="body1">
             Encargado:{branch.user_id?.fullname}
         </Typography>
         <Typography variant="body1">
@@ -55,7 +58,7 @@ export const BranchDetail = () => {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small">Activar</Button>
+        <Button onClick={()=>{verifyOneBranch(id, branch.user_id._id)}} size="small">Activar</Button>
       </CardActions>
     </Card>
    </Grid>
