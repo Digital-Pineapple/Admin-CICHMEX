@@ -43,34 +43,49 @@ export const getOneSubCategory = (subCategory_id) => async (dispatch) => {
     });
   }
 };
-export const addOneSubCategory = (values) => async (dispatch) => {
-  try {
-    const { data } = await instanceApi.post(`/sub-category/`, values);
-    dispatch(onAddNewSubCategory(data.data));
-    enqueueSnackbar("Subcategoria creada con éxito", {
-      variant: "success",
-      anchorOrigin: {
-        vertical: "top",
-        horizontal: "right",
-      },
-    });
-  } catch (error) {
-    enqueueSnackbar(
-      `Error: ${error.response.data?.message}`,
-      {
-        variant: "error",
+export const addOneSubCategory = (values) => {
+
+  return async (dispatch) => {
+    try {
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("category_id", values.category);
+      const { data } = await instanceApi.post(
+        `/sub-category`,values
+      );
+
+      dispatch(addOneSubCategory(data,data));
+      enqueueSnackbar("Alta exitosa", {
+        variant: "success",
         anchorOrigin: {
           vertical: "top",
           horizontal: "right",
         },
-      }
-    );
-  }
-};
-
+      });
+      return data
+    } catch (error) {
+      
+      enqueueSnackbar(
+        `Error:  ${error.response.data?.message}`,
+        {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        }
+      );
+    }
+  };
+}
 export const deleteOneSubCategory = (id) => async (dispatch) => {
   try {
-   const {data} =  await instanceApi.delete(`/sub-category/${id}`);
+    const token = localStorage.getItem('token')
+   const {data} =  await instanceApi.delete(`/sub-category/${id}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
     enqueueSnackbar("Se eliminó con éxito", {
       variant: "success",
       anchorOrigin: {
@@ -81,7 +96,7 @@ export const deleteOneSubCategory = (id) => async (dispatch) => {
     dispatch(deleteSubCategory(id));
     return data
   } catch (error) {
-    enqueueSnackbar(`Ocurrió un error al eliminar la subcategoria + ${error}`, {
+    enqueueSnackbar(`Ocurrió un error al eliminar la subcategoria + ${error.response.data.message}`, {
       variant: "error",
       anchorOrigin: {
         vertical: "top",
@@ -98,12 +113,15 @@ export const editOneSubCategory = (subCategory_id, values) => {
       formData.append("name", values.name);
       formData.append("image", values.subCategory_image);
       formData.append("category", values.category);
+      const token = localStorage.getItem('token')
+      console.log(token);
       const { data } = await instanceApi.post(
         `/sub-category/${subCategory_id}`,
         formData,
         {
           headers: {
-            token: localStorage.getItem('token'),
+  
+            'Authorization': `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
         }

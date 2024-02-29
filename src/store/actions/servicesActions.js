@@ -50,7 +50,7 @@ export const deleteOneServices = (service_id) =>
             const { data } = await instanceApi.post(
                 `/services/${service_id}`,formData, {
                   headers: {
-                    token: Cookies.get("session"),
+                    token: localStorage.getItem('token'),
                     "Content-Type": "multipart/form-data",
                   }
                 }

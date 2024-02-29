@@ -128,14 +128,14 @@ const Commissions = () => {
 
   return (
     <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-      <Title>Comisiones</Title>
+      <Title>Descuentos</Title>
       <Button
           variant="contained"
           disableElevation
           sx={{ color: "primary", my: 5, p: 2, borderRadius: 5 }}
           onClick={createCommission}
         >
-          Registrar nueva comision
+          Registrar nuevo descuento
         </Button>
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
@@ -150,7 +150,7 @@ const Commissions = () => {
           {
             field: "name",
             hideable: false,
-            headerName: "Nombre de la comisión",
+            headerName: "Nombre de la promoción",
             flex: 2,
             sortable: false,
           },
