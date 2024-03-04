@@ -7,7 +7,6 @@ import {
   loadCommissions,
   onAddNewCommission,
 } from "../reducer/commissionReducer";
-import Cookies from "js-cookie";
 
 export const startLoadCommissions = () => {
   return async (dispatch) => {

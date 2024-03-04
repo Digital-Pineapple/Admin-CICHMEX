@@ -77,7 +77,7 @@ export const editOneTypeCar = (typeCar_id, values) => {
         const { data } = await instanceApi.post(
             `/type-car/${typeCar_id}`,formData, {
               headers: {
-                token: Cookies.get("session"),
+                token: localStorage.getItem('token'),
                 "Content-Type": "multipart/form-data",
               }
             }
