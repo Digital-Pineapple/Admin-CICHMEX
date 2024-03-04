@@ -2,7 +2,7 @@ import { enqueueSnackbar } from "notistack"
 import { instanceApi } from "../../apis/configAxios"
 import { loadService, loadServices, deleteService, editService, onAddNewService } from "../reducer/servicesReducer"
 import {loadOneServiceCustomer, onAddNewServiceCustomer} from "../reducer/servicesCustomerReducer"
-import Cookies from "js-cookie"
+import { loadMemberships } from "../reducer/membershipReducer";
 
 const config = {
   headers: {
@@ -11,11 +11,11 @@ const config = {
   },
 };    
 
-export const startLoadServices = () => {
+export const startLoadMemberships = () => {
     return async dispatch => {
         try {
-            const { data } = await instanceApi.get('/services', config)
-            dispatch(loadServices(data.data))
+            const { data } = await instanceApi.get('/memberships', config)
+            dispatch(loadMemberships(data.data))
         } catch (error) {
             console.log(error)
         }
