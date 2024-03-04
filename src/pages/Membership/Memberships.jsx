@@ -15,7 +15,7 @@ import {
 import { useEffect } from "react";
 import { useCustomers } from "../../hooks/useCustomers";
 import MuiPagination from "@mui/material/Pagination";
-import { Avatar, Chip } from "@mui/material";
+import { Avatar, Chip, Grid } from "@mui/material";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import LocalCarWashIcon from "@mui/icons-material/LocalCarWash";
 import NoCrashIcon from '@mui/icons-material/NoCrash';
@@ -26,7 +26,8 @@ import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
 import { redirectPages } from "../../helpers";
 import { Workbook } from "exceljs";
-import { Button } from "antd";
+import { Button, Typography } from "antd";
+import { useMembership } from "../../hooks/useMembership";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -60,33 +61,30 @@ function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
-export default function Users() {
-  const { loadCustomers, deleteCustomer, customers } = useCustomers();
-  const navigate = useNavigate();
+export default function Memberships() {
+  const { loadMemberships, deleteMembership, memberships, navigate } = useMembership();
 
   useEffect(() => {
-    loadCustomers();
+    loadMemberships()
   }, []);
 
-  const rowsWithIds = customers.map((customer, _id) => ({
+  const rowsWithIds = memberships.map((membership, _id) => ({
     id: _id.toString(),
-    typeUser : customer.type_user?.type,
-    ...customer,
+    ...membership,
   }));
 
   const exportToExcel = () => {
     const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Usuarios");
+    const worksheet = workbook.addWorksheet("membership");
 
     // Agregar encabezados de columna
     const headerRow = worksheet.addRow([
       "ID",
       "Nombre",
-      "Correo",
-      "Tipo de usuario",
-      "Registro con Google",
-      "Telefono",
-      // "cuenta Verificada",
+      "Precio estándar",
+      "Descuento",
+      "Precio con descuento",
+      "Descuento en productos"
     ]);
     headerRow.eachCell((cell) => {
       cell.font = { bold: true };
@@ -95,21 +93,13 @@ export default function Users() {
     rowsWithIds.forEach((row) => {
       worksheet.addRow([
         row._id,
-        row.fullname,
+        row.name,
         row.email,
-        row.typeUser == 1
-          ? "Lavador"
-          : row.type_user2 == 0
-          ? "Cliente"
-          : row.type_user2  == 2
-          ? "Establecimiento"
-          : "usuario",
-        row.google === true 
-        ? "si":"no",
-        row.phone?.phone_number ? row.phone?.phone_number: 
-        row.phone?.phone_number === undefined ? 'no tiene numero': null,
-        // row.accountVerify === true 
-        // ? "si":"no",
+        row.price_standard,
+        row.discount_porcent,
+        row.price_discount,
+        row.discount_products
+
       ]);
     });
 
@@ -119,8 +109,19 @@ export default function Users() {
         type:
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-      saveAs(blob, "categorias.xlsx");
+      saveAs(blob, "membresias.xlsx");
     });
+  };
+
+  const RenderPorcent = ({params}) => {
+    return (
+      <Typography style={{fontSize:'20px'}} >{params.value} % </Typography>
+    );
+  };
+  const Rendered = ({params}) => {
+    return (
+      <Typography style={{fontSize:'20px'}} > $ {params.value}  </Typography>
+    );
   };
 
   function CustomToolbar() {
@@ -147,7 +148,18 @@ export default function Users() {
 
   return (
     <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-      <Title>Usuarios</Title>
+      <Title>Membresías</Title>
+      <Grid container my={2} >
+      <Button
+          variant="contained"
+          disableElevation
+          sx={{ color: "primary", my: 10, p: 2, borderRadius: 5 }}
+          onClick={()=>navigate('/auth/CrearMembresia', {replace:true})}
+        >
+          Registrar nueva membresía
+        </Button>
+        
+      </Grid>
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
@@ -159,82 +171,48 @@ export default function Users() {
             sortable: "false",
           },
           {
-            field: "profile_image",
+            field: "name",
             hideable: false,
-            headerName: "Foto de perfil",
-            flex: 1,
-            sortable: "false",
-            renderCell: (params) =>
-              params?.value ? (
-                <Avatar alt={params.value} src={params.value} />
-              ) : null,
-          },
-          {
-            field: "fullname",
-            hideable: false,
-            headerName: "Nombre completo",
+            headerName: "Nombre",
             flex: 2,
-            sortable: false,
+            sortable: "false",
           },
           {
-            field: "typeUser",
-            headerName: "Tipo de usuario",
+            field: "price_standard",
+            hideable: false,
+            headerName: "Precio estándar",
+            flex: 1,
+            sortable: false,
+            renderCell:(params)=><Rendered params ={params}/>
+
+          },
+          {
+            field: "discount_porcent",
+            headerName: "Descuento",
             flex: 1,
             align: "center",
-            renderCell: (params) =>
-              params.value === 0 ? (
-                <>
-                  <Chip
-                    icon={<PermIdentityIcon />}
-                    label="cliente"
-                    variant="outlined"
-                    color="primary"
-                  />
-                </>
-              ) : params.value === 1 ? (
-                <>
-                  <Chip
-                    icon={<WashIcon />}
-                    label="lavador independiente"
-                    variant="outlined"
-                    color="success"
-                  />
-                </>
-              ) : params.value ===  2? (
-                <>
-                  <Chip
-                    icon={<LocalCarWashIcon />}
-                    label="Establecimiento"
-                    variant="outlined"
-                    color="info"
-                  />
-                </>
-              ):params.value === 3  ?(
-                <>
-                  <Chip
-                    icon={<SupervisorAccount />}
-                    label="Administrador principal"
-                    variant="outlined"
-                    color="info"
-                  />
-                </>
-              ):'',
+            sortable:false,
+            renderCell:(params)=><RenderPorcent params ={params}/>
+          },
+          {
+            field: "discount_products",
+            headerName: "Descuento en productos",
+            flex: 1.5,
+            align: "center",
+            sortable:false,
+            renderCell:(params)=><RenderPorcent params ={params}/>
+          },
+          {
+            field: "price_discount",
+            headerName: "Precio con descuento",
+            flex: 1.5,
+            align: "center",
+            sortable:false,
+            renderCell:(params)=><Rendered params ={params}/>
+
+           
           },
 
-          { field: "email", headerName: "Correo", flex: 1, sortable: false },
-          // {
-          //   field: "accountVerify",
-          //   headerName: "Estatus de verificación",
-          //   align: "center",
-          //   flex: 1,
-          //   sortable: false,
-          //   renderCell: (params) =>
-          //     params.value === true ? (
-          //       <CheckCircleOutlineIcon />
-          //     ) : (
-          //       <HighlightOffIcon color="error" />
-          //     ),
-          // },
           {
             field: "Opciones",
             headerName: "Opciones",
@@ -244,39 +222,14 @@ export default function Users() {
             type: "actions",
             getActions: (params) => [
               <WarningAlert
-                title="¿Estas seguro que deseas eliminar el usuario?"
-                callbackToDeleteItem={() => deleteCustomer(params.row._id)}
-                titleEdit="¿Quieres editar este usuario?"
-                callbackEditItem={() => editUser(params.row._id)}
+                title="¿Estas seguro que deseas eliminar esta membresía?"
+                callbackToDeleteItem={() => deleteMembership(params.row._id)}
+               
               />,
               <GridActionsCellItem
                 icon={<Edit />}
                 onClick={() => redirectPages(navigate, params.row._id )}
-                label="Editar usuario"
-                showInMenu
-              />,
-              <GridActionsCellItem
-                icon={<DoneAllOutlined />}
-                label="Verificar Usuario"
-                onClick={() =>
-                  redirectPages(navigate, `validate/${params.row._id}`)
-                }
-                showInMenu
-              />,
-              <GridActionsCellItem
-                icon={<ControlPointDuplicateOutlined />}
-                label="Servicios"
-                onClick={() =>
-                  redirectPages(navigate, `services/${params.row._id}`)
-                }
-                showInMenu
-              />,
-              <GridActionsCellItem
-                icon={<NoCrashIcon />}
-                label="Mis autos"
-                onClick={() =>
-                  redirectPages(navigate, `myCars/${params.row._id}`)
-                }
+                label="Editar membresía"
                 showInMenu
               />,
             ],
@@ -284,7 +237,7 @@ export default function Users() {
         ]}
         initialState={{
           sorting: {
-            sortModel: [{ field: "type_customer", sort: "desc" }],
+            sortModel: [{ field: "name", sort: "desc" }],
           },
         }}
         rows={rowsWithIds}

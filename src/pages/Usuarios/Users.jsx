@@ -263,14 +263,14 @@ export default function Users() {
                 }
                 showInMenu
               />,
-              <GridActionsCellItem
-                icon={<ControlPointDuplicateOutlined />}
-                label="Servicios"
-                onClick={() =>
-                  redirectPages(navigate, `services/${params.row._id}`)
-                }
-                showInMenu
-              />,
+              // <GridActionsCellItem
+              //   icon={<ControlPointDuplicateOutlined />}
+              //   label="Servicios"
+              //   onClick={() =>
+              //     redirectPages(navigate, `services/${params.row._id}`)
+              //   }
+              //   showInMenu
+              // />,
               <GridActionsCellItem
                 icon={<NoCrashIcon />}
                 label="Mis autos"

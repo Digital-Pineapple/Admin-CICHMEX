@@ -6,6 +6,7 @@ import KeyboardTabIcon from '@mui/icons-material/KeyboardTab';
 import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import StoreIcon from '@mui/icons-material/Store';
+import CardMembershipIcon from '@mui/icons-material/CardMembership';
 export const Links = [
   {
     title : "Sucursales",
@@ -39,9 +40,9 @@ export const Links = [
     Icon: <KeyboardTabIcon />,
   },
   {
-    title : "Comisiones",
-    path : "/auth/comisiones",
-    Icon : <CurrencyExchangeIcon/>
+    title : "Membresias",
+    path : "/auth/Membresias",
+    Icon : <CardMembershipIcon/>
 
   },
 

@@ -24,6 +24,9 @@ import MyCars from '../pages/Usuarios/MyCars'
 import { Branches } from '../pages/Branches/Branches'
 import { BranchesToVerified } from '../pages/Branches/BranchesToVerified'
 import { BranchDetail } from '../pages/Branches/BranchDetail'
+import Memberships from '../pages/Membership/Memberships'
+import CreateMembership from '../pages/Membership/Create'
+import EditMembership from '../pages/Membership/Edit'
 
 
 
@@ -65,5 +68,10 @@ export const AllRoutes = [
   { type: 1, path: '/Sucursales', element: <Branches/>},
   { type: 1, path: '/Sucursales/pending', element: <BranchesToVerified/>},
   { type: 1, path: '/Sucursales/:id', element: <BranchDetail/>},
+
+  { type: 1, path: '/Membresias', element: <Memberships/> },
+  { type: 1, path: '/CrearMembresia', element: <CreateMembership/>},
+  { type: 1, path: '/Membresias/:id', element: <EditMembership/>},
+
 
 ]

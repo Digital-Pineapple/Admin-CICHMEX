@@ -1,33 +1,30 @@
 import { useDispatch, useSelector } from "react-redux"
-import { startLoadServices, deleteOneServices, getOneService, editOneService, addOneService, searchServices, startLoadCuServ, addOneCustomerService } from "../store/actions/servicesActions";
 import { useNavigate } from "react-router-dom";
+import { addOneMembership, deleteOneMembership, editOneMembership, getOneMembership, startLoadMemberships } from "../store/actions/membershipActions";
 
 export const useMembership = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate()
 
-    const { services, service } = useSelector(state => state.services);
+    const { memberships,membership } = useSelector(state => state.memberships);
 
-    const loadServices = async () => dispatch(startLoadServices());
+    const loadMemberships = async () => dispatch(startLoadMemberships());
 
-    const loadService = async service_id => dispatch(getOneService(service_id));
+    const loadMembership = async _id => dispatch(getOneMembership(_id));
 
-    const deleteService = async service_id => dispatch(deleteOneServices(service_id))
+    const deleteMembership = async _id => dispatch(deleteOneMembership(_id))
 
-    const editService = async (service_id, values) => dispatch(editOneService(service_id, values))
+    const editMembership = async (_id, values) => dispatch(editOneMembership(_id, values))
 
-    const addService = async values => 
+    const addMembership = async values => 
     {
-        const response  = await dispatch(addOneService(values));
+        const response  = await dispatch(addOneMembership(values));
         if (response) {
-            navigate('/auth/servicios')
+            navigate('/auth/Membresias')
         }
 
     }
 
-    const searchService = async value => await dispatch(searchServices(value));
-
-
-    return { loadServices, services, deleteService, loadService, service, editService, addService, searchService }
+    return { addMembership, deleteMembership, dispatch, editMembership, loadMembership, loadMemberships, membership, memberships, navigate }
 }

@@ -1,8 +1,6 @@
 import { enqueueSnackbar } from "notistack"
 import { instanceApi } from "../../apis/configAxios"
-import { loadService, loadServices, deleteService, editService, onAddNewService } from "../reducer/servicesReducer"
-import {loadOneServiceCustomer, onAddNewServiceCustomer} from "../reducer/servicesCustomerReducer"
-import { loadMemberships } from "../reducer/membershipReducer";
+import { deleteMemmbership, editMembership, loadMembership, loadMemberships, onAddNewMembership } from "../reducer/membershipReducer";
 
 const config = {
   headers: {
@@ -22,21 +20,21 @@ export const startLoadMemberships = () => {
     }
 }
 
-export const getOneService = service_id =>
+export const getOneMembership = _id =>
     async dispatch => {
         try {
-            const { data } = await instanceApi.get(`/services/${service_id}`)
-            dispatch(loadService(data.data));
+            const { data } = await instanceApi.get(`/memberships/${id}`, config)
+            dispatch(loadMembership(data.data));
         } catch (error) {
             console.log(error);
         }
     }
 
-export const deleteOneServices = (service_id) =>
+export const deleteOneMembership = (_id) =>
     async dispatch => {
         try {
-            await instanceApi.delete(`/services/${service_id}`)
-            dispatch(deleteService(service_id));
+            await instanceApi.delete(`/memberships/${_id}`, config)
+            dispatch(deleteMemmbership(_id));
             enqueueSnackbar('Se eliminó correctamente', {variant:'success',anchorOrigin:{
               horizontal:'center',vertical:'top'
             }})
@@ -45,31 +43,22 @@ export const deleteOneServices = (service_id) =>
         }
     }
 
-    export const editOneService = (service_id, values) => {
+    export const editOneMembership = (_id, values) => {
         return async (dispatch) => {
             try {
               const formData = new FormData();
               formData.append('name', values.name );
               formData.append('description',values.description);
-              formData.append('service_image',values.service_image);
-              formData.append('status', values.status);
-              formData.append('subCategory', values.subCategory)
-            const { data } = await instanceApi.post(
-                `/services/${service_id}`,formData, {
-                  headers: {
-                    token: localStorage.getItem('token'),
-                    "Content-Type": "multipart/form-data",
-                  }
-                }
-            );
-            dispatch(editService(service_id, data.data));
-            enqueueSnackbar('Categoria actualizada con exito', {variant:'success', anchorOrigin: {
+            const { data } = await instanceApi.patch(
+                `/memberships/${_id}`,formData, config);
+            dispatch(editMembership(_id, data.data));
+            enqueueSnackbar('Editado con éxito', {variant:'success', anchorOrigin: {
               vertical: 'top',
               horizontal: 'right'
             }})
             } catch (error) {
               console.log(error);
-              enqueueSnackbar(`Ocurrió un error al actualizar la categoria + ${error}`,
+              enqueueSnackbar(`Error ${error.response.data.message | ''}`,
                {variant:'error', anchorOrigin: {
                 vertical: 'top',
                 horizontal: 'right'
@@ -78,11 +67,11 @@ export const deleteOneServices = (service_id) =>
         };
     
     };
-    export const addOneService = (values) => async (dispatch) => {
+    export const addOneMembership = (values) => async (dispatch) => {
         try {
-          const { data } = await instanceApi.post(`/services/`, values);
-          dispatch(onAddNewService(data.data));
-          enqueueSnackbar('Categoria creada con éxito', {variant:'success', anchorOrigin: {
+          const { data } = await instanceApi.post(`/memberships/`, values, config);
+          dispatch(onAddNewMembership(data.data));
+          enqueueSnackbar('Creado con éxito', {variant:'success', anchorOrigin: {
             vertical: 'top',
             horizontal: 'right'
           }})
@@ -90,86 +79,14 @@ export const deleteOneServices = (service_id) =>
       
         } catch (error) {
           console.log(error);
-          enqueueSnackbar(`Ocurrió un error al agregar la categoria : ${error.response.data?.message}`,
+          enqueueSnackbar(`Error${error.response.data?.message|''}`,
           {variant:'error', anchorOrigin: {
            vertical: 'top',
            horizontal: 'right'
          }})
         }
       };
-      export const searchServices = ({value}) => {
-        return async (dispatch) => {
-            try {
-            const { data } = await instanceApi.get(
-                `/services/search/search${value ? `?search=${value}` : `?search=${""}`}`,
-            );
-            console.log(data);
-            dispatch(loadServices( data.data));
-            enqueueSnackbar('Buesqueda realizada con exito', {variant:'success', anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right'
-            }})
-            } catch (error) {
-              enqueueSnackbar(`Ocurrió un error al buscar el servicio + ${error}`,
-               {variant:'error', anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right'
-              }})
-            }
-        };
       
-      };
-      export const Services = ({value}) => {
-        return async (dispatch) => {
-            try {
-            const { data } = await instanceApi.get(
-                `/services/search/search${value ? `?search=${value}` : `?search=${""}`}`,
-            );
-            console.log(data);
-            dispatch(loadServices( data.data));
-            enqueueSnackbar('Buesqueda realizada con exito', {variant:'success', anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right'
-            }})
-            } catch (error) {
-              enqueueSnackbar(`Ocurrió un error al buscar el servicio + ${error}`,
-               {variant:'error', anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right'
-              }})
-            }
-        };
-      
-      };
-
-      export const startLoadCuServ = (id) => {
-        return async dispatch => {
-            try {
-                const { data } = await instanceApi.get(`/service-customer/customer/${id}`)
-                dispatch(loadOneServiceCustomer(data.data))
-            } catch (error) {
-                console.log(error)
-            }
-        }
-    }
-
-    export const addOneCustomerService = (id, values) => async (dispatch) => {
-      try {
-        const { data } = await instanceApi.post(`/service-customer/edit/${id}`, values);
-        dispatch(onAddNewServiceCustomer(data.data));
-        enqueueSnackbar('Servicio agregado con éxito', {variant:'success', anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right'
-        }})
     
-      } catch (error) {
-        console.log(error);
-        enqueueSnackbar(`Ocurrió un error al agregar : ${error.response.data?.message}`,
-        {variant:'error', anchorOrigin: {
-         vertical: 'top',
-         horizontal: 'right'
-       }})
-      }
-    };
 
    
