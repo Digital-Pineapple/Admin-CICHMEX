@@ -9,10 +9,18 @@ import {
 } from "../reducer/customerReducer";
 import { enqueueSnackbar } from "notistack";
 
+const headerConfig = {
+  headers: {
+      "Content-type": "application/json",
+       "Authorization": `Bearer ${localStorage.getItem("token")}`,
+  },
+};    
+
+
 export const startLoadCustomers = () => {
   return async (dispatch) => {
     try {
-      const { data } = await instanceApi.get("/user");
+      const { data } = await instanceApi.get("/user", headerConfig);
       dispatch(loadCustomers(data.data));
     } catch (error) {
       enqueueSnackbar(`Error: ${data.data.response?.message}`);
@@ -22,7 +30,7 @@ export const startLoadCustomers = () => {
 
 export const getOneUser = (_id) => async (dispatch) => {
   try {
-    const { data } = await instanceApi.get(`/user/${_id}`);
+    const { data } = await instanceApi.get(`/user/${_id}`, headerConfig);
     dispatch(loadCustomer(data.data));
   } catch (error) {
     console.log(error);
@@ -51,7 +59,7 @@ export const verifyOneCustomer = (customer_id) => {
   return async (dispatch) => {
     try {
       const { data } = await instanceApi.post(
-        `/customer/validate/${customer_id}`
+        `/user/validate/${customer_id}`, headerConfig
       );
       console.log(data);
       dispatch(verifyCustomerRedux(customer_id));
@@ -71,12 +79,7 @@ export const editOneCustomer = (customer_id, values) => {
       const { data } = await instanceApi.post(
         `/user/update/${customer_id}`,
         formData,
-        {
-          headers: {
-            token: localStorage.getItem('token'),
-            "Content-Type": "multipart/form-data",
-          },
-        }
+       headerConfig
       );
       dispatch(editCustomer(customer_id, data.data));
       enqueueSnackbar("Editado con exito", {

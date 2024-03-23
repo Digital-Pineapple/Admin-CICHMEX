@@ -6,12 +6,19 @@ import {
   loadDocumentations,
   onAddNewDocumentation,
 } from "../reducer/documentationReducer";
-import Cookies from "js-cookie";
+
+const config = {
+  headers: {
+      "Content-type": "application/json",
+       "Authorization": `Bearer ${localStorage.getItem("token")}`,
+  },
+};    
+
 
 export const startLoadDocumentations = () => {
   return async (dispatch) => {
     try {
-      const { data } = await instanceApi.get("/documentation");
+      const { data } = await instanceApi.get("/documentation", config);
       dispatch(loadDocumentations(data.data));
     } catch (error) {
       enqueueSnackbar(
@@ -31,7 +38,7 @@ export const startLoadDocumentations = () => {
 export const getOneDocumentation = (customer_id) => async (dispatch) => {
   try {
     const { data } = await instanceApi.get(
-      `/documentation/user/${customer_id}`
+      `/documentation/user/${customer_id}`, config
     );
     dispatch(loadDocumentations(data.data));
   } catch (error) {
@@ -46,7 +53,7 @@ export const getOneDocumentation = (customer_id) => async (dispatch) => {
 };
 export const addOneDocumentation = (values) => async (dispatch) => {
   try {
-    const { data } = await instanceApi.post(`/documentation/`, values);
+    const { data } = await instanceApi.post(`/documentation/`, values, config);
     dispatch(onAddNewDocumentation(data.data));
     enqueueSnackbar("Documentacion creada con éxito", {
       variant: "success",
@@ -74,7 +81,7 @@ export const deleteOneDocumentation = (documentation_id) => async (
   dispatch
 ) => {
   try {
-    await instanceApi.delete(`/documentation/${documentation_id}`);
+    await instanceApi.delete(`/documentation/${documentation_id}`, config);
     dispatch(deleteOneDocumentation(documentation_id));
   } catch (error) {
     enqueueSnackbar(
@@ -104,12 +111,7 @@ export const editOneDocumentation = (documentation_id, values) => {
       const { data } = await instanceApi.put(
         `/documentation/${documentation_id}`,
         formData,
-        {
-          headers: {
-            token: Cookies.get("session"),
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        config
       );
       dispatch(editDocumentation(documentation_id, data.data));
       enqueueSnackbar("Documentación actualizada con exito", {
@@ -170,13 +172,7 @@ export const verifyOneDocument = (id,verify,message) => {
 
       const { data } = await instanceApi.put(
         `/documentation/verify`,
-        formData,
-        {
-          headers: {
-            token: localStorage.getItem('token'),
-            "Content-Type": "appllication/x-www-form-urlencoded",
-          },
-        }
+        formData,config
       );
       dispatch(editDocumentation(data.data));
       return data.data.verify

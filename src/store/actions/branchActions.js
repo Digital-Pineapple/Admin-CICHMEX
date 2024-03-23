@@ -5,6 +5,13 @@ import {
     loadBranches,
 } from "../reducer/branchReducer";
 
+const config = {
+  headers: {
+      "Content-type": "application/json",
+       "Authorization": `Bearer ${localStorage.getItem("token")}`,
+  },
+}; 
+
 export const startLoadBranches = () => {
   return async (dispatch) => {
     try {
@@ -41,12 +48,7 @@ export const startVerifyBranch = (_id, user_id, navigate) => {
         const formData = new FormData();
         formData.append('user_id', user_id );
       const { data } = await instanceApi.post(
-          `/branch-offices/verify/${_id}`,formData, {
-            headers: {
-              token: localStorage.getItem('token'),
-              "Content-Type": "multipart/form-data",
-            }
-          }
+          `/branch-offices/verify/${_id}`,formData, config
       );
       enqueueSnackbar('Activación exitosa', {variant:'success', anchorOrigin: {
         vertical: 'top',

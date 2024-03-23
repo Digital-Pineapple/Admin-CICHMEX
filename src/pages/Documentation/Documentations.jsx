@@ -70,15 +70,16 @@ const Documentation = () => {
     }
   };
 
-  const pathIne = findFile(documentations.name, "ine");
+  const pathIne = findFile(documentations.name, "csf");
+  console.log(pathIne);
 
-  const pathProok_Address = findFile(documentations.name, "prook_address");
+  // const pathProok_Address = findFile(documentations.name, "prook_address");
 
-  // const pathCurp = findFile(documentations.name, "curp");
+  // // const pathCurp = findFile(documentations.name, "curp");
 
-  const pathCriminalRecord = findFile(documentations.name, "criminal_record");
+  // const pathCriminalRecord = findFile(documentations.name, "criminal_record");
 
-  const pathRfc = findFile(documentations.name, "rfc");
+  // const pathRfc = findFile(documentations.name, "rfc");
 
   return (
     <Box marginX={"10%"}>
@@ -134,12 +135,12 @@ const Documentation = () => {
   
 
         <Grid container display={'flex'} minHeight={'50vh'} justifyContent={'center'} alignContent={'center'} direction={"row"}>
-        {/* Componente ine */}
+        {/* Componente RFC */}
 
           <CardContent>
             <ModalDocuments
               pdfPath={pathIne?.url}
-              name={"Identificacion Oficial"}
+              name={"Comprobante de siruación fiscal"}
             />
             {pathIne?.message === undefined ||
             (pathIne?.message.length > 0 && pathIne?.verify === false) ? (
@@ -152,80 +153,12 @@ const Documentation = () => {
               <VerifyButton pathFile={pathIne} />
             </CardActions>
           </CardContent>
-{/* Componente Comprobante de domicilio */}
-          <CardContent>
-            <ModalDocuments
-              pdfPath={pathProok_Address?.url}
-              name={"Comprobante de domicilio"}
-            />
-            {pathProok_Address?.message === undefined ||
-            (pathProok_Address?.message.length >= 0 &&
-              pathProok_Address?.verify === false) ? (
-              <Paper elevation={5} sx={{ padding: "20px" }}>
-                <Typography variant="h5">Motivo de rechazo:</Typography>
-                {pathProok_Address?.message}
-              </Paper>
-            ) : null}
-            <CardActions>
-              <VerifyButton pathFile={pathProok_Address} />
-            </CardActions>
-          </CardContent>
-{/* Componente curp */}
-          {/* <CardContent>
-            <ModalDocuments pdfPath={pathCurp?.url} name={"Curp"} />
-            {pathCurp?.message === undefined ||
-            (pathCurp?.message.length > 0 && pathCurp?.verify === false) ? (
-              <Paper elevation={5} sx={{ padding: "20px" }}>
-                <Typography variant="h5">Motivo de rechazo:</Typography>
-                {pathCurp?.message}
-              </Paper>
-            ) : null}
-            <CardActions>
-              <VerifyButton pathFile={pathCurp} />
-            </CardActions>
-          </CardContent> */}
 
-        {/* Componente antecedentes penales */}
-
-          <CardContent>
-            <ModalDocuments
-              pdfPath={pathCriminalRecord?.url}
-              name={"Antecedentes Penales"}
-            />
-            {pathCriminalRecord?.message === undefined ||
-            (pathCriminalRecord?.message.length > 0 &&
-              pathCriminalRecord?.verify === false) ? (
-              <Paper elevation={5} sx={{ padding: "20px" }}>
-                <Typography variant="h5">Motivo de rechazo:</Typography>
-                {pathCriminalRecord?.message}
-              </Paper>
-            ) : null}
-            <CardActions>
-              <VerifyButton pathFile={pathCriminalRecord} />
-            </CardActions>
-          </CardContent>
-{/* Componente RFC */}
-          <CardContent>
-            <ModalDocuments pdfPath={pathRfc?.url} name={"RFC"} />
-            {pathRfc?.message === undefined ||
-            (pathRfc?.message.length > 0 && pathRfc?.verify === false) ? (
-              <Paper elevation={5} sx={{ padding: "20px" }}>
-                <Typography variant="h5">Motivo de rechazo:</Typography>
-                {pathRfc?.message}
-              </Paper>
-            ) : null}
-            <CardActions>
-              <VerifyButton pathFile={pathRfc} />
-            </CardActions>
-          </CardContent>
 
         </Grid>
 
       <Grid display={'flex'}  justifyContent={"center"} marginBottom={'3rem'}  minHeight={'5vh'} width="100%">
-        {pathIne?.verify === true &&
-        pathProok_Address?.verify === true &&
-        pathCriminalRecord?.verify === true &&
-        pathRfc?.verify === true ? (
+        {pathIne?.verify === true ? (
           <Button onClick={handleClickOpen} variant="contained">
             Verificar cuenta
           </Button>
