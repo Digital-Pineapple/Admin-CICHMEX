@@ -54,10 +54,9 @@ export const startVerifyBranch = (_id, user_id, navigate) => {
         vertical: 'top',
         horizontal: 'center'
       }})
-      navigate('/Sucursales/pending',{replace:true})
+      navigate('/auth/Sucursales',{replace:true})
       
       } catch (error) {
-
         enqueueSnackbar(`Error ${error.response.data?.message}`,
          {variant:'error', anchorOrigin: {
           vertical: 'top',

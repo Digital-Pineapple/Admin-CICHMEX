@@ -18,19 +18,18 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
 import { useDocumentations } from "../../hooks/useDocumentation";
 import ModalDocuments from "../../components/CheckDocument/ModalDocuments";
-import { useCustomers } from "../../hooks/useCustomers";
 import VerifyButton from "../../components/Buttons/VerifyButton";
 import { enqueueSnackbar } from "notistack";
 import CustomBreadcrumb from "../../components/ui/CustomBreadcrumb";
+import { useUsers } from "../../hooks/useUsers";
 
 const Documentation = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { loadDocumentation, documentations } = useDocumentations();
-  const { loadUser, customer, verifyCustomer } = useCustomers();
+  const { loadUser, user, verifyUser} = useUsers()
 
   const [open, setOpen] = useState(false);
 
@@ -56,30 +55,13 @@ const Documentation = () => {
     );
   };
   const verification = () => {
-    try {
-      verifyCustomer(id);
-    } catch (error) {
-      console.log(error);
-      return enqueueSnackbar("Error al verificar el usuario", {
-        variant: "error",
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "right",
-        },
-      });
-    }
+      verifyUser(id);
+      setOpen(false)
   };
 
-  const pathIne = findFile(documentations.name, "csf");
-  console.log(pathIne);
+  const pathCsf = findFile(documentations.name, "csf");
+ 
 
-  // const pathProok_Address = findFile(documentations.name, "prook_address");
-
-  // // const pathCurp = findFile(documentations.name, "curp");
-
-  // const pathCriminalRecord = findFile(documentations.name, "criminal_record");
-
-  // const pathRfc = findFile(documentations.name, "rfc");
 
   return (
     <Box marginX={"10%"}>
@@ -94,7 +76,7 @@ const Documentation = () => {
             <CardContent>
               <Avatar
                 variant="circular"
-                src={customer?.profile_image}
+                src={user?.profile_image}
                 alt="foto de perfil"
                 sx={{ width: "100px", height: "100px" }}
               />
@@ -103,29 +85,29 @@ const Documentation = () => {
                 color="text.secondary"
                 gutterBottom
               >
-                Usuario : {customer._id}
+                Usuario : {user._id}
               </Typography>
               <Typography variant="h5" component="div">
-                {customer?.fullname}
+                {user?.fullname}
               </Typography>
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                {customer?.email}
+                {user?.email}
               </Typography>
               <Typography variant="body2">
                 Tipo de usuario:
                 <br />
-                {customer?.type_customer === "0"
+                {user?.type_customer === "0"
                   ? "Cliente"
-                  : customer?.type_customer === "1"
+                  : user?.type_customer === "1"
                   ? "Lavador independiente"
-                  : customer?.type_customer === "2"
+                  : user?.type_customer === "2"
                   ? "Establecimiento"
                   : "administrador"}
               </Typography>
               <Typography variant="body2">Numero de telefono:</Typography>
 
-              {customer.phone?.phone_number
-                ? customer?.phone.phone_number
+              {user.phone?.phone_number
+                ? user?.phone.phone_number
                 : "No hay telefono registrado"}
             </CardContent>
           </Card>
@@ -139,18 +121,18 @@ const Documentation = () => {
 
           <CardContent>
             <ModalDocuments
-              pdfPath={pathIne?.url}
+              pdfPath={pathCsf?.url}
               name={"Comprobante de siruación fiscal"}
             />
-            {pathIne?.message === undefined ||
-            (pathIne?.message.length > 0 && pathIne?.verify === false) ? (
+            {pathCsf?.message === undefined ||
+            (pathCsf?.message.length > 0 && pathCsf?.verify === false) ? (
               <Paper elevation={5} sx={{ padding: "20px" }}>
                 <Typography variant="h5">Motivo de rechazo:</Typography>
-                {pathIne?.message}
+                {pathCsf?.message}
               </Paper>
             ) : null}
             <CardActions>
-              <VerifyButton pathFile={pathIne} />
+              <VerifyButton pathFile={pathCsf} />
             </CardActions>
           </CardContent>
 
@@ -158,7 +140,7 @@ const Documentation = () => {
         </Grid>
 
       <Grid display={'flex'}  justifyContent={"center"} marginBottom={'3rem'}  minHeight={'5vh'} width="100%">
-        {pathIne?.verify === true ? (
+        {pathCsf?.verify === true ? (
           <Button onClick={handleClickOpen} variant="contained">
             Verificar cuenta
           </Button>

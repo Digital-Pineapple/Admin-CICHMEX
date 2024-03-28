@@ -3,37 +3,31 @@ import Titles from "../../components/ui/Titles";
 import Grid from "@mui/material/Grid";
 import {
   Card,
-  CardActionArea,
   CardActions,
   CardContent,
   CardMedia,
   FormControl,
   FormHelperText,
   FormLabel,
-  Input,
   MenuItem,
   Select,
   TextField,
-  TextareaAutosize,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
-import { useCustomers } from "../../hooks/useCustomers";
 import { useFormik } from "formik";
-import { enqueueSnackbar } from "notistack";
-import { useSubCategories } from "../../hooks/useSubCategories";
-import { useSelector } from "react-redux";
+import { enqueueSnackbar } from "notistack";;
 import AddImage from "../../assets/Images/add.png";
-import { editCustomer } from "../../store/reducer/customerReducer";
 import CustomBreadcrumb from "../../components/ui/CustomBreadcrumb";
 import { useTypeUser } from '../../hooks/useTypeUser'
+import { useUsers } from "../../hooks/useUsers";
 
 const Edit = () => {
   const { id } = useParams();
-  const {  customer, editCustomer, loadUser } = useCustomers();
+  const { user,editUser,loadUser } = useUsers()
   const {loadTypeUsers, typeUsers} = useTypeUser()
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState(null);
@@ -51,24 +45,23 @@ const Edit = () => {
 
   useEffect(() => {
     formik.setValues({
-      fullname: customer.fullname,
-      type_customer: customer.type_user?.name,
+      fullname: user?.fullname,
+      type_user: user?.type_user._id,
       profile_image: previewImage,
     });
-    setPreviewImage(customer.profile_image);
-  }, [customer]);
-
+    setPreviewImage(user?.profile_image);
+  }, [user]);
   const formik = useFormik({
     initialValues: {
       fullname: "",
-      type_customer: customer.type_user?.name,
+      type_user: '',
       profile_image: "",
     },
     onSubmit: (values) => {
       try {
         values.profile_image = selectedFile;
         console.log(values,'edit');
-        editCustomer(customer._id, values);
+        editUser(user._id, values);
       } catch (error) {
         return enqueueSnackbar(`Error: ${error.response.data?.message}`, {
           variant: "error",
@@ -111,7 +104,7 @@ const Edit = () => {
                   image={
                     previewImage
                       ? previewImage
-                      : customer.profile_image || AddImage
+                      : user.profile_image || AddImage
                   }
                   title={selectedFile ? selectedFile.name : "Selecciona imagen"}
                 />
@@ -150,10 +143,10 @@ const Edit = () => {
           <FormControl>
             <FormLabel>TIpo de usuario</FormLabel>
             <Select
-              id="type_customer"
+              id="type_user"
               type="text"
-              name="type_customer"
-              value={formik.values.type_customer}
+              name="type_user"
+              value={formik.values.type_user}
               label="Tipo de usuario"
               onChange={formik.handleChange}
             >

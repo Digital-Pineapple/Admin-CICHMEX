@@ -13,20 +13,18 @@ import {
   useGridSelector,
 } from "@mui/x-data-grid";
 import { useEffect } from "react";
-import { useCustomers } from "../../hooks/useCustomers";
 import MuiPagination from "@mui/material/Pagination";
 import { Avatar, Chip } from "@mui/material";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import LocalCarWashIcon from "@mui/icons-material/LocalCarWash";
-import NoCrashIcon from '@mui/icons-material/NoCrash';
 import WashIcon from "@mui/icons-material/Wash";
-import { ControlPointDuplicateOutlined, DoneAllOutlined, Download, Edit, Phone, SupervisorAccount } from "@mui/icons-material";
+import { DoneAllOutlined, Download, Edit, SupervisorAccount } from "@mui/icons-material";
 import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
-import { useNavigate } from "react-router-dom";
 import { redirectPages } from "../../helpers";
 import { Workbook } from "exceljs";
 import { Button } from "antd";
+import { useUsers } from "../../hooks/useUsers";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -61,17 +59,15 @@ function CustomPagination(props) {
 }
 
 export default function Users() {
-  const { loadCustomers, deleteCustomer, customers } = useCustomers();
-  const navigate = useNavigate();
-
+  const { loadUsers, deleteUser, navigate, users } = useUsers();
   useEffect(() => {
-    loadCustomers();
+    loadUsers();
   }, []);
 
-  const rowsWithIds = customers.map((customer, _id) => ({
+  const rowsWithIds = users?.map((user, _id) => ({
     id: _id.toString(),
-    typeUser : customer.type_user?.type,
-    ...customer,
+    typeUser : user.type_user?.type,
+    ...user,
   }));
 
   const exportToExcel = () => {
@@ -119,7 +115,7 @@ export default function Users() {
         type:
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-      saveAs(blob, "categorias.xlsx");
+      saveAs(blob, "usuarios.xlsx");
     });
   };
 
@@ -245,7 +241,7 @@ export default function Users() {
             getActions: (params) => [
               <WarningAlert
                 title="¿Estas seguro que deseas eliminar el usuario?"
-                callbackToDeleteItem={() => deleteCustomer(params.row._id)}
+                callbackToDeleteItem={() => deleteUser(params.row._id)}
                 titleEdit="¿Quieres editar este usuario?"
                 callbackEditItem={() => editUser(params.row._id)}
               />,
@@ -263,22 +259,7 @@ export default function Users() {
                 }
                 showInMenu
               />,
-              // <GridActionsCellItem
-              //   icon={<ControlPointDuplicateOutlined />}
-              //   label="Servicios"
-              //   onClick={() =>
-              //     redirectPages(navigate, `services/${params.row._id}`)
-              //   }
-              //   showInMenu
-              // />,
-              <GridActionsCellItem
-                icon={<NoCrashIcon />}
-                label="Mis autos"
-                onClick={() =>
-                  redirectPages(navigate, `myCars/${params.row._id}`)
-                }
-                showInMenu
-              />,
+             
             ],
           },
         ]}

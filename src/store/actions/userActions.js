@@ -1,12 +1,12 @@
 import Cookies from "js-cookie";
 import { instanceApi } from "../../apis/configAxios";
 import {
-  loadCustomers,
-  loadCustomer,
-  deleteCustomer,
-  editCustomer,
-  verifyCustomerRedux,
-} from "../reducer/customerReducer";
+ deleteUser,
+ editUser,
+ loadUser,
+ loadUsers,
+ verifyUser
+} from "../reducer/userReducer";
 import { enqueueSnackbar } from "notistack";
 
 const headerConfig = {
@@ -17,11 +17,11 @@ const headerConfig = {
 };    
 
 
-export const startLoadCustomers = () => {
+export const getUsers = () => {
   return async (dispatch) => {
     try {
       const { data } = await instanceApi.get("/user", headerConfig);
-      dispatch(loadCustomers(data.data));
+      dispatch(loadUsers(data.data));
     } catch (error) {
       enqueueSnackbar(`Error: ${data.data.response?.message}`);
     }
@@ -31,16 +31,16 @@ export const startLoadCustomers = () => {
 export const getOneUser = (_id) => async (dispatch) => {
   try {
     const { data } = await instanceApi.get(`/user/${_id}`, headerConfig);
-    dispatch(loadCustomer(data.data));
+    dispatch(loadUser(data.data));
   } catch (error) {
     console.log(error);
   }
 };
 
-export const deleteOneCustomer = (_id) => async (dispatch) => {
+export const deleteOneUser = (_id) => async (dispatch) => {
   try {
-    const response = await instanceApi.delete(`/user/delete-user/${_id}`);
-    dispatch(deleteCustomer(_id))
+    const response = await instanceApi.delete(`/user/delete-user/${_id}`, headerConfig);
+    dispatch(deleteUser(_id))
     enqueueSnackbar(
       `Se elimino de manera correcta el usuario:${
         response.data?.fullname || ""
@@ -55,21 +55,34 @@ export const deleteOneCustomer = (_id) => async (dispatch) => {
   }
 };
 
-export const verifyOneCustomer = (customer_id) => {
+export const verifyOneUser = (id) => {
   return async (dispatch) => {
     try {
-      const { data } = await instanceApi.post(
-        `/user/validate/${customer_id}`, headerConfig
-      );
-      console.log(data);
-      dispatch(verifyCustomerRedux(customer_id));
+      const formData = new FormData();
+      formData.append("accountVerified", true);
+      const { data } = await instanceApi.put(`/user/validate/${id}`,formData ,headerConfig);
+      dispatch(verifyUser(data.data));  
+      enqueueSnackbar(`${data?.message || 'Verificado con éxito'}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
     } catch (error) {
       console.log(error);
+      enqueueSnackbar(`Error: ${error.response.data. message || ''}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center",
+        },
+      });
     }
   };
 };
 
-export const editOneCustomer = (customer_id, values) => {
+export const editOneUser = (user_id, values) => {
   return async (dispatch) => {
     try {
       const formData = new FormData();
@@ -77,11 +90,11 @@ export const editOneCustomer = (customer_id, values) => {
       formData.append("type_customer", values.type_customer);
       formData.append("profile_image", values.profile_image);
       const { data } = await instanceApi.post(
-        `/user/update/${customer_id}`,
+        `/user/update/${user_id}`,
         formData,
        headerConfig
       );
-      dispatch(editCustomer(customer_id, data.data));
+      dispatch(editUser(user_id, data.data));
       enqueueSnackbar("Editado con exito", {
         variant: "success",
         anchorOrigin: {

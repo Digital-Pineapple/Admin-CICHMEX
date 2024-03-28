@@ -13,14 +13,9 @@ import {
   useGridSelector,
 } from "@mui/x-data-grid";
 import { useEffect } from "react";
-import { useCustomers } from "../../hooks/useCustomers";
 import MuiPagination from "@mui/material/Pagination";
 import { Avatar, Chip, Grid } from "@mui/material";
-import PermIdentityIcon from "@mui/icons-material/PermIdentity";
-import LocalCarWashIcon from "@mui/icons-material/LocalCarWash";
-import NoCrashIcon from '@mui/icons-material/NoCrash';
-import WashIcon from "@mui/icons-material/Wash";
-import { ControlPointDuplicateOutlined, DoneAllOutlined, Download, Edit, Phone, SupervisorAccount } from "@mui/icons-material";
+import { Download, Edit } from "@mui/icons-material";
 import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
