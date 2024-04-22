@@ -4,20 +4,26 @@ import { instanceApi } from "../../apis/configAxios";
 import { enqueueSnackbar } from "notistack";
 import { onLogin } from '../reducer/authReducer'
 
+
 export const startLogin = ({ email, password }) => async (dispatch) => {
  
   try {
     const { data } = await instanceApi.post("/auth/login", {
       email,
       password,
+    },{
+      headers: {
+        "Content-type": "application/json",
+         "Authorization": `Bearer ${localStorage.getItem("token")}`,
+    },
     });
-    console.log(data);
     dispatch(onLogin(data.data.user));
     localStorage.setItem("token", data.data.token, { expires: 7 });
     return {
       success: true,
     };
   } catch (error) {
+    console.log(error);
     if (axios.isAxiosError(error)) {
       enqueueSnackbar(
         "Error en el inicio de sesión" && error.response.data.message,

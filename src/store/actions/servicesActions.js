@@ -80,7 +80,7 @@ export const deleteOneServices = (service_id) =>
     };
     export const addOneService = (values) => async (dispatch) => {
         try {
-          const { data } = await instanceApi.post(`/services/`, values);
+          const { data } = await instanceApi.post(`/services/`, values, config);
           dispatch(onAddNewService(data.data));
           enqueueSnackbar('Categoria creada con éxito', {variant:'success', anchorOrigin: {
             vertical: 'top',
