@@ -1,5 +1,5 @@
 export const getUsers = async() =>{
-    const url = `http://localhost:3001/api/customer`;
+    const url = `https://api.carwashymas.com/api/user`;
     const resp = await fetch ( url );
     const { data } = await resp.json();
     

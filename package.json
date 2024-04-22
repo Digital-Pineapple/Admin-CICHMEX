@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite --port 3003",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "aws s3 sync dist/ s3://admin.carwashymas.com"
   },
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
