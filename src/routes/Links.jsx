@@ -7,6 +7,7 @@ import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import StoreIcon from '@mui/icons-material/Store';
 import CardMembershipIcon from '@mui/icons-material/CardMembership';
+import StorefrontIcon from '@mui/icons-material/Storefront';
 export const Links = [
   {
     title : "Sucursales",
@@ -43,6 +44,12 @@ export const Links = [
     title : "Membresias",
     path : "/auth/Membresias",
     Icon : <CardMembershipIcon/>
+
+  },
+  {
+    title : "Productos",
+    path : "/auth/Productos",
+    Icon : <StorefrontIcon/>
 
   },
 

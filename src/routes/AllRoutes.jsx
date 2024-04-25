@@ -27,6 +27,9 @@ import { BranchDetail } from '../pages/Branches/BranchDetail'
 import Memberships from '../pages/Membership/Memberships'
 import CreateMembership from '../pages/Membership/Create'
 import EditMembership from '../pages/Membership/Edit'
+import Products from '../pages/Products/Products'
+import CreateProduct from '../pages/Products/Create'
+import EditProduct from '../pages/Products/Edit'
 
 
 
@@ -72,6 +75,10 @@ export const AllRoutes = [
   { type: 1, path: '/Membresias', element: <Memberships/> },
   { type: 1, path: '/CrearMembresia', element: <CreateMembership/>},
   { type: 1, path: '/Membresias/:id', element: <EditMembership/>},
+
+  { type: 1, path: '/Productos', element: <Products/> },
+  { type: 1, path: '/CrearProducto', element: <CreateProduct/>},
+  { type: 1, path: '/Productos/:id', element: <EditProduct/>},
 
 
 ]
