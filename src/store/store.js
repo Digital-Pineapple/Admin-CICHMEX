@@ -15,6 +15,7 @@ import branchReducer from "./reducer/branchReducer";
 import membershipReducer from "./reducer/membershipReducer";
 import userReducer from "./reducer/userReducer";
 import productsReducer from "./reducer/productsReducer";
+import storeHouseReducer from "./reducer/storeHouseReducer";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -31,10 +32,12 @@ const rootReducer = combineReducers({
   myCars: myCarReducer,
   branches: branchReducer,
   memberships: membershipReducer,
-  products : productsReducer
+  products : productsReducer,
+  storeHouse : storeHouseReducer
 });
 
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk), 
+  devTools:false
 });

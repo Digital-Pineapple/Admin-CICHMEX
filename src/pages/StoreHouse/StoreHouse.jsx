@@ -14,7 +14,7 @@ import {
   useGridSelector,
 } from "@mui/x-data-grid";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useStore } from "react-redux";
 import { useServices } from "../../hooks/useServices";
 import MuiPagination from "@mui/material/Pagination";
 import { Download, Edit } from "@mui/icons-material";
@@ -25,6 +25,7 @@ import { redirectPages } from '../../helpers';
 import { Button } from "@mui/material";
 import { Workbook } from "exceljs";
 import { useProducts } from "../../hooks/useProducts";
+import { useStoreHouse } from "../../hooks/useStoreHouse";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -59,10 +60,10 @@ function CustomPagination(props) {
 }
 
 const StoreHouse = () => {
-  const { loadProducts, products, navigate } = useProducts();
+  const { loadAllStock, AllStock} = useStoreHouse();
 
   useEffect(() => {
-    loadProducts()
+    loadAllStock()
   }, []);
 
   const rowsWithIds = products.map((item, _id) => ({

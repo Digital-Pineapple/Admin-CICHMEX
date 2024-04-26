@@ -145,6 +145,7 @@ const CreateProduct = () => {
             </label>
           </Grid>
         )}
+
         <Typography marginTop={"10px"}> peso max de imagen(500 kb)</Typography>
         <Grid
           className="image-branch-container"

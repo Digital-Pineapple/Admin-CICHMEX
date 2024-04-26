@@ -56,8 +56,7 @@ export const LoadOneProduct = (_id) => {
 };
 
 export const addOneProduct =
-  ({name,price,description, tag, size}, images) => async (dispatch) => {
-    console.log(images);
+  ({name,price,description, tag, size}, images, navigate) => async (dispatch) => {
     try {
       const formData = new FormData()
       formData.append("name", name)
@@ -79,6 +78,7 @@ export const addOneProduct =
           horizontal: "right",
         },
       });
+      navigate("/auth/productos", { replace: true });
     } catch (error) {
       enqueueSnackbar(`Error: ${error.response.data.message}`, {
         variant: "error",
@@ -91,17 +91,20 @@ export const addOneProduct =
   };
 
   export const editOneProduct =
-  (id,values) => async (dispatch) => {
+  (id,{name,price,description,tag, size}, images, navigate) => async (dispatch) => {
     try {
       const formData = new FormData()
-      formData.append('name', values.name)
-      formData.append('price', values.price)
-      formData.append('description',values.description)
-      formData.append('tag', values.tag)
-      formData.append('images', values.images)
-      const { data } = await instanceApi.patch(
+      formData.append('name', name)
+      formData.append('price', price)
+      formData.append('description',description)
+      formData.append('tag', tag)
+      formData.append('size', size)
+      for (let i = 0; i < images.length; i++) {
+        formData.append("images", images[i]);
+      }
+      const { data } = await instanceApi.post(
         `/product/${id}`,
-        values,headerConfigFormData);
+        formData,headerConfigFormData);
       dispatch(editProduct(data.data));
       enqueueSnackbar("Editado con éxito", {
         variant: "success",
@@ -110,6 +113,7 @@ export const addOneProduct =
           horizontal: "right",
         },
       });
+      navigate("/auth/productos", { replace: true });
     } catch (error) {
       enqueueSnackbar(`Ocurrió un error + ${error.response.data.message}` , {
         variant: "error",
