@@ -30,7 +30,11 @@ import EditMembership from '../pages/Membership/Edit'
 import Products from '../pages/Products/Products'
 import CreateProduct from '../pages/Products/Create'
 import EditProduct from '../pages/Products/Edit'
-
+import StoreHouse from '../pages/StoreHouse/StoreHouse'
+import CreateStoreHouse from '../pages/StoreHouse/Create'
+import EditStoreHouse from '../pages/StoreHouse/Edit'
+import StockProductsSH from '../pages/StoreHouse/StockProductsSH'
+import AddProductsToSH from '../pages/StoreHouse/AddProductsToSH'
 
 
 export const AllRoutes = [
@@ -79,6 +83,11 @@ export const AllRoutes = [
   { type: 1, path: '/Productos', element: <Products/> },
   { type: 1, path: '/CrearProducto', element: <CreateProduct/>},
   { type: 1, path: '/Productos/:id', element: <EditProduct/>},
+
+  { type: 1, path: '/Almacenes', element: <StoreHouse/> },
+  { type: 1, path: '/CrearAlmacen', element: <CreateStoreHouse/>},
+  { type: 1, path: '/Almacenes/:id', element: <StockProductsSH/>},
+  { type: 1, path: '/agregar-productos/:id', element: <AddProductsToSH/>},
 
 
 ]

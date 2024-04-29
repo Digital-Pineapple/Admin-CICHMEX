@@ -20,13 +20,12 @@ import MuiPagination from "@mui/material/Pagination";
 import { Download, Edit } from "@mui/icons-material";
 import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { redirectPages } from '../../helpers';
-import { Button } from "@mui/material";
+import { Button, ButtonGroup } from "@mui/material";
 import { Workbook } from "exceljs";
 import { useProducts } from "../../hooks/useProducts";
 import { useStoreHouse } from "../../hooks/useStoreHouse";
-import { replace } from "formik";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -60,31 +59,33 @@ function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
-const StoreHouse = () => {
-  const { loadStoreHouse, StoreHouses,navigate, deleteStoreHouse} = useStoreHouse();
-
+const StockProductsSH = () => {
+  const { navigate, loadOneStoreHouse, StoreHouseDetail, loadAllStock, AllStock } = useStoreHouse();
+  const { id } = useParams()
+ let StoreHouse =StoreHouseDetail
   useEffect(() => {
-    loadStoreHouse()
-  }, []);
+    loadOneStoreHouse(id)
+    loadAllStock(id)
+  }, [id]);
 
-  const rowsWithIds = StoreHouses.map((item, _id) => ({
+  const rowsWithIds = AllStock?.map((item, _id) => ({
     id: _id.toString(),
     ...item,
   }));
 
   const createStoreHouse = () => {
-    navigate('/auth/CrearAlmacen')
+    navigate(`/auth/agregar-productos/${id}`)
   }
   
   const exportToExcel = () => {
     const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Almacenes");
+    const worksheet = workbook.addWorksheet(`Productos en almacen: ${StoreHouse?.name}`);
 
     // Agregar encabezados de columna
     const headerRow = worksheet.addRow([
       "ID",
-      "Nombre del almacen",
-      "Numero de telefono",
+      "Nombre del producto",
+      "Cantidad",
     ]);
     headerRow.eachCell((cell) => {
       cell.font = { bold: true };
@@ -92,7 +93,7 @@ const StoreHouse = () => {
 
     // Agregar datos de las filas
     rowsWithIds.forEach((row) => {
-      worksheet.addRow([row._id, row.name, row.phone_number]);
+      worksheet.addRow([row._id, row.name, row.quantity]);
     });
 
     // Crear un Blob con el archivo Excel y guardarlo
@@ -101,7 +102,7 @@ const StoreHouse = () => {
         type:
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-      saveAs(blob, "almacenes.xlsx");
+      saveAs(blob, "Producto en mi almacen.xlsx");
     });
   };
 
@@ -130,14 +131,14 @@ const StoreHouse = () => {
 
   return (
     <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-      <Title>Mis Almacenes</Title>
+      <Title>Productos en el almacen: {StoreHouse?.name} </Title>
       <Button
           variant="contained"
           disableElevation
           sx={{ color: "primary", my: 5, p: 2, borderRadius: 5 }}
           onClick={createStoreHouse}
         >
-          Agregar nuevo almacen
+          Agregar productos
         </Button>
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
@@ -157,8 +158,8 @@ const StoreHouse = () => {
             sortable: false,
           },
           {
-            field: "phone_number",
-            headerName: "Numero de telefono",
+            field: "quantity",
+            headerName: "Quantity",
             flex: 1,
             align: "center",
           },
@@ -172,9 +173,18 @@ const StoreHouse = () => {
             getActions: (params) => [
               <WarningAlert
                 title="¿Estas seguro que deseas eliminar el producto?"
-                callbackToDeleteItem={() => deleteStoreHouse(params.row._id)}
+                callbackToDeleteItem={() => (params.row._id)}
               />,
-              <GridActionsCellItem icon={<Edit />} onClick={()=>redirectPages(navigate,(params.row._id))}  label="Editar Productos de almacen" showInMenu />,            
+              <>
+              <ButtonGroup variant="contained" color="primary" aria-label=''>
+                <Button>Agregar</Button>
+                <Button>Quitar</Button> 
+              </ButtonGroup>
+              <Button variant="outlined" color="primary">
+                Guardar cambios
+              </Button>
+              </>
+                             
             ],
           },
         ]}
@@ -207,5 +217,5 @@ const StoreHouse = () => {
   );
 }
 
-export default StoreHouse
+export default StockProductsSH
 
