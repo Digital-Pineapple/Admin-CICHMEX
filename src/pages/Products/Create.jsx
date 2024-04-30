@@ -11,6 +11,12 @@ import {
   Avatar,
   TextareaAutosize,
   Button,
+  FormControl,
+  FormLabel,
+  Select,
+  MenuItem,
+  FormHelperText,
+  
 } from "@mui/material";
 import { Typography } from "antd";
 import { useProducts } from "../../hooks/useProducts";
@@ -20,6 +26,8 @@ import { styled } from "@mui/material/styles";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ClearIcon from "@mui/icons-material/Clear";
 import AddIcon from "@mui/icons-material/Add";
+import { useSubCategories } from "../../hooks/useSubCategories";
+import { useEffect } from "react";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -35,6 +43,7 @@ const styleStatus = {
 
 const CreateProduct = () => {
   const { createProduct } = useProducts();
+  const {loadSubCategories, subCategories} = useSubCategories()
   const { images, handleImageChange, deleteImage, imagesPreview, imagesFiles } =
     useImages();
 
@@ -45,6 +54,7 @@ const CreateProduct = () => {
       description: "",
       size: "",
       tag: "",
+      subCategory:"",
     },
     onSubmit: (values) => {
       try {
@@ -60,6 +70,10 @@ const CreateProduct = () => {
       }
     },
   });
+  useEffect(() => {
+    loadSubCategories()
+  }, [])
+  
 
   return (
     <Box component="form" onSubmit={formik.handleSubmit} marginX={"10%"}>
@@ -105,6 +119,23 @@ const CreateProduct = () => {
           sx={{ margin: 2 }}
           onChange={formik.handleChange}
         />
+         <FormControl>
+            <FormLabel>Subcategoria</FormLabel>
+            <Select
+              id="subCategory"
+              name="subCategory"
+              value={formik.values.subCategory}
+              label="Subcategoria"
+              onChange={formik.handleChange}
+            >
+              {subCategories.map((subCategory) => (
+                <MenuItem key={subCategory._id} value={subCategory._id}>
+                  {subCategory.name}
+                </MenuItem>
+              ))}
+            </Select>
+            <FormHelperText>Selecciona una sub-categoria</FormHelperText>
+          </FormControl>
         <TextField
           focused
           fullWidth

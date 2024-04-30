@@ -24,19 +24,21 @@ export const useStoreHouse = () => {
 
   const loadOneStoreHouse = async (id) => dispatch(startLoadOneStoreHouse(id));
 
-  const createStoreHouse = async (values) => dispatch(startCreateOneStoreHouse(values));
+  const createStoreHouse = async (id,values) => dispatch(startCreateOneStoreHouse(values));
 
   const loadAllStock = async (id) =>
     dispatch(startLoadAllStock(id));
 
-  const createStockProduct = async (values) =>
-    dispatch(startCreateStockProduct(values, navigate));
+  const createStockProduct = async (id,values) =>
+    dispatch(startCreateStockProduct(id,values, navigate));
 
   const addStockProduct = async (id, values) =>
     dispatch(startAddStockProduct(id, values, navigate));
 
   const removeStockProduct = async (id, values) =>
-    dispatch(startRemoveStockProduct(id, values, navigate));
+
+   {
+    dispatch(startRemoveStockProduct(id, values, navigate))};
 
   const returnStockProduct = async (id, values) =>
     dispatch(startReturnStockProduct(id, values, navigate));

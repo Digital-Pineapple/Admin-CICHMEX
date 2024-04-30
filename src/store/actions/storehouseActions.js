@@ -7,6 +7,7 @@ import {
   headerConfigApplication,
   headerConfigFormData,
 } from "../../apis/headersConfig";
+import { deleteProduct } from "../reducer/productsReducer";
 
 export const startLoadAllStock = (id) => {
   return async (dispatch) => {
@@ -98,13 +99,13 @@ export const startCreateOneStoreHouse =
 
 
 export const startCreateStockProduct =
-  (values, navigate) => async (dispatch) => {
+  (id,values, navigate) => async (dispatch) => {
     try {
      
-      const { data } = await instanceApi.patch(
-        `/stock-StoreHouse`,
+      const { data } = await instanceApi.post(
+        `/stock-StoreHouse/${id}`,
         values, headerConfigApplication);
-      dispatch(onAddStockProduct (data.data));
+      dispatch(deleteProduct(data.data?.product_id));
       enqueueSnackbar("Agregado con éxito", {
         variant: "success",
         anchorOrigin: {
@@ -131,7 +132,6 @@ export const startAddStockProduct =
       const { data } = await instanceApi.patch(
         `/stock-StoreHouse/add/${id}`,
         values, headerConfigApplication);
-      dispatch(editStockProduct (data.data));
       enqueueSnackbar("Agregado con éxito", {
         variant: "success",
         anchorOrigin: {
@@ -139,7 +139,6 @@ export const startAddStockProduct =
           horizontal: "right",
         },
       });
-      navigate("/auth/storeHouse", { replace: true });
     } catch (error) {
       enqueueSnackbar(`Error: ${error.response.data.message}`, {
         variant: "error",
@@ -152,11 +151,11 @@ export const startAddStockProduct =
   };
 
   export const startRemoveStockProduct =
-  (id,values, navigate) => async (dispatch) => {
+  (id,values) => async (dispatch) => {
     try {
       const { data } = await instanceApi.patch(
         `/stock-StoreHouse/remove/${id}`,
-        values,headerConfigFormData);
+        values,headerConfigApplication);
       dispatch(editStockProduct(data.data));
       enqueueSnackbar("Editado con éxito", {
         variant: "success",
@@ -164,8 +163,7 @@ export const startAddStockProduct =
           vertical: "top",
           horizontal: "right",
         },
-      });
-      navigate("/auth/storeHouse", { replace: true });
+      })
     } catch (error) {
       enqueueSnackbar(`Ocurrió un error + ${error.response.data.message}` , {
         variant: "error",

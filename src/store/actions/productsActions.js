@@ -56,7 +56,7 @@ export const LoadOneProduct = (_id) => {
 };
 
 export const addOneProduct =
-  ({name,price,description, tag, size}, images, navigate) => async (dispatch) => {
+  ({name,price,description, tag, size, subCategory}, images, navigate) => async (dispatch) => {
     try {
       const formData = new FormData()
       formData.append("name", name)
@@ -64,6 +64,7 @@ export const addOneProduct =
       formData.append("description",description)
       formData.append("tag", tag)
       formData.append("size", size)
+      formData.append("subCategory", subCategory)
       for (let i = 0; i < images.length; i++) {
         formData.append("images", images[i]);
       }

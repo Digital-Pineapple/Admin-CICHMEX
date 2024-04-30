@@ -1,4 +1,3 @@
-import * as React from "react";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SortIcon from "@mui/icons-material/Sort";
@@ -13,7 +12,7 @@ import {
   useGridApiContext,
   useGridSelector,
 } from "@mui/x-data-grid";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useStore } from "react-redux";
 import { useServices } from "../../hooks/useServices";
 import MuiPagination from "@mui/material/Pagination";
@@ -22,10 +21,22 @@ import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate, useParams } from "react-router-dom";
 import { redirectPages } from '../../helpers';
-import { Button, ButtonGroup } from "@mui/material";
+import { Button, ButtonGroup, Modal, Box,  Typography, TextField, InputAdornment } from "@mui/material";
 import { Workbook } from "exceljs";
 import { useProducts } from "../../hooks/useProducts";
 import { useStoreHouse } from "../../hooks/useStoreHouse";
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -43,6 +54,10 @@ function Pagination({ page, onPageChange, className }) {
     />
   );
 }
+
+
+
+
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
@@ -60,7 +75,11 @@ function CustomPagination(props) {
 }
 
 const StockProductsSH = () => {
-  const { navigate, loadOneStoreHouse, StoreHouseDetail, loadAllStock, AllStock } = useStoreHouse();
+  const { navigate, loadOneStoreHouse, StoreHouseDetail, loadAllStock, AllStock, addStockProduct, removeStockProduct } = useStoreHouse();
+  const [openAddModal, setOpenAddModal] = useState(false)
+  const [openRemoveModal, setOpenRemoveModal] = useState(false)
+  const [info, setInfo] = useState('')
+  const [quantity, setQuantity] = useState('')
   const { id } = useParams()
  let StoreHouse =StoreHouseDetail
   useEffect(() => {
@@ -69,13 +88,33 @@ const StockProductsSH = () => {
   }, [id]);
 
   const rowsWithIds = AllStock?.map((item, _id) => ({
+
     id: _id.toString(),
-    ...item,
+    name:item.product_id.name,
+    ...item, 
   }));
 
   const createStoreHouse = () => {
     navigate(`/auth/agregar-productos/${id}`)
   }
+
+  const handleAddOpen = (values) => {
+    setInfo(values)
+    setOpenAddModal(true)
+  };
+  const handleAddClose = () => {
+    setInfo('')
+    setQuantity('')
+    setOpenAddModal(false)};
+
+  const handleRemoveOpen = (values) => {
+    setInfo(values)
+    setOpenRemoveModal(true)};
+
+  const handleRemoveClose = () => {
+    setInfo('')
+    setQuantity('')
+    setOpenRemoveModal(false)};
   
   const exportToExcel = () => {
     const workbook = new Workbook();
@@ -93,7 +132,7 @@ const StockProductsSH = () => {
 
     // Agregar datos de las filas
     rowsWithIds.forEach((row) => {
-      worksheet.addRow([row._id, row.name, row.quantity]);
+      worksheet.addRow([row._id, row.product_id, row.stock]);
     });
 
     // Crear un Blob con el archivo Excel y guardarlo
@@ -105,6 +144,20 @@ const StockProductsSH = () => {
       saveAs(blob, "Producto en mi almacen.xlsx");
     });
   };
+
+  const agregateStock = (quantity, info) => {
+    addStockProduct(info?._id,{stock:quantity})
+   handleAddClose()
+  
+  }
+  const removeStock = (quantity, info) => {
+    removeStockProduct(info?._id,{stock:quantity})
+   handleRemoveClose()
+  
+  }
+
+
+  
 
   function CustomToolbar() {
     const apiRef = useGridApiContext();
@@ -151,14 +204,14 @@ const StockProductsSH = () => {
             sortable: "false",
           },
           {
-            field: "name",
+            field: `name`,
             hideable: false,
             headerName: "Nombre del producto",
             flex: 2,
             sortable: false,
           },
           {
-            field: "quantity",
+            field: "stock",
             headerName: "Quantity",
             flex: 1,
             align: "center",
@@ -170,22 +223,27 @@ const StockProductsSH = () => {
             flex: 1,
             sortable: false,
             type: "actions",
-            getActions: (params) => [
-              <WarningAlert
-                title="¿Estas seguro que deseas eliminar el producto?"
-                callbackToDeleteItem={() => (params.row._id)}
-              />,
-              <>
-              <ButtonGroup variant="contained" color="primary" aria-label=''>
-                <Button>Agregar</Button>
-                <Button>Quitar</Button> 
-              </ButtonGroup>
-              <Button variant="outlined" color="primary">
-                Guardar cambios
-              </Button>
-              </>
-                             
-            ],
+            getActions: (params) => {
+              const actions = [];
+        
+              if (params.row.stock === 0) {
+                actions.push(
+                  <WarningAlert
+                    title="¿Estás seguro de que deseas eliminar el producto?"
+                    callbackToDeleteItem={() => console.log(`Eliminar ID: ${params.row._id}`)}
+                  />
+                );
+              }
+        
+              actions.push(
+                <ButtonGroup variant="contained" color="primary">
+                  <Button onClick={()=>handleAddOpen(params.row)}>Agregar</Button>
+                  <Button onClick={()=>handleRemoveOpen(params.row)}>Quitar</Button>
+                </ButtonGroup>
+              );
+        
+              return actions;
+            },
           },
         ]}
         
@@ -213,6 +271,73 @@ const StockProductsSH = () => {
           hideToolbar: true,
         }}
       />
+  
+      <Modal
+        keepMounted
+        open={openAddModal}
+        onClose={handleAddClose}
+      >
+        <Box sx={style}>
+          <Typography id="keep-mounted-modal-title" variant="h6" component="h2">
+           Agregar al Producto : {info?.name}
+          </Typography>
+          <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
+            Stock actual: {info?.stock}
+          </Typography>
+          <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
+            Agregar:
+          </Typography>
+          <TextField
+           
+            id="quantity"
+            variant="outlined"
+            color="primary"
+            margin="none"
+            sizes="small"
+            value={quantity}
+            InputProps={{
+              endAdornment: <InputAdornment position="start">Pz's</InputAdornment>,
+            }}
+            onChange={(e)=>setQuantity(e.target.value)}
+          />
+          <Button onClick={()=>agregateStock(quantity, info)} variant="contained" color="primary">
+            Guardar
+          </Button>
+        </Box>
+      </Modal>
+      <Modal
+        keepMounted
+        open={openRemoveModal}
+        onClose={handleRemoveClose}
+      >
+        <Box sx={style}>
+          <Typography id="keep-mounted-modal-title" variant="h6" component="h2">
+           Quitar al Producto : {info?.name}
+          </Typography>
+          <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
+            Stock actual: {info?.stock}
+          </Typography>
+          <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
+            Quitar:
+          </Typography>
+          <TextField
+           
+            id="quantity"
+            variant="outlined"
+            color="primary"
+            margin="none"
+            sizes="small"
+            value={quantity}
+            InputProps={{
+              endAdornment: <InputAdornment position="start">Pz's</InputAdornment>,
+            }}
+            onChange={(e)=>setQuantity(e.target.value)}
+          />
+          <Button onClick={()=>removeStock(quantity, info)} variant="contained" color="primary">
+            Guardar
+          </Button>
+        </Box>
+      </Modal>
     </div>
   );
 }

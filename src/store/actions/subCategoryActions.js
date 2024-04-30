@@ -8,6 +8,7 @@ import {
   onAddNewSubCategory,
 } from "../reducer/subCategoryReducer";
 import Cookies from "js-cookie";
+import { headerConfigApplication } from "../../apis/headersConfig";
 
 export const startLoadSubCategories = () => {
   return async (dispatch) => {
@@ -51,7 +52,7 @@ export const addOneSubCategory = (values) => {
       formData.append("name", values.name);
       formData.append("category_id", values.category);
       const { data } = await instanceApi.post(
-        `/sub-category`,values
+        `/sub-category`,values, headerConfigApplication
       );
 
       dispatch(addOneSubCategory(data,data));
@@ -81,11 +82,7 @@ export const addOneSubCategory = (values) => {
 export const deleteOneSubCategory = (id) => async (dispatch) => {
   try {
     const token = localStorage.getItem('token')
-   const {data} =  await instanceApi.delete(`/sub-category/${id}`, {
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
-  });
+   const {data} =  await instanceApi.delete(`/sub-category/${id}`,headerConfigApplication);
     enqueueSnackbar("Se eliminó con éxito", {
       variant: "success",
       anchorOrigin: {

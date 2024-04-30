@@ -1,4 +1,3 @@
-import * as React from "react";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SortIcon from "@mui/icons-material/Sort";
@@ -13,7 +12,7 @@ import {
   useGridApiContext,
   useGridSelector,
 } from "@mui/x-data-grid";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useStore } from "react-redux";
 import { useServices } from "../../hooks/useServices";
 import MuiPagination from "@mui/material/Pagination";
@@ -22,7 +21,7 @@ import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate, useParams } from "react-router-dom";
 import { redirectPages } from '../../helpers';
-import { Button, ButtonGroup } from "@mui/material";
+import { Button, ButtonGroup, Modal, Box, Typography, TextField } from "@mui/material";
 import { Workbook } from "exceljs";
 import { useProducts } from "../../hooks/useProducts";
 import { useStoreHouse } from "../../hooks/useStoreHouse";
@@ -60,19 +59,42 @@ function CustomPagination(props) {
 }
 
 const AddProductsToSH = () => {
-  const { loadProducts, products } = useProducts();
+  const { loadProducts, products, navigate } = useProducts();
+  const {loadAllStock, AllStock}=useStoreHouse()
+  const [openModal, setOpenModal] = useState(false);
+  const {createStockProduct}= useStoreHouse()
+
+
+ 
+  const [info, setinfo] = useState('')
+  const [quantity, setQuantity] = useState('')
   const { id } = useParams()
   useEffect(() => {
     loadProducts()
+    loadAllStock(id)
+    
   }, [id]);
 
+ 
   const rowsWithIds = products?.map((item, _id) => ({
     id: _id.toString(),
     ...item,
   }));
 
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+  };
+
   const Out = () => {
-    navigate(`/auth/Almacen/${id}`)
+    navigate(`/auth/Almacenes/${id}`)
   }
   
   const exportToExcel = () => {
@@ -103,6 +125,20 @@ const AddProductsToSH = () => {
     });
   };
 
+  const addProductInBranch = (quantity,values ) =>{
+createStockProduct(id,{stock:quantity, product_id:values._id} )
+   handleClose()
+  }
+  const handleOpen = (values) => {
+    setinfo(values)
+    setOpenModal(true)
+  
+  }
+
+  const handleClose = () => setOpenModal(false);
+
+  
+
   function CustomToolbar() {
     const apiRef = useGridApiContext();
   
@@ -129,14 +165,9 @@ const AddProductsToSH = () => {
   return (
     <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
       <Title>Productos en el alamcen: {products?.name} </Title>
-      <Button
-          variant="contained"
-          disableElevation
-          sx={{ color: "primary", my: 5, p: 2, borderRadius: 5 }}
-          onClick={Out}
-        >
-          Agregar productos
-        </Button>
+      <Button onClick={()=>Out()} variant="contained" color="primary">
+        regresar
+      </Button>
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
@@ -165,7 +196,7 @@ const AddProductsToSH = () => {
             getActions: (params) => [
               <>
               
-              <Button variant="outlined" color="primary">
+              <Button  key={params.row._id} onClick={()=>{handleOpen(params.row);}} variant="outlined" color="primary">
                 Agregar
               </Button>
               </>
@@ -184,6 +215,7 @@ const AddProductsToSH = () => {
           columnUnsortedIcon: UnsortedIcon,
         }}
         disableColumnFilter
+        
         disableColumnMenu
         disableColumnSelector
         disableDensitySelector
@@ -198,7 +230,36 @@ const AddProductsToSH = () => {
           hideToolbar: true,
         }}
       />
+        
+      <Modal
+        keepMounted
+        open={openModal}
+        onClose={handleClose}
+      >
+        <Box sx={style}>
+          <Typography id="keep-mounted-modal-title" variant="h6" component="h2">
+            Agregar producto: {info.name}
+          </Typography>
+          <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
+           Cantidad:
+          </Typography>
+          <TextField
+            id="quantity"
+            variant="outlined"
+            color="primary"
+            margin="none"
+            sizes="small"
+            value={quantity}
+            onChange={(e)=>setQuantity(e.target.value)}
+          />
+          <Button onClick={()=>addProductInBranch(quantity, info)} variant="contained" color="primary">
+            Guardar
+          </Button>
+        </Box>
+      </Modal>
+    
     </div>
+    
   );
 }
 
