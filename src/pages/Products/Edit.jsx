@@ -321,7 +321,7 @@ const Edit = () => {
                 </MenuItem>
               ))}
             </Select>
-            <FormHelperText>Selecciona una categoria</FormHelperText>
+            <FormHelperText>Selecciona una subcategoria</FormHelperText>
           </FormControl>
           </Stack>
           

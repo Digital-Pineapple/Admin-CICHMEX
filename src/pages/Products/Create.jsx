@@ -44,7 +44,7 @@ const styleStatus = {
 
 const CreateProduct = () => {
   const { createProduct } = useProducts();
-  const { loadSubCategories, subCategories, loadSubcategoriesByCategory, subsByCategory } = useSubCategories()
+  const { loadSubCategories, subCategories, loadSubcategoriesByCategory, subCatByCategory } = useSubCategories()
   const { categories, loadCategories } = useCategories();
   const { images, handleImageChange, deleteImage, imagesPreview, imagesFiles } =
     useImages();
@@ -133,6 +133,7 @@ const CreateProduct = () => {
               value={formik.values.category}
               label="Categoria"
               onChange={(e)=>{
+                formik.setFieldValue('subCategory','');
                 formik.handleChange(e)
                 loadSubcategoriesByCategory(e.target.value);
               }}
@@ -154,7 +155,7 @@ const CreateProduct = () => {
               label="Subcategoria"
               onChange={formik.handleChange}
             >
-              { formik.values.category && subsByCategory.map((subCategory) => (
+              { formik.values.category && subCatByCategory.map((subCategory) => (
                 <MenuItem key={subCategory._id} value={subCategory._id}>
                   {subCategory.name}
                 </MenuItem>
