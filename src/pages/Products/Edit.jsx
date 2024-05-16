@@ -7,7 +7,13 @@ import {
   TextareaAutosize,
   useMediaQuery,
   Avatar,
-  Badge
+  Badge,
+  FormControl,
+  FormLabel,
+  Select,
+  MenuItem,
+  FormHelperText,
+  Stack
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -24,13 +30,19 @@ import LoadingScreen from '../../components/ui/LoadingScreen'
 import FilterIcon from "@mui/icons-material/Filter";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { styled } from "@mui/material/styles";
+import { useCategories } from "../../hooks/useCategories";
+import { useSubCategories } from "../../hooks/useSubCategories";
+import { useDispatch } from "react-redux";
+import { LoadOneProduct } from "../../store/actions/productsActions";
 
 const Edit = () => {
   const { id } = useParams();
-  const { loadProduct, product, editProduct, navigate } = useProducts();
+  const { loadProduct, product, editProduct, navigate, isLoading } = useProducts();
+  const { categories, loadCategories } = useCategories();
+  const { subCatByCategory, loadSubcategoriesByCategory } = useSubCategories();
   const [loading, setLoading] = useState(true)
   const isSmallScreen = useMediaQuery("(max-width:600px)");
-
+  const dispatch = useDispatch()
   const StyledBadge = styled(Badge)(({ theme }) => ({
     "& .MuiBadge-badge": {
       right: 0,
@@ -38,21 +50,25 @@ const Edit = () => {
     },
   }));
   useEffect(() => {
-    setTimeout(async()=>{
-      await loadProduct(id)
-      if (product) {
-        await formik.setValues({
-          name: product.name,
-          description: product.description,
-          price: product.price,
-          size: product.size,
-          tag: product.tag,
-        });
-        setLoading(false)
-      }
-    },500)
-    
-  }, [id]);
+    // setTimeout(async()=>{
+      loadProduct(id)
+      dispatch(LoadOneProduct(id)).then(({data})=>{
+        formik.setValues({
+         name: data.name,
+         description: data.description,
+         price: data.price,
+         size: data.size,
+         tag: data.tag,
+         category: data?.category?._id,
+         subCategory: data?.subCategory?._id
+       });
+       setLoading(false)
+       loadSubcategoriesByCategory(data?.category?._id)
+      })
+     
+    // },500)
+    loadCategories();
+  }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -62,6 +78,8 @@ const Edit = () => {
       size: "",
       tag: "",
       images: "",
+      category:"",
+      subCategory: ""
     },
 
     onSubmit: (values) => {
@@ -93,7 +111,7 @@ const Edit = () => {
     <>
     
     {
-      loading ? <LoadingScreen />  
+      isLoading ? <LoadingScreen />  
       :
    
     <Box component="form" onSubmit={formik.handleSubmit} marginX={"10%"}>
@@ -265,6 +283,48 @@ const Edit = () => {
             style={{ width: "100%", fontFamily: "BikoBold", marginBottom: 20 }}
             onChange={formik.handleChange}
           />
+         
+          <Stack direction='row' columnGap={2}>
+          {/* {JSON.stringify(subCatByCategory,null,2)} */}
+            <FormControl>
+            <FormLabel>Categoría</FormLabel>
+            <Select
+              id="category"
+              name="category"
+              value={formik.values.category}
+              label="Categoria"
+              onChange={(e)=>{
+                formik.handleChange(e)
+                loadSubcategoriesByCategory(e.target.value);
+              }}
+            >
+              {categories.map((category) => (
+                <MenuItem key={category._id} value={category._id}>
+                  {category.name}
+                </MenuItem>
+              ))}
+            </Select>
+            <FormHelperText>Selecciona una categoria</FormHelperText>
+          </FormControl>
+          <FormControl>
+            <FormLabel>Subcategoría</FormLabel>
+            <Select
+              id="subCategory"
+              name="subCategory"
+              value={formik.values.subCategory}
+              label="subcategoria"
+              onChange={formik.handleChange}
+            >
+              {formik.values.category && subCatByCategory.map((subCategory) => (
+                <MenuItem key={subCategory._id} value={subCategory._id}>
+                  {subCategory.name}
+                </MenuItem>
+              ))}
+            </Select>
+            <FormHelperText>Selecciona una categoria</FormHelperText>
+          </FormControl>
+          </Stack>
+          
           <TextField
             focused
             type="number"
