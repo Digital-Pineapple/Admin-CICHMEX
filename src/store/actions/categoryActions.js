@@ -7,12 +7,14 @@ import {
   editCategory,
   onAddNewCategory,
 } from "../reducer/categoryReducer";
-import Cookies from "js-cookie";
+import { headerConfig } from "./headers";
+
+
 
 export const startLoadCategories = () => {
   return async (dispatch) => {
     try {
-      const { data } = await instanceApi.get("/category");
+      const { data } = await instanceApi.get("/category",headerConfig);
       dispatch(loadCategories(data.data));
     } catch (error) {
       enqueueSnackbar(`Ocurrió un error al cargar las categorias + ${error}`,
@@ -26,7 +28,7 @@ export const startLoadCategories = () => {
 
 export const getOneCategory = (category_id) => async (dispatch) => {
   try {
-    const { data } = await instanceApi.get(`/category/${category_id}`);
+    const { data } = await instanceApi.get(`/category/${category_id}`, headerConfig);
     dispatch(loadCategory(data.data));
   } catch (error) {
     enqueueSnackbar(`Ocurrió un error al cargar la categoria + ${error}`,
@@ -38,7 +40,7 @@ export const getOneCategory = (category_id) => async (dispatch) => {
 };
 export const addOneCategory = (values) => async (dispatch) => {
   try {
-    const { data } = await instanceApi.post(`/category/`, values);
+    const { data } = await instanceApi.post(`/category/`, values, headerConfig);
     enqueueSnackbar('Categoria creada con éxito', {variant:'success', anchorOrigin: {
       vertical: 'top',
       horizontal: 'right'
@@ -56,7 +58,7 @@ export const addOneCategory = (values) => async (dispatch) => {
 
 export const deleteOneCategory = (category_id) => async (dispatch) => {
   try {
-    await instanceApi.delete(`/category/${category_id}`);
+    await instanceApi.delete(`/category/${category_id}`, headerConfig);
     dispatch(deleteCategory(category_id));
   } catch (error) {
     enqueueSnackbar(`Ocurrió un error al eliminar la categoria + ${error}`,

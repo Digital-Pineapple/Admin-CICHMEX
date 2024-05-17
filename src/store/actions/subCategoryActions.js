@@ -7,14 +7,14 @@ import {
   editSubCategory,
   onAddNewSubCategory,
 } from "../reducer/subCategoryReducer";
-import Cookies from "js-cookie";
 import { headerConfigApplication } from "../../apis/headersConfig";
+import { headerConfig, headerConfigForm } from "./headers";
 
 export const startLoadSubCategories = () => {
   return async (dispatch) => {
     try {
       const { data } = await instanceApi.get("/sub-category");
-      dispatch(loadSubCategories(data.data));
+      dispatch(loadSubCategories(data.data), headerConfig);
     } catch (error) {
       enqueueSnackbar(
         `Ocurrió un error al cargar las sub-categorias + ${error}`,
@@ -32,7 +32,7 @@ export const startLoadSubCategories = () => {
 
 export const getOneSubCategory = (subCategory_id) => async (dispatch) => {
   try {
-    const { data } = await instanceApi.get(`/sub-category/${subCategory_id}`);
+    const { data } = await instanceApi.get(`/sub-category/${subCategory_id}`, headerConfig);
     dispatch(loadSubCategory(data.data));
   } catch (error) {
     enqueueSnackbar(`Ocurrió un error al cargar la sub-categoria + ${error}`, {
@@ -52,7 +52,7 @@ export const addOneSubCategory = (values) => {
       formData.append("name", values.name);
       formData.append("category_id", values.category);
       const { data } = await instanceApi.post(
-        `/sub-category`,values, headerConfigApplication
+        `/sub-category`,values, headerConfigForm
       );
 
       dispatch(addOneSubCategory(data,data));
@@ -82,7 +82,7 @@ export const addOneSubCategory = (values) => {
 export const deleteOneSubCategory = (id) => async (dispatch) => {
   try {
     const token = localStorage.getItem('token')
-   const {data} =  await instanceApi.delete(`/sub-category/${id}`,headerConfigApplication);
+   const {data} =  await instanceApi.delete(`/sub-category/${id}`,headerConfig);
     enqueueSnackbar("Se eliminó con éxito", {
       variant: "success",
       anchorOrigin: {
@@ -178,7 +178,7 @@ export const getSubCategoriesByCategory = (value) => {
   // console.log(value,"");
   return async (dispatch) => {
     try {
-      const { data } = await instanceApi.get(`/sub-category/subCategory/${value}`);
+      const { data } = await instanceApi.get(`/sub-category/subCategory/${value}`, headerConfig);
       return data.data
     } catch (error) {
       console.error(error);
