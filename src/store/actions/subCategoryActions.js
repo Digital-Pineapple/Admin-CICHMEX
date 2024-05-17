@@ -154,7 +154,7 @@ export const searchSubCategories = ({ value }) => {
           value ? `?search=${value}` : `?search=${""}`
         }`
       );
-      console.log(data);
+      // console.log(data);
       dispatch(loadSubCategories(data.data));
       enqueueSnackbar("Categorias encontradas con exito", {
         variant: "success",
@@ -174,3 +174,16 @@ export const searchSubCategories = ({ value }) => {
     }
   };
 };
+export const getSubCategoriesByCategory = (value) => {
+  // console.log(value,"");
+  return async (dispatch) => {
+    try {
+      const { data } = await instanceApi.get(`/sub-category/subCategory/${value}`);
+      return data.data
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};
+
+

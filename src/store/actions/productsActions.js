@@ -7,6 +7,7 @@ import {
   loadProducts,
   onAddNewProduct,
   productsReducer,
+  startLoading,
 } from "../reducer/productsReducer";
 import {
   headerConfigApplication,
@@ -39,9 +40,11 @@ export const LoadOneProduct = (_id) => {
   return async (dispatch) => {
     if (typeof _id == "string") {   
       try {
+        dispatch(startLoading());
         const { data } = await instanceApi.get(
           `/product/${_id}`, headerConfigApplication );
         dispatch(loadProduct(data.data));
+        return data;
       } catch (error) {
         enqueueSnackbar(
           `${error.response.data.message}|| 'Error al consultar información'`,
@@ -56,7 +59,7 @@ export const LoadOneProduct = (_id) => {
 };
 
 export const addOneProduct =
-  ({name,price,description, tag, size, subCategory}, images, navigate) => async (dispatch) => {
+  ({name,price,description, tag, size, category, subCategory}, images, navigate) => async (dispatch) => {
     try {
       const formData = new FormData()
       formData.append("name", name)
@@ -65,6 +68,7 @@ export const addOneProduct =
       formData.append("tag", tag)
       formData.append("size", size)
       formData.append("subCategory", subCategory)
+      formData.append("category", category)
       for (let i = 0; i < images.length; i++) {
         formData.append("images", images[i]);
       }
@@ -92,7 +96,7 @@ export const addOneProduct =
   };
 
   export const editOneProduct =
-  (id,{name,price,description,tag, size}, images, navigate) => async (dispatch) => {
+  (id,{name,price,description,tag, size, category, subCategory}, images, navigate) => async (dispatch) => {
     try {
       const formData = new FormData()
       formData.append('name', name)
@@ -100,6 +104,8 @@ export const addOneProduct =
       formData.append('description',description)
       formData.append('tag', tag)
       formData.append('size', size)
+      formData.append('category', category)
+      formData.append('subCategory', subCategory)
       for (let i = 0; i < images.length; i++) {
         formData.append("images", images[i]);
       }

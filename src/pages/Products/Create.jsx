@@ -28,6 +28,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import AddIcon from "@mui/icons-material/Add";
 import { useSubCategories } from "../../hooks/useSubCategories";
 import { useEffect } from "react";
+import { useCategories } from "../../hooks/useCategories";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -43,7 +44,8 @@ const styleStatus = {
 
 const CreateProduct = () => {
   const { createProduct } = useProducts();
-  const {loadSubCategories, subCategories} = useSubCategories()
+  const { loadSubCategories, subCategories, loadSubcategoriesByCategory, subCatByCategory } = useSubCategories()
+  const { categories, loadCategories } = useCategories();
   const { images, handleImageChange, deleteImage, imagesPreview, imagesFiles } =
     useImages();
 
@@ -55,6 +57,7 @@ const CreateProduct = () => {
       size: "",
       tag: "",
       subCategory:"",
+      category:""
     },
     onSubmit: (values) => {
       try {
@@ -70,8 +73,11 @@ const CreateProduct = () => {
       }
     },
   });
+
+ 
   useEffect(() => {
     loadSubCategories()
+    loadCategories()
   }, [])
   
 
@@ -120,6 +126,27 @@ const CreateProduct = () => {
           onChange={formik.handleChange}
         />
          <FormControl>
+            <FormLabel>Categoría</FormLabel>
+            <Select
+              id="category"
+              name="category"
+              value={formik.values.category}
+              label="Categoria"
+              onChange={(e)=>{
+                formik.setFieldValue('subCategory','');
+                formik.handleChange(e)
+                loadSubcategoriesByCategory(e.target.value);
+              }}
+            >
+              {categories.map((category) => (
+                <MenuItem key={category._id} value={category._id}>
+                  {category.name}
+                </MenuItem>
+              ))}
+            </Select>
+            <FormHelperText>Selecciona una categoria</FormHelperText>
+          </FormControl>
+         <FormControl>
             <FormLabel>Subcategoria</FormLabel>
             <Select
               id="subCategory"
@@ -128,7 +155,7 @@ const CreateProduct = () => {
               label="Subcategoria"
               onChange={formik.handleChange}
             >
-              {subCategories.map((subCategory) => (
+              { formik.values.category && subCatByCategory.map((subCategory) => (
                 <MenuItem key={subCategory._id} value={subCategory._id}>
                   {subCategory.name}
                 </MenuItem>
