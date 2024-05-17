@@ -210,7 +210,7 @@ export const startDeleteStoreHouse = (id,navigate) => {
   return async (dispatch) => {
     try {
       const { data } = await instanceApi.delete(
-        `/storehouse/${id}`,values, headerConfigApplication);
+        `/storehouse/${id}`, headerConfigApplication);
     
       enqueueSnackbar("Almacen eliminado", {
         variant: "success",
