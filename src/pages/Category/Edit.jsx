@@ -71,7 +71,7 @@ const Edit = () => {
 
   return (
     <Box marginX={"10%"}>
-      <Titles name={<h2 align="center">Editar Categoria</h2>} />
+      <Titles name={<h2 align="center">Editar Categoria</h2>} />     
       <Grid
         color="#F7BFBF"
         borderRadius={5}
@@ -126,6 +126,7 @@ const Edit = () => {
             value={formik.values.name}
             sx={{ margin: 2 }}
             onChange={formik.handleChange}
+            required
           />
           <Grid
             container

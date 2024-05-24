@@ -294,7 +294,8 @@ const Edit = () => {
               value={formik.values.category}
               label="Categoria"
               onChange={(e)=>{
-                formik.handleChange(e)
+                formik.setFieldValue('subCategory','');
+                formik.handleChange(e);
                 loadSubcategoriesByCategory(e.target.value);
               }}
             >

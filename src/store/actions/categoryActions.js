@@ -76,11 +76,13 @@ export const editOneCategory = (category_id, {name, category_image,}) => {
           const formData = new FormData();
           formData.append('name', name );
           formData.append('image',category_image);
-        const { data } = await instanceApi.post(
+        const { data } = await instanceApi.patch(
             `/category/${category_id}`,formData, {
               headers: {
-                token: localStorage.getItem('token'),
-                "Content-Type": "multipart/form-data",
+                // token: localStorage.getItem('token'),
+                // "Content-Type": "multipart/form-data",
+                "Content-type": "multipart/form-data",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
               }
             }
         );

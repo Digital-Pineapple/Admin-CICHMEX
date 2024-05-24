@@ -62,6 +62,7 @@ const CreateProduct = () => {
     onSubmit: (values) => {
       try {
         createProduct(values, imagesFiles());
+        // console.log(values);
       } catch (error) {
         return enqueueSnackbar(`Error: ${error.data.response?.message}`, {
           variant: "error",
