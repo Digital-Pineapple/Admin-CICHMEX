@@ -16,7 +16,7 @@ export const useCategories = () => {
     
     const editCategory = async (category_id, {name, category_image}) => await dispatch(editOneCategory(category_id,{name, category_image,}));
     
-    const addCategory = async values => await dispatch(addOneCategory(values));
+    const addCategory = async (values, files) => await dispatch(addOneCategory(values, files));
 
     const searchCategory = async value => await dispatch(searchCategories(value));
 

@@ -7,7 +7,7 @@ import {
   editCategory,
   onAddNewCategory,
 } from "../reducer/categoryReducer";
-import { headerConfig } from "./headers";
+import { headerConfig, headerConfigForm } from "./headers";
 
 
 
@@ -38,16 +38,19 @@ export const getOneCategory = (category_id) => async (dispatch) => {
           }})
   }
 };
-export const addOneCategory = (values) => async (dispatch) => {
+export const addOneCategory = (values, image) => async (dispatch) => {
+
   try {
-    const { data } = await instanceApi.post(`/category/`, values, headerConfig);
+    const formData = new FormData();
+    formData.append('name', values.name );
+    formData.append('image',image[0]);
+    const { data } = await instanceApi.post(`/category/`, formData, headerConfigForm);
     enqueueSnackbar('Categoria creada con éxito', {variant:'success', anchorOrigin: {
       vertical: 'top',
       horizontal: 'right'
     }})
     dispatch(loadCategory(data.data))
   } catch (error) {
-    console.log(error);
     enqueueSnackbar(`Error : ${error.response.data?.message}`,
     {variant:'error', anchorOrigin: {
      vertical: 'top',

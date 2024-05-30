@@ -33,7 +33,7 @@ const Edit = () => {
 
   useEffect(() => {
     loadCategory(id);
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     formik.setValues({
@@ -107,7 +107,10 @@ const Edit = () => {
                   accept={"image/png, image/jpeg"}
                   value={formik.values.category_image}
                   onChange={handleImage}
-                />
+                >
+            
+                  </CardMedia>
+
               </CardActionArea>
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
