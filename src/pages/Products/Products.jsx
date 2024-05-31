@@ -22,7 +22,7 @@ import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
 import { redirectPages } from '../../helpers';
-import { Button } from "@mui/material";
+import { Button, IconButton, Tooltip } from "@mui/material";
 import { Workbook } from "exceljs";
 import { useProducts } from "../../hooks/useProducts";
 import { editOneProduct } from "../../store/actions/productsActions";
@@ -144,17 +144,23 @@ const Products = () => {
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
+          // {
+          //   field: "_id",
+          //   hideable: false,
+          //   headerName: "Id",
+          //   flex: 1,
+          //   sortable: "false",
+          // },
           {
-            field: "_id",
-            hideable: false,
-            headerName: "Id",
+            field: "tag",
+            headerName: "Código",
             flex: 1,
-            sortable: "false",
+            align: "center",
           },
           {
             field: "name",
             hideable: false,
-            headerName: "Nombre del servicio",
+            headerName: "Nombre del prodcto",
             flex: 1,
             sortable: false,
           },
@@ -176,12 +182,7 @@ const Products = () => {
             flex: 1,
             align: "center",
           },
-          {
-            field: "tag",
-            headerName: "Código",
-            flex: 1,
-            align: "center",
-          },
+         
           {
             field: "Opciones",
             headerName: "Opciones",
@@ -194,7 +195,12 @@ const Products = () => {
                 title="¿Estas seguro que deseas eliminar el producto?"
                 callbackToDeleteItem={() => deleteProduct(params.row._id)}
               />,
-              <GridActionsCellItem icon={<Edit />} onClick={()=>redirectPages(navigate,(params.row._id))}  label="Editar servicio" showInMenu />,
+              <Tooltip title='Editar Producto' >
+
+              <IconButton aria-label="Editar" color="success" onClick={()=>redirectPages(navigate,(params.row._id))} >
+                <Edit />
+              </IconButton> 
+              </Tooltip>
                              
             ],
           },

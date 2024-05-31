@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux"
-import { LoadOneProduct, addOneProduct, deleteOneProduct, editOneProduct, startLoadProducts } from "../store/actions/productsActions";
+import { LoadOneProduct, addOneProduct, deleteOneProduct, editOneProduct, startLoadProducts, startLoadStockProducts } from "../store/actions/productsActions";
 import { useNavigate } from "react-router-dom";
 import { cleanProductDetail } from "../store/reducer/productsReducer";
 
@@ -10,7 +10,9 @@ export const useProducts = () => {
 
     const { products, product, isLoading } = useSelector(state => state.products);
 
-    const loadProducts = async () => dispatch((startLoadProducts()));
+    const loadProducts = async () => dispatch((startLoadProducts()))
+
+    const loadStockProducts = async () => dispatch((startLoadStockProducts()))
 
     const loadProduct = async (_id) => {
         dispatch((LoadOneProduct(_id)));
@@ -24,5 +26,5 @@ export const useProducts = () => {
 
     const cleanProductD = () => dispatch(cleanProductDetail())
 
-    return { loadProducts, loadProduct, createProduct, editProduct, deleteProduct, product, products, navigate, isLoading, cleanProductD }
+    return { loadProducts, loadProduct, createProduct, editProduct, deleteProduct, product, products, navigate, isLoading, cleanProductD, loadStockProducts }
 }

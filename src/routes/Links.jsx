@@ -12,11 +12,17 @@ import MuseumIcon from '@mui/icons-material/Museum';
 
 export const Links = [
   {
-    title : "Sucursales",
-    path : "/auth/Sucursales",
-    Icon : <StoreIcon/>
+    title : "Almacen",
+    path : "/auth/MiAlmacen",
+    Icon : <MuseumIcon/>
 
   },
+  // {
+  //   title : "Sucursales",
+  //   path : "/auth/Sucursales",
+  //   Icon : <StoreIcon/>
+
+  // },
   {
     title: "Usuarios",
     path: "/auth/usuarios",
@@ -48,18 +54,20 @@ export const Links = [
     Icon : <CardMembershipIcon/>
 
   },
-  {
-    title : "Productos",
-    path : "/auth/Productos",
-    Icon : <StorefrontIcon/>
+  // {
+  //   title : "Productos",
+  //   path : "/auth/Productos",
+  //   Icon : <StorefrontIcon/>
 
-  },
-  {
-    title : "Almacenes",
-    path : "/auth/Almacenes",
-    Icon : <MuseumIcon/>
+  // },
+  // {
+  //   title : "Almacenes",
+  //   path : "/auth/Almacenes",
+  //   Icon : <MuseumIcon/>
 
-  },
+  // },
+
+  
 
  
 ];

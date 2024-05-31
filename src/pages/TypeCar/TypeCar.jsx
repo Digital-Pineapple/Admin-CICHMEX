@@ -139,13 +139,13 @@ const TypeCar = () => {
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
-          {
-            field: "_id",
-            hideable: false,
-            headerName: "Id",
-            flex: 1,
-            sortable: "false",
-          },
+          // {
+          //   field: "_id",
+          //   hideable: false,
+          //   headerName: "Id",
+          //   flex: 1,
+          //   sortable: "false",
+          // },
           // {
           //   field: "service_image",
           //   hideable: false,

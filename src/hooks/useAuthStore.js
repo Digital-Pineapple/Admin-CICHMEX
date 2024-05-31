@@ -68,6 +68,7 @@ export const useAuthStore = () => {
     RevalidateToken,
     logged,
     startLogout,
-    StartLogin
+    StartLogin,
+    navigate
   };
 };

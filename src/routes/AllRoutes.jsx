@@ -35,6 +35,9 @@ import CreateStoreHouse from '../pages/StoreHouse/Create'
 import EditStoreHouse from '../pages/StoreHouse/Edit'
 import StockProductsSH from '../pages/StoreHouse/StockProductsSH'
 import AddProductsToSH from '../pages/StoreHouse/AddProductsToSH'
+import { MyStoreHouse } from '../pages/MyStoreHouse/MyStoreHouse'
+import MyStockProducts from '../pages/MyStoreHouse/MyStockProducts'
+import MyProductOrders from '../pages/MyStoreHouse/MyProductOrders'
 
 
 export const AllRoutes = [
@@ -89,5 +92,8 @@ export const AllRoutes = [
   { type: 1, path: '/Almacenes/:id', element: <StockProductsSH/>},
   { type: 1, path: '/agregar-productos/:id', element: <AddProductsToSH/>},
 
+  { type: 1, path: '/MiAlmacen', element: <MyStoreHouse/> },
+  { type: 1, path: '/MiAlmacen/stock', element: <MyStockProducts/> },
+  { type: 1, path: '/MiAlmacen/product-orders', element: <MyProductOrders/> },
 
 ]

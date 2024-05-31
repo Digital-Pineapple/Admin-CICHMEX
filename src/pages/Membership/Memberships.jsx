@@ -158,13 +158,13 @@ export default function Memberships() {
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
-          {
-            field: "_id",
-            hideable: false,
-            headerName: "Id",
-            flex: 1,
-            sortable: "false",
-          },
+          // {
+          //   field: "_id",
+          //   hideable: false,
+          //   headerName: "Id",
+          //   flex: 1,
+          //   sortable: "false",
+          // },
           {
             field: "name",
             hideable: false,

@@ -147,18 +147,18 @@ export default function Users() {
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
-          {
-            field: "_id",
-            hideable: false,
-            headerName: "Id",
-            flex: 1,
-            sortable: "false",
-          },
+          // {
+          //   field: "_id",
+          //   hideable: false,
+          //   headerName: "Id",
+          //   flex: 1,
+          //   sortable: "false",
+          // },
           {
             field: "profile_image",
             hideable: false,
             headerName: "Foto de perfil",
-            flex: 1,
+            flex: .2,
             sortable: "false",
             renderCell: (params) =>
               params?.value ? (

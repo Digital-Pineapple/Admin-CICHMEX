@@ -16,11 +16,13 @@ import membershipReducer from "./reducer/membershipReducer";
 import userReducer from "./reducer/userReducer";
 import productsReducer from "./reducer/productsReducer";
 import storeHouseReducer from "./reducer/storeHouseReducer";
+import productOrdersReducer from "./reducer/productOrdersReducer";
 
 const rootReducer = combineReducers({
   auth: authReducer,
   ui: uiReducer,
   users: userReducer,
+  allProductOrders: productOrdersReducer,
   services: servicesReducer,
   categories: categoryReducer,
   typeCars: typeCarReducer,
@@ -34,6 +36,7 @@ const rootReducer = combineReducers({
   memberships: membershipReducer,
   products : productsReducer,
   storeHouse : storeHouseReducer
+
 });
 
 export const store = configureStore({

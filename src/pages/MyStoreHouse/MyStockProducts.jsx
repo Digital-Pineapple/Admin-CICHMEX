@@ -6,6 +6,7 @@ import {
   DataGrid,
   GridActionsCellItem,
   GridPagination,
+  GridToolbar,
   GridToolbarContainer,
   GridToolbarQuickFilter,
   gridPageCountSelector,
@@ -14,17 +15,17 @@ import {
 } from "@mui/x-data-grid";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useServices } from "../../hooks/useServices";
 import MuiPagination from "@mui/material/Pagination";
 import { Download, Edit } from "@mui/icons-material";
 import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
-import { redirectPages } from "../../helpers";
-import { useCategories } from "../../hooks/useCategories";
-import { Button, Avatar } from "@mui/material";
+import { redirectPages } from '../../helpers';
+import { Button, IconButton, Tooltip } from "@mui/material";
 import { Workbook } from "exceljs";
-import { saveAs } from 'file-saver';
-
+import { useProducts } from "../../hooks/useProducts";
+import { editOneProduct } from "../../store/actions/productsActions";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -58,32 +59,34 @@ function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
-const Categories = () => {
-  const { loadCategories, deleteCategory } = useCategories();
-  const { categories } = useSelector((state) => state.categories);
-  const navigate = useNavigate();
+const MyStockProducts = () => {
+  const { loadStockProducts, products, navigate, deleteProduct } = useProducts();
 
   useEffect(() => {
-    loadCategories();
+    loadStockProducts()
   }, []);
 
-  const rowsWithIds = categories.map((category, _id) => ({
+  const rowsWithIds = products.map((item, _id) => ({
     id: _id.toString(),
-    ...category,
+    ...item,
   }));
-  const createCategory = () => {
-    navigate("/auth/CrearCategoria");
-  };
 
+  const createProduct = () => {
+    navigate('/auth/CrearProducto')
+  }
+  
   const exportToExcel = () => {
     const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Categorias");
+    const worksheet = workbook.addWorksheet("Stock de productos");
 
     // Agregar encabezados de columna
     const headerRow = worksheet.addRow([
-      "ID",
-      "Nombre de la categoria",
-      "Imagen",
+      "Código",
+      "Nombre del producto",
+      "Existencias",
+      "Precio",
+      "Tamaño",
+    
     ]);
     headerRow.eachCell((cell) => {
       cell.font = { bold: true };
@@ -91,7 +94,7 @@ const Categories = () => {
 
     // Agregar datos de las filas
     rowsWithIds.forEach((row) => {
-      worksheet.addRow([row._id, row.name]);
+      worksheet.addRow([row._id, row.name, row.description, row.price, row.size, row.tag]);
     });
 
     // Crear un Blob con el archivo Excel y guardarlo
@@ -100,7 +103,7 @@ const Categories = () => {
         type:
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-      saveAs(blob, "categorias.xlsx");
+      saveAs(blob, "productos.xlsx");
     });
   };
 
@@ -126,19 +129,10 @@ const Categories = () => {
     );
   }
 
+
   return (
     <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-      <Title>Categorias</Title>
-      <Button
-        variant="contained"
-        disableElevation
-        sx={{ color: "primary", my: 5, p: 2, borderRadius: 5 }}
-        onClick={createCategory}
-      >
-        Registrar nuevo Categoría
-      </Button>
-     
-
+      <Title>Stock de productos</Title>
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
@@ -150,23 +144,37 @@ const Categories = () => {
           //   sortable: "false",
           // },
           {
+            field: "tag",
+            headerName: "Código",
+            flex: 1,
+            align: "center",
+          },
+          {
             field: "name",
             hideable: false,
-            headerName: "Nombre de la categoria",
-            flex: 2,
+            headerName: "Nombre del prodcto",
+            flex: 1,
             sortable: false,
           },
           {
-            field: "category_image",
-            hideable: false,
-            headerName: "Imagen",
+            field: "price",
+            headerName: "Precio",
             flex: 1,
-            sortable: "false",
-            renderCell: (params) =>
-              params?.value ? (
-                <Avatar alt={params.value} src={params.value} />
-              ) : null,
+            align: "center",
           },
+          {
+            field: "stock",
+            headerName: "Existencia",
+            flex: 1,
+            align: "center",
+          },
+          {
+            field: "size",
+            headerName: "Tamaño",
+            flex: 1,
+            align: "center",
+          },
+         
           {
             field: "Opciones",
             headerName: "Opciones",
@@ -175,29 +183,25 @@ const Categories = () => {
             sortable: false,
             type: "actions",
             getActions: (params) => [
-              <WarningAlert
-                title="¿Estas seguro que deseas eliminar la categoria?"
-                callbackToDeleteItem={() => deleteCategory(params.row._id)}
-              />,
-              <GridActionsCellItem
-                icon={<Edit />}
-                onClick={() => redirectPages(navigate, params.row._id)}
-                label="Editar categoria"
-                showInMenu
-              />,
+            //   <WarningAlert
+            //     title="¿Estas seguro que deseas eliminar el producto?"
+            //     callbackToDeleteItem={() => deleteProduct(params.row._id)}
+            //   />,
+            //   <Tooltip title='Editar Producto' >
+            //   <IconButton aria-label="Editar" color="success" onClick={()=>redirectPages(navigate,(params.row._id))} >
+            //     <Edit />
+            //   </IconButton> 
+            //   </Tooltip>
+                             
             ],
           },
         ]}
-        initialState={{
-          sorting: {
-            sortModel: [{ field: "type_customer", sort: "desc" }],
-          },
-        }}
+        
         rows={rowsWithIds}
         pagination
         slots={{
           pagination: CustomPagination,
-          toolbar: CustomToolbar ,
+          toolbar: CustomToolbar,
           columnSortedDescendingIcon: SortedDescendingIcon,
           columnSortedAscendingIcon: SortedAscendingIcon,
           columnUnsortedIcon: UnsortedIcon,
@@ -210,7 +214,6 @@ const Categories = () => {
           toolbar: {
             showQuickFilter: true,
             quickFilterProps: { debounceMs: 500 },
-            
           },
         }}
         printOptions={{
@@ -220,6 +223,6 @@ const Categories = () => {
       />
     </div>
   );
-};
+}
 
-export default Categories;
+export default MyStockProducts

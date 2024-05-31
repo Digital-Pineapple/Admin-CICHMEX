@@ -33,6 +33,31 @@ export const startLoadProducts = () => {
       );
     }
   };
+}
+export const startLoadStockProducts = () => {
+  return async (dispatch) => {
+    try {
+      const { data } = await instanceApi.get(
+        `/stock-StoreHouse/available/ok`,
+        headerConfigApplication
+      );
+      const info = data.data.map((item, index)=>{
+        const info = item.product_id
+        const stock = item.stock
+        const totInfo = {...info,stock}
+        return totInfo
+      })
+      dispatch(loadProducts(info));
+    } catch (error) {
+      enqueueSnackbar(
+        `${error.response.data.message}|| 'Error al consultar información'`,
+        {
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+          variant: "error",
+        }
+      );
+    }
+  };
 };
 
 export const LoadOneProduct = (_id) => {
