@@ -7,6 +7,7 @@ export const productOrdersReducer = createSlice({
         productOrders: [],
         productOrder: {},
         isLoading: false,
+        resumeOrders :[]
     },
     reducers: {
         loadProductOrders: (state, { type, payload }) => {
@@ -25,6 +26,9 @@ export const productOrdersReducer = createSlice({
         startLoading(state){
           state.isLoading=true
         },
+        startLoadResume: (state, { payload }) => {
+          state.resumeOrders =  payload;
+      },
         cleanProductOrderDetail(state){
           state.productOrder = {}
         },
@@ -42,6 +46,6 @@ export const productOrdersReducer = createSlice({
             });
           }}})
 
-export const { cleanProductOrderDetail, deleteProductOrder, editProductOrder, loadProductOrder, loadProductOrders, onAddNewProductOrder } = productOrdersReducer.actions;
+export const { cleanProductOrderDetail, startLoadResume, deleteProductOrder, editProductOrder, loadProductOrder, loadProductOrders, onAddNewProductOrder } = productOrdersReducer.actions;
 
 export default productOrdersReducer.reducer;

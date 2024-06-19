@@ -1,149 +1,87 @@
-import { Grid, ButtonGroup, Button, Paper, Typography, Avatar, TextField, Input, FormControl, InputLabel, InputAdornment, Chip} from '@mui/material'
-import Carwash from '../assets/Images/icono1.png'
-import Image from 'mui-image'
-import { LogoutButton } from '../components/Buttons/LogoutButton'
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Tab from '@mui/material/Tab';
-import TabContext from '@mui/lab/TabContext';
-import TabList from '@mui/lab/TabList';
-import TabPanel from '@mui/lab/TabPanel';
-import { useSelector } from 'react-redux';
-import ImageAvatar from '../assets/Images/Icono App2.png'
-import { AccountCircle, Mail } from '@mui/icons-material';
-import PermIdentityIcon from '@mui/icons-material/PermIdentity';
-import { useFormik } from 'formik';
-import { useNavigate } from 'react-router-dom';
-import { enqueueSnackbar } from 'notistack';
+import { Grid, Typography, Card, CardContent, CardActions, Button, Icon, IconButton } from "@mui/material"
+import { useAuthStore } from "../hooks"
+import EventIcon from '@mui/icons-material/Event';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import { Link } from "react-router-dom";
+import { useProductOrder } from "../hooks/useProductOrder";
+import { useEffect } from "react";
 
-export const Principal = () => {
-  const { user } = useSelector((state) => state.auth);
-  const [value, setValue] = React.useState('1');
-  const navigate = useNavigate();
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-  React.useEffect(() => {
-    formik.setValues({
-      name: user.fullname,
-      email: user.email,
-      
-    });
-  }, [user]);
+const Principal = () => {
+  const {user} = useAuthStore()
+  const {loadResumeProductOrder, resumeOrders} = useProductOrder()
+  useEffect(() => {
+    loadResumeProductOrder()
+  }, [user])
+  
+console.log(resumeOrders);
+  const cards =[
+    {
+      title:'Ventas por Día',
+      icon:<EventIcon/>,
+      number:resumeOrders.ordersDay,
+      path:''
+    },
+    {
+      title:'Ventas por Mes',
+      icon:<CalendarMonthIcon/>,
+      number:resumeOrders.ordersMonth,
+      path:''
+    },
+    {
+      title:'Ingresos por día',
+      icon:<TrendingUpIcon/>,
+      number:`$ ${resumeOrders.cashDay}`,
+      path:''
+    },
+    {
+      title:'Ingresos por Més',
+      icon:<TrendingUpIcon/>,
+      number:`$ ${resumeOrders.cashMonth}`,
+      path:''
+    },
 
-  const formik = useFormik({
-    initialValues: {
-      name: "",
-      email:'',
-    },
-    onSubmit: (values) => {
-      try {
-        navigate("/auth/servicios", { replace: true });
-      } catch (error) {
-        return enqueueSnackbar("Error al editar", {
-          variant: "error",
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "right",
-          },
-        });
-      }
-    },
-  });
+  ]
+  
+  
+  
   return (
     <>
-      <Grid sx={{marginX:'10%'}}   >
-  <Typography variant="h4" color="initial">
-    Cuenta
-  </Typography>
-      <Box sx={{ width: '100%', typography: 'body1', }}>
-      <TabContext value={value}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <TabList onChange={handleChange}>
-            <Tab label="Mis datos" value="1" />
-            <Tab label="Configuración" value="2" />
-            <Tab label="Item Three" value="3" />
-          </TabList>
-        </Box>
-        <TabPanel value="1">
-<Paper sx={{padding:'5%', borderRadius:'20px'}}  variant="elevation" elevation="10" >
-  <Grid container >
-  <Grid item xs={4} >
-    <Typography variant='h4'>Información básica</Typography>
-  </Grid>
-  <Grid item xs={8} 
-  component="form"
- onSubmit={formik.handleSubmit} 
-  sx={{
-    '& .MuiTextField-root': { m: 1, width: '90%' },
-  }}
-  noValidate
-  autoComplete="off"
->
-    <Avatar 
-    src={user.image_profile? user.image_profile : ImageAvatar}
-    sx={{ width: 100, height: 100, border:5, borderColor:'#902282', margin:1}}/>
-   <Chip sx={{marginY:1}} variant="outlined" color="info" label={`id: ${user._id}`} />
+     <Grid contsianer display={'flex'} flexDirection={'column'} sx={{marginX:'10%'}}>
+      
+      <Grid item xs={12} width={'100%'} boxSizing={'border-box'} padding={2} borderRadius={'20px'}  bgcolor={'#0E4E73'}>
+        
+     <Typography variant="h1" fontSize={{xs:'40px'}} color="#fff">Bienvenido {user?.fullname}</Typography>
+      </Grid>
 
-      <TextField
-          id="name"
-          label="Nombre Completo"
-          multiline
-          focused
-          value={formik.values.name}
-          onChange={formik.handleChange}
-        />
-         <TextField
-          id="email"
-          multiline
-          disabled
-          value={formik.values.email}
-          onChange={formik.handleChange}
-        />
-  </Grid>
-  </Grid>
-</Paper>
-        </TabPanel>
-        <TabPanel value="2">
-        <Paper sx={{padding:'5%', borderRadius:'20px'}}  variant="elevation" elevation="10" >
-  <Grid container >
-  <Grid item xs={4} >
-    <Typography variant='h4'>Cambiar contraseña</Typography>
-  </Grid>
-  <Grid item xs={8} 
-  component="form"
- onSubmit={formik.handleSubmit} 
-  sx={{
-    '& .MuiTextField-root': { m: 1, width: '90%' },
-  }}
-  noValidate
-  autoComplete="off"
->
-   <Chip sx={{marginY:1}} variant="outlined" color="info" label={`id: ${user._id}`} />
-   <Typography variant="h5" color="#A24999">Antigua Contraseña</Typography>
-      <TextField
-          id="password"
-          multiline
-          focused
-          value={formik.values.oldPassword}
-          onChange={formik.handleChange}
-        />
-        <Typography variant="h5" color="#A24999">Nueva contraseña</Typography>
-         <TextField
-          id=""
-          multiline
-          disabled
-          value={formik.values.newPassword}
-          onChange={formik.handleChange}
-        />
-  </Grid>
-  </Grid>
-</Paper>
-        </TabPanel>
-        <TabPanel value="3">Item Three</TabPanel>
-      </TabContext>
-    </Box>
+      <Grid container spacing={2}  marginY={'20px'}>
+
+        {
+          cards.map((item, index)=>{
+            return(
+              <Grid key={index}  item xs={6} lg={3}>
+                <Link to={item.path} style={{textDecoration:'none'}}  >
+              <Card variant="outlined">
+              <CardContent>
+             {item.icon}
+                <Typography variant="h2" fontSize={{xs:'20px', md:'25px'}} color="initial">{item.title}</Typography>
+                <br />
+                <Typography variant="h2" color="initial">{item.number}</Typography>
+              </CardContent>
+              
+            </Card>
+                </Link>
+              </Grid>
+            )
+          })
+        }
+        
+      </Grid>
+
     </Grid>
     </>
   )
 }
+
+
+export default Principal
