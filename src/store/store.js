@@ -17,6 +17,7 @@ import userReducer from "./reducer/userReducer";
 import productsReducer from "./reducer/productsReducer";
 import storeHouseReducer from "./reducer/storeHouseReducer";
 import productOrdersReducer from "./reducer/productOrdersReducer";
+import carrierDriverReducer from "./reducer/carrierDriverReducer";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -35,7 +36,8 @@ const rootReducer = combineReducers({
   branches: branchReducer,
   memberships: membershipReducer,
   products : productsReducer,
-  storeHouse : storeHouseReducer
+  storeHouse : storeHouseReducer,
+  carrierDriver : carrierDriverReducer
 
 });
 

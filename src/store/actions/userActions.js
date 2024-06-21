@@ -8,6 +8,7 @@ import {
  verifyUser
 } from "../reducer/userReducer";
 import { enqueueSnackbar } from "notistack";
+import { loadCarrierDrivers } from "../reducer";
 
 const headerConfig = {
   headers: {
@@ -22,6 +23,17 @@ export const getUsers = () => {
     try {
       const { data } = await instanceApi.get("/user", headerConfig);
       dispatch(loadUsers(data.data));
+    } catch (error) {
+      enqueueSnackbar(`Error: ${data.data.response?.message}`);
+    }
+  };
+};
+
+export const getCarrierDrivers = () => {
+  return async (dispatch) => {
+    try {
+      const { data } = await instanceApi.get("/user/carrier-driver/all", headerConfig);
+      dispatch(loadCarrierDrivers(data.data));
     } catch (error) {
       enqueueSnackbar(`Error: ${data.data.response?.message}`);
     }
