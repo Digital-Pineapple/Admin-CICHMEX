@@ -1,12 +1,19 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from "@reduxjs/toolkit";
 
 export const CarrierDriverReducer = createSlice({
-  name: 'carrierDrivers',
+  name: "carrierDrivers",
   initialState: {
     CarrierDrivers: [],
-    CarrierDriver: {}
+    CarrierDriver: {},
+    loading: false,
   },
   reducers: {
+    startLoading: (state) => {
+      state.loading = true;
+    },
+    stopLoading: (state) => {
+      state.loading = false;
+    },
     loadCarrierDrivers: (state, action) => {
       state.CarrierDrivers = action.payload;
     },
@@ -14,10 +21,12 @@ export const CarrierDriverReducer = createSlice({
       state.CarrierDriver = payload;
     },
     deleteCarrierDriver: (state, { payload }) => {
-      state.CarrierDrivers = state.CarrierDrivers.filter(i => i._id !== payload);
+      state.CarrierDrivers = state.CarrierDrivers.filter(
+        (i) => i._id !== payload
+      );
     },
-    editcarrierDriver: ( state, { payload } ) => {
-      state.CarrierDrivers = state.CarrierDrivers.map(i => {
+    editcarrierDriver: (state, { payload }) => {
+      state.CarrierDrivers = state.CarrierDrivers.map((i) => {
         if (i._id === payload._id) {
           return {
             ...i,
@@ -27,13 +36,18 @@ export const CarrierDriverReducer = createSlice({
             phone: payload.phone,
           };
         }
-        return i
+        return i;
       });
-    }
-    
+    },
   },
-})
+});
 
-export const { deleteCarrierDriver, editcarrierDriver, loadCarrierDriver, loadCarrierDrivers} = CarrierDriverReducer.actions;
+export const {
+  deleteCarrierDriver,
+  editcarrierDriver,
+  loadCarrierDriver,
+  loadCarrierDrivers,
+  startLoading,stopLoading
+} = CarrierDriverReducer.actions;
 
 export default CarrierDriverReducer.reducer;

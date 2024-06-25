@@ -19,12 +19,12 @@ export const Links = [
     Icon : <MuseumIcon/>
 
   },
-  // {
-  //   title : "Sucursales",
-  //   path : "/auth/Sucursales",
-  //   Icon : <StoreIcon/>
+  {
+    title : "Sucursales",
+    path : "/auth/Sucursales",
+    Icon : <StoreIcon/>
 
-  // },
+  },
   {
     title: "Usuarios",
     path: "/auth/usuarios",

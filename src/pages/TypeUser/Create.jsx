@@ -6,8 +6,9 @@ import { useTypeUser } from "../../hooks/useTypeUser";
 const Create = () => {
   const { control, handleSubmit } = useForm({ defaultValues: { name: "" } });
   const {createTypeUser} = useTypeUser()
+  const {addCarrier}= useUsers()
   const createTU = (values) => {
-    createTypeUser(values);
+    addCarrier(values);
   };
 
   return (

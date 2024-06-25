@@ -8,18 +8,23 @@ import {
   import { useTypeUser } from "../../hooks/useTypeUser";
   import { useAuthStore } from "../../hooks";
 import { useUsers } from "../../hooks/useUsers";
-import { Delete } from "@mui/icons-material";
-  
-  
+import { Delete, Edit } from "@mui/icons-material";
+import DeleteAlert from "../../components/ui/DeleteAlert";
+
+
   const CarrierDrivers = () => {
    const {rowsCarrierDrivers, loadCarrierDrivers, navigate} =  useUsers()
    const {user} =useAuthStore()
+
 useEffect(() => {
     loadCarrierDrivers()
 }, [user])
 
-  
-  
+const Delete = (value)=>{
+console.log(value);
+}
+
+
     return (
       <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
         <h1>Transportistas</h1>
@@ -27,11 +32,11 @@ useEffect(() => {
             variant="contained"
             disableElevation
             sx={{ color: "primary", my: 5, p: 2, borderRadius: 5 }}
-            onClick={()=>navigate('/auth/crear-tipo-usuario')}
+            onClick={()=>navigate('/auth/AltaTransportista')}
           >
             Registrar nuevo transportista
           </Button>
-  
+
           {
               rowsCarrierDrivers ? (
   <DataGrid
@@ -58,10 +63,11 @@ useEffect(() => {
               flex: 1,
               sortable: false,
               type: "actions",
-              getActions: (params) => [
-                <GridActionsCellItem icon={<Delete />} onClick={()=>redirectPages(navigate,(params.row._id))}  label="Editar Usuario" />,  
-                <GridActionsCellItem icon={<Delete />} onClick={()=>redirectPages(navigate,(params.row._id))}  label="Editar Usuario" />,                
-              ],
+              getActions: (params)=>[
+              
+                <DeleteAlert title='¿Desea eliminar el siguiente elemento?' callbackToDeleteItem={()=>Delete(params.row._id)} />
+                
+              ]
             },
           ]}
           rows={rowsCarrierDrivers}
@@ -78,9 +84,9 @@ useEffect(() => {
         />
               ):(<Skeleton  title="Cargando..." variant="rectangular" />)
           }
-        
+
       </div>
     );
   }
- 
+
  export default CarrierDrivers

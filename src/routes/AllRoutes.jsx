@@ -43,6 +43,8 @@ import AssignRoute from '../pages/MyStoreHouse/ AssignRoute'
 import TypeUser from '../pages/TypeUser/TypeUser'
 import CreateTypeUser from '../pages/TypeUser/Create'
 import CarrierDrivers from '../pages/CarrierDriver/CarrierDrivers'
+import CreateCarrier from '../pages/CarrierDriver/Create'
+
 
 
 export const AllRoutes = [
@@ -109,5 +111,6 @@ export const AllRoutes = [
   { type: 1, path: '/asignar-ruta/:id', element: <AssignRoute/> },
 
   { type: 1, path: '/Transportistas', element: <CarrierDrivers/> },
+  { type: 1, path: '/AltaTransportista', element: <CreateCarrier/> },
 
 ]

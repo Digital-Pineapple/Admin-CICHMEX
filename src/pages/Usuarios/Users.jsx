@@ -18,7 +18,7 @@ import { Avatar, Chip } from "@mui/material";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import LocalCarWashIcon from "@mui/icons-material/LocalCarWash";
 import WashIcon from "@mui/icons-material/Wash";
-import { DoneAllOutlined, Download, Edit, SupervisorAccount } from "@mui/icons-material";
+import { AirportShuttle, DoneAllOutlined, Download, Edit, LocalGroceryStore, SupervisorAccount } from "@mui/icons-material";
 import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
 import { redirectPages } from "../../helpers";
@@ -191,7 +191,7 @@ export default function Users() {
                 <>
                   <Chip
                     icon={<WashIcon />}
-                    label="lavador independiente"
+                    label="Socio"
                     variant="outlined"
                     color="success"
                   />
@@ -214,23 +214,19 @@ export default function Users() {
                     color="info"
                   />
                 </>
+              ): params.value === 4  ?(
+                <>
+                  <Chip
+                    icon={<AirportShuttle />}
+                    label="Transportista"
+                    variant="outlined"
+                    color="secondary"
+                  />
+                </>
               ):'',
           },
 
           { field: "email", headerName: "Correo", flex: 1, sortable: false },
-          // {
-          //   field: "accountVerify",
-          //   headerName: "Estatus de verificación",
-          //   align: "center",
-          //   flex: 1,
-          //   sortable: false,
-          //   renderCell: (params) =>
-          //     params.value === true ? (
-          //       <CheckCircleOutlineIcon />
-          //     ) : (
-          //       <HighlightOffIcon color="error" />
-          //     ),
-          // },
           {
             field: "Opciones",
             headerName: "Opciones",
