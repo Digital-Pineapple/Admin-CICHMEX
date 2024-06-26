@@ -147,17 +147,16 @@ const CreateCarrier = () => {
           control={control}
           defaultValue=""
           rules={{ validate: matchIsValidTel, required:true }}
-          render={({ field :{ref:fieldRef, value,...fieldProps}, fieldState }) => (
+          render={({ field, fieldState }) => (
             <MuiTelInput
-            {...fieldProps}
-              variant="outlined"
-              label="Telefono"
-              value={value ?? ''}
-              inputRef={fieldRef}
+            {...field}
               onlyCountries={["MX"]}
-              defaultCountry="MX"
+              forceCallingCode
               disableDropdown
-              helperText={fieldState.invalid ? "Telefono es inválido" : ""}
+              defaultCountry="MX"
+              helperText={
+                fieldState.invalid ? "Telefono es invalido" : ""
+              }
               error={fieldState.invalid}
             />
           )}
