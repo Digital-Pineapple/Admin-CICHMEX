@@ -30,7 +30,7 @@ export const SlideBranchesImages = ({ image, images, altura }) => {
               style={{
                 height: altura,
                 width: "100%",
-                objectFit:'cover'
+                objectFit:'scale-down'
               }}
             />
           </SwiperSlide>
@@ -46,7 +46,7 @@ export const SlideBranchesImages = ({ image, images, altura }) => {
                   style={{
                     height: altura,
                     width: "100%",
-                    objectFit:'cover'
+                    objectFit:'scale-down'
                   }}
                 />
               </SwiperSlide>

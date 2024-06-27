@@ -18,12 +18,16 @@ export const productsReducer = createSlice({
         },
         onAddNewProduct: (state, { payload }) => {
             state.product = payload;
+            state.isLoading = false;
         },
         deleteProduct: (state, { type, payload }) => {
             state.products = state.products.filter(product => product._id !== payload);
         },
         startLoading(state){
           state.isLoading=true
+        },
+        stopLoading(state){
+          state.isLoading=false
         },
         cleanProductDetail(state){
           state.product = {}
@@ -42,6 +46,6 @@ export const productsReducer = createSlice({
             });
           }}})
 
-export const { deleteProduct,editProduct,loadProduct,loadProducts,onAddNewProduct, startLoading, cleanProductDetail } = productsReducer.actions;
+export const { deleteProduct,editProduct,loadProduct,loadProducts,onAddNewProduct, startLoading, cleanProductDetail, stopLoading } = productsReducer.actions;
 
 export default productsReducer.reducer;

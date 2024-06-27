@@ -8,12 +8,14 @@ import {
   onAddNewProduct,
   productsReducer,
   startLoading,
+  stopLoading,
 } from "../reducer/productsReducer";
 import {
   headerConfigApplication,
   headerConfigForm,
   headerConfigFormData,
 } from "../../apis/headersConfig";
+import Swal from "sweetalert2";
 
 export const startLoadProducts = () => {
   return async (dispatch) => {
@@ -85,6 +87,7 @@ export const LoadOneProduct = (_id) => {
 
 export const addOneProduct =
   ({name,price,description, tag, size, category, subCategory}, images, navigate) => async (dispatch) => {
+   dispatch(startLoading())
     try {
       const formData = new FormData()
       formData.append("name", name)
@@ -100,7 +103,7 @@ export const addOneProduct =
       const { data } = await instanceApi.post(
         `/product`,
         formData, headerConfigFormData);
-      dispatch(addOneProduct(data.data));
+      dispatch(onAddNewProduct(data.data));
       enqueueSnackbar("Agregado con éxito", {
         variant: "success",
         anchorOrigin: {
@@ -110,6 +113,7 @@ export const addOneProduct =
       });
       navigate("/auth/productos", { replace: true });
     } catch (error) {
+      dispatch(stopLoading())
       enqueueSnackbar(`Error: ${error.response.data.message}`, {
         variant: "error",
         anchorOrigin: {
@@ -163,16 +167,16 @@ export const deleteOneProduct = (id) => {
       const { data } = await instanceApi.delete(
         `/product/${id}`, headerConfigApplication);
       dispatch(deleteProduct(data.data?._id));
-      enqueueSnackbar("Producto eliminado", {
-        variant: "success",
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "right",
-        },
+      Swal.fire({
+        title:'Producto eliminado con éxito',
+        icon:'success',
+        confirmButtonColor:green[800],
+        timer:3000,
+        timerProgressBar:true
       });
+      dispatch(deleteProduct(data.data))
     } catch (error) {
-      console.log(error);
-      enqueueSnackbar(`Ocurrió un error + ${error}`, {
+      enqueueSnackbar(`${error.response.data.message}`, {
         variant: "error",
         anchorOrigin: {
           vertical: "top",

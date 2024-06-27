@@ -26,6 +26,9 @@ import { Button, IconButton, Tooltip } from "@mui/material";
 import { Workbook } from "exceljs";
 import { useProducts } from "../../hooks/useProducts";
 import { editOneProduct } from "../../store/actions/productsActions";
+import AlertDelete from "../../components/ui/AlertDelete";
+import DeleteAlert from "../../components/ui/DeleteAlert";
+import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -60,7 +63,7 @@ function CustomPagination(props) {
 }
 
 const Products = () => {
-  const { loadProducts, products, navigate, deleteProduct } = useProducts();
+  const { loadProducts, products, navigate, deleteProduct, isLoading } = useProducts();
 
   useEffect(() => {
     loadProducts()
@@ -111,6 +114,8 @@ const Products = () => {
     const apiRef = useGridApiContext();
   
     const handleGoToPage1 = () => apiRef.current.setPage(1);
+
+    if (isLoading) return (<LoadingScreenBlue/>)
   
     return (
       <GridToolbarContainer sx={{justifyContent:'space-between'}}>
@@ -191,8 +196,8 @@ const Products = () => {
             sortable: false,
             type: "actions",
             getActions: (params) => [
-              <WarningAlert
-                title="¿Estas seguro que deseas eliminar el producto?"
+              <DeleteAlert
+                title={`¿Estas seguro de eliminar el producto ${params.row?.name}`}
                 callbackToDeleteItem={() => deleteProduct(params.row._id)}
               />,
               <Tooltip title='Editar Producto' >

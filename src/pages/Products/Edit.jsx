@@ -34,14 +34,14 @@ import { useCategories } from "../../hooks/useCategories";
 import { useSubCategories } from "../../hooks/useSubCategories";
 import { useDispatch } from "react-redux";
 import { LoadOneProduct } from "../../store/actions/productsActions";
+import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 
 const Edit = () => {
   const { id } = useParams();
   const { loadProduct, product, editProduct, navigate, isLoading } = useProducts();
   const { categories, loadCategories } = useCategories();
   const { subCatByCategory, loadSubcategoriesByCategory } = useSubCategories();
-  const [loading, setLoading] = useState(true)
-  const isSmallScreen = useMediaQuery("(max-width:600px)");
+  const isSmallScreen = useMediaQuery("(max-width:400px)");
   const dispatch = useDispatch()
   const StyledBadge = styled(Badge)(({ theme }) => ({
     "& .MuiBadge-badge": {
@@ -50,37 +50,24 @@ const Edit = () => {
     },
   }));
   useEffect(() => {
-    // setTimeout(async()=>{
       loadProduct(id)
-      dispatch(LoadOneProduct(id)).then(({data})=>{
+      if (product !== null) {
         formik.setValues({
-         name: data.name,
-         description: data.description,
-         price: data.price,
-         size: data.size,
-         tag: data.tag,
-         category: data?.category?._id,
-         subCategory: data?.subCategory?._id
-       });
-       setLoading(false)
-       loadSubcategoriesByCategory(data?.category?._id)
-      })
-     
-    // },500)
-    loadCategories();
-  }, []);
+          name: product?.name || '',
+          description: product?.description || '',
+          price: product?.price || '',
+          size: product?.size || '',
+          tag: product?.tag || '',
+          images: product?.images || '',
+          category:product?.category || '',
+          subCategory: product?.subCategory || ''
+        })
+        loadCategories()
+        loadSubcategoriesByCategory(product?.category)
+      }
+  }, [id]);
 
   const formik = useFormik({
-    initialValues: {
-      name: "",
-      description: "",
-      price: true,
-      size: "",
-      tag: "",
-      images: "",
-      category:"",
-      subCategory: ""
-    },
 
     onSubmit: (values) => {
       try {
@@ -111,27 +98,15 @@ const Edit = () => {
     <>
     
     {
-      isLoading ? <LoadingScreen />  
+      isLoading && product ? <LoadingScreenBlue />  
       :
    
-    <Box component="form" onSubmit={formik.handleSubmit} marginX={"10%"}>
-      <Titles name={<h2 align="center">Editar Producto</h2>} />
-
-      <Grid
-        color="#F7BFBF"
-        borderRadius={5}
-        mt={3}
-        sx={{ border: 10, p: 5 }}
-        container
-        spacing={4}
-      >
+    <Grid width={'90%'} component="form"padding={4}  container onSubmit={formik.handleSubmit} marginLeft={"100px"}>
+     <Typography variant="h1" fontSize={{xs:'40px'}} color="initial">Editar Producto</Typography>
         <Grid
           container
-          item
-          xs={12}
-          display={"flex"}
-          margin={"auto"}
-          justifyContent={"center"}
+          padding={2}
+          boxSizing={'border-box'}
         >
           {product.images?.length ? (
             <SlideBranchesImages
@@ -146,117 +121,117 @@ const Edit = () => {
         </Grid>
 
         {images.length > 0 && (
-          <Grid item xs={12} md={4}>
-            <input
-              id="image"
-              name="image"
-              type="file"
-              accept="image/jpg"
-              onChange={handleImageChange}
-              hidden
-            />
-            <label htmlFor={"image"}>
-              <Button component="span" color="primary" variant="outlined">
-                Agrega Fotos
-              </Button>
-            </label>
-          </Grid>
-        )}
-
-        <Typography marginTop={"10px"}> peso max de imagen(500 kb)</Typography>
-        <Grid
-          className="image-branch-container"
-          item
-          xs={12}
-          display={"flex"}
-          justifyContent={"flex-start"}
-        >
-          {/* <ImagesBranchComponent /> */}
-          {
-            images.length ? (
-              <>
-                <Grid
-                  container
-                  xs={12}
-                  md={12}
-                  spacing={1}
-                  item
-                  display={"flex"}
-                  justifyContent={"flex-start"}
-                  padding={"10px"}
-                  marginTop={"20px"}
-                  sx={{ backgroundColor: "#F7F7F7" }}
-                >
-                  {images.map(({ id, filePreview }) => (
-                    <Grid item xs={12} md={6} key={id}>
-                      <StyledBadge
-                        badgeContent={
-                          <IconButton
-                            sx={{ backgroundColor: "black", color: "black" }}
-                            onClick={() => deleteImage(id)}
-                          >
-                            {" "}
-                            <DeleteIcon
-                              sx={{ color: "white", fontSize: "20px" }}
-                            />{" "}
-                          </IconButton>
-                        }
-                      >
-                        <Avatar
-                          src={filePreview}
-                          variant="square"
-                          sx={{ width: "100%", height: "200px" }}
-                        />
-                      </StyledBadge>
-                    </Grid>
-                  ))}
-                </Grid>
-              </>
-            ) : (
-              <Grid
-                item
-                xs={12}
-                md={12}
-                sx={{ backgroundColor: "#F7F7F7" }}
-                display={"flex"}
-                flexDirection={"column"}
-                alignItems={"center"}
-                justifyContent={"center"}
-                marginTop={"20px"}
-                height={"300px"}
-                borderRadius={"5px"}
-              >
-                <FilterIcon
-                  style={{
-                    fontSize: "40px",
-                    alignSelf: "center",
-                    marginBottom: "10px",
-                  }}
-                />
-                {/* <Typography>Agrega imagenes de tu sucursal</Typography> */}
+              <Grid item xs={12}>
                 <input
                   id="image"
                   name="image"
                   type="file"
-                  accept="image/jpg"
+                  accept="image/png, image/jpeg, image/jpg"
                   onChange={handleImageChange}
                   hidden
                 />
                 <label htmlFor={"image"}>
-                  <Button component="span" color="primary" variant="outlined">
-                    Agrega Fotos
+                  <Button component="span" color="primary" fullWidth variant="contained">
+                    Agregar Fotos
                   </Button>
                 </label>
               </Grid>
-            )
-            // <Grid></Grid>
-          }
-          </Grid>
+            )}
+           
+
+            <Grid
+              className="image-branch-container"
+              item
+              xs={12}
+            >
+               <Typography marginTop={"10px"}>
+              {" "}
+              peso max de imagen(500 kb)
+            </Typography>
+              {images.length ? (
+                <>
+                  <Grid
+                    container
+                    xs={12}
+                    md={12}
+                    spacing={1}
+                    item
+                    display={"flex"}
+                    justifyContent={"flex-start"}
+                    padding={"10px"}
+                    marginTop={"20px"}
+                    sx={{ backgroundColor: "#F7F7F7" }}
+                  >
+                    {images.map(({ id, filePreview }) => (
+                      <Grid item xs={12} md={6} key={id}>
+                        <StyledBadge
+                          badgeContent={
+                            <IconButton
+                              sx={{
+                                backgroundColor: "black",
+                                color: "black",
+                              }}
+                              onClick={() => deleteImage(id)}
+                            >
+                              {" "}
+                              <DeleteIcon
+                                sx={{ color: "white", fontSize: "20px" }}
+                              />{" "}
+                            </IconButton>
+                          }
+                        >
+                          <Avatar
+                            src={filePreview}
+                            variant="square"
+                            sx={{ width: "100%", height: "200px" }}
+                          />
+                        </StyledBadge>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </>
+              ) : (
+                <Grid
+                  item
+                  xs={12}
+                  md={12}
+                  sx={{ backgroundColor: "#F7F7F7" }}
+                  display={"flex"}
+                  flexDirection={"column"}
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                  marginTop={"20px"}
+                  height={"300px"}
+                  borderRadius={"5px"}
+                >
+                  <FilterIcon
+                    style={{
+                      fontSize: "40px",
+                      alignSelf: "center",
+                      marginBottom: "10px",
+                    }}
+                  />
+                  <input
+                    id="image"
+                    name="image"
+                    type="file"
+                    accept="image/png, image/jpeg, image/jpg"
+                    onChange={handleImageChange}
+                    hidden
+                  />
+                  <label htmlFor={"image"}>
+                    <Button component="span" color="primary" variant="outlined">
+                      Agrega Fotos
+                    </Button>
+                  </label>
+                </Grid>
+              )}
+            </Grid>
      
 
         <Grid
           item
-          sm={8}
+          xs={12}
           display={"flex"}
           flexDirection={"column"}
           alignItems={"center"}
@@ -274,25 +249,25 @@ const Edit = () => {
           />
           <Typography>Descripción del prducto</Typography>
           <TextareaAutosize
-            aria-label="minimum height"
+            aria-label="Descripción"
             id="description"
             name="description"
-            minRows={6}
+            minRows={3}
             label="Descripcion"
             value={formik.values?.description}
             style={{ width: "100%", fontFamily: "BikoBold", marginBottom: 20 }}
             onChange={formik.handleChange}
           />
          
-          <Stack direction='row' columnGap={2}>
-          {/* {JSON.stringify(subCatByCategory,null,2)} */}
-            <FormControl>
+          
+            <FormControl fullWidth>
             <FormLabel>Categoría</FormLabel>
             <Select
               id="category"
               name="category"
-              value={formik.values.category}
+              value={formik.values?.category}
               label="Categoria"
+              
               onChange={(e)=>{
                 formik.setFieldValue('subCategory','');
                 formik.handleChange(e);
@@ -307,16 +282,16 @@ const Edit = () => {
             </Select>
             <FormHelperText>Selecciona una categoria</FormHelperText>
           </FormControl>
-          <FormControl>
+          <FormControl fullWidth>
             <FormLabel>Subcategoría</FormLabel>
             <Select
               id="subCategory"
               name="subCategory"
-              value={formik.values.subCategory}
+              value={formik.values?.subCategory}
               label="subcategoria"
               onChange={formik.handleChange}
             >
-              {formik.values.category && subCatByCategory.map((subCategory) => (
+              {formik.values?.category && subCatByCategory?.map((subCategory) => (
                 <MenuItem key={subCategory._id} value={subCategory._id}>
                   {subCategory.name}
                 </MenuItem>
@@ -324,8 +299,6 @@ const Edit = () => {
             </Select>
             <FormHelperText>Selecciona una subcategoria</FormHelperText>
           </FormControl>
-          </Stack>
-          
           <TextField
             focused
             type="number"
@@ -349,27 +322,16 @@ const Edit = () => {
             sx={{ margin: 2 }}
             onChange={formik.handleChange}
           />
-
-
-
-          <Grid
-            container
-            justifyContent={"center"}
-            justifyItems={"center"}
-            alignItems={"center"}
-          >
-            <Grid item sx={{ display: "flex", justifyContent: "center" }}>
-              <Button type="submit" variant="contained">
+              <Button type="submit" variant="contained" fullWidth >
                 Guardar
               </Button>
-              <Button onClick={outEdit} variant="outlined" color="secondary">
-                Salir
+              <br />
+              <Button onClick={outEdit} fullWidth variant="outlined" color="secondary">
+                Cancelar
               </Button>
-            </Grid>
-          </Grid>
+
         </Grid>
-      </Grid>
-    </Box>
+    </Grid>
 }
 </>
   )
