@@ -29,8 +29,9 @@ export const useStoreHouse = () => {
   const loadAllStock = async (id) =>
     dispatch(startLoadAllStock(id));
 
-  const createStockProduct = async (id,values) =>
-    dispatch(startCreateStockProduct(id,values, navigate));
+  const createStockProduct = async (values) =>
+    {
+      dispatch(startCreateStockProduct(values, navigate))}
 
   const addStockProduct = async (id, values) =>
     dispatch(startAddStockProduct(id, values, navigate));

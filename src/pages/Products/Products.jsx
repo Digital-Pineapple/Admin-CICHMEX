@@ -187,6 +187,12 @@ const Products = () => {
             flex: 1,
             align: "center",
           },
+          {
+            field: "weight",
+            headerName: "Peso",
+            flex: 1,
+            align: "center",
+          },
          
           {
             field: "Opciones",

@@ -1,16 +1,19 @@
-import { Satellite } from '@mui/icons-material';
 import { createSlice } from '@reduxjs/toolkit'
 
 export const productsReducer = createSlice({
     name: 'products',
     initialState: {
         products: [],
+        stockProducts:[],
         product: {},
         isLoading: false,
     },
     reducers: {
         loadProducts: (state, { type, payload }) => {
             state.products = payload;
+        },
+        loadStockProducts: (state,{payload})=>{
+          state.stockProducts = payload
         },
         loadProduct: (state, { type, payload }) => {
             state.product = payload;
@@ -46,6 +49,6 @@ export const productsReducer = createSlice({
             });
           }}})
 
-export const { deleteProduct,editProduct,loadProduct,loadProducts,onAddNewProduct, startLoading, cleanProductDetail, stopLoading } = productsReducer.actions;
+export const { deleteProduct,editProduct,loadProduct, loadStockProducts,loadProducts,onAddNewProduct, startLoading, cleanProductDetail, stopLoading } = productsReducer.actions;
 
 export default productsReducer.reducer;

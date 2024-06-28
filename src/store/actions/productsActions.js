@@ -5,6 +5,7 @@ import {
   editProduct,
   loadProduct,
   loadProducts,
+  loadStockProducts,
   onAddNewProduct,
   productsReducer,
   startLoading,
@@ -46,13 +47,34 @@ export const startLoadStockProducts = () => {
       const info = data.data.map((item, index)=>{
         const info = item.product_id
         const stock = item.stock
-        const totInfo = {...info,stock}
+        const stock_id = item._id
+        const totInfo = {...info,stock, stock_id}
         return totInfo
       })
-      dispatch(loadProducts(info));
+      dispatch(loadStockProducts(info));
     } catch (error) {
       enqueueSnackbar(
         `${error.response.data.message}|| 'Error al consultar información'`,
+        {
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+          variant: "error",
+        }
+      );
+    }
+  };
+};
+
+export const startLoadNonExistProduct = () => {
+  return async (dispatch) => {
+    try {
+      const { data } = await instanceApi.get(
+        `/product/non-existent/get`,
+        headerConfigApplication
+      );
+      dispatch(loadProducts(data.data));
+    } catch (error) {
+      enqueueSnackbar(
+        `${error.response.data.message}`||'Error al consultar la información',
         {
           anchorOrigin: { horizontal: "center", vertical: "top" },
           variant: "error",
@@ -86,7 +108,7 @@ export const LoadOneProduct = (_id) => {
 };
 
 export const addOneProduct =
-  ({name,price,description, tag, size, category, subCategory}, images, navigate) => async (dispatch) => {
+  ({name,price,description, tag, size, category, subCategory, weight}, images, navigate) => async (dispatch) => {
    dispatch(startLoading())
     try {
       const formData = new FormData()
@@ -97,6 +119,7 @@ export const addOneProduct =
       formData.append("size", size)
       formData.append("subCategory", subCategory)
       formData.append("category", category)
+      formData.append('weight', weight)
       for (let i = 0; i < images.length; i++) {
         formData.append("images", images[i]);
       }
@@ -125,7 +148,7 @@ export const addOneProduct =
   };
 
   export const editOneProduct =
-  (id,{name,price,description,tag, size, category, subCategory}, images, navigate) => async (dispatch) => {
+  (id,{name,price,description,tag, size, category, subCategory, weight}, images, navigate) => async (dispatch) => {
     try {
       const formData = new FormData()
       formData.append('name', name)
@@ -135,6 +158,8 @@ export const addOneProduct =
       formData.append('size', size)
       formData.append('category', category)
       formData.append('subCategory', subCategory)
+      formData.append('weight', weight)
+
       for (let i = 0; i < images.length; i++) {
         formData.append("images", images[i]);
       }

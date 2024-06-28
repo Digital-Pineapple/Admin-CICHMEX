@@ -22,10 +22,13 @@ import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
 import { redirectPages } from '../../helpers';
-import { Button, IconButton, Tooltip } from "@mui/material";
+import { Button, Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import { Workbook } from "exceljs";
 import { useProducts } from "../../hooks/useProducts";
 import { editOneProduct } from "../../store/actions/productsActions";
+import AddButton from "../../components/Buttons/AddButton";
+import {useStoreHouse} from '../../hooks/useStoreHouse'
+import AddButton2 from "../../components/Buttons/AddButton2";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -60,20 +63,19 @@ function CustomPagination(props) {
 }
 
 const MyStockProducts = () => {
-  const { loadStockProducts, products, navigate, deleteProduct } = useProducts();
+  const { loadStockProducts,loadNoStockProducts, rowsStockProducts, navigate, rowsOutOfStockProducts  } = useProducts();
+  const {createStockProduct} = useStoreHouse()
 
   useEffect(() => {
     loadStockProducts()
+    loadNoStockProducts()
   }, []);
 
-  const rowsWithIds = products.map((item, _id) => ({
-    id: _id.toString(),
-    ...item,
-  }));
 
+  const rowsWithIds = rowsStockProducts
   const createProduct = () => {
     navigate('/auth/CrearProducto')
-  }
+  };
   
   const exportToExcel = () => {
     const workbook = new Workbook();
@@ -106,6 +108,7 @@ const MyStockProducts = () => {
       saveAs(blob, "productos.xlsx");
     });
   };
+  console.log(rowsOutOfStockProducts.length > 0);
 
   function CustomToolbar() {
     const apiRef = useGridApiContext();
@@ -131,18 +134,96 @@ const MyStockProducts = () => {
 
 
   return (
-    <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-      <Title>Stock de productos</Title>
+    <Grid container  paddingLeft={'100px'}>
+      <Grid item xs={12} display={'flex'} justifyContent={'center'}>
+      <Typography variant="h1" fontSize={'40px'}  color="initial">Administracion de productos</Typography>
+      </Grid>
+      {rowsOutOfStockProducts.length > 0 ? 
+      (<Grid item xs={6} lg={6} mr={1} >
+
+    <Typography variant="h1" fontSize={'30px'}>Productos sin almacen</Typography>
+
+    <DataGrid
+      sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
+      columns={[
+        {
+          field: "tag",
+          headerName: "Código",
+          flex: 1,
+          align: "center",
+        },
+        {
+          field: "name",
+          hideable: false,
+          headerName: "Nombre del prodcto",
+          flex: 1,
+          sortable: false,
+        },
+        {
+          field: "price",
+          headerName: "Precio",
+          flex: 1,
+          align: "center",
+        },
+        {
+          field: "size",
+          headerName: "Tamaño",
+          flex: 1,
+          align: "center",
+        },
+        {
+          field: "weight",
+          headerName: "Peso",
+          flex: 1,
+          align: "center",
+        },
+       
+        {
+          field: "Opciones",
+          headerName: "Opciones",
+          align: "center",
+          flex: 1,
+          sortable: false,
+          type: "actions",
+          getActions: (params) => [
+          <AddButton title={`Agregar`} product={params?.row} text={`¿Quiere agregar al almacen el producto ${params.row.name}?`} />      
+          ],
+        },
+      ]}
+      
+      rows={rowsOutOfStockProducts}
+      pagination
+      slots={{
+        pagination: CustomPagination,
+        toolbar: CustomToolbar,
+        columnSortedDescendingIcon: SortedDescendingIcon,
+        columnSortedAscendingIcon: SortedAscendingIcon,
+        columnUnsortedIcon: UnsortedIcon,
+      }}
+      disableColumnFilter
+      disableColumnMenu
+      disableColumnSelector
+      disableDensitySelector
+      slotProps={{
+        toolbar: {
+          showQuickFilter: true,
+          quickFilterProps: { debounceMs: 500 },
+        },
+      }}
+      printOptions={{
+        hideFooter: true,
+        hideToolbar: true,
+      }}
+    />
+  </Grid>):''
+      }
+    <Grid item xs={12}lg={rowsOutOfStockProducts.length > 0 ? 6:11}>
+
+      <Typography variant="h1" fontSize={'30px'}>Productos en almacen </Typography>
+
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
-          // {
-          //   field: "_id",
-          //   hideable: false,
-          //   headerName: "Id",
-          //   flex: 1,
-          //   sortable: "false",
-          // },
           {
             field: "tag",
             headerName: "Código",
@@ -174,7 +255,12 @@ const MyStockProducts = () => {
             flex: 1,
             align: "center",
           },
-         
+          {
+            field: "weight",
+            headerName: "Peso",
+            flex: 1,
+            align: "center",
+          },
           {
             field: "Opciones",
             headerName: "Opciones",
@@ -183,16 +269,7 @@ const MyStockProducts = () => {
             sortable: false,
             type: "actions",
             getActions: (params) => [
-            //   <WarningAlert
-            //     title="¿Estas seguro que deseas eliminar el producto?"
-            //     callbackToDeleteItem={() => deleteProduct(params.row._id)}
-            //   />,
-            //   <Tooltip title='Editar Producto' >
-            //   <IconButton aria-label="Editar" color="success" onClick={()=>redirectPages(navigate,(params.row._id))} >
-            //     <Edit />
-            //   </IconButton> 
-            //   </Tooltip>
-                             
+            <AddButton2 title={`Agregar`} product={params?.row} text={`¿Quiere agregar al almacen el producto ${params.row.name}?`} />      
             ],
           },
         ]}
@@ -221,7 +298,9 @@ const MyStockProducts = () => {
           hideToolbar: true,
         }}
       />
-    </div>
+    </Grid>
+    
+    </Grid>
   );
 }
 
