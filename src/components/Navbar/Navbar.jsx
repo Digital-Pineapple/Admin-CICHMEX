@@ -121,11 +121,12 @@ export const Navbar = () => {
           </IconButton>
           <Typography color="GrayText" variant="h4" >Bienvenido:{" "} {user.fullname} </Typography>
           
-          <Grid item direction={"row"} >
+          <Grid item display={'flex'} direction={"row"} >
             
           <AvatarCustom ProfileImage={user.profile_image}/>
           
           </Grid>
+          
         </Toolbar>
       </AppBar>
       <Drawer
@@ -137,26 +138,17 @@ export const Navbar = () => {
         variant="permanent"
         open={open}
       >
-        <DrawerHeader sx={{ backgroundColor: '"#0E2E73"' }}>
+        <DrawerHeader>
           <Tooltip title="Cerrar">
           <IconButton onClick={handleDrawerClose} >
             <ChevronLeftIcon color="secondary" />
-            <Image width="50px" src={icono} />
+            {/* <Image width="50px" src={icono} /> */}
           </IconButton>
           </Tooltip>
           <Grid direction={'column'} >
-          <Typography variant="body1" color="white">Administrador</Typography>
-          <Typography variant="body2" fontFamily={"BikoBoldLight"} color="GrayText">Produccion</Typography>
+          <Typography variant="body1" color="white">{user.type_user?.name}</Typography>
           </Grid>
-          {/* <IconButton onClick={handleDrawerClose}>
-            {theme.direction === "rtl" ? (
-              <>
-              <ChevronRightIcon />
-              </>
-            ) : (
-              <ChevronLeftIcon />
-              )}
-          </IconButton> */}
+
         </DrawerHeader>
         <Divider />
         <NavListDrawer navArrayLinks={Links} />

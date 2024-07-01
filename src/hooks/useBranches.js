@@ -32,9 +32,14 @@ export const useBranches = () => {
         return ok
     }
 
+    const rowsBranches = branches?.map((i, _id) => ({
+        id: _id.toString(),
+        ...i,
+      }));
 
 
-    return { branch, branches, loadBranches, pendingToVerify, activeBranches, navigate, pendingBranches, loadOneBranch, verifyOneBranch }
+
+    return { branch, branches, loadBranches, pendingToVerify, activeBranches, navigate, pendingBranches, loadOneBranch, verifyOneBranch, rowsBranches }
 
 
 }

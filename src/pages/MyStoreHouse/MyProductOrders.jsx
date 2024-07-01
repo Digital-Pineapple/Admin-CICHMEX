@@ -27,6 +27,11 @@ import { Workbook } from "exceljs";
 import { useProducts } from "../../hooks/useProducts";
 import { editOneProduct } from "../../store/actions/productsActions";
 import { useProductOrder } from "../../hooks/useProductOrder";
+import PaidIcon from '@mui/icons-material/Paid';
+import PendingIcon from '@mui/icons-material/Pending';
+import CarCrashIcon from '@mui/icons-material/CarCrash';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -81,8 +86,6 @@ const MyProductOrders = () => {
       ...item
     };
   });
-
-console.log(rowsWithIds);
   const exportToExcel = () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Stock de productos");
@@ -90,7 +93,7 @@ console.log(rowsWithIds);
     // Agregar encabezados de columna
     const headerRow = worksheet.addRow([
       "Cantidad de productos",
-      "Nombre del producto",
+      "Tipo de envio",
       "Existencias",
       "Precio",
       "Tamaño",
@@ -166,13 +169,39 @@ console.log(rowsWithIds);
           {
             field: "typeDelivery",
             hideable: false,
-            headerName: "Nombre del prodcto",
+            headerName: "Tipo de envio",
             flex: 1,
             sortable: false,
           },
           {
+            field: "payment_status",
+            headerName: "Status de pago",
+            flex: 1,
+            align: "center",
+            renderCell: (params) =>
+              params.value === 'approved' ? (
+                <>
+                  <Chip
+                    icon={<PaidIcon />}
+                    label="Pagado"
+                    variant="outlined"
+                    color="success"
+                  />
+                </>
+              ) :(
+                <>
+                  <Chip
+                    icon={<PendingIcon />}
+                    label="Pendiente"
+                    variant="outlined"
+                    color="info"
+                  />
+                </>
+              ),
+          },
+          {
             field: "storeHouseStatus",
-            headerName: "Surtido en almacen",
+            headerName: "Orden preparada",
             flex: 1,
             align: "center",
             renderCell: (params) =>
@@ -197,8 +226,34 @@ console.log(rowsWithIds);
               ),
           },
           {
+            field: "route_status",
+            headerName: "Ruta",
+            flex: 1,
+            align: "center",
+            renderCell: (params) =>
+              params.value === true ? (
+                <>
+                  <Chip
+                    icon={<LocalShippingIcon />}
+                    label="En camino"
+                    variant="outlined"
+                    color="success"
+                  />
+                </>
+              ) :(
+                <>
+                  <Chip
+                    icon={<CarCrashIcon />}
+                    label="Sin ruta"
+                    variant="outlined"
+                    color="error"
+                  />
+                </>
+              ),
+          },
+          {
             field: "deliveryStatus",
-            headerName: "Enviado",
+            headerName: "Entregado",
             flex: 1,
             align: "center",
             renderCell: (params) =>
@@ -206,7 +261,7 @@ console.log(rowsWithIds);
                 <>
                   <Chip
                     icon={<LocalShipping />}
-                    label="Enviado"
+                    label="Entregado"
                     variant="outlined"
                     color="success"
                   />
@@ -231,15 +286,11 @@ console.log(rowsWithIds);
             sortable: false,
             type: "actions",
             getActions: (params) => [
-            //   <WarningAlert
-            //     title="¿Estas seguro que deseas eliminar el producto?"
-            //     callbackToDeleteItem={() => deleteProduct(params.row._id)}
-            //   />,
-            //   <Tooltip title='Editar Producto' >
-            //   <IconButton aria-label="Editar" color="success" onClick={()=>redirectPages(navigate,(params.row._id))} >
-            //     <Edit />
-            //   </IconButton> 
-            //   </Tooltip>
+              <Tooltip title='Surtir orden' >
+              <IconButton aria-label="Surtir" color="success" onClick={()=>redirectPages(navigate,(`/auth/surtir-orden/${params.row._id}`))} >
+                <AddShoppingCartIcon />
+              </IconButton> 
+              </Tooltip>
                              
             ],
           },

@@ -1,6 +1,6 @@
 
 import { useSelector, useDispatch } from 'react-redux';
-import { deleteOneUser, editOneUser, getOneUser, getUsers, verifyOneUser } from '../store/actions/userActions'; 
+import { addOneCarrier, deleteOneUser, editOneUser, getCarrierDrivers, getOneUser, getUsers, verifyOneUser } from '../store/actions/userActions'; 
 import { useNavigate } from 'react-router-dom';
 
 export const useUsers = () => {
@@ -8,8 +8,11 @@ export const useUsers = () => {
     const dispatch = useDispatch();
 
     const { user, users } = useSelector(state => state.users)
+    const { CarrierDrivers, CarrierDriver, loading } = useSelector(state => state.carrierDriver)
 
     const loadUsers = async () => await dispatch(getUsers());
+
+    const loadCarrierDrivers = () => dispatch(getCarrierDrivers())
 
     const loadUser = async user_id => await dispatch(getOneUser(user_id));
 
@@ -20,6 +23,8 @@ export const useUsers = () => {
    
     }
 
+    const addCarrier = async values => await dispatch(addOneCarrier(values,navigate))
+
     const editUser = async (user_id, values) => 
     {
        const response =  await dispatch(editOneUser(user_id,values))
@@ -28,7 +33,12 @@ export const useUsers = () => {
         }
     }
 
-    return { user, users, loadUser, loadUsers, deleteUser, verifyUser, editUser, navigate }
+    const rowsCarrierDrivers = CarrierDrivers?.map((i, _id) => ({
+        id: _id.toString(),
+        ...i,
+      }));
+
+    return { user, users, loadUser,addCarrier, loadUsers, deleteUser, verifyUser, editUser, navigate, loadCarrierDrivers, rowsCarrierDrivers, CarrierDriver, loading }
 
 
 }

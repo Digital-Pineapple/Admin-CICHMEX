@@ -1,27 +1,41 @@
 import Cookies from "js-cookie";
 import { instanceApi } from "../../apis/configAxios";
 import {
- deleteUser,
- editUser,
- loadUser,
- loadUsers,
- verifyUser
+  deleteUser,
+  editUser,
+  loadUser,
+  loadUsers,
+  verifyUser,
 } from "../reducer/userReducer";
 import { enqueueSnackbar } from "notistack";
+import { loadCarrierDrivers, startLoading, stopLoading } from "../reducer";
 
 const headerConfig = {
   headers: {
-      "Content-type": "application/json",
-       "Authorization": `Bearer ${localStorage.getItem("token")}`,
+    "Content-type": "application/json",
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
   },
-};    
-
+};
 
 export const getUsers = () => {
   return async (dispatch) => {
     try {
       const { data } = await instanceApi.get("/user", headerConfig);
       dispatch(loadUsers(data.data));
+    } catch (error) {
+      enqueueSnackbar(`Error: ${data.data.response?.message}`);
+    }
+  };
+};
+
+export const getCarrierDrivers = () => {
+  return async (dispatch) => {
+    try {
+      const { data } = await instanceApi.get(
+        "/user/carrier-driver/all",
+        headerConfig
+      );
+      dispatch(loadCarrierDrivers(data.data));
     } catch (error) {
       enqueueSnackbar(`Error: ${data.data.response?.message}`);
     }
@@ -39,8 +53,11 @@ export const getOneUser = (_id) => async (dispatch) => {
 
 export const deleteOneUser = (_id) => async (dispatch) => {
   try {
-    const response = await instanceApi.delete(`/user/delete-user/${_id}`, headerConfig);
-    dispatch(deleteUser(_id))
+    const response = await instanceApi.delete(
+      `/user/delete-user/${_id}`,
+      headerConfig
+    );
+    dispatch(deleteUser(_id));
     enqueueSnackbar(
       `Se elimino de manera correcta el usuario:${
         response.data?.fullname || ""
@@ -60,24 +77,30 @@ export const verifyOneUser = (id) => {
     try {
       const formData = new FormData();
       formData.append("accountVerified", true);
-      const { data } = await instanceApi.put(`/user/validate/${id}`,formData ,headerConfig);
-      dispatch(verifyUser(data.data));  
-      enqueueSnackbar(`${data?.message || 'Verificado con éxito'}`, {
+      const { data } = await instanceApi.put(
+        `/user/validate/${id}`,
+        formData,
+        headerConfig
+      );
+      dispatch(verifyUser(data.data));
+      enqueueSnackbar(`${data?.message || "Verificado con éxito"}`, {
         variant: "success",
         anchorOrigin: {
           vertical: "top",
           horizontal: "right",
         },
       });
+      stoptLoading();
     } catch (error) {
       console.log(error);
-      enqueueSnackbar(`Error: ${error.response.data. message || ''}`, {
+      enqueueSnackbar(`Error: ${error.response.data.message || ""}`, {
         variant: "error",
         anchorOrigin: {
           vertical: "top",
           horizontal: "center",
         },
       });
+      stoptLoading();
     }
   };
 };
@@ -92,7 +115,7 @@ export const editOneUser = (user_id, values) => {
       const { data } = await instanceApi.post(
         `/user/update/${user_id}`,
         formData,
-       headerConfig
+        headerConfig
       );
       dispatch(editUser(user_id, data.data));
       enqueueSnackbar("Editado con exito", {
@@ -102,7 +125,7 @@ export const editOneUser = (user_id, values) => {
           horizontal: "right",
         },
       });
-      return(data.data)
+      return data.data;
     } catch (error) {
       console.log(error);
       enqueueSnackbar(
@@ -115,6 +138,39 @@ export const editOneUser = (user_id, values) => {
           },
         }
       );
+    }
+  };
+};
+
+export const addOneCarrier = (values, navigate) => {
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      const { data } = await instanceApi.post(
+        `/user/carrier-driver`,
+        { values: values },
+        headerConfig
+      );
+      navigate("/auth/Transportistas");
+      enqueueSnackbar(`${data.message}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+      dispatch(stopLoading());
+    } catch (error) {
+      enqueueSnackbar(`${error.response.data.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+      if (error) {
+        dispatch(stopLoading());
+      }
     }
   };
 };

@@ -1,4 +1,3 @@
-import Titles from "../../components/ui/Titles";
 
 import Box from "@mui/material/Box";
 
@@ -16,19 +15,19 @@ import {
   Select,
   MenuItem,
   FormHelperText,
+  Typography,
+  InputAdornment,
   
 } from "@mui/material";
-import { Typography } from "antd";
 import { useProducts } from "../../hooks/useProducts";
 import useImages from "../../hooks/useImages";
 import FilterIcon from "@mui/icons-material/Filter";
 import { styled } from "@mui/material/styles";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ClearIcon from "@mui/icons-material/Clear";
-import AddIcon from "@mui/icons-material/Add";
 import { useSubCategories } from "../../hooks/useSubCategories";
 import { useEffect } from "react";
 import { useCategories } from "../../hooks/useCategories";
+import { AttachMoney } from "@mui/icons-material";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -36,17 +35,12 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
     top: 1,
   },
 }));
-const styleStatus = {
-  position: { xs: "static", md: "absolute" },
-  left: { xs: "70%", md: "35%" },
-  marginTop: { xs: "10px", md: "0px" },
-};
 
 const CreateProduct = () => {
   const { createProduct } = useProducts();
   const { loadSubCategories, subCategories, loadSubcategoriesByCategory, subCatByCategory } = useSubCategories()
   const { categories, loadCategories } = useCategories();
-  const { images, handleImageChange, deleteImage, imagesPreview, imagesFiles } =
+  const { images, handleImageChange, deleteImage, imagesFiles } =
     useImages();
 
   const formik = useFormik({
@@ -57,7 +51,8 @@ const CreateProduct = () => {
       size: "",
       tag: "",
       subCategory:"",
-      category:""
+      category:"",
+      weight:"" 
     },
     onSubmit: (values) => {
       try {
@@ -83,13 +78,12 @@ const CreateProduct = () => {
   
 
   return (
-    <Box component="form" onSubmit={formik.handleSubmit} marginX={"10%"}>
-      <Titles name={<h2 align="center">Crear Producto</h2>} />
-      <Grid
-        color="#F7BFBF"
-        borderRadius={5}
+    <Box component="form" onSubmit={formik.handleSubmit} marginLeft={{xs:'100px'}} padding={4}>
+      <Typography variant="h1" fontSize={{xs:'40px'}} >
+        Registar nuevo producto
+      </Typography>
+      <Grid 
         mt={3}
-        sx={{ border: 10, p: 5 }}
         container
         spacing={4}
       >
@@ -114,6 +108,13 @@ const CreateProduct = () => {
           value={formik.values.price}
           sx={{ margin: 2 }}
           onChange={formik.handleChange}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <AttachMoney />
+              </InputAdornment>
+            ),
+          }}
         />
         <TextField
           focused
@@ -126,7 +127,18 @@ const CreateProduct = () => {
           sx={{ margin: 2 }}
           onChange={formik.handleChange}
         />
-         <FormControl>
+        <TextField
+          focused
+          fullWidth
+          id="weight"
+          name="weight"
+          label="Peso del producto"
+          variant="outlined"
+          value={formik.values.weight}
+          sx={{ margin: 2 }}
+          onChange={formik.handleChange}
+        />
+         <FormControl fullWidth >
             <FormLabel>Categoría</FormLabel>
             <Select
               id="category"
@@ -147,7 +159,7 @@ const CreateProduct = () => {
             </Select>
             <FormHelperText>Selecciona una categoria</FormHelperText>
           </FormControl>
-         <FormControl>
+         <FormControl fullWidth>
             <FormLabel>Subcategoria</FormLabel>
             <Select
               id="subCategory"
@@ -296,7 +308,7 @@ const CreateProduct = () => {
         </Grid>
       </Grid>
 
-      <Button type="submit" variant="contained" color="secondary">
+      <Button type="submit" fullWidth variant="contained" color="success">
         Crear
       </Button>
     </Box>

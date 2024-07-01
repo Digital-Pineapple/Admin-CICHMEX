@@ -1,6 +1,5 @@
 import { Navigate } from 'react-router-dom'
 import {Login} from '../pages/Login'
-import { Principal } from '../pages/Principal'
 import Users from '../pages/Usuarios/Users'
 import Services from '../pages/Services/Services'
 import EditUser from '../pages/Usuarios/Edit'
@@ -38,6 +37,14 @@ import AddProductsToSH from '../pages/StoreHouse/AddProductsToSH'
 import { MyStoreHouse } from '../pages/MyStoreHouse/MyStoreHouse'
 import MyStockProducts from '../pages/MyStoreHouse/MyStockProducts'
 import MyProductOrders from '../pages/MyStoreHouse/MyProductOrders'
+import Principal from '../pages/Principal'
+import FillOrder from '../pages/MyStoreHouse/FillOrder'
+import AssignRoute from '../pages/MyStoreHouse/ AssignRoute'
+import TypeUser from '../pages/TypeUser/TypeUser'
+import CreateTypeUser from '../pages/TypeUser/Create'
+import CarrierDrivers from '../pages/CarrierDriver/CarrierDrivers'
+import CreateCarrier from '../pages/CarrierDriver/Create'
+
 
 
 export const AllRoutes = [
@@ -71,6 +78,10 @@ export const AllRoutes = [
   { type: 1, path: '/CrearSubCategoria', element: <CreateSubCategory/>},
   { type: 1, path: '/SubCategorias/:id', element: <EditSubCategory/>},
 
+  { type: 1, path: '/Tipos-Usuario', element: <TypeUser/>},
+  { type: 1, path: '/crear-tipo-usuario', element: <CreateTypeUser/>},
+  { type: 1, path: '/SubCategorias/:id', element: <EditSubCategory/>},
+
   { type: 1, path: '/Comisiones', element: <Commissions/>},
   { type: 1, path: '/CrearComisiones', element: <CreateCommission/>},
   { type: 1, path: '/Comisiones/:id', element: <EditCommission/>},
@@ -95,5 +106,11 @@ export const AllRoutes = [
   { type: 1, path: '/MiAlmacen', element: <MyStoreHouse/> },
   { type: 1, path: '/MiAlmacen/stock', element: <MyStockProducts/> },
   { type: 1, path: '/MiAlmacen/product-orders', element: <MyProductOrders/> },
+
+  { type: 1, path: '/surtir-orden/:id', element: <FillOrder/> },
+  { type: 1, path: '/asignar-ruta/:id', element: <AssignRoute/> },
+
+  { type: 1, path: '/Transportistas', element: <CarrierDrivers/> },
+  { type: 1, path: '/AltaTransportista', element: <CreateCarrier/> },
 
 ]

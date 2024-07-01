@@ -9,6 +9,8 @@ import StoreIcon from '@mui/icons-material/Store';
 import CardMembershipIcon from '@mui/icons-material/CardMembership';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import MuseumIcon from '@mui/icons-material/Museum';
+import PeopleIcon from '@mui/icons-material/People';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 
 export const Links = [
   {
@@ -17,12 +19,12 @@ export const Links = [
     Icon : <MuseumIcon/>
 
   },
-  // {
-  //   title : "Sucursales",
-  //   path : "/auth/Sucursales",
-  //   Icon : <StoreIcon/>
+  {
+    title : "Sucursales",
+    path : "/auth/Sucursales",
+    Icon : <StoreIcon/>
 
-  // },
+  },
   {
     title: "Usuarios",
     path: "/auth/usuarios",
@@ -52,6 +54,18 @@ export const Links = [
     title : "Membresias",
     path : "/auth/Membresias",
     Icon : <CardMembershipIcon/>
+
+  },
+  {
+    title : "Tipos de usuario",
+    path : "/auth/Tipos-Usuario",
+    Icon : <PeopleIcon/>
+
+  },
+  {
+    title : "Transportistas",
+    path : "/auth/Transportistas",
+    Icon : <LocalShippingIcon/>
 
   },
   // {

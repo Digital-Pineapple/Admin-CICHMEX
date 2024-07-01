@@ -27,3 +27,28 @@ export const startLoadTypeUsers = () => {
   };
 };
 
+export const startCreateTypeUser = (values, navigate) => {
+  return async (dispatch) => {
+    try {
+      const { data } = await instanceApi.post("/type-user",values, headerConfig);
+      enqueueSnackbar(` ${data.message}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+      navigate('/auth/Tipos-Usuario',{replace:true})
+    } catch (error) {
+      console.log(error);
+      enqueueSnackbar(`${error.response.data?.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    }
+  };
+};
+

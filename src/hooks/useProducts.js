@@ -1,18 +1,22 @@
 import { useDispatch, useSelector } from "react-redux"
-import { LoadOneProduct, addOneProduct, deleteOneProduct, editOneProduct, startLoadProducts, startLoadStockProducts } from "../store/actions/productsActions";
+import { LoadOneProduct, addOneProduct, deleteOneProduct, editOneProduct, startLoadNonExistProduct, startLoadProducts, startLoadStockProducts } from "../store/actions/productsActions";
 import { useNavigate } from "react-router-dom";
 import { cleanProductDetail } from "../store/reducer/productsReducer";
+import { useForm } from "react-hook-form";
 
 export const useProducts = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate()
+    const {reset} = useForm()
 
-    const { products, product, isLoading } = useSelector(state => state.products);
+    const { products, product, isLoading, stockProducts } = useSelector(state => state.products);
 
     const loadProducts = async () => dispatch((startLoadProducts()))
 
     const loadStockProducts = async () => dispatch((startLoadStockProducts()))
+    
+    const loadNoStockProducts = async () => dispatch((startLoadNonExistProduct()))
 
     const loadProduct = async (_id) => {
         dispatch((LoadOneProduct(_id)));
@@ -26,5 +30,15 @@ export const useProducts = () => {
 
     const cleanProductD = () => dispatch(cleanProductDetail())
 
-    return { loadProducts, loadProduct, createProduct, editProduct, deleteProduct, product, products, navigate, isLoading, cleanProductD, loadStockProducts }
+    const rowsStockProducts = stockProducts.map((item, _id) => ({
+        id: _id.toString(),
+        ...item,
+      }));
+
+    const rowsOutOfStockProducts = products?.map((item, _id) => ({
+        id: _id.toString(),
+        ...item,
+      }));
+
+    return { loadProducts,rowsOutOfStockProducts,stockProducts,loadNoStockProducts,  loadProduct, createProduct, editProduct, deleteProduct,rowsStockProducts, product, products, navigate, isLoading, cleanProductD, loadStockProducts }
 }
