@@ -21,10 +21,9 @@ import { useForm } from "react-hook-form";
 import { useAuth, useAuthStore } from "../hooks";
 import Image from "mui-image";
 import logo from "../assets/Images/logotipo.png";
-
-
-import { useSnackbar } from "notistack";
-import { useDispatch } from "react-redux";
+import LogoCHMX from "../assets/Images/CHMX/Imagotipo CHMX Blanco.png"
+import { blue, orange } from "@mui/material/colors";
+import { ErrorMessage } from "@hookform/error-message";
 
 export const Login = () => {
   const {
@@ -36,18 +35,8 @@ export const Login = () => {
   
   const {login} = useAuth();
 
-  // const { errorMessage, StartLogin } = useAuthStore();
-
-  const {enqueueSnackbar} = useSnackbar()
-  // useEffect(() => {
-  //   if (errorMessage  !== undefined) {
-  //     enqueueSnackbar('Error en el inicio de sesión' && errorMessage ,{variant:'error'})
-  //   }
-  // }, [errorMessage]);
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
@@ -57,59 +46,69 @@ export const Login = () => {
 
   return (
     <>
-      <Box sx={{ flexGrow: 1 }}>
         <Grid
-          className="GradientItem"
+          bgcolor={'#0D0318'}
           container
-          direction={{ xs: "column", sm:'row' }}
           minHeight={"100vh"}
-          alignContent='center'
           justifyContent={'center'}
+          padding={{xs:2, sm:4}}
+          display={'flex'}
 
         >
-          <Grid maxHeight={'600px'} item container xs={12} sm={5} xl={5}>
-            <Image
+          <Grid maxHeight={'250px'} padding={2} boxSizing={'border-box'} display={'flex'} justifyContent={'center'} item container xs={12}>
+            <Grid item xs={12}>
+            <Typography variant="h1" fontWeight={'Bold'} textAlign={'center'} fontSize={{xs:'40px', md:'45px', xl:'50px'}}color="#fff">Administrador</Typography>
+            </Grid>
+          <Grid  item xs={6}xl={4}>  
+          <Image
               src={logo}
-              fit="cover"
+              fit="contain"
               duration={1000}
               style={{
                 position: "static",
-                minHeight: "40vh",
+                minWidth: "150px",
+                maxWidth:'300px'
               }}
             />
+          </Grid>
+          <Grid item xs={6} xl={4}>
+            <Image
+              src={LogoCHMX}
+              fit="contain"
+              duration={1000}
+              style={{
+                position: "static",
+                minWidth: "150px",
+                maxWidth:'300px'
+              }}
+            />
+          </Grid>
           </Grid>
           <Grid
             component="form"
             autoComplete="off"
             onSubmit={handleSubmit(login)}
+            borderRadius={'20px'}
+            border={'4px solid'}
+            borderColor={blue[900]}
             sx={{ backgroundColor: "white" }}
-            borderRadius={"20px"}
-            position="relative"
-            zIndex={2}
-            alignItems="center"
-            justifyItems={'center'}
-            width={{xs:'90%'}}
-            margin={2}
-            border={2}
-            borderColor={'#E94C45'}
-            boxShadow={8}
-            padding={2}
-            maxHeight={'500px'}
-            item
-            xs={12}
-            sm={5}
-            md={5}
+            container
+            maxWidth={{sm:'70%', md:'60%', lg:'50%'}}
+            maxHeight={{xs:'400px'}}
+            padding={{xs:1}}
           >
+            <Grid item xs={12} >
             <Typography
               fontSize={{ xs: 25, sm: 30, md: 35, lg: 34, xl: 40 }}
-              color="#CC3C5C"
-              align="center"
-              alignContent={"center"}
+              textAlign={'center'}
+              color={orange[900]}
             >
               Inicio de Sesión
             </Typography>
+            </Grid>
+              
             {/* CORREO */}
-            <FormControl sx={{ mt: 4 }} fullWidth required variant="outlined">
+            <FormControl  fullWidth required variant="outlined">
               <InputLabel>Correo</InputLabel>
               <OutlinedInput
                 {...register("email", {
@@ -119,23 +118,30 @@ export const Login = () => {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                type="mail"
+                type="email"
                 label="Correo"
               />
+               <ErrorMessage errors={errors.root?.message} name="email" />
+
             </FormControl>
 
             {/* CONTRASEÑA */}
             <FormControl
               fullWidth
               required
-              sx={{ mt: 2, mb: 2 }}
               variant="outlined"
             >
               <InputLabel>Password</InputLabel>
               <OutlinedInput
                 {...register("password", {
-                  required: true,
-                  minLength: 8,
+                  required: {
+                    value:true,
+                    message:'Campo requerido'
+                  },
+                  minLength:{
+                    value:8,
+                    message:'Min 8 caracteres'
+                  }
                   // pattern: {
                   //   value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])([A-Za-z\d$@$!%*?&]|[^ ]){8,15}$/,
                   // },
@@ -157,18 +163,8 @@ export const Login = () => {
                   </InputAdornment>
                 }
                 label="Password"
+                
               />
-              {/* {errors.password?.type === "pattern" && (
-                <h5 color="red">
-                  "Contraseña inválida:debe contener: Mayusculas,Minusculas,
-                  Numeros y un caracter especial($%&)"
-                </h5>
-              )} */}
-              {errors.password?.type === "minLength" && (
-                <h5 color="red">
-                  La contraseña debe tener minimo 8 carácteres
-                </h5>
-              )}
             </FormControl>
             <Divider variant="middle" />
             {/* ACTIVACION DE BOTON */}
@@ -196,7 +192,7 @@ export const Login = () => {
             </Grid>
           </Grid>
         </Grid>
-      </Box>
+ 
     </>
   );
 };
