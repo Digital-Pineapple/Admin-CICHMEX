@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Titles from "../../components/ui/Titles";
 import Grid from "@mui/material/Grid";
 import {
   IconButton,
@@ -13,29 +12,24 @@ import {
   Select,
   MenuItem,
   FormHelperText,
-  Stack,
+  InputAdornment,
 } from "@mui/material";
-import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useFormik } from "formik";
 import { enqueueSnackbar } from "notistack";
-import AddImage from "../../assets/Images/add.png";
 import { useProducts } from "../../hooks/useProducts";
 import { SlideBranchesImages } from "../../components/Images/SlideBranchesImages";
 import useImages from "../../hooks/useImages";
-import LoadingScreen from "../../components/ui/LoadingScreen";
 import FilterIcon from "@mui/icons-material/Filter";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { styled } from "@mui/material/styles";
 import { useCategories } from "../../hooks/useCategories";
 import { useSubCategories } from "../../hooks/useSubCategories";
-import { useDispatch } from "react-redux";
-import { LoadOneProduct } from "../../store/actions/productsActions";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
-
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 const Edit = () => {
   const { id } = useParams();
   const { loadProduct, product, editProduct, navigate, isLoading } =
@@ -87,7 +81,7 @@ const Edit = () => {
     },
   });
 
-  const { images, handleImageChange, deleteImage, imagesPreview, imagesFiles } =
+  const { images, handleImageChange, deleteImage, imagesFiles } =
     useImages();
 
   const outEdit = () => {
@@ -100,21 +94,19 @@ const Edit = () => {
         <LoadingScreenBlue />
       ) : (
         <Grid
-          width={"90%"}
-          component="form"
-          padding={4}
-          container
-          onSubmit={formik.handleSubmit}
-          marginLeft={"100px"}
+        component="form" padding={1} gap={2} container onSubmit={formik.handleSubmit} paddingLeft={{xs:'65px', sm:'75px'}} 
         >
-          <Typography variant="h1" fontSize={{ xs: "40px" }} color="initial">
-            Editar Producto
-          </Typography>
-          <Grid container padding={2} boxSizing={"border-box"}>
+      <Grid item marginTop={{xs:'-30px'}} xs={12} minHeight={'100px'} className="Titles">   
+      <Typography textAlign={'center'} variant="h1" fontSize={{xs:'20px', sm:'30px', lg:'40px'}} >
+        Editar
+      </Typography>
+
+      </Grid>
+          <Grid container boxSizing={"border-box"}>
             {product.images?.length ? (
               <SlideBranchesImages
                 images={product?.images}
-                altura={isSmallScreen ? "200px" : "400px"}
+                altura={isSmallScreen ? "200px" : "300px"}
               />
             ) : (
               <Typography marginY={"80px"}>
@@ -122,58 +114,44 @@ const Edit = () => {
               </Typography>
             )}
           </Grid>
-
+          <Grid container >
           {images.length > 0 && (
-            <Grid item xs={12}>
-              <input
-                id="image"
-                name="image"
-                type="file"
-                accept="image/png, image/jpeg, image/jpg"
-                onChange={handleImageChange}
-                hidden
-              />
-              <label htmlFor={"image"}>
-                <Button
-                  component="span"
-                  color="primary"
-                  fullWidth
-                  variant="contained"
-                >
-                  Agregar Fotos
-                </Button>
-              </label>
-            </Grid>
-          )}
+          <Grid item xs={12}>
+            <input
+              id="image"
+              name="image"
+              type="file"
+              accept="image/jpg"
+              onChange={handleImageChange}
+              hidden
+            />
+            <label htmlFor={"image"}>
+              <Button fullWidth component="span" color="primary" variant="contained">
+                Agrega Fotos
+              </Button>
+            </label>
+          </Grid>
+        )}
 
-          <Grid className="image-branch-container" item xs={12}>
-            <Typography marginTop={"10px"}>
-              {" "}
-              peso max de imagen(500 kb)
-            </Typography>
-            {images.length ? (
+        <Typography marginTop={"10px"}> peso max de imagen(500 kb)</Typography>
+          {
+            images.length ? (
               <>
                 <Grid
                   container
-                  xs={12}
-                  md={12}
-                  spacing={1}
-                  item
                   display={"flex"}
-                  justifyContent={"flex-start"}
+                  justifyContent={"center"}
                   padding={"10px"}
                   marginTop={"20px"}
-                  sx={{ backgroundColor: "#F7F7F7" }}
+                  sx={{ backgroundColor: "#cfd8dc" }}
+                  gap={2}
                 >
                   {images.map(({ id, filePreview }) => (
-                    <Grid item xs={12} md={6} key={id}>
+                    <Grid item xs={12} sm={3} key={id}>
                       <StyledBadge
                         badgeContent={
                           <IconButton
-                            sx={{
-                              backgroundColor: "black",
-                              color: "black",
-                            }}
+                            sx={{ backgroundColor: "black", color: "black" }}
                             onClick={() => deleteImage(id)}
                           >
                             {" "}
@@ -195,10 +173,8 @@ const Edit = () => {
               </>
             ) : (
               <Grid
-                item
-                xs={12}
-                md={12}
-                sx={{ backgroundColor: "#F7F7F7" }}
+                container
+                sx={{ backgroundColor: "#cfd8dc" }}
                 display={"flex"}
                 flexDirection={"column"}
                 alignItems={"center"}
@@ -214,6 +190,7 @@ const Edit = () => {
                     marginBottom: "10px",
                   }}
                 />
+                {/* <Typography>Agrega imagenes de tu sucursal</Typography> */}
                 <input
                   id="image"
                   name="image"
@@ -222,22 +199,18 @@ const Edit = () => {
                   onChange={handleImageChange}
                   hidden
                 />
-                <label htmlFor={"image"}>
-                  <Button component="span" color="primary" variant="outlined">
-                    Agrega Fotos
+                <label htmlFor={"image"}> 
+                  <Button  component="span" color="primary" variant="contained">
+                    Agregar Fotos
                   </Button>
                 </label>
               </Grid>
-            )}
+            )
+          }
+            
           </Grid>
 
-          <Grid
-            item
-            xs={12}
-            display={"flex"}
-            flexDirection={"column"}
-            alignItems={"center"}
-          >
+            <Grid item xs={12} sm={5}>  
             <TextField
               focused
               fullWidth
@@ -246,15 +219,72 @@ const Edit = () => {
               label="Nombre del producto"
               variant="outlined"
               value={formik.values?.name}
-              sx={{ margin: 2 }}
               onChange={formik.handleChange}
             />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+            <TextField
+              focused
+              type="number"
+              fullWidth
+              id="price"
+              name="price"
+              label="Precio del producto"
+              variant="outlined"
+              value={formik.values?.price}
+              onChange={formik.handleChange}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <AttachMoneyIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            </Grid>
+            <Grid item xs={12} sm={3} >
+            <TextField
+              focused
+              fullWidth
+              id="size"
+              name="size"
+              label="Tamaño"
+              variant="outlined"
+              value={formik.values?.size}
+              onChange={formik.handleChange}
+            />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+            <TextField
+              focused
+              fullWidth
+              id="weight"
+              name="weight"
+              label="Peso"
+              variant="outlined"
+              value={formik.values?.weight}
+              onChange={formik.handleChange}
+            />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+            <TextField
+              focused
+              fullWidth
+              id="tag"
+              name="tag"
+              label="Código"
+              variant="outlined"
+              value={formik.values?.tag}
+              onChange={formik.handleChange}
+            />
+            </Grid>
+            <Grid item xs={12} sm={4}>
             <Typography>Descripción del prducto</Typography>
             <TextareaAutosize
               aria-label="Descripción"
               id="description"
               name="description"
-              minRows={3}
+              minRows={2}
               label="Descripcion"
               value={formik.values?.description}
               style={{
@@ -264,8 +294,9 @@ const Edit = () => {
               }}
               onChange={formik.handleChange}
             />
-
-            <FormControl fullWidth>
+            </Grid>
+            <Grid item xs={12} sm={5.8}>
+              <FormControl fullWidth>
               <FormLabel>Categoría</FormLabel>
               <Select
                 id="category"
@@ -286,7 +317,9 @@ const Edit = () => {
               </Select>
               <FormHelperText>Selecciona una categoria</FormHelperText>
             </FormControl>
-            <FormControl fullWidth>
+            </Grid>
+            <Grid item xs={12} sm={5.8}>
+              <FormControl fullWidth>
               <FormLabel>Subcategoría</FormLabel>
               <Select
                 id="subCategory"
@@ -304,53 +337,21 @@ const Edit = () => {
               </Select>
               <FormHelperText>Selecciona una subcategoria</FormHelperText>
             </FormControl>
-            <TextField
-              focused
-              type="number"
-              fullWidth
-              id="price"
-              name="price"
-              label="Precio del producto"
-              variant="outlined"
-              value={formik.values?.price}
-              sx={{ margin: 2 }}
-              onChange={formik.handleChange}
-            />
-            <TextField
-              focused
-              fullWidth
-              id="size"
-              name="size"
-              label="Tamaño"
-              variant="outlined"
-              value={formik.values?.size}
-              sx={{ margin: 2 }}
-              onChange={formik.handleChange}
-            />
-            <TextField
-              focused
-              fullWidth
-              id="weight"
-              name="weight"
-              label="Peso"
-              variant="outlined"
-              value={formik.values?.weight}
-              sx={{ margin: 2 }}
-              onChange={formik.handleChange}
-            />
-            <Button type="submit" variant="contained" fullWidth>
+            </Grid>
+
+            <Button type="submit" sx={{minHeight:'50px'}} color="success" variant="contained" fullWidth>
               Guardar
             </Button>
-            <br />
             <Button
               onClick={outEdit}
               fullWidth
-              variant="outlined"
-              color="secondary"
+              variant="contained"
+              color="warning"
+              sx={{minHeight:'50px'}} 
             >
               Cancelar
             </Button>
-          </Grid>
+         
         </Grid>
       )}
     </>

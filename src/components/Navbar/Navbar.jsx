@@ -106,7 +106,6 @@ export const Navbar = () => {
     <Box sx={{ display: "flex" }}>
       <AppBar sx={{backgroundColor:'white'}} position="fixed" open={open}>
         <Toolbar style={{justifyContent:'space-between'}} >
-         
           <IconButton
             color="black"
             aria-label="open drawer"
@@ -119,9 +118,7 @@ export const Navbar = () => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography color="GrayText" variant="h4" >Bienvenido:{" "} {user.fullname} </Typography>
-          
-          <Grid item display={'flex'} direction={"row"} >
+          <Grid container display={'flex'} direction={"row"} >
             
           <AvatarCustom ProfileImage={user.profile_image}/>
           

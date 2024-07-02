@@ -17,16 +17,13 @@ const LoadingScreen = () => {
       }}
     >
       <ThreeCircles
-  height="200"
+  height="300"
   width="300"
-  color="##D7B3C6"
-  wrapperStyle={{}}
-  wrapperClass=""
+  color="#EE6B10"
   visible={true}
-  ariaLabel="three-circles-rotating"
-  outerCircleColor="white"
+  outerCircleColor="#fff"
   innerCircleColor="#0d2b6b"
-  middleCircleColor="#D7B3C6"
+  middleCircleColor="#EE6B10"
 />
     
    {/* '#00a399', '#cb5b55', '#00a399', '#382e73', '#c7c1e6' */}

@@ -4,9 +4,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SortIcon from "@mui/icons-material/Sort";
 import {
   DataGrid,
-  GridActionsCellItem,
   GridPagination,
-  GridToolbar,
   GridToolbarContainer,
   GridToolbarQuickFilter,
   gridPageCountSelector,
@@ -14,25 +12,32 @@ import {
   useGridSelector,
 } from "@mui/x-data-grid";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
-import { useServices } from "../../hooks/useServices";
 import MuiPagination from "@mui/material/Pagination";
-import { CancelScheduleSend, Clear, Done, Download, Edit, LocalShipping } from "@mui/icons-material";
-import Title from "antd/es/typography/Title";
-import WarningAlert from "../../components/ui/WarningAlert";
-import { useNavigate } from "react-router-dom";
-import { redirectPages } from '../../helpers';
-import { Button, Chip, IconButton, Tooltip } from "@mui/material";
+import {
+  CancelScheduleSend,
+  Clear,
+  Done,
+  Download,
+  LocalShipping,
+} from "@mui/icons-material";
+import {
+  Button,
+  Chip,
+  Grid,
+  IconButton,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { Workbook } from "exceljs";
-import { useProducts } from "../../hooks/useProducts";
-import { editOneProduct } from "../../store/actions/productsActions";
 import { useProductOrder } from "../../hooks/useProductOrder";
-import PaidIcon from '@mui/icons-material/Paid';
-import PendingIcon from '@mui/icons-material/Pending';
-import CarCrashIcon from '@mui/icons-material/CarCrash';
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
-
+import PaidIcon from "@mui/icons-material/Paid";
+import PendingIcon from "@mui/icons-material/Pending";
+import CarCrashIcon from "@mui/icons-material/CarCrash";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import ScheduleSendIcon from '@mui/icons-material/ScheduleSend';
+import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
+import Swal from "sweetalert2";
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -66,24 +71,28 @@ function CustomPagination(props) {
 }
 
 const MyProductOrders = () => {
-  const { loadProductOrders, loadProductOrder, navigate, dispatch, productOrder, productOrders, isLoading } = useProductOrder();
+  const {
+    loadProductOrders,
+    navigate,
+    productOrders,
+  } = useProductOrder();
 
   useEffect(() => {
-    loadProductOrders()
+    loadProductOrders();
   }, []);
 
   const rowsWithIds = productOrders.map((item, index) => {
-    const quantities = item.products.map(i => i.quantity);
+    const quantities = item.products.map((i) => i.quantity);
     const suma = quantities.reduce((valorAnterior, valorActual) => {
       return valorAnterior + valorActual;
     }, 0);
 
-    const TD = item.branch ? 'En Punto de entrega':'A domicilio'           
+    const TD = item.branch ? "En Punto de entrega" : "A domicilio";
     return {
       quantityProduct: suma,
       typeDelivery: TD,
       id: index.toString(),
-      ...item
+      ...item,
     };
   });
   const exportToExcel = () => {
@@ -97,7 +106,6 @@ const MyProductOrders = () => {
       "Existencias",
       "Precio",
       "Tamaño",
-    
     ]);
     headerRow.eachCell((cell) => {
       cell.font = { bold: true };
@@ -105,14 +113,20 @@ const MyProductOrders = () => {
 
     // Agregar datos de las filas
     rowsWithIds.forEach((row) => {
-      worksheet.addRow([row._id, row.name, row.description, row.price, row.size, row.tag]);
+      worksheet.addRow([
+        row._id,
+        row.name,
+        row.description,
+        row.price,
+        row.size,
+        row.tag,
+      ]);
     });
 
     // Crear un Blob con el archivo Excel y guardarlo
     workbook.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer], {
-        type:
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
       saveAs(blob, "Ordenes de producto.xlsx");
     });
@@ -120,209 +134,272 @@ const MyProductOrders = () => {
 
   function CustomToolbar() {
     const apiRef = useGridApiContext();
-  
+
     const handleGoToPage1 = () => apiRef.current.setPage(1);
-  
+
     return (
-      <GridToolbarContainer sx={{justifyContent:'space-between'}}>
+      <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
         <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-        <GridToolbarQuickFilter/>
+        <GridToolbarQuickFilter />
         <Button
-        variant="text"
-        startIcon={<Download/>}
-        disableElevation
-        sx={{ color: "secondary" }}
-        onClick={exportToExcel}
-      >
-        Descargar Excel
-      </Button>
+          variant="text"
+          startIcon={<Download />}
+          disableElevation
+          sx={{ color: "secondary" }}
+          onClick={exportToExcel}
+        >
+          Descargar Excel
+        </Button>
       </GridToolbarContainer>
     );
   }
+  const paymentValuate = (row)=>{
+    if (row.payment_status !== 'approved') {
+      Swal.fire('Pendiente de pago','','error')
+    }
+    else{
+      navigate(`/auth/surtir-orden/${row._id}`)
+    }
+  }
 
+
+
+  const renderIcon = (values) => {
+    if (!values.row.storeHouseStatus) {
+      return (
+        <Tooltip title="Surtir orden">
+          <Button
+            aria-label="Surtir"
+            color="success"
+            onClick={()=>paymentValuate(values.row)}
+            variant="outlined"
+          >
+            Surtir
+          </Button>
+        </Tooltip>
+      );
+    } else if (!values.row.route_status) {
+      return (
+        <Tooltip title="Asignar Ruta">
+          <Button
+            aria-label="Asignar Ruta"
+            color="info"
+            variant="outlined"
+            onClick={() =>navigate(`/auth/asignar-ruta/${values.row._id}`)}
+          >
+            Ruta
+          </Button>
+        </Tooltip>
+      );
+    } else if (!values.row.deliveryStatus)  {
+      return (
+        <Tooltip title="En envio">
+          <IconButton
+            aria-label="secondary"
+            color="secondary"
+          >
+            <ScheduleSendIcon />
+          </IconButton>
+        </Tooltip>
+      );
+    }
+    else{
+      return (
+        <Tooltip title="Pedido entregado">
+          <IconButton
+            aria-label="Pedido entregado"
+            color="primary"
+          >
+            <ThumbUpAltIcon />
+          </IconButton>
+        </Tooltip>
+      );
+    }
+  };
+  
 
   return (
-    <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-      <Title>Ordenes de producto</Title>
-      <DataGrid
-        sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
-        columns={[
-          // {
-          //   field: "_id",
-          //   hideable: false,
-          //   headerName: "Id",
-          //   flex: 1,
-          //   sortable: "false",
-          // },
-          {
-            field: "createdAt",
-            headerName: "Fecha de solicitud",
-            flex: 1,
-            align: "center",
-          },
-          {
-            field: "quantityProduct",
-            headerName: "Catidad de producto",
-            flex: 1,
-            align: "center",
-          },
-          {
-            field: "typeDelivery",
-            hideable: false,
-            headerName: "Tipo de envio",
-            flex: 1,
-            sortable: false,
-          },
-          {
-            field: "payment_status",
-            headerName: "Status de pago",
-            flex: 1,
-            align: "center",
-            renderCell: (params) =>
-              params.value === 'approved' ? (
-                <>
-                  <Chip
-                    icon={<PaidIcon />}
-                    label="Pagado"
-                    variant="outlined"
-                    color="success"
-                  />
-                </>
-              ) :(
-                <>
-                  <Chip
-                    icon={<PendingIcon />}
-                    label="Pendiente"
-                    variant="outlined"
-                    color="info"
-                  />
-                </>
-              ),
-          },
-          {
-            field: "storeHouseStatus",
-            headerName: "Orden preparada",
-            flex: 1,
-            align: "center",
-            renderCell: (params) =>
-              params.value === true ? (
-                <>
-                  <Chip
-                    icon={<Done />}
-                    label="Surtido"
-                    variant="outlined"
-                    color="success"
-                  />
-                </>
-              ) :(
-                <>
-                  <Chip
-                    icon={<Clear />}
-                    label="Pendiente"
-                    variant="outlined"
-                    color="error"
-                  />
-                </>
-              ),
-          },
-          {
-            field: "route_status",
-            headerName: "Ruta",
-            flex: 1,
-            align: "center",
-            renderCell: (params) =>
-              params.value === true ? (
-                <>
-                  <Chip
-                    icon={<LocalShippingIcon />}
-                    label="En camino"
-                    variant="outlined"
-                    color="success"
-                  />
-                </>
-              ) :(
-                <>
-                  <Chip
-                    icon={<CarCrashIcon />}
-                    label="Sin ruta"
-                    variant="outlined"
-                    color="error"
-                  />
-                </>
-              ),
-          },
-          {
-            field: "deliveryStatus",
-            headerName: "Entregado",
-            flex: 1,
-            align: "center",
-            renderCell: (params) =>
-              params.value === true ? (
-                <>
-                  <Chip
-                    icon={<LocalShipping />}
-                    label="Entregado"
-                    variant="outlined"
-                    color="success"
-                  />
-                </>
-              ) :(
-                <>
-                  <Chip
-                    icon={<CancelScheduleSend />}
-                    label="Pendiente"
-                    variant="outlined"
-                    color="error"
-                  />
-                </>
-              ),
-          },
-         
-          {
-            field: "Opciones",
-            headerName: "Opciones",
-            align: "center",
-            flex: 1,
-            sortable: false,
-            type: "actions",
-            getActions: (params) => [
-              <Tooltip title='Surtir orden' >
-              <IconButton aria-label="Surtir" color="success" onClick={()=>redirectPages(navigate,(`/auth/surtir-orden/${params.row._id}`))} >
-                <AddShoppingCartIcon />
-              </IconButton> 
-              </Tooltip>
-                             
-            ],
-          },
-        ]}
-        
-        rows={rowsWithIds}
-        pagination
-        slots={{
-          pagination: CustomPagination,
-          toolbar: CustomToolbar,
-          columnSortedDescendingIcon: SortedDescendingIcon,
-          columnSortedAscendingIcon: SortedAscendingIcon,
-          columnUnsortedIcon: UnsortedIcon,
-        }}
-        disableColumnFilter
-        disableColumnMenu
-        disableColumnSelector
-        disableDensitySelector
-        slotProps={{
-          toolbar: {
-            showQuickFilter: true,
-            quickFilterProps: { debounceMs: 500 },
-          },
-        }}
-        printOptions={{
-          hideFooter: true,
-          hideToolbar: true,
-        }}
-      />
-    </div>
+    <Grid container style={{ marginLeft: "10%", height: "70%", width: "85%" }}>
+      <Grid
+        item
+        marginTop={{ xs: "-30px" }}
+        xs={12}
+        minHeight={"100px"}
+        className="Titles"
+      >
+        <Typography
+          textAlign={"center"}
+          variant="h1"
+          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
+        >
+          Ordenes de compra
+        </Typography>
+      </Grid>
+      <Grid item xs={12} marginY={2}>
+        <DataGrid
+          sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
+          columns={[
+            {
+              field: "createdAt",
+              headerName: "Fecha de solicitud",
+              flex: 1,
+              align: "center",
+            },
+            {
+              field: "quantityProduct",
+              headerName: "Catidad de producto",
+              flex: 1,
+              align: "center",
+            },
+            {
+              field: "typeDelivery",
+              hideable: false,
+              headerName: "Tipo de envio",
+              flex: 1,
+              sortable: false,
+            },
+            {
+              field: "payment_status",
+              headerName: "Status de pago",
+              flex: 1,
+              align: "center",
+              renderCell: (params) =>
+                params.value === "approved" ? (
+                  <>
+                    <Chip
+                      icon={<PaidIcon />}
+                      label="Pagado"
+                      variant="outlined"
+                      color="success"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Chip
+                      icon={<PendingIcon />}
+                      label="Pendiente"
+                      variant="outlined"
+                      color="info"
+                    />
+                  </>
+                ),
+            },
+            {
+              field: "storeHouseStatus",
+              headerName: "Orden preparada",
+              flex: 1,
+              align: "center",
+              renderCell: (params) =>
+                params.value === true ? (
+                  <>
+                    <Chip
+                      icon={<Done />}
+                      label="Surtido"
+                      variant="outlined"
+                      color="success"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Chip
+                      icon={<Clear />}
+                      label="Pendiente"
+                      variant="outlined"
+                      color="error"
+                    />
+                  </>
+                ),
+            },
+            {
+              field: "route_status",
+              headerName: "Ruta",
+              flex: 1,
+              align: "center",
+              renderCell: (params) =>
+                params.value === true ? (
+                  <>
+                    <Chip
+                      icon={<LocalShippingIcon />}
+                      label="En camino"
+                      variant="outlined"
+                      color="success"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Chip
+                      icon={<CarCrashIcon />}
+                      label="Sin ruta"
+                      variant="outlined"
+                      color="error"
+                    />
+                  </>
+                ),
+            },
+            {
+              field: "deliveryStatus",
+              headerName: "Entregado",
+              flex: 1,
+              align: "center",
+              renderCell: (params) =>
+                params.value === true ? (
+                  <>
+                    <Chip
+                      icon={<LocalShipping />}
+                      label="Entregado"
+                      variant="outlined"
+                      color="success"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Chip
+                      icon={<CancelScheduleSend />}
+                      label="Pendiente"
+                      variant="outlined"
+                      color="error"
+                    />
+                  </>
+                ),
+            },
+
+            {
+              field: "Opciones",
+              headerName: "Opciones",
+              align: "center",
+              flex: 1,
+              sortable: false,
+              type: "actions",
+              getActions: (params) => [renderIcon(params)],
+            },
+          ]}
+          rows={rowsWithIds}
+          pagination
+          slots={{
+            pagination: CustomPagination,
+            toolbar: CustomToolbar,
+            columnSortedDescendingIcon: SortedDescendingIcon,
+            columnSortedAscendingIcon: SortedAscendingIcon,
+            columnUnsortedIcon: UnsortedIcon,
+          }}
+          disableColumnFilter
+          disableColumnMenu
+          disableColumnSelector
+          disableDensitySelector
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true,
+              quickFilterProps: { debounceMs: 500 },
+            },
+          }}
+          printOptions={{
+            hideFooter: true,
+            hideToolbar: true,
+          }}
+        />
+      </Grid>
+    </Grid>
   );
-}
+};
 
-export default MyProductOrders
-
+export default MyProductOrders;

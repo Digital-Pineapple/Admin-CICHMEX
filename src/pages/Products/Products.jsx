@@ -22,7 +22,7 @@ import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
 import { redirectPages } from '../../helpers';
-import { Button, IconButton, Tooltip } from "@mui/material";
+import { Button, IconButton, Tooltip, Grid, Typography } from "@mui/material";
 import { Workbook } from "exceljs";
 import { useProducts } from "../../hooks/useProducts";
 import { editOneProduct } from "../../store/actions/productsActions";
@@ -137,11 +137,15 @@ const Products = () => {
 
   return (
     <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-      <Title>Productos</Title>
+      <Grid item marginTop={{xs:'-30px'}} xs={12} minHeight={'100px'} className="Titles">   
+      <Typography textAlign={'center'} variant="h1" fontSize={{xs:'20px', sm:'30px', lg:'40px'}} >
+        Productos
+      </Typography>
+      </Grid>
       <Button
           variant="contained"
           disableElevation
-          sx={{ color: "primary", my: 5, p: 2, borderRadius: 5 }}
+          sx={{ color: "primary", my: 5, p: 2, borderRadius: 3 }}
           onClick={createProduct}
         >
           Registrar nuevo producto

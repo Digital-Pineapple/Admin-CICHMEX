@@ -1,5 +1,5 @@
-import { AppBar, createTheme } from "@mui/material";
-import { blue, blueGrey, lightGreen, red, teal, yellow } from "@mui/material/colors";
+import { createTheme } from "@mui/material";
+import { blue, green, orange, purple, red, yellow } from "@mui/material/colors";
 
 export const theme = createTheme({
   palette: {
@@ -9,21 +9,26 @@ export const theme = createTheme({
       contrastText: '#fff',
     },
     secondary: {
-      main: blueGrey[600],
+      main: orange[900],
       contrastText: "#fff",
     },
     info:{
-      main:yellow[900],
+      main:yellow[700],
       contrastText:'#fff'
     },
     success:{
-      main:lightGreen[700],
+      main:green[800],
       contrastText:'#fff'
     },
     warning:{
-      main:red['A700'],
+      main:red[900],
+      contrastText:'#fff'
+    },
+    error:{
+      main:purple[600],
       contrastText:'#fff'
     }
+
 
     
   },

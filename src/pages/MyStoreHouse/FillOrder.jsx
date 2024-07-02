@@ -1,4 +1,4 @@
-import { Grid, Skeleton, Button } from "@mui/material";
+import { Grid, Skeleton, Button, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useProductOrder } from "../../hooks/useProductOrder";
@@ -30,8 +30,22 @@ const FillOrder = () => {
 
 
   return (
-    <Grid marginX={"10%"}>
-      <h1>Surtir Orden </h1>
+    <Grid container style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
+       <Grid
+        item
+        marginTop={{ xs: "-30px" }}
+        xs={12}
+        minHeight={"100px"}
+        className="Titles"
+      >
+        <Typography
+          textAlign={"center"}
+          variant="h2"
+          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
+        >
+          Surtir Producto
+        </Typography>
+      </Grid>
       <Grid container spacing={0}>
         <Grid item xs={12}>  
         <h2>Id de orden:{productOrder?._id}</h2>

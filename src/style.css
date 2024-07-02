@@ -133,7 +133,8 @@ animation: burbujas 5s linear  infinite;
 }
 .GradientItem {
     position: relative;
-    background: linear-gradient(0deg, #CC3C5C 0%, rgba(13,43,107,1) 75%);
+    background: rgb(58,64,180);
+background: linear-gradient(36deg, rgba(58,64,180,1) 0%, rgba(255,111,0,1) 100%);
     background-size: 100% 100%;
     z-index: 0;
 }
@@ -195,7 +196,12 @@ animation: burbujas 5s linear  infinite;
     width:100%;
     justify-content:center;
     background-color: #89C2FF;
-    
 
+}
 
+.Titles{
+    background-color: #37474f;
+    border-radius: 10px;
+    color: #fff;
+    align-content: center;
 }

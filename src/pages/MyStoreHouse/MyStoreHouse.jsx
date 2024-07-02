@@ -25,10 +25,12 @@ const ButtonDetail = [
 export const MyStoreHouse = () => {
   const { navigate } = useAuthStore();
   return (
-    <Grid container ml={"100px"}>
-      <Typography variant="h1" color="primary">
-        Mi Almacén
+    <Grid container style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
+     <Grid item marginTop={{xs:'-30px'}} xs={12} minHeight={'100px'} className="Titles">   
+      <Typography textAlign={'center'} variant="h1" fontSize={{xs:'20px', sm:'30px', lg:'40px'}} >
+        Mi almacén
       </Typography>
+      </Grid>
 
       <Grid
         item

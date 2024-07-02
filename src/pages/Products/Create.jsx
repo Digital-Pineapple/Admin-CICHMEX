@@ -1,7 +1,4 @@
-
-import Box from "@mui/material/Box";
-
-import { useFormik } from "formik";
+import { replace, useFormik } from "formik";
 import TextField from "@mui/material/TextField";
 import {
   Grid,
@@ -37,8 +34,8 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 const CreateProduct = () => {
-  const { createProduct } = useProducts();
-  const { loadSubCategories, subCategories, loadSubcategoriesByCategory, subCatByCategory } = useSubCategories()
+  const { createProduct, navigate } = useProducts();
+  const { loadSubCategories, loadSubcategoriesByCategory, subCatByCategory } = useSubCategories()
   const { categories, loadCategories } = useCategories();
   const { images, handleImageChange, deleteImage, imagesFiles } =
     useImages();
@@ -57,7 +54,7 @@ const CreateProduct = () => {
     onSubmit: (values) => {
       try {
         createProduct(values, imagesFiles());
-        // console.log(values);
+  
       } catch (error) {
         return enqueueSnackbar(`Error: ${error.data.response?.message}`, {
           variant: "error",
@@ -70,7 +67,6 @@ const CreateProduct = () => {
     },
   });
 
- 
   useEffect(() => {
     loadSubCategories()
     loadCategories()
@@ -78,15 +74,13 @@ const CreateProduct = () => {
   
 
   return (
-    <Box component="form" onSubmit={formik.handleSubmit} marginLeft={{xs:'100px'}} padding={4}>
-      <Typography variant="h1" fontSize={{xs:'40px'}} >
+    <Grid component="form" gap={2} container onSubmit={formik.handleSubmit} paddingLeft={{xs:'75px'}} paddingRight={'10px'} boxSizing={'border-box'} >
+      <Grid item marginTop={{xs:'-30px'}} xs={12} minHeight={'100px'} className="Titles">   
+      <Typography textAlign={'center'} variant="h1" fontSize={{xs:'20px', sm:'30px', lg:'40px'}} >
         Registar nuevo producto
       </Typography>
-      <Grid 
-        mt={3}
-        container
-        spacing={4}
-      >
+      </Grid>
+     <Grid item xs={12} sm={6.5} md={4}>
         <TextField
           focused
           fullWidth
@@ -95,9 +89,10 @@ const CreateProduct = () => {
           label="Nombre del producto "
           variant="outlined"
           value={formik.values.name}
-          sx={{ margin: 2 }}
           onChange={formik.handleChange}
         />
+     </Grid>
+     <Grid item xs={12} sm={5} md={3} lg={3.6}>
         <TextField
           focused
           fullWidth
@@ -106,7 +101,6 @@ const CreateProduct = () => {
           label="Precio del producto"
           variant="outlined"
           value={formik.values.price}
-          sx={{ margin: 2 }}
           onChange={formik.handleChange}
           InputProps={{
             startAdornment: (
@@ -116,6 +110,8 @@ const CreateProduct = () => {
             ),
           }}
         />
+     </Grid>
+     <Grid item xs={12} sm={4} md={4}>
         <TextField
           focused
           fullWidth
@@ -124,9 +120,10 @@ const CreateProduct = () => {
           label="Tamaño del producto"
           variant="outlined"
           value={formik.values.size}
-          sx={{ margin: 2 }}
           onChange={formik.handleChange}
         />
+     </Grid>
+     <Grid item xs={12} sm={3.5} md={6}>
         <TextField
           focused
           fullWidth
@@ -135,9 +132,22 @@ const CreateProduct = () => {
           label="Peso del producto"
           variant="outlined"
           value={formik.values.weight}
-          sx={{ margin: 2 }}
           onChange={formik.handleChange}
         />
+     </Grid>
+     <Grid item xs={12} sm={3.5} md={5.2} lg={5.7} > 
+        <TextField
+          focused
+          fullWidth
+          id="tag"
+          name="tag"
+          label="Código"
+          variant="outlined"
+          value={formik.values.tag}
+          onChange={formik.handleChange}
+        />
+     </Grid>
+     <Grid item xs={12} sm={6}lg={3} >
          <FormControl fullWidth >
             <FormLabel>Categoría</FormLabel>
             <Select
@@ -159,6 +169,8 @@ const CreateProduct = () => {
             </Select>
             <FormHelperText>Selecciona una categoria</FormHelperText>
           </FormControl>
+     </Grid>
+     <Grid item xs={12} sm={5} lg={3} >
          <FormControl fullWidth>
             <FormLabel>Subcategoria</FormLabel>
             <Select
@@ -176,31 +188,24 @@ const CreateProduct = () => {
             </Select>
             <FormHelperText>Selecciona una sub-categoria</FormHelperText>
           </FormControl>
-        <TextField
-          focused
-          fullWidth
-          id="tag"
-          name="tag"
-          label="Código"
-          variant="outlined"
-          value={formik.values.tag}
-          sx={{ margin: 2 }}
-          onChange={formik.handleChange}
-        />
+     </Grid>
+     <Grid item xs={12} lg={5.6}>
         <Typography>Descipcion del Producto</Typography>
         <TextareaAutosize
           aria-label="Descripcion"
           id="description"
           name="description"
-          minRows={6}
+          minRows={3}
           label="Descripcion"
           value={formik.values.description}
           style={{ width: "100%", fontFamily: "BikoBold", marginBottom: 20 }}
           onChange={formik.handleChange}
         />
+     </Grid>
+
 
         {images.length > 0 && (
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12}>
             <input
               id="image"
               name="image"
@@ -210,7 +215,7 @@ const CreateProduct = () => {
               hidden
             />
             <label htmlFor={"image"}>
-              <Button component="span" color="primary" variant="outlined">
+              <Button fullWidth component="span" color="primary" variant="contained">
                 Agrega Fotos
               </Button>
             </label>
@@ -218,31 +223,20 @@ const CreateProduct = () => {
         )}
 
         <Typography marginTop={"10px"}> peso max de imagen(500 kb)</Typography>
-        <Grid
-          className="image-branch-container"
-          item
-          xs={12}
-          display={"flex"}
-          justifyContent={"flex-start"}
-        >
-          {/* <ImagesBranchComponent /> */}
           {
             images.length ? (
               <>
                 <Grid
                   container
-                  xs={12}
-                  md={12}
-                  spacing={1}
-                  item
                   display={"flex"}
-                  justifyContent={"flex-start"}
+                  justifyContent={"center"}
                   padding={"10px"}
                   marginTop={"20px"}
-                  sx={{ backgroundColor: "#F7F7F7" }}
+                  sx={{ backgroundColor: "#cfd8dc" }}
+                  gap={2}
                 >
                   {images.map(({ id, filePreview }) => (
-                    <Grid item xs={12} md={6} key={id}>
+                    <Grid item xs={12} sm={3} key={id}>
                       <StyledBadge
                         badgeContent={
                           <IconButton
@@ -268,10 +262,8 @@ const CreateProduct = () => {
               </>
             ) : (
               <Grid
-                item
-                xs={12}
-                md={12}
-                sx={{ backgroundColor: "#F7F7F7" }}
+                container
+                sx={{ backgroundColor: "#cfd8dc" }}
                 display={"flex"}
                 flexDirection={"column"}
                 alignItems={"center"}
@@ -296,22 +288,25 @@ const CreateProduct = () => {
                   onChange={handleImageChange}
                   hidden
                 />
-                <label htmlFor={"image"}>
-                  <Button component="span" color="primary" variant="outlined">
-                    Agrega Fotos
+                <label htmlFor={"image"}> 
+                  <Button  component="span" color="primary" variant="contained">
+                    Agregar Fotos
                   </Button>
                 </label>
               </Grid>
             )
-            // <Grid></Grid>
           }
-        </Grid>
-      </Grid>
-
-      <Button type="submit" fullWidth variant="contained" color="success">
+       
+      
+<Grid item xs={12} minHeight={'130px'}   >
+      <Button  type="submit" sx={{minHeight:'60px'}} fullWidth variant="contained" color="success">
         Crear
       </Button>
-    </Box>
+      <Button  sx={{minHeight:'50px',mt:2}} onClick={()=>navigate('/auth/Productos', {replace:true})} fullWidth variant="contained" color="warning">
+        Salir
+      </Button>
+</Grid>
+    </Grid>
   );
 };
 
