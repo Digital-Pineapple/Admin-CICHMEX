@@ -50,7 +50,7 @@ export const BranchDetail = () => {
           fontSize={{ xs: "35px" }}
           color="primary"
         >
-          Susursal:{branch?.name}
+          Punto de entrega: {branch?.name}
         </Typography>
       </Grid>
 
@@ -95,7 +95,7 @@ export const BranchDetail = () => {
             {
               branch.activated ? '': (
             <ActivatedButton
-              title={`¿Desea activar las sucursal ${branch.name}?`}
+              title={`¿Desea activar el punto de entrega: ${branch.name}?`}
               callbackActivatedItem={()=> verifyOneBranch(id, branch.user_id?._id)}
             />
               )

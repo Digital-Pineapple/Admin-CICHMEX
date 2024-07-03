@@ -14,17 +14,27 @@ import {
 } from "@mui/x-data-grid";
 import { useEffect } from "react";
 import MuiPagination from "@mui/material/Pagination";
-import { Avatar, Chip } from "@mui/material";
+import { Avatar, Chip, Grid, Typography } from "@mui/material";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import LocalCarWashIcon from "@mui/icons-material/LocalCarWash";
 import WashIcon from "@mui/icons-material/Wash";
-import { AirportShuttle, DoneAllOutlined, Download, Edit, LocalGroceryStore, SupervisorAccount } from "@mui/icons-material";
+import {
+  AirportShuttle,
+  DoneAllOutlined,
+  Download,
+  Edit,
+  LocalGroceryStore,
+  SupervisorAccount,
+} from "@mui/icons-material";
 import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
 import { redirectPages } from "../../helpers";
 import { Workbook } from "exceljs";
 import { Button } from "antd";
 import { useUsers } from "../../hooks/useUsers";
+import AlertDelete from "../../components/ui/AlertDelete";
+import DeleteAlert from "../../components/ui/DeleteAlert";
+import EditButton from "../../components/Buttons/EditButton";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -66,7 +76,7 @@ export default function Users() {
 
   const rowsWithIds = users?.map((user, _id) => ({
     id: _id.toString(),
-    typeUser : user.type_user?.type,
+    typeUser: user.type_user?.type,
     ...user,
   }));
 
@@ -97,14 +107,16 @@ export default function Users() {
           ? "Lavador"
           : row.type_user2 == 0
           ? "Cliente"
-          : row.type_user2  == 2
+          : row.type_user2 == 2
           ? "Establecimiento"
           : "usuario",
-        row.google === true 
-        ? "si":"no",
-        row.phone?.phone_number ? row.phone?.phone_number: 
-        row.phone?.phone_number === undefined ? 'no tiene numero': null,
-        // row.accountVerify === true 
+        row.google === true ? "si" : "no",
+        row.phone?.phone_number
+          ? row.phone?.phone_number
+          : row.phone?.phone_number === undefined
+          ? "no tiene numero"
+          : null,
+        // row.accountVerify === true
         // ? "si":"no",
       ]);
     });
@@ -112,8 +124,7 @@ export default function Users() {
     // Crear un Blob con el archivo Excel y guardarlo
     workbook.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer], {
-        type:
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
       saveAs(blob, "usuarios.xlsx");
     });
@@ -142,23 +153,30 @@ export default function Users() {
   }
 
   return (
-    <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-      <Title>Usuarios</Title>
+    <Grid container style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
+      <Grid
+        item
+        marginTop={{ xs: "-30px" }}
+        xs={12}
+        minHeight={"100px"}
+        className="Titles"
+      >
+        <Typography
+          textAlign={"center"}
+          variant="h1"
+          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
+        >
+          Usuarios
+        </Typography>
+      </Grid>
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
-          // {
-          //   field: "_id",
-          //   hideable: false,
-          //   headerName: "Id",
-          //   flex: 1,
-          //   sortable: "false",
-          // },
           {
             field: "profile_image",
             hideable: false,
             headerName: "Foto de perfil",
-            flex: .2,
+            flex: 0.2,
             sortable: "false",
             renderCell: (params) =>
               params?.value ? (
@@ -196,7 +214,7 @@ export default function Users() {
                     color="success"
                   />
                 </>
-              ) : params.value ===  2? (
+              ) : params.value === 2 ? (
                 <>
                   <Chip
                     icon={<LocalCarWashIcon />}
@@ -205,7 +223,7 @@ export default function Users() {
                     color="info"
                   />
                 </>
-              ):params.value === 3  ?(
+              ) : params.value === 3 ? (
                 <>
                   <Chip
                     icon={<SupervisorAccount />}
@@ -214,7 +232,7 @@ export default function Users() {
                     color="info"
                   />
                 </>
-              ): params.value === 4  ?(
+              ) : params.value === 4 ? (
                 <>
                   <Chip
                     icon={<AirportShuttle />}
@@ -223,7 +241,9 @@ export default function Users() {
                     color="secondary"
                   />
                 </>
-              ):'',
+              ) : (
+                ""
+              ),
           },
 
           { field: "email", headerName: "Correo", flex: 1, sortable: false },
@@ -235,27 +255,9 @@ export default function Users() {
             sortable: false,
             type: "actions",
             getActions: (params) => [
-              <WarningAlert
-                title="¿Estas seguro que deseas eliminar el usuario?"
-                callbackToDeleteItem={() => deleteUser(params.row._id)}
-                titleEdit="¿Quieres editar este usuario?"
-                callbackEditItem={() => editUser(params.row._id)}
-              />,
-              <GridActionsCellItem
-                icon={<Edit />}
-                onClick={() => redirectPages(navigate, params.row._id )}
-                label="Editar usuario"
-                showInMenu
-              />,
-              <GridActionsCellItem
-                icon={<DoneAllOutlined />}
-                label="Verificar Usuario"
-                onClick={() =>
-                  redirectPages(navigate, `validate/${params.row._id}`)
-                }
-                showInMenu
-              />,
-             
+
+             <DeleteAlert title={`¿Estas seguro de eliminar a:${params.row.fullname}?`} callbackToDeleteItem={()=> deleteUser(params.row._id)}/>,
+             <EditButton title={`¿Esta seguro de editar a:${params.row.fullname}?`} callbackToEdit={()=>navigate(`/auth/usuarios/${params.row._id}`)}/>
             ],
           },
         ]}
@@ -284,6 +286,6 @@ export default function Users() {
           hideToolbar: true,
         }}
       />
-    </div>
+    </Grid>
   );
 }

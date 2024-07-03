@@ -18,7 +18,7 @@ const ButtonDetail = [
   },
   {
     path: "/auth/MiAlmacen/product-orders",
-    text: "Ordenes de Compra",
+    text: "Pedidos",
   },
 ];
 

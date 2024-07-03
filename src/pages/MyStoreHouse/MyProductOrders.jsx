@@ -128,7 +128,7 @@ const MyProductOrders = () => {
       const blob = new Blob([buffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-      saveAs(blob, "Ordenes de producto.xlsx");
+      saveAs(blob, "Pedidos.xlsx");
     });
   };
 
@@ -232,7 +232,7 @@ const MyProductOrders = () => {
           variant="h1"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-          Ordenes de compra
+         Pedidos
         </Typography>
       </Grid>
       <Grid item xs={12} marginY={2}>

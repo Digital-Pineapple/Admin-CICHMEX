@@ -20,8 +20,8 @@ export const Links = [
 
   },
   {
-    title : "Sucursales",
-    path : "/auth/Sucursales",
+    title : "Puntos de entrega",
+    path : "/auth/Puntos-de-entrega",
     Icon : <StoreIcon/>
 
   },

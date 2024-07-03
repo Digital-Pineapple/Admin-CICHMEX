@@ -82,7 +82,7 @@ const AddButton = ({title,text, product}) => {
                 <IconButton
                 color='success'
                 onClick={() => ModalSweet()}
-                title='Activar Sucursal'
+                title='Activar Punto de entrega'
                 startIcon={<Add/>}
                 variant='contained'
                 fullWidth

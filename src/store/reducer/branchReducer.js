@@ -16,8 +16,8 @@ export const branchReducer = createSlice({
     onAddNewBranch: (state, { payload }) => {
       state.branch = payload;
     },
-    deleteBranch: (state, { type, payload }) => {
-      state.branches = state.branches.filter(branch => branch._id !== payload);
+    deleteBranch: (state, { payload }) => {
+      state.branches = state.branches.filter(branch => branch._id !== payload._id);
     },
     editBranch: ( state, { payload } ) => {
       state.branches = state.branches.map(branch => {

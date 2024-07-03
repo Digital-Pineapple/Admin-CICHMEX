@@ -3,8 +3,9 @@ import { Typography, Grid, Chip, IconButton, Tooltip, Button } from "@mui/materi
 import { useBranches } from "../../hooks/useBranches";
 import { DataGrid } from "@mui/x-data-grid";
 import { Add, Check, Clear, InfoOutlined } from "@mui/icons-material";
+import DeleteAlert from "../../components/ui/DeleteAlert";
 export const Branches = () => {
-  const { loadBranches, navigate, rowsBranches } = useBranches();
+  const { loadBranches, navigate, rowsBranches, deleteOneBranch } = useBranches();
   useEffect(() => {
     loadBranches();
   }, []);
@@ -23,7 +24,7 @@ export const Branches = () => {
           variant="h1"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-          Sucursales
+          Puntos de entrega
         </Typography>
       </Grid>
       <Grid item mt={2} xs={12}>
@@ -76,22 +77,26 @@ export const Branches = () => {
                 type: "actions",
                 renderCell: (params) =>
                   params.row.activated === false ? (
-                    <Tooltip title="Activar sucursal">
+                    <>
+                    <DeleteAlert title={`¿Deseas eliminar : ${params.row.name}?`} callbackToDeleteItem={()=>deleteOneBranch(params.row._id)}/>
+                     <Tooltip title="Activar punto de entrega">
                       <Button
                         aria-label="Activar"
                         onClick={() =>
-                          navigate(`/auth/Sucursales/${params.row?._id}`)
+                          navigate(`/auth/Puntos-de-entrega/${params.row?._id}`)
                         }
                         color="success"
                       >
                         Activar
                       </Button>
                     </Tooltip>
+                    </>
+                   
                   ) : (
-                    <Tooltip title="Información de la sucursal">
+                    <Tooltip title="Información de la punto de entrega">
                       <Button
                         aria-label="Información"
-                        onClick={() =>navigate(`/auth/Sucursales/${params.row?._id}`)}
+                        onClick={() =>navigate(`/auth/Puntos-de-entrega/${params.row?._id}`)}
                         color="info"
                       >
                         Información

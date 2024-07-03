@@ -54,7 +54,6 @@ const FillOrder = () => {
         <Grid item xs={12}>    
         {rows ? (
           <DataGrid
-             checkboxSelection
             onRowSelectionModelChange={(value) => {
                 setRowSelection(value)
                 activeButton(value.length)
@@ -81,15 +80,11 @@ const FillOrder = () => {
         ) : (
           <Skeleton variant="rectangular" />
         )}
-        {
-          activeButton1 ? (
-            <Button variant="contained" onClick={()=>completeOrder()} color="primary">
-              Completar pedido
+      
+            <Button style={{marginTop:10}} variant="contained" fullWidth onClick={()=>completeOrder()} color="primary">
+              Pedido surtido
             </Button>
-          ):(<Button variant="contained" disabled color="warning">
-            NO Completo
-          </Button>)
-        }
+         
         </Grid>
       </Grid>
     </Grid>

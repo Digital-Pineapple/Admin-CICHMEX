@@ -80,7 +80,7 @@ export const BranchesToVerified = () => {
 
   const exportToExcel = () => {
     const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Sucursales");
+    const worksheet = workbook.addWorksheet("Puntos de Entrega");
 
     // Agregar encabezados de columna
     const headerRow = worksheet.addRow(["ID", "Nombre", "Telefono"]);
@@ -101,7 +101,7 @@ export const BranchesToVerified = () => {
       const blob = new Blob([buffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-      saveAs(blob, "sucursales.xlsx");
+      saveAs(blob, "Puntos de entrega.xlsx");
     });
   };
 
@@ -129,7 +129,7 @@ export const BranchesToVerified = () => {
 
   return (
     <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-      <Title>Sucursales pendientes por validar </Title>
+      <Title>Puntos de entrega pendientes por validar </Title>
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
@@ -164,13 +164,8 @@ export const BranchesToVerified = () => {
             type: "actions",
             getActions: (params) => [
               <Stack direction="row" spacing={1}>
-                {/* <Tooltip title="Editar">
-                  <IconButton aria-label="Editar" color="primary">
-                    <Edit />
-                  </IconButton>
-                </Tooltip> */}
                 <Tooltip title="Verificar">
-                  <IconButton onClick={()=>{navigate(`/auth/Sucursales/${params.row?._id}`, {replace:true})}} aria-label="Info" color="success">
+                  <IconButton onClick={()=>{navigate(`/auth/Puntos-de-entrega/${params.row?._id}`, {replace:true})}} aria-label="Info" color="success">
                     <InfoRounded />
                   </IconButton>
                 </Tooltip>

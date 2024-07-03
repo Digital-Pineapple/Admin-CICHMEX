@@ -9,6 +9,7 @@ import {
 } from "../reducer/userReducer";
 import { enqueueSnackbar } from "notistack";
 import { loadCarrierDrivers, startLoading, stopLoading } from "../reducer";
+import { headerConfigFormData } from "../../apis/headersConfig";
 
 const headerConfig = {
   headers: {
@@ -105,17 +106,17 @@ export const verifyOneUser = (id) => {
   };
 };
 
-export const editOneUser = (user_id, values) => {
+export const editOneUser = (user_id, {fullname,type_user,profile_image}) => {
   return async (dispatch) => {
     try {
       const formData = new FormData();
-      formData.append("fullname", values.fullname);
-      formData.append("type_customer", values.type_customer);
-      formData.append("profile_image", values.profile_image);
+      formData.append("fullname", fullname);
+      formData.append("type_user", type_user);
+      formData.append("profile_image", profile_image);
       const { data } = await instanceApi.post(
         `/user/update/${user_id}`,
         formData,
-        headerConfig
+        headerConfigFormData
       );
       dispatch(editUser(user_id, data.data));
       enqueueSnackbar("Editado con exito", {

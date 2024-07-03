@@ -250,7 +250,7 @@ const MyStockProducts = () => {
           textAlign={"center"}
           fontSize={"30px"}
         >
-          Productos en almacen{" "}
+          Stock de productos
         </Typography>
 
         <DataGrid

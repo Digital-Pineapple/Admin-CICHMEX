@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Titles from "../../components/ui/Titles";
 import Grid from "@mui/material/Grid";
 import {
+  Avatar,
+  Badge,
   Card,
   CardActions,
   CardContent,
@@ -9,9 +11,12 @@ import {
   FormControl,
   FormHelperText,
   FormLabel,
+  IconButton,
   MenuItem,
   Select,
   TextField,
+  styled,
+  useMediaQuery,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -19,49 +24,46 @@ import Button from "@mui/material/Button";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useFormik } from "formik";
-import { enqueueSnackbar } from "notistack";;
+import { enqueueSnackbar } from "notistack";
 import AddImage from "../../assets/Images/add.png";
 import CustomBreadcrumb from "../../components/ui/CustomBreadcrumb";
-import { useTypeUser } from '../../hooks/useTypeUser'
+import { useTypeUser } from "../../hooks/useTypeUser";
 import { useUsers } from "../../hooks/useUsers";
+import useImages from "../../hooks/useImages";
+import { Delete, Filter } from "@mui/icons-material";
+import { SlideBranchesImages } from "../../components/Images/SlideBranchesImages";
+import ProfileImageUploader from "../../components/ui/ProfileImageUploader";
 
 const Edit = () => {
   const { id } = useParams();
-  const { user,editUser,loadUser } = useUsers()
-  const {loadTypeUsers, typeUsers} = useTypeUser()
+  const { user, editUser, loadUser } = useUsers();
+  const { loadTypeUsers, typeUsers } = useTypeUser();
   const navigate = useNavigate();
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [previewImage, setPreviewImage] = useState(null);
-
-  const handleImage = ({ target }) => {
-    setPreviewImage(URL.createObjectURL(target.files[0]));
-    setSelectedFile(target.files[0]);
-  };
 
   useEffect(() => {
     loadUser(id);
-    loadTypeUsers()
+    loadTypeUsers();
   }, [id]);
 
   useEffect(() => {
+  
     formik.setValues({
       fullname: user?.fullname,
-      type_user: user?.type_user._id,
-      profile_image: previewImage,
+      type_user: user?.type_user?._id,
+     
     });
-    setPreviewImage(user?.profile_image);
   }, [user]);
+
   const formik = useFormik({
     initialValues: {
       fullname: "",
-      type_user: '',
+      type_user: "",
       profile_image: "",
     },
     onSubmit: (values) => {
       try {
-        values.profile_image = selectedFile;
-        console.log(values,'edit');
-        editUser(user._id, values);
+        console.log(values);
+        // editUser(user._id, values);
       } catch (error) {
         return enqueueSnackbar(`Error: ${error.response.data?.message}`, {
           variant: "error",
@@ -77,104 +79,93 @@ const Edit = () => {
     navigate("/auth/usuarios", { replace: true });
   };
 
+
   return (
-    <Box component="form" onSubmit={formik.handleSubmit} marginX={"10%"}>
-      <Titles name={<h2 align="center">Editar Usuario</h2>} />
+    <Grid
+      container
+      component="form"
+      onSubmit={formik.handleSubmit}
+      style={{ marginLeft: "10%", height: "70%", width: "80%" }}
+    >
       <Grid
-        color="#F7BFBF"
-        borderRadius={5}
-        mt={3}
-        sx={{ border: 10, p: 5 }}
-        container
-        spacing={4}
+        item
+        marginTop={{ xs: "-30px" }}
+        xs={12}
+        minHeight={"100px"}
+        className="Titles"
       >
-        <CustomBreadcrumb id={id} />
+        <Typography
+          textAlign={"center"}
+          variant="h1"
+          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
+        >
+          Editar Usuario
+        </Typography>
+      </Grid>
+
+      <Grid
+        item
+        xs={12}
+        display={"flex"}
+        flexDirection={"column"}
+        alignItems={"center"}
+      >
+        <Grid container>
+          <ProfileImageUploader formik={formik} previewImage={user?.profile_image} />
+        </Grid>
+
+        <TextField
+          focused
+          fullWidth
+          id="fullname"
+          name="fullname"
+          label="Nombre"
+          variant="outlined"
+          value={formik.values.fullname}
+          sx={{ margin: 2 }}
+          onChange={formik.handleChange}
+        />
+
+        <FormControl>
+          <FormLabel>TIpo de usuario</FormLabel>
+          <Select
+            id="type_user"
+            type="text"
+            name="type_user"
+            value={formik.values.type_user}
+            label="Tipo de usuario"
+            onChange={formik.handleChange}
+          >
+            {typeUsers
+              ? typeUsers.map((item, index) => {
+                  return (
+                    <MenuItem key={index} value={item?._id}>
+                      {item.name}
+                    </MenuItem>
+                  );
+                })
+              : ""}
+          </Select>
+          <FormHelperText>Selecciona un tipo de usuario</FormHelperText>
+        </FormControl>
+
         <Grid
-          item
-          sm={8}
-          display={"flex"}
-          flexDirection={"column"}
+          container
+          justifyContent={"center"}
+          justifyItems={"center"}
           alignItems={"center"}
         >
-          <Grid item>
-            <Card sx={{ maxWidth: 345 }}>
-              <CardContent>
-                <CardMedia
-                  sx={{ height: 140 }}
-                  image={
-                    previewImage
-                      ? previewImage
-                      : user.profile_image || AddImage
-                  }
-                  title={selectedFile ? selectedFile.name : "Selecciona imagen"}
-                />
-
-                <Typography gutterBottom variant="h5" component="div">
-                  {selectedFile
-                    ? selectedFile.name
-                    : previewImage
-                    ? "Cambiar imagen"
-                    : "Elige una imagen"}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <input
-                  type="file"
-                  id="profile_image"
-                  name="profile_image"
-                  accept="image/png, image/jpeg"
-                  onChange={(e) => handleImage(e)}
-                />
-              </CardActions>
-            </Card>
-          </Grid>
-          <TextField
-            focused
-            fullWidth
-            id="fullname"
-            name="fullname"
-            label="Nombre"
-            variant="outlined"
-            value={formik.values.fullname}
-            sx={{ margin: 2 }}
-            onChange={formik.handleChange}
-          />
-
-          <FormControl>
-            <FormLabel>TIpo de usuario</FormLabel>
-            <Select
-              id="type_user"
-              type="text"
-              name="type_user"
-              value={formik.values.type_user}
-              label="Tipo de usuario"
-              onChange={formik.handleChange}
-            >
-              {typeUsers? typeUsers.map((item, index)=>{return(
-                <MenuItem key={index} value={item?._id}>{item.name}</MenuItem>
-              )}):''}
-            </Select>
-            <FormHelperText>Selecciona un tipo de usuario</FormHelperText>
-          </FormControl>
-
-          <Grid
-            container
-            justifyContent={"center"}
-            justifyItems={"center"}
-            alignItems={"center"}
-          >
-            <Grid item sx={{ display: "flex", justifyContent: "center" }}>
-              <Button type="submit" variant="contained">
-                Guardar
-              </Button>
-              <Button onClick={outEdit} variant="outlined" color="secondary">
-                Salir
-              </Button>
-            </Grid>
+          <Grid item sx={{ display: "flex", justifyContent: "center" }}>
+            <Button type="submit" variant="contained">
+              Guardar
+            </Button>
+            <Button onClick={outEdit} variant="outlined" color="secondary">
+              Salir
+            </Button>
           </Grid>
         </Grid>
       </Grid>
-    </Box>
+    </Grid>
   );
 };
 

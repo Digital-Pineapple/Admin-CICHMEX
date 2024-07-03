@@ -13,8 +13,6 @@ const Principal = () => {
   useEffect(() => {
     loadResumeProductOrder()
   }, [user])
-  
-console.log(resumeOrders);
   const cards =[
     {
       title:'Ventas por Día',

@@ -122,7 +122,7 @@ const CreateCategory = () => {
                     marginBottom: "10px",
                   }}
                 />
-                {/* <Typography>Agrega imagenes de tu sucursal</Typography> */}
+               
                 <input
                   id="image"
                   name="image"

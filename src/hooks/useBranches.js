@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 
-import {  startLoadBranch, startLoadBranches, startVerifyBranch } from '../store/actions/branchActions'; 
+import {  startDeleteBranch, startLoadBranch, startLoadBranches, startVerifyBranch } from '../store/actions/branchActions'; 
 import { useNavigate } from 'react-router-dom';
 
 export const useBranches = () => {
@@ -37,9 +37,11 @@ export const useBranches = () => {
         ...i,
       }));
 
+      const deleteOneBranch = async (id) => await dispatch(startDeleteBranch(id));
 
 
-    return { branch, branches, loadBranches, pendingToVerify, activeBranches, navigate, pendingBranches, loadOneBranch, verifyOneBranch, rowsBranches }
+
+    return { branch, branches, loadBranches, pendingToVerify, activeBranches, navigate, pendingBranches, loadOneBranch, verifyOneBranch, rowsBranches, deleteOneBranch }
 
 
 }

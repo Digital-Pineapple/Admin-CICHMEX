@@ -51,7 +51,7 @@ export const AllRoutes = [
   { type: 0, path: '/*', element: <Login/>},
   { type: 0, path: '/pruebas', element: <Users/>},
   
-  { type: 1, path: '/', element: <Navigate to={"/Home"} /> },
+  { type: 1, path: '/', element: <Navigate to={"/home"} /> },
 
   { type: 1, path: '/Home', element: <Principal/>},
   { type: 1, path: '/usuarios', element: <Users/>},
@@ -86,9 +86,9 @@ export const AllRoutes = [
   { type: 1, path: '/CrearComisiones', element: <CreateCommission/>},
   { type: 1, path: '/Comisiones/:id', element: <EditCommission/>},
 
-  { type: 1, path: '/Sucursales', element: <Branches/>},
-  { type: 1, path: '/Sucursales/pending', element: <BranchesToVerified/>},
-  { type: 1, path: '/Sucursales/:id', element: <BranchDetail/>},
+  { type: 1, path: '/Puntos-de-entrega', element: <Branches/>},
+  { type: 1, path: '/Puntos-de-entrega/pending', element: <BranchesToVerified/>},
+  { type: 1, path: '/Puntos-de-entrega/:id', element: <BranchDetail/>},
 
   { type: 1, path: '/Membresias', element: <Memberships/> },
   { type: 1, path: '/CrearMembresia', element: <CreateMembership/>},

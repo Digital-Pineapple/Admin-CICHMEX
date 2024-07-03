@@ -38,10 +38,10 @@ const ImagesBranchComponent = () => {
     <>
     <Grid item xs={6} sx={{backgroundColor:'#F7F7F7'}} display={'flex'} flexDirection={'column'} alignItems={'center'} justifyContent={'center'} marginTop={'20px'} height={'300px'} borderRadius={'5px'} >
        <FilterIcon style={{fontSize:'40px', alignSelf:'center'}}/>  
-       {/* <Typography>Agrega imagenes de tu sucursal</Typography> */}
+      
        <Button sx={{ alignSelf:'center', marginTop:'10px'}} color='primary' variant='outlined' onClick={handleOpen}>Agrega Fotos</Button>
     </Grid>
-    {/* Modal para seleccionar y subir imagenes */}
+  
     <Modal
       open={open}
       onClose={handleClose}

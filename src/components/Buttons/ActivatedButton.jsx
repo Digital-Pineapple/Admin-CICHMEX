@@ -51,12 +51,12 @@ const ActivatedButton = ({title, callbackActivatedItem}) => {
                 <Button
                 color='success'
                 onClick={() => ModalSweet()}
-                title='Activar Sucursal'
+                title='Activar Punto de entrega'
                 startIcon={<Add/>}
                 variant='contained'
                 fullWidth
                 >
-                 Activar sucursal
+                Activar punto de entrega
                 </Button>
         </>
     )

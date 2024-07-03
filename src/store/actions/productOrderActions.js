@@ -83,7 +83,7 @@ export const StartCompleteProductOrder = (id, navigate) => {
               variant: "success",
             }
           );
-          navigate(`/auth/asignar-ruta/${id}`)
+          navigate(`/auth/MiAlmacen/product-orders`,{replace:true})
           
        
       } catch (error) {

@@ -29,7 +29,7 @@ import { styled } from "@mui/material/styles";
 import { useCategories } from "../../hooks/useCategories";
 import { useSubCategories } from "../../hooks/useSubCategories";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 const Edit = () => {
   const { id } = useParams();
   const { loadProduct, product, editProduct, navigate, isLoading } =
@@ -81,8 +81,7 @@ const Edit = () => {
     },
   });
 
-  const { images, handleImageChange, deleteImage, imagesFiles } =
-    useImages();
+  const { images, handleImageChange, deleteImage, imagesFiles } = useImages();
 
   const outEdit = () => {
     navigate("/auth/productos", { replace: true });
@@ -94,14 +93,28 @@ const Edit = () => {
         <LoadingScreenBlue />
       ) : (
         <Grid
-        component="form" padding={1} gap={2} container onSubmit={formik.handleSubmit} paddingLeft={{xs:'65px', sm:'75px'}} 
+          component="form"
+          padding={1}
+          gap={2}
+          container
+          onSubmit={formik.handleSubmit}
+          paddingLeft={{ xs: "65px", sm: "75px" }}
         >
-      <Grid item marginTop={{xs:'-30px'}} xs={12} minHeight={'100px'} className="Titles">   
-      <Typography textAlign={'center'} variant="h1" fontSize={{xs:'20px', sm:'30px', lg:'40px'}} >
-        Editar
-      </Typography>
-
-      </Grid>
+          <Grid
+            item
+            marginTop={{ xs: "-30px" }}
+            xs={12}
+            minHeight={"100px"}
+            className="Titles"
+          >
+            <Typography
+              textAlign={"center"}
+              variant="h1"
+              fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
+            >
+              Editar
+            </Typography>
+          </Grid>
           <Grid container boxSizing={"border-box"}>
             {product.images?.length ? (
               <SlideBranchesImages
@@ -114,28 +127,35 @@ const Edit = () => {
               </Typography>
             )}
           </Grid>
-          <Grid container >
-          {images.length > 0 && (
-          <Grid item xs={12}>
-            <input
-              id="image"
-              name="image"
-              type="file"
-              accept="image/jpg"
-              onChange={handleImageChange}
-              hidden
-            />
-            <label htmlFor={"image"}>
-              <Button fullWidth component="span" color="primary" variant="contained">
-                Agrega Fotos
-              </Button>
-            </label>
-          </Grid>
-        )}
+          <Grid container>
+            {images.length > 0 && (
+              <Grid item xs={12}>
+                <input
+                  id="image"
+                  name="image"
+                  type="file"
+                  accept="image/jpg"
+                  onChange={handleImageChange}
+                  hidden
+                />
+                <label htmlFor={"image"}>
+                  <Button
+                    fullWidth
+                    component="span"
+                    color="primary"
+                    variant="contained"
+                  >
+                    Agrega Fotos
+                  </Button>
+                </label>
+              </Grid>
+            )}
 
-        <Typography marginTop={"10px"}> peso max de imagen(500 kb)</Typography>
-          {
-            images.length ? (
+            <Typography marginTop={"10px"}>
+              {" "}
+              peso max de imagen(500 kb)
+            </Typography>
+            {images.length ? (
               <>
                 <Grid
                   container
@@ -190,7 +210,7 @@ const Edit = () => {
                     marginBottom: "10px",
                   }}
                 />
-                {/* <Typography>Agrega imagenes de tu sucursal</Typography> */}
+
                 <input
                   id="image"
                   name="image"
@@ -199,18 +219,16 @@ const Edit = () => {
                   onChange={handleImageChange}
                   hidden
                 />
-                <label htmlFor={"image"}> 
-                  <Button  component="span" color="primary" variant="contained">
+                <label htmlFor={"image"}>
+                  <Button component="span" color="primary" variant="contained">
                     Agregar Fotos
                   </Button>
                 </label>
               </Grid>
-            )
-          }
-            
+            )}
           </Grid>
 
-            <Grid item xs={12} sm={5}>  
+          <Grid item xs={12} sm={5}>
             <TextField
               focused
               fullWidth
@@ -221,8 +239,8 @@ const Edit = () => {
               value={formik.values?.name}
               onChange={formik.handleChange}
             />
-            </Grid>
-            <Grid item xs={12} sm={3}>
+          </Grid>
+          <Grid item xs={12} sm={3}>
             <TextField
               focused
               type="number"
@@ -241,8 +259,8 @@ const Edit = () => {
                 ),
               }}
             />
-            </Grid>
-            <Grid item xs={12} sm={3} >
+          </Grid>
+          <Grid item xs={12} sm={3}>
             <TextField
               focused
               fullWidth
@@ -253,8 +271,8 @@ const Edit = () => {
               value={formik.values?.size}
               onChange={formik.handleChange}
             />
-            </Grid>
-            <Grid item xs={12} sm={3}>
+          </Grid>
+          <Grid item xs={12} sm={3}>
             <TextField
               focused
               fullWidth
@@ -265,8 +283,8 @@ const Edit = () => {
               value={formik.values?.weight}
               onChange={formik.handleChange}
             />
-            </Grid>
-            <Grid item xs={12} sm={4}>
+          </Grid>
+          <Grid item xs={12} sm={4}>
             <TextField
               focused
               fullWidth
@@ -277,8 +295,8 @@ const Edit = () => {
               value={formik.values?.tag}
               onChange={formik.handleChange}
             />
-            </Grid>
-            <Grid item xs={12} sm={4}>
+          </Grid>
+          <Grid item xs={12} sm={4}>
             <Typography>Descripción del prducto</Typography>
             <TextareaAutosize
               aria-label="Descripción"
@@ -294,9 +312,9 @@ const Edit = () => {
               }}
               onChange={formik.handleChange}
             />
-            </Grid>
-            <Grid item xs={12} sm={5.8}>
-              <FormControl fullWidth>
+          </Grid>
+          <Grid item xs={12} sm={5.8}>
+            <FormControl fullWidth>
               <FormLabel>Categoría</FormLabel>
               <Select
                 id="category"
@@ -317,9 +335,9 @@ const Edit = () => {
               </Select>
               <FormHelperText>Selecciona una categoria</FormHelperText>
             </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={5.8}>
-              <FormControl fullWidth>
+          </Grid>
+          <Grid item xs={12} sm={5.8}>
+            <FormControl fullWidth>
               <FormLabel>Subcategoría</FormLabel>
               <Select
                 id="subCategory"
@@ -337,21 +355,26 @@ const Edit = () => {
               </Select>
               <FormHelperText>Selecciona una subcategoria</FormHelperText>
             </FormControl>
-            </Grid>
+          </Grid>
 
-            <Button type="submit" sx={{minHeight:'50px'}} color="success" variant="contained" fullWidth>
-              Guardar
-            </Button>
-            <Button
-              onClick={outEdit}
-              fullWidth
-              variant="contained"
-              color="warning"
-              sx={{minHeight:'50px'}} 
-            >
-              Cancelar
-            </Button>
-         
+          <Button
+            type="submit"
+            sx={{ minHeight: "50px" }}
+            color="success"
+            variant="contained"
+            fullWidth
+          >
+            Guardar
+          </Button>
+          <Button
+            onClick={outEdit}
+            fullWidth
+            variant="contained"
+            color="warning"
+            sx={{ minHeight: "50px" }}
+          >
+            Cancelar
+          </Button>
         </Grid>
       )}
     </>
