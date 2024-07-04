@@ -22,8 +22,11 @@ import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
 import { redirectPages } from '../../helpers';
-import { Button } from "@mui/material";
+import { Button, Grid, Typography } from "@mui/material";
 import { Workbook } from "exceljs";
+import AlertDelete from "../../components/ui/AlertDelete";
+import DeleteAlert from "../../components/ui/DeleteAlert";
+import EditButton from "../../components/Buttons/EditButton";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -128,16 +131,34 @@ const Services = () => {
 
 
   return (
-    <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-      <Title>Servicios Globales</Title>
-      <Button
+    <Grid container style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
+       <Grid
+        item
+        marginTop={{ xs: "-30px" }}
+        xs={12}
+        minHeight={"100px"}
+        className="Titles"
+      >
+        <Typography
+          textAlign={"center"}
+          variant="h1"
+          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
+        >
+          Servicios Globales
+        </Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <Button
           variant="contained"
           disableElevation
-          sx={{ color: "primary", my: 5, p: 2, borderRadius: 5 }}
+          sx={{  my: 5, p: 2, borderRadius: 5 }}
           onClick={createService}
+          color="secondary"
         >
           Registrar nuevo servicio
         </Button>
+      </Grid>
+      
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
@@ -169,12 +190,8 @@ const Services = () => {
             sortable: false,
             type: "actions",
             getActions: (params) => [
-              <WarningAlert
-                title="¿Estas seguro que deseas eliminar el servicio?"
-                callbackToDeleteItem={() => deleteService(params.row._id)}
-                callbackEditItem={()=> editService(params.row._id)}
-              />,
-              <GridActionsCellItem icon={<Edit />} onClick={()=>redirectPages(navigate,(params.row._id))}  label="Editar servicio" showInMenu />,
+             <DeleteAlert title={`¿Quieres eliminar ${params.row.name}?`} callbackToDeleteItem={()=>deleteService(params.row._id)} />,
+             <EditButton title={`¿Quieres editar ${params.row.name}?`} callbackToEdit={()=>navigate(`/auth/servicios/${params.row._id}`)}  />
                              
             ],
           },
@@ -204,7 +221,7 @@ const Services = () => {
           hideToolbar: true,
         }}
       />
-    </div>
+    </Grid>
   );
 }
 

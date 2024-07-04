@@ -54,21 +54,21 @@ export const getOneUser = (_id) => async (dispatch) => {
 
 export const deleteOneUser = (_id) => async (dispatch) => {
   try {
-    const response = await instanceApi.delete(
+    const {data} = await instanceApi.delete(
       `/user/delete-user/${_id}`,
       headerConfig
     );
-    dispatch(deleteUser(_id));
+    // dispatch(deleteUser(data.data._id));
+    dispatch(deleteUser(_id))
     enqueueSnackbar(
-      `Se elimino de manera correcta el usuario:${
-        response.data?.fullname || ""
-      }`,
+      `${data.message}`,
       {
         variant: "success",
         anchorOrigin: { horizontal: "right", vertical: "top" },
       }
     );
   } catch (error) {
+    console.log(error);
     enqueueSnackbar(`Error:${error.response}`);
   }
 };

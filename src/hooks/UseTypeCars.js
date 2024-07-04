@@ -1,10 +1,12 @@
 import { useSelector, useDispatch } from 'react-redux';
 
 import { startLoadTypeCars, getOneTypeCar, deleteOneTypeCar, editOneTypeCar, addOneTypeCar  } from '../store/actions/typeCarActions'; 
+import { useNavigate } from 'react-router-dom';
 
 export const useTypeCars = () => {
     
     const dispatch = useDispatch();
+    const navigate = useNavigate()
     
     const { typeCars, typeCar } = useSelector(state => state.typeCars)
 
@@ -18,7 +20,14 @@ export const useTypeCars = () => {
     
     const addTypeCar = async values => await dispatch(addOneTypeCar(values));
 
-    return { typeCar, typeCars, loadTypeCars, loadTypeCar, deleteTypeCar, editTypeCar, addTypeCar }
+    const rowsTypeCars = typeCars.map((typeCars, _id) => (
+        {
+        id: _id.toString(),
+        ...typeCars,
+      }));
+    
+
+    return { typeCar,rowsTypeCars,navigate, typeCars, loadTypeCars, loadTypeCar, deleteTypeCar, editTypeCar, addTypeCar }
 
 
 }

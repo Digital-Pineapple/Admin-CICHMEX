@@ -17,17 +17,10 @@ export const useServices = () => {
 
     const editService = async (service_id, values) => dispatch(editOneService(service_id, values))
 
-    const addService = async values => 
-    {
-        const response  = await dispatch(addOneService(values));
-        if (response) {
-            navigate('/auth/servicios')
-        }
-
-    }
+    const addService = async values =>  await dispatch(addOneService(values, navigate));
 
     const searchService = async value => await dispatch(searchServices(value));
 
 
-    return { loadServices, services, deleteService, loadService, service, editService, addService, searchService }
+    return {navigate, loadServices, services, deleteService, loadService, service, editService, addService, searchService }
 }

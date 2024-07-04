@@ -3,6 +3,7 @@ import { instanceApi } from "../../apis/configAxios"
 import { loadService, loadServices, deleteService, editService, onAddNewService } from "../reducer/servicesReducer"
 import {loadOneServiceCustomer, onAddNewServiceCustomer} from "../reducer/servicesCustomerReducer"
 import Cookies from "js-cookie"
+import { headerConfig, headerConfigFormData } from "./headers"
 
 const config = {
   headers: {
@@ -25,7 +26,7 @@ export const startLoadServices = () => {
 export const getOneService = service_id =>
     async dispatch => {
         try {
-            const { data } = await instanceApi.get(`/services/${service_id}`)
+            const { data } = await instanceApi.get(`/services/${service_id}`, headerConfig)
             dispatch(loadService(data.data));
         } catch (error) {
             console.log(error);
@@ -35,7 +36,7 @@ export const getOneService = service_id =>
 export const deleteOneServices = (service_id) =>
     async dispatch => {
         try {
-            await instanceApi.delete(`/services/${service_id}`)
+            await instanceApi.delete(`/services/${service_id}`, headerConfig)
             dispatch(deleteService(service_id));
             enqueueSnackbar('Se eliminó correctamente', {variant:'success',anchorOrigin:{
               horizontal:'center',vertical:'top'
@@ -55,12 +56,7 @@ export const deleteOneServices = (service_id) =>
               formData.append('status', values.status);
               formData.append('subCategory', values.subCategory)
             const { data } = await instanceApi.post(
-                `/services/${service_id}`,formData, {
-                  headers: {
-                    token: localStorage.getItem('token'),
-                    "Content-Type": "multipart/form-data",
-                  }
-                }
+                `/services/${service_id}`,formData, headerConfigFormData 
             );
             dispatch(editService(service_id, data.data));
             enqueueSnackbar('Categoria actualizada con exito', {variant:'success', anchorOrigin: {
@@ -78,15 +74,20 @@ export const deleteOneServices = (service_id) =>
         };
     
     };
-    export const addOneService = (values) => async (dispatch) => {
+    export const addOneService = (values, navigate) => async (dispatch) => {
         try {
-          const { data } = await instanceApi.post(`/services/`, values, config);
+          const formData = new FormData();
+          formData.append('name', values.name );
+          formData.append('description',values.description);
+          formData.append('service_image',values.service_image);
+          formData.append('subCategory', values.subCategory)
+          const { data } = await instanceApi.post(`/services`,formData, headerConfigFormData );
           dispatch(onAddNewService(data.data));
           enqueueSnackbar('Categoria creada con éxito', {variant:'success', anchorOrigin: {
             vertical: 'top',
             horizontal: 'right'
           }})
-          return data.data
+          navigate('/auth/servicios')
       
         } catch (error) {
           console.log(error);

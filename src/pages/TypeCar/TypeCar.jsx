@@ -16,7 +16,7 @@ import {
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import MuiPagination from "@mui/material/Pagination";
-import { Button, Chip } from "@mui/material";
+import { Button, Chip, Grid, Typography } from "@mui/material";
 import { Download, Edit } from "@mui/icons-material";
 import Title from "antd/es/typography/Title";
 import WarningAlert from "../../components/ui/WarningAlert";
@@ -24,6 +24,8 @@ import { useNavigate } from "react-router-dom";
 import { redirectPages } from '../../helpers';
 import { useTypeCars } from "../../hooks/UseTypeCars";
 import { Workbook } from "exceljs";
+import DeleteAlert from '../../components/ui/DeleteAlert'
+import EditButton from "../../components/Buttons/EditButton";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -58,19 +60,11 @@ function CustomPagination(props) {
 }
 
 const TypeCar = () => {
-  const { loadTypeCars, deleteTypeCar } = useTypeCars();
-  const { typeCars } = useSelector((state) => state.typeCars);
-  const navigate = useNavigate();
+  const { loadTypeCars, deleteTypeCar, rowsTypeCars, navigate } = useTypeCars();
 
   useEffect(() => {
     loadTypeCars()
   }, []);
-
-  const rowsWithIds = typeCars.map((typeCars, _id) => (
-    {
-    id: _id.toString(),
-    ...typeCars,
-  }));
 
   const createTypeCar = () => {
     navigate('/auth/createTypeCar')
@@ -89,7 +83,7 @@ const TypeCar = () => {
     });
 
     // Agregar datos de las filas
-    rowsWithIds.forEach((row) => {
+    rowsTypeCars.forEach((row) => {
       worksheet.addRow([row._id, row.name]);
     });
 
@@ -126,12 +120,27 @@ const TypeCar = () => {
   }
 
   return (
-    <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-      <Title>Tipos de Autos</Title>
+    <Grid style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
+       <Grid
+        item
+        marginTop={{ xs: "-30px" }}
+        xs={12}
+        minHeight={"100px"}
+        className="Titles"
+      >
+        <Typography
+          textAlign={"center"}
+          variant="h1"
+          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
+        >
+          Tipos de auto
+        </Typography>
+      </Grid>
       <Button
           variant="contained"
           disableElevation
-          sx={{ color: "primary", my: 5, p: 2, borderRadius: 5 }}
+          color="secondary"
+          sx={{ my: 5, p: 2, borderRadius: 5 }}
           onClick={createTypeCar}
         >
           Registrar nuevo tipo de auto
@@ -139,21 +148,6 @@ const TypeCar = () => {
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
-          // {
-          //   field: "_id",
-          //   hideable: false,
-          //   headerName: "Id",
-          //   flex: 1,
-          //   sortable: "false",
-          // },
-          // {
-          //   field: "service_image",
-          //   hideable: false,
-          //   headerName: "Foto de perfil",
-          //   flex: 0.2,
-          //   sortable: "false",
-          //   renderCell: (params) => params.value.service_image ?<Avatar src={params.value.service_image}/>: null
-          // },
           {
             field: "name",
             hideable: false,
@@ -169,19 +163,13 @@ const TypeCar = () => {
             sortable: false,
             type: "actions",
             getActions: (params) => [
-              <WarningAlert
-                title="¿Estas seguro que deseas eliminar el tipo de auto?"
-                callbackToDeleteItem={() => deleteTypeCar(params.row._id)}
-                titleEdit="¿Quieres editar este servicio?"
-                callbackEditItem={()=> editTypeCar(params.row._id)}
-              />,
-              <GridActionsCellItem icon={<Edit />} onClick={()=>redirectPages(navigate,(params.row._id))}  label="Editar tipo de auto" showInMenu />,
-                             
+              <DeleteAlert title={`¿Desea eliminar ${params.row.name}?`} callbackToDeleteItem={()=>deleteTypeCar(params.row._id)}/> , 
+              <EditButton title={`¿Desea editar ${params.row.name}?`} callbackToEdit={()=>navigate(`/auth/typeCar/${params.row._id}`)} />           
             ],
           },
         ]}
         
-        rows={rowsWithIds}
+        rows={rowsTypeCars}
         pagination
         slots={{
           pagination: CustomPagination,
@@ -205,7 +193,7 @@ const TypeCar = () => {
           hideToolbar: true,
         }}
       />
-    </div>
+    </Grid>
   );
 }
 

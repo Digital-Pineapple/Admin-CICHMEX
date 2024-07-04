@@ -58,9 +58,12 @@ export const deleteOneTypeCar = (typeCar_id) => async (dispatch) => {
   try {
     await instanceApi.delete(`/type-car/${typeCar_id}`);
     dispatch(deleteTypeCar(typeCar_id));
-    enqueueSnackbar('se elimino correctamente')
+    enqueueSnackbar('Se eliminó con éxito', {variant:'success', anchorOrigin: {
+      vertical: 'top',
+      horizontal: 'right'
+    }})
   } catch (error) {
-    enqueueSnackbar(`Ocurrió un error al eliminar la categoria + ${error}`,
+    enqueueSnackbar(`Ocurrió un error al eliminar`,
            {variant:'error', anchorOrigin: {
             vertical: 'top',
             horizontal: 'right'

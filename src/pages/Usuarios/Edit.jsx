@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import Titles from "../../components/ui/Titles";
 import Grid from "@mui/material/Grid";
 import {
   Avatar,
   Badge,
+  ButtonGroup,
   Card,
   CardActions,
   CardContent,
@@ -46,11 +46,9 @@ const Edit = () => {
   }, [id]);
 
   useEffect(() => {
-  
     formik.setValues({
       fullname: user?.fullname,
       type_user: user?.type_user?._id,
-     
     });
   }, [user]);
 
@@ -62,8 +60,7 @@ const Edit = () => {
     },
     onSubmit: (values) => {
       try {
-        console.log(values);
-        // editUser(user._id, values);
+        editUser(user._id, values);
       } catch (error) {
         return enqueueSnackbar(`Error: ${error.response.data?.message}`, {
           variant: "error",
@@ -79,13 +76,15 @@ const Edit = () => {
     navigate("/auth/usuarios", { replace: true });
   };
 
-
   return (
     <Grid
       container
       component="form"
       onSubmit={formik.handleSubmit}
-      style={{ marginLeft: "10%", height: "70%", width: "80%" }}
+      style={{ marginLeft: "10%", width: "85%" }}
+      display={"flex"}
+      justifyContent={"center"}
+      alignContent={'center'}
     >
       <Grid
         item
@@ -102,18 +101,17 @@ const Edit = () => {
           Editar Usuario
         </Typography>
       </Grid>
+<Grid container columnSpacing={1} padding={{xs:0, sm:4, md:8}}>
+   <Grid item xs={12} sm={5} md={5.7}>
+        <ProfileImageUploader
+          formik={formik}
+          previewImage1={user?.profile_image}
+          id={"profile_image"}
+          name={"profile_image"}
+        />
+      </Grid>
 
-      <Grid
-        item
-        xs={12}
-        display={"flex"}
-        flexDirection={"column"}
-        alignItems={"center"}
-      >
-        <Grid container>
-          <ProfileImageUploader formik={formik} previewImage={user?.profile_image} />
-        </Grid>
-
+      <Grid item xs={12} sm={6} mt={2} display={'flex'} flexDirection={'column'} gap={2} >
         <TextField
           focused
           fullWidth
@@ -122,11 +120,9 @@ const Edit = () => {
           label="Nombre"
           variant="outlined"
           value={formik.values.fullname}
-          sx={{ margin: 2 }}
           onChange={formik.handleChange}
         />
-
-        <FormControl>
+        <FormControl fullWidth>
           <FormLabel>TIpo de usuario</FormLabel>
           <Select
             id="type_user"
@@ -148,23 +144,30 @@ const Edit = () => {
           </Select>
           <FormHelperText>Selecciona un tipo de usuario</FormHelperText>
         </FormControl>
-
-        <Grid
-          container
-          justifyContent={"center"}
-          justifyItems={"center"}
-          alignItems={"center"}
+        <ButtonGroup
+        variant="contained"
+        color="inherit"
+        size="large"
+        aria-label="group"
+        fullWidth
+      >
+        <Button type="submit" variant="contained" color="success">
+          Guardar
+        </Button>
+        <Button
+          onClick={outEdit}
+          variant="contained"
+          size="large"
+          color="warning"
         >
-          <Grid item sx={{ display: "flex", justifyContent: "center" }}>
-            <Button type="submit" variant="contained">
-              Guardar
-            </Button>
-            <Button onClick={outEdit} variant="outlined" color="secondary">
-              Salir
-            </Button>
-          </Grid>
-        </Grid>
+          Salir
+        </Button>
+      </ButtonGroup>
       </Grid>
+</Grid>
+     
+
+     
     </Grid>
   );
 };

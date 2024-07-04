@@ -14,7 +14,7 @@ export const userReducer = createSlice({
       state.user = payload;
     },
     deleteUser: (state, { payload }) => {
-      state.users = state.user.filter(user => user._id !== payload);
+      state.users = state.users.filter(user => user._id !== payload);
     },
     verifyUser: (state, { payload }) => {
       state.users = state.payload
