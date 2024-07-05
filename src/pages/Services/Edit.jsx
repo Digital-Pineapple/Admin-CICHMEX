@@ -1,23 +1,15 @@
 import React, { useState } from "react";
-import Titles from "../../components/ui/Titles";
 import Grid from "@mui/material/Grid";
 import {
   ButtonGroup,
-  Card,
-  CardActionArea,
-  CardActions,
-  CardContent,
-  CardMedia,
   FormControl,
   FormHelperText,
   FormLabel,
-  Input,
   MenuItem,
   Select,
   TextField,
   TextareaAutosize,
 } from "@mui/material";
-import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { useNavigate, useParams } from "react-router-dom";
@@ -27,7 +19,6 @@ import { useFormik } from "formik";
 import { enqueueSnackbar } from "notistack";
 import { useSubCategories } from "../../hooks/useSubCategories";
 import { useSelector } from "react-redux";
-import AddImage from "../../assets/Images/add.png";
 import ProfileImageUploader from "../../components/ui/ProfileImageUploader";
 
 const Edit = () => {
@@ -39,11 +30,6 @@ const Edit = () => {
   const subCategories = useSelector(
     (state) => state.subCategories.subCategories
   );
-
-  const handleImage = ({ target }) => {
-    setPreviewImage(URL.createObjectURL(target.files[0]));
-    setSelectedFile(target.files[0]);
-  };
 
   useEffect(() => {
     loadService(id);

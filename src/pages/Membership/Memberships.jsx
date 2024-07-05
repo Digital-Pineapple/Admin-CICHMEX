@@ -14,15 +14,12 @@ import {
 } from "@mui/x-data-grid";
 import { useEffect } from "react";
 import MuiPagination from "@mui/material/Pagination";
-import { Avatar, Chip, Grid } from "@mui/material";
+import { Avatar, Button, Chip, Grid, Typography } from "@mui/material";
 import { Download, Edit } from "@mui/icons-material";
-import Title from "antd/es/typography/Title";
-import WarningAlert from "../../components/ui/WarningAlert";
-import { useNavigate } from "react-router-dom";
-import { redirectPages } from "../../helpers";
+import DeleteAlert  from "../../components/ui/DeleteAlert";
 import { Workbook } from "exceljs";
-import { Button, Typography } from "antd";
 import { useMembership } from "../../hooks/useMembership";
+import EditButton from "../../components/Buttons/EditButton"
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -143,13 +140,29 @@ export default function Memberships() {
 
   return (
     <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-      <Title>Membresías</Title>
+     <Grid
+        item
+        marginTop={{ xs: "-30px" }}
+        xs={12}
+        minHeight={"100px"}
+        className="Titles"
+      >
+        <Typography
+          textAlign={"center"}
+          variant="h1"
+          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
+        >
+          Membresías
+        </Typography>
+      </Grid>
       <Grid container my={2} >
       <Button
           variant="contained"
           disableElevation
-          sx={{ color: "primary", my: 10, p: 2, borderRadius: 5 }}
+          color="secondary"
+          sx={{  my: 10, p: 2, borderRadius: 5 }}
           onClick={()=>navigate('/auth/CrearMembresia', {replace:true})}
+          disabled
         >
           Registrar nueva membresía
         </Button>
@@ -158,13 +171,7 @@ export default function Memberships() {
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
-          // {
-          //   field: "_id",
-          //   hideable: false,
-          //   headerName: "Id",
-          //   flex: 1,
-          //   sortable: "false",
-          // },
+
           {
             field: "name",
             hideable: false,
@@ -216,17 +223,8 @@ export default function Memberships() {
             sortable: false,
             type: "actions",
             getActions: (params) => [
-              <WarningAlert
-                title="¿Estas seguro que deseas eliminar esta membresía?"
-                callbackToDeleteItem={() => deleteMembership(params.row._id)}
-               
-              />,
-              <GridActionsCellItem
-                icon={<Edit />}
-                onClick={() => redirectPages(navigate, params.row._id )}
-                label="Editar membresía"
-                showInMenu
-              />,
+           <DeleteAlert disabled={true} title={`¿Desea eliminar ${params.row.name}?`} callbackToDeleteItem={()=> deleteMembership(params.row._id)} />,
+           <EditButton disabled={true} title={`¿Desea editar ${params.row.name}?`} callbackToEdit={()=>navigate(`/auth/Membresias/${params.row._id}`)}/>
             ],
           },
         ]}

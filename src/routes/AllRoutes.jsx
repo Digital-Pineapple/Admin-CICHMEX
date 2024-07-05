@@ -70,9 +70,9 @@ export const AllRoutes = [
   { type: 1, path: '/createTypeCar', element: <CreateTypeCar/>},
   { type: 1, path: '/typeCar/:id', element: <EditTypeCar/>},
   
-  { type: 1, path: '/CategoriaServicios', element: <Categories/>},
+  { type: 1, path: '/Categorias', element: <Categories/>},
   { type: 1, path: '/CrearCategoria', element: <CreateCategory/>},
-  { type: 1, path: '/CategoriaServicios/:id', element: <EditCategory/>},
+  { type: 1, path: '/Categoria/:id', element: <EditCategory/>},
 
   { type: 1, path: '/SubCategorias', element: <SubCategories/>},
   { type: 1, path: '/CrearSubCategoria', element: <CreateSubCategory/>},

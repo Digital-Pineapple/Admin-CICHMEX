@@ -27,21 +27,20 @@ export const useSubCategories = () => {
         }
     } 
     
-    const editSubCategory = async (subCategory_id, values) => 
-    {
-        const response =  await dispatch(editOneSubCategory(subCategory_id,values));
-        if (response) {
-            navigate('/auth/SubCategorias',{replace:true})
-            
-        }
-    }
+    const editSubCategory = async (subCategory_id, values) =>  await dispatch(editOneSubCategory(subCategory_id,values, navigate));
+ 
    
     
-    const addSubCategory = async values => await dispatch(addOneSubCategory(values));
+    const addSubCategory = async values => await dispatch(addOneSubCategory(values, navigate));
 
     const searchSubCategory = async value => await dispatch(searchSubCategories(value));
 
-    return { subCategories, subCatByCategory, subCategory, loadSubCategories, loadSubCategory, deleteSubCategory, editSubCategory, addSubCategory, searchSubCategory, loadSubcategoriesByCategory }
+    const rowsSubCategories = subCategories.map((category, _id) => ({
+        id: _id.toString(),
+        ...category,
+      }));
+
+    return { subCategories,navigate, subCatByCategory,rowsSubCategories, subCategory, loadSubCategories, loadSubCategory, deleteSubCategory, editSubCategory, addSubCategory, searchSubCategory, loadSubcategoriesByCategory }
 
 
 }

@@ -4,7 +4,6 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SortIcon from "@mui/icons-material/Sort";
 import {
   DataGrid,
-  GridActionsCellItem,
   GridPagination,
   GridToolbarContainer,
   GridToolbarQuickFilter,
@@ -15,15 +14,14 @@ import {
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import MuiPagination from "@mui/material/Pagination";
-import { Download, Edit } from "@mui/icons-material";
-import Title from "antd/es/typography/Title";
-import WarningAlert from "../../components/ui/WarningAlert";
+import { Download } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { redirectPages } from "../../helpers";
 import { useCategories } from "../../hooks/useCategories";
-import { Button, Avatar } from "@mui/material";
+import { Button, Avatar, Grid, Typography } from "@mui/material";
 import { Workbook } from "exceljs";
 import { saveAs } from 'file-saver';
+import DeleteAlert from "../../components/ui/DeleteAlert";
+import EditButton from "../../components/Buttons/EditButton";
 
 
 function Pagination({ page, onPageChange, className }) {
@@ -128,11 +126,26 @@ const Categories = () => {
 
   return (
     <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-      <Title>Categorias</Title>
+       <Grid
+        item
+        marginTop={{ xs: "-30px" }}
+        xs={12}
+        minHeight={"100px"}
+        className="Titles"
+      >
+        <Typography
+          textAlign={"center"}
+          variant="h1"
+          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
+        >
+          Categorías
+        </Typography>
+      </Grid>
       <Button
         variant="contained"
         disableElevation
-        sx={{ color: "primary", my: 5, p: 2, borderRadius: 5 }}
+        sx={{ my: 5, p: 2, borderRadius: 5 }}
+        color="secondary"
         onClick={createCategory}
       >
         Registrar nuevo Categoría
@@ -142,13 +155,6 @@ const Categories = () => {
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
-          // {
-          //   field: "_id",
-          //   hideable: false,
-          //   headerName: "Id",
-          //   flex: 1,
-          //   sortable: "false",
-          // },
           {
             field: "name",
             hideable: false,
@@ -175,16 +181,8 @@ const Categories = () => {
             sortable: false,
             type: "actions",
             getActions: (params) => [
-              <WarningAlert
-                title="¿Estas seguro que deseas eliminar la categoria?"
-                callbackToDeleteItem={() => deleteCategory(params.row._id)}
-              />,
-              <GridActionsCellItem
-                icon={<Edit />}
-                onClick={() => redirectPages(navigate, params.row._id)}
-                label="Editar categoria"
-                showInMenu
-              />,
+             <DeleteAlert title={`¿Desea eliminar ${params.row.name}?`} callbackToDeleteItem={()=> deleteCategory(params.row._id)}/>,
+             <EditButton title={`Desea editar ${params.row.name}?`} callbackToEdit={()=>navigate(`/auth/Categoria/${params.row._id}`)} />
             ],
           },
         ]}

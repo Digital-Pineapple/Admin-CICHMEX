@@ -42,7 +42,7 @@ export const Links = [
   },
   {
     title: "Categorías",
-    path: "/auth/CategoriaServicios",
+    path: "/auth/Categorias",
     Icon: <CategoryIcon />,
   },
   {

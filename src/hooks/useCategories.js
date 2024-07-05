@@ -1,10 +1,11 @@
 import { useSelector, useDispatch } from 'react-redux';
-
 import { startLoadCategories, getOneCategory, deleteOneCategory, editOneCategory, addOneCategory, searchCategories  } from '../store/actions/categoryActions'; 
+import { useNavigate } from 'react-router-dom';
 
 export const useCategories = () => {
     
     const dispatch = useDispatch();
+    const navigate = useNavigate()
     
     const { categories, category } = useSelector(state => state.categories)
 
@@ -14,13 +15,13 @@ export const useCategories = () => {
 
     const deleteCategory = async category_id => await dispatch(deleteOneCategory(category_id));
     
-    const editCategory = async (category_id, {name, category_image}) => await dispatch(editOneCategory(category_id,{name, category_image,}));
+    const editCategory = async (category_id, values) => await dispatch(editOneCategory(category_id,values,navigate));
     
-    const addCategory = async (values, files) => await dispatch(addOneCategory(values, files));
+    const addCategory = async (values) => await dispatch(addOneCategory(values, navigate));
 
     const searchCategory = async value => await dispatch(searchCategories(value));
 
-    return { categories, category, loadCategories, loadCategory, deleteCategory, editCategory, addCategory, searchCategory }
+    return { navigate, categories, category, loadCategories, loadCategory, deleteCategory, editCategory, addCategory, searchCategory }
 
 
 }

@@ -4,7 +4,7 @@ import { Delete } from '@mui/icons-material';
 import Swal from 'sweetalert2';
 import { green } from '@mui/material/colors';
 
-const DeleteAlert = ({title, callbackToDeleteItem}) => {
+const DeleteAlert = ({title, callbackToDeleteItem, disabled}) => {
 
     const ModalSweet = () => {
        
@@ -31,6 +31,7 @@ const DeleteAlert = ({title, callbackToDeleteItem}) => {
                 color='warning'
                 onClick={() => ModalSweet()}
                 icon={<Delete/>}
+                disabled={disabled === true ? disabled:false}
                 >
               
                 </GridActionsCellItem>

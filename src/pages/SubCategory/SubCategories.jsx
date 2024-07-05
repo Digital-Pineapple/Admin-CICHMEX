@@ -4,7 +4,6 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SortIcon from "@mui/icons-material/Sort";
 import {
   DataGrid,
-  GridActionsCellItem,
   GridPagination,
   GridToolbarContainer,
   GridToolbarQuickFilter,
@@ -15,14 +14,16 @@ import {
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import MuiPagination from "@mui/material/Pagination";
-import { Button, Avatar } from "@mui/material";
-import { Download, Edit } from "@mui/icons-material";
-import Title from "antd/es/typography/Title";
-import WarningAlert from "../../components/ui/WarningAlert";
+import { Download } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { redirectPages } from '../../helpers';
-import { useSubCategories } from "../../hooks/useSubCategories";
+import { useCategories } from "../../hooks/useCategories";
+import { Button, Avatar, Grid, Typography } from "@mui/material";
 import { Workbook } from "exceljs";
+import { saveAs } from 'file-saver';
+import DeleteAlert from "../../components/ui/DeleteAlert";
+import EditButton from "../../components/Buttons/EditButton";
+import { useSubCategories } from "../../hooks/useSubCategories";
+
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -57,24 +58,20 @@ function CustomPagination(props) {
 }
 
 const SubCategories = () => {
-  const { loadSubCategories, deleteSubCategory  } = useSubCategories();
-  const { subCategories } = useSelector((state) => state.subCategories);
-  const navigate = useNavigate();
+  const { loadSubCategories, rowsSubCategories, navigate, deleteSubCategory} = useSubCategories()
 
   useEffect(() => {
- loadSubCategories();
+    loadSubCategories();
   }, []);
 
-  const rowsWithIds = subCategories.map((subCategory, _id) => ({
-    id: _id.toString(),
-    ...subCategory,
-  }));
+ 
   const createSubCategory = () => {
-    navigate('/auth/CrearSubCategoria')
-  }
+    navigate("/auth/CrearSubCategoria");
+  };
+
   const exportToExcel = () => {
     const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Subcategorías");
+    const worksheet = workbook.addWorksheet("Subcategorias");
 
     // Agregar encabezados de columna
     const headerRow = worksheet.addRow([
@@ -88,7 +85,7 @@ const SubCategories = () => {
 
     // Agregar datos de las filas
     rowsWithIds.forEach((row) => {
-      worksheet.addRow([row._id, row.name, row.description]);
+      worksheet.addRow([row._id, row.name]);
     });
 
     // Crear un Blob con el archivo Excel y guardarlo
@@ -97,7 +94,7 @@ const SubCategories = () => {
         type:
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-      saveAs(blob, "subCategorias.xlsx");
+      saveAs(blob, "subcategorias.xlsx");
     });
   };
 
@@ -123,28 +120,37 @@ const SubCategories = () => {
     );
   }
 
-
   return (
     <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-      <Title>SubCategorias</Title>
-      <Button
-          variant="contained"
-          disableElevation
-          sx={{ color: "primary", my: 5, p: 2, borderRadius: 5 }}
-          onClick={createSubCategory}
+       <Grid
+        item
+        marginTop={{ xs: "-30px" }}
+        xs={12}
+        minHeight={"100px"}
+        className="Titles"
+      >
+        <Typography
+          textAlign={"center"}
+          variant="h1"
+          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-          Registrar nuevo subcategoría
-        </Button>
+          Subcategorías
+        </Typography>
+      </Grid>
+      <Button
+        variant="contained"
+        disableElevation
+        sx={{ my: 5, p: 2, borderRadius: 5 }}
+        color="secondary"
+        onClick={createSubCategory}
+      >
+        Registrar nueva Subcategoría
+      </Button>
+     
+
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
-          // {
-          //   field: "_id",
-          //   hideable: false,
-          //   headerName: "Id",
-          //   flex: 1,
-          //   sortable: "false",
-          // },
           {
             field: "name",
             hideable: false,
@@ -171,20 +177,21 @@ const SubCategories = () => {
             sortable: false,
             type: "actions",
             getActions: (params) => [
-              <WarningAlert
-                title="¿Estas seguro que deseas eliminar la categoria?"
-                callbackToDeleteItem={() => deleteSubCategory(params.row._id)}
-              />,
-              <GridActionsCellItem icon={<Edit />} onClick={()=>redirectPages(navigate,(params.row._id))}  label="Editar Subcategoria" showInMenu />,
-                             
+             <DeleteAlert title={`¿Desea eliminar ${params.row.name}?`} callbackToDeleteItem={()=> deleteSubCategory(params.row._id)}/>,
+             <EditButton title={`Desea editar ${params.row.name}?`} callbackToEdit={()=>navigate(`/auth/SubCategorias/${params.row._id}`)} />
             ],
           },
         ]}
-        rows={rowsWithIds}
+        initialState={{
+          sorting: {
+            sortModel: [{ field: "type_customer", sort: "desc" }],
+          },
+        }}
+        rows={rowsSubCategories}
         pagination
         slots={{
           pagination: CustomPagination,
-          toolbar: CustomToolbar,
+          toolbar: CustomToolbar ,
           columnSortedDescendingIcon: SortedDescendingIcon,
           columnSortedAscendingIcon: SortedAscendingIcon,
           columnUnsortedIcon: UnsortedIcon,
@@ -197,6 +204,7 @@ const SubCategories = () => {
           toolbar: {
             showQuickFilter: true,
             quickFilterProps: { debounceMs: 500 },
+            
           },
         }}
         printOptions={{
@@ -206,7 +214,6 @@ const SubCategories = () => {
       />
     </div>
   );
-}
+};
 
-
-export default SubCategories
+export default SubCategories;

@@ -1,60 +1,45 @@
 import React, { useState } from "react";
-import Titles from "../../components/ui/Titles";
 import Grid from "@mui/material/Grid";
 import {
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
+  ButtonGroup,
   TextField,
-  TextareaAutosize,
 } from "@mui/material";
-import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import { useNavigate, useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import { useEffect } from "react";
-import { useCategories } from "../../hooks/useCategories";
 import { useFormik } from "formik";
 import { enqueueSnackbar } from "notistack";
-import AddImage from "../../assets/Images/add.png";
+import ProfileImageUploader from "../../components/ui/ProfileImageUploader";
+import { useCategories } from "../../hooks/useCategories";
 
 const Edit = () => {
   const { id } = useParams();
-  const { loadCategory, category, editCategory } = useCategories();
-  const navigate = useNavigate();
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [previewImage, setPreviewImage] = useState(null);
-
-  const handleImage = ({ target }) => {
-    setPreviewImage(URL.createObjectURL(target.files[0]));
-    setSelectedFile(target.files[0]);
-  };
+  const { loadCategory,editCategory, category, navigate } = useCategories();
 
   useEffect(() => {
     loadCategory(id);
   }, [id]);
-
   useEffect(() => {
     formik.setValues({
       name: category.name,
-      category_image: previewImage,
     });
   }, [category]);
 
   const formik = useFormik({
     initialValues: {
       name: "",
-      category_image: "",
     },
+
     onSubmit: (values) => {
+      const values2 = {
+        ...values,
+        category_image: values?.profile_image ? values?.profile_image : null,
+      };
       try {
-        values.category_image = selectedFile;
-        editCategory(category._id, values);
-        navigate("/auth/CategoriaServicios", { replace: true });
+        editCategory(id,values2)
       } catch (error) {
-        console.log(error);
-        return enqueueSnackbar("Error al editar la categoria", {
+        return enqueueSnackbar("Error al editar", {
           variant: "error",
           anchorOrigin: {
             vertical: "top",
@@ -64,91 +49,91 @@ const Edit = () => {
       }
     },
   });
-
   const outEdit = () => {
-    navigate("/auth/CategoriaServicios", { replace: true });
+    navigate("/auth/Categorias", { replace: true });
   };
 
   return (
-    <Box marginX={"10%"}>
-      <Titles name={<h2 align="center">Editar Categoria</h2>} />     
+    <Grid
+      container
+      component="form"
+      onSubmit={formik.handleSubmit}
+      style={{ marginLeft: "10%", height: "70%", width: "80%", display:'flex', justifyContent:'center' }}
+    >
       <Grid
-        color="#F7BFBF"
-        borderRadius={5}
-        mt={3}
-        sx={{ border: 10, p: 5 }}
-        container
-        spacing={4}
+        item
+        marginTop={{ xs: "-30px" }}
+        xs={12}
+        minHeight={"100px"}
+        className="Titles"
       >
-        <Grid
-          item
-          sm={8}
-          display={"flex"}
-          flexDirection={"column"}
-          alignItems={"center"}
-          component="form"
-          onSubmit={formik.handleSubmit}
+        <Typography
+          textAlign={"center"}
+          variant="h1"
+          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-          <Grid item>
-            <Card sx={{ maxWidth: 345 }}>
-              <CardActionArea>
-                <CardMedia
-                  sx={{ height: 140 }}
-                  image={
-                    selectedFile
-                      ? previewImage
-                      : category.category_image || AddImage
-                  }
-                  title={selectedFile ? selectedFile.name : "Selecciona imagen"}
-                  component={"input"}
-                  type={"file"}
-                  id={"category_image"}
-                  name={"category_image"}
-                  accept={"image/png, image/jpeg"}
-                  value={formik.values.category_image}
-                  onChange={handleImage}
-                >
-            
-                  </CardMedia>
-
-              </CardActionArea>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  {selectedFile ? selectedFile.name : "Selecciona una imagen"}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <TextField
-            focused
-            fullWidth
-            id="name"
-            name="name"
-            label="Nombre de la categoria"
-            variant="outlined"
-            value={formik.values.name}
-            sx={{ margin: 2 }}
-            onChange={formik.handleChange}
-            required
-          />
-          <Grid
-            container
-            justifyContent={"center"}
-            justifyItems={"center"}
-            alignItems={"center"}
-          >
-            <Grid item sx={{ display: "flex", justifyContent: "center" }}>
-              <Button type="submit" variant="contained">
-                Guardar
-              </Button>
-              <Button onClick={outEdit} variant="outlined" color="secondary">
-                Salir
-              </Button>
-            </Grid>
-          </Grid>
-        </Grid>
+          Categorias
+        </Typography>
       </Grid>
-    </Box>
+
+      <Grid
+        item
+        sm={8}
+        display={"flex"}
+        flexDirection={"column"}
+        alignItems={"center"}
+      >
+        <Grid item xs={12} sm={5} md={5.7}>
+          <ProfileImageUploader
+            formik={formik}
+            previewImage1={category?.category_image}
+            id={"image"}
+            name={"image"}
+          />
+        </Grid>
+
+        <TextField
+          focused
+          fullWidth
+          id="name"
+          name="name"
+          label="Nombre del servicio"
+          variant="outlined"
+          value={formik.values.name}
+          sx={{ margin: 2 }}
+          onChange={formik.handleChange}
+        />
+
+
+        <Grid
+          container
+          justifyContent={"center"}
+          justifyItems={"center"}
+          alignItems={"center"}
+        >
+           <ButtonGroup
+        variant="contained"
+        color="inherit"
+        size="large"
+        aria-label="group"
+        fullWidth
+      >
+        <Button type="submit" variant="contained" color="success">
+          Guardar
+        </Button>
+        <Button
+          onClick={outEdit}
+          variant="contained"
+          size="large"
+          color="warning"
+        >
+          Salir
+        </Button>
+      </ButtonGroup>
+        </Grid>
+        
+      </Grid>
+    </Grid>
   );
 };
 

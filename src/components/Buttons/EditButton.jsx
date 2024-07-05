@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import { green } from '@mui/material/colors';
 import { Tooltip } from '@mui/material';
 
-const EditButton = ({title, callbackToEdit}) => {
+const EditButton = ({title, callbackToEdit, disabled}) => {
 
     const ModalSweet = () => {
        
@@ -34,6 +34,7 @@ const EditButton = ({title, callbackToEdit}) => {
                 color='info'
                 onClick={() => ModalSweet()}
                 icon={<Edit/>}
+                disabled={disabled === true ? disabled:false}
                 >
                 </GridActionsCellItem>
         </Tooltip>
