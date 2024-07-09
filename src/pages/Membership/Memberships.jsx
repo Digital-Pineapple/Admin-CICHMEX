@@ -162,7 +162,7 @@ export default function Memberships() {
           color="secondary"
           sx={{  my: 10, p: 2, borderRadius: 5 }}
           onClick={()=>navigate('/auth/CrearMembresia', {replace:true})}
-          disabled
+          
         >
           Registrar nueva membresía
         </Button>
@@ -223,7 +223,7 @@ export default function Memberships() {
             sortable: false,
             type: "actions",
             getActions: (params) => [
-           <DeleteAlert disabled={true} title={`¿Desea eliminar ${params.row.name}?`} callbackToDeleteItem={()=> deleteMembership(params.row._id)} />,
+           <DeleteAlert title={`¿Desea eliminar ${params.row.name}?`} callbackToDeleteItem={()=> deleteMembership(params.row._id)} />,
            <EditButton disabled={true} title={`¿Desea editar ${params.row.name}?`} callbackToEdit={()=>navigate(`/auth/Membresias/${params.row._id}`)}/>
             ],
           },

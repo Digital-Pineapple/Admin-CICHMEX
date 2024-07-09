@@ -11,8 +11,15 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import MuseumIcon from '@mui/icons-material/Museum';
 import PeopleIcon from '@mui/icons-material/People';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import { Home } from "@mui/icons-material";
 
 export const Links = [
+  {
+    title : "Inicio",
+    path : "/",
+    Icon : <Home/>
+
+  },
   {
     title : "Almacen",
     path : "/auth/MiAlmacen",

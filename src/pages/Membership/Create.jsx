@@ -21,6 +21,7 @@ import { useTypeCars } from "../../hooks/UseTypeCars";
 import { useFormik } from "formik";
 import { AttachMoney } from "@mui/icons-material";
 import { blueGrey } from "@mui/material/colors";
+import { useMembership } from "../../hooks/useMembership";
 
 const Create = () => {
   const [selectedService, setSelectedService] = useState("");
@@ -30,11 +31,12 @@ const Create = () => {
   const [myTypeCars, setMyTypeCars] = useState([]);
   const { loadServices, services, navigate } = useServices();
   const { typeCars, loadTypeCars } = useTypeCars();
+  const {addMembership} = useMembership()
 
   useEffect(() => {
     loadServices();
     loadTypeCars();
-  }, [loadServices, loadTypeCars]);
+  }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -46,13 +48,13 @@ const Create = () => {
       type_cars: [],
     },
     onSubmit: (values) => {
-      const values2 = {
-        ...values,
-        image: values?.profile_image ? values?.profile_image : null,
-      };
+     const x = values.type_cars
+     const y = x.map((i)=>i.typeCar_id)
+     values.type_cars = y
+     console.log(values);
       try {
-        console.log(values2);
-        // addCategory(values2);
+        addMembership(values)
+        
       } catch (error) {
         enqueueSnackbar(`Error: ${error.data.response?.message}`, {
           variant: "error",

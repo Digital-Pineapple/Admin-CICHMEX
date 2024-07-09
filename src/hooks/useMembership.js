@@ -17,14 +17,7 @@ export const useMembership = () => {
 
     const editMembership = async (_id, values) => dispatch(editOneMembership(_id, values))
 
-    const addMembership = async values => 
-    {
-        const response  = await dispatch(addOneMembership(values));
-        if (response) {
-            navigate('/auth/Membresias')
-        }
-
-    }
-
+    const addMembership = async values => dispatch(addOneMembership(values, navigate))
+    
     return { addMembership, deleteMembership, dispatch, editMembership, loadMembership, loadMemberships, membership, memberships, navigate }
 }

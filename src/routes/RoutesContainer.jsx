@@ -27,7 +27,7 @@ const RoutesContainer = () => {
         path="/auth/*"
         element={
           <PrivateRoutes>
-           <Navbar navArrayLinks={Links} />   
+           <Navbar navArrayLinks={Links}>
             <Routes>
               {AllRoutes.filter(({ type }) => type === 1).map(
                 ({ path, element }, index) => (
@@ -35,6 +35,7 @@ const RoutesContainer = () => {
                 )
               )}
             </Routes>
+            </Navbar>   
           </PrivateRoutes>
         }
       />

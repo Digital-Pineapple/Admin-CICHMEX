@@ -1,6 +1,8 @@
 import { enqueueSnackbar } from "notistack"
 import { instanceApi } from "../../apis/configAxios"
 import { deleteMemmbership, editMembership, loadMembership, loadMemberships, onAddNewMembership } from "../reducer/membershipReducer";
+import { headerConfig } from "./headers";
+import { replace } from "formik";
 
 const config = {
   headers: {
@@ -20,10 +22,10 @@ export const startLoadMemberships = () => {
     }
 }
 
-export const getOneMembership = _id =>
+export const getOneMembership = (_id) =>
     async dispatch => {
         try {
-            const { data } = await instanceApi.get(`/memberships/${id}`, config)
+            const { data } = await instanceApi.get(`/memberships/info/${_id}`, config)
             dispatch(loadMembership(data.data));
         } catch (error) {
             console.log(error);
@@ -33,7 +35,7 @@ export const getOneMembership = _id =>
 export const deleteOneMembership = (_id) =>
     async dispatch => {
         try {
-            await instanceApi.delete(`/memberships/${_id}`, config)
+            await instanceApi.delete(`/memberships/${_id}`, headerConfig)
             dispatch(deleteMemmbership(_id));
             enqueueSnackbar('Se eliminó correctamente', {variant:'success',anchorOrigin:{
               horizontal:'center',vertical:'top'
@@ -67,19 +69,18 @@ export const deleteOneMembership = (_id) =>
         };
     
     };
-    export const addOneMembership = (values) => async (dispatch) => {
+    export const addOneMembership = (values, navigate) => async (dispatch) => {
         try {
-          const { data } = await instanceApi.post(`/memberships/`, values, config);
+          const { data } = await instanceApi.post(`/memberships/`, values, headerConfig);
           dispatch(onAddNewMembership(data.data));
-          enqueueSnackbar('Creado con éxito', {variant:'success', anchorOrigin: {
+          enqueueSnackbar(`${data.message}`, {variant:'success', anchorOrigin: {
             vertical: 'top',
             horizontal: 'right'
           }})
-          return data.data
-      
+          navigate('/auth/Membresias', {replace:true})
         } catch (error) {
           console.log(error);
-          enqueueSnackbar(`Error${error.response.data?.message|''}`,
+          enqueueSnackbar(`${error.response.data?.message}`,
           {variant:'error', anchorOrigin: {
            vertical: 'top',
            horizontal: 'right'

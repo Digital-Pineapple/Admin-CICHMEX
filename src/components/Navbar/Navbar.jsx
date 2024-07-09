@@ -1,157 +1,132 @@
-import * as React from "react";
-import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import MuiDrawer from "@mui/material/Drawer";
-import MuiAppBar from "@mui/material/AppBar";
+import Drawer from "@mui/material/Drawer";
+import AppBar from "@mui/material/AppBar";
+import CssBaseline from "@mui/material/CssBaseline";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import icono from "../../assets/Images/icono2.png";
-import { Avatar, Button, Grid, Icon, Tooltip } from "@mui/material";
-import NavListDrawer from "./NavList";
+import MenuDrawer from "../Drawers/MenuDrawer";
+import {
+  Button,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
+import { Inbox, Mail, Menu } from "@mui/icons-material";
+import { useState } from "react";
 import { Links } from "../../routes/Links";
-import { useSelector } from "react-redux";
-import Image from "mui-image";
-import ImageAvatar from '../../assets/Images/Icono App.png'
+import { useAuthStore } from "../../hooks";
 import AvatarCustom from "../ui/AvatarCustom";
 
 const drawerWidth = 240;
+const heigthToolbar = 100;
 
+export const Navbar = (props) => {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const { user } = useAuthStore();
 
+  const toggleDrawer = (open) => (event) => {
+    if (
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+    setDrawerOpen(open);
+  };
+  const handleButtonClick = () => {
+    setDrawerOpen(!drawerOpen);
+  };
 
-const openedMixin = (theme) => ({
-  width: drawerWidth,
-  transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
-  overflowX: "hidden",
-});
-
-const closedMixin = (theme) => ({
-  transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  overflowX: "hidden",
-  width: `calc(${theme.spacing(7)} + 1px)`,
-  [theme.breakpoints.up("sm")]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
-  },
-});
-
-const DrawerHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  padding: theme.spacing(0, 2),
-  ...theme.mixins.toolbar,
-}));
-
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(["width", "margin"], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(["width", "margin"], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}));
-
-const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
-  width: drawerWidth,
-  flexShrink: 0,
-  whiteSpace: "nowrap",
-  boxSizing: "border-box",
-  ...(open && {
-    ...openedMixin(theme),
-    "& .MuiDrawer-paper": openedMixin(theme),
-  }),
-  ...(!open && {
-    ...closedMixin(theme),
-    "& .MuiDrawer-paper": closedMixin(theme),
-  }),
-}));
-
-export const Navbar = () => {
-  const {user} = useSelector(
-    (state) => state.auth
+  console.log(user);
+  const list = () => (
+    <Box
+      sx={{ width: drawerWidth, mt: "60px" }}
+      role="presentation"
+      onClick={toggleDrawer(false)}
+      onKeyDown={toggleDrawer(false)}
+    >
+      <List component={"nav"}>
+        {Links?.map(({ title, path, Icon }, index) => {
+          return (
+            <ListItemButton
+              key={index}
+              onClick={() =>
+                navigate(path, {
+                  replace: true,
+                })
+              }
+            >
+              <ListItemIcon>{Icon}</ListItemIcon>
+              <ListItemText primary={title} />
+            </ListItemButton>
+          );
+        })}
+      </List>
+    </Box>
   );
-
-  const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
-
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
 
   return (
     <Box sx={{ display: "flex" }}>
-      <AppBar sx={{backgroundColor:'white'}} position="fixed" open={open}>
-        <Toolbar style={{justifyContent:'space-between'}} >
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        sx={{
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          bgcolor: "primary.main",
+        }}
+      >
+        <Toolbar
+          sx={{
+            display: "flex",
+            marginX: "5%",
+            justifyContent: "space-between",
+          }}
+        >
           <IconButton
-            color="black"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{
-              marginRight: 5,
-              ...(open && { display: "none" }),
-            }}
+            sx={{ display: { xs: "flex", md: "none" }, color: "primary.contrastText" }}
+            onClick={handleButtonClick}
           >
-            <MenuIcon />
+            <Menu/>
           </IconButton>
-          <Grid container display={'flex'} direction={"row"} >
-            
-          <AvatarCustom ProfileImage={user.profile_image}/>
-          
-          </Grid>
-          
+          <Typography
+            variant="h6"
+            fontSize={{ xs: "20px", sm: "30px" }}
+            noWrap
+            component="div"
+          >
+            {user.fullname}
+          </Typography>
+          <AvatarCustom ProfileImage={user.profile_image} />
         </Toolbar>
       </AppBar>
       <Drawer
-        PaperProps={{
-          sx: {
-            backgroundColor: "#0E2E73",
-          },
-        }}
         variant="permanent"
-        open={open}
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          [`& .MuiDrawer-paper`]: {
+            width: drawerWidth,
+            boxSizing: "border-box",
+            bgcolor: "primary.main",
+            color: "primary.contrastText",
+          },
+          display: { xs: "none", sm: "none", md: "flex" },
+        }}
       >
-        <DrawerHeader>
-          <Tooltip title="Cerrar">
-          <IconButton onClick={handleDrawerClose} >
-            <ChevronLeftIcon color="secondary" />
-            {/* <Image width="50px" src={icono} /> */}
-          </IconButton>
-          </Tooltip>
-          <Grid direction={'column'} >
-          <Typography variant="body1" color="white">{user.type_user?.name}</Typography>
-          </Grid>
-
-        </DrawerHeader>
-        <Divider />
-        <NavListDrawer navArrayLinks={Links} />
+        <Toolbar />
+        <MenuDrawer />
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <DrawerHeader />
+
+      <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
+        {list()}
+      </Drawer>
+      <Box component="main" sx={{ flexGrow: 1, p: 5 }}>
+        <Toolbar />
+        {props.children}
       </Box>
     </Box>
   );

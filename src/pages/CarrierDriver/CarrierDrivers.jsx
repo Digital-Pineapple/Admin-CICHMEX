@@ -4,7 +4,7 @@ import {
     GridActionsCellItem,
   } from "@mui/x-data-grid";
   import { useEffect } from "react";
-  import { Button, Skeleton, } from "@mui/material";
+  import { Button, Grid, Skeleton, Typography, } from "@mui/material";
   import { useTypeUser } from "../../hooks/useTypeUser";
   import { useAuthStore } from "../../hooks";
 import { useUsers } from "../../hooks/useUsers";
@@ -27,11 +27,26 @@ console.log(value);
 
     return (
       <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-        <h1>Transportistas</h1>
+        <Grid
+        item
+        marginTop={{ xs: "-30px" }}
+        xs={12}
+        minHeight={"100px"}
+        className="Titles"
+      >
+        <Typography
+          textAlign={"center"}
+          variant="h1"
+          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
+        >
+          Transportistas
+        </Typography>
+      </Grid>
         <Button
-            variant="contained"
-            disableElevation
-            sx={{ color: "primary", my: 5, p: 2, borderRadius: 5 }}
+             variant="contained"
+             disableElevation
+             color="secondary"
+             sx={{ my: 5, p: 2, borderRadius: 5 }}
             onClick={()=>navigate('/auth/AltaTransportista')}
           >
             Registrar nuevo transportista
