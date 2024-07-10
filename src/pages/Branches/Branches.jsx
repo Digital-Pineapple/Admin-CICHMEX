@@ -11,7 +11,7 @@ export const Branches = () => {
   }, []);
 
   return (
-    <Grid container style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
+    <Grid container >
       <Grid
         item
         marginTop={{ xs: "-30px" }}

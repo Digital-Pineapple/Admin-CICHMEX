@@ -17,8 +17,7 @@ import { useSelector, useStore } from "react-redux";
 import { useServices } from "../../hooks/useServices";
 import MuiPagination from "@mui/material/Pagination";
 import { Download, Edit } from "@mui/icons-material";
-import Title from "antd/es/typography/Title";
-import WarningAlert from "../../components/ui/WarningAlert";
+
 import { useNavigate, useParams } from "react-router-dom";
 import { redirectPages } from '../../helpers';
 import { Button, ButtonGroup, Modal, Box,  Typography, TextField, InputAdornment } from "@mui/material";
@@ -184,7 +183,6 @@ const StockProductsSH = () => {
 
   return (
     <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-      <Title>Productos en el almacen: {StoreHouse?.name} </Title>
       <Button
           variant="contained"
           disableElevation
@@ -228,10 +226,7 @@ const StockProductsSH = () => {
         
               if (params.row.stock === 0) {
                 actions.push(
-                  <WarningAlert
-                    title="¿Estás seguro de que deseas eliminar el producto?"
-                    callbackToDeleteItem={() => console.log(`Eliminar ID: ${params.row._id}`)}
-                  />
+                
                 );
               }
         

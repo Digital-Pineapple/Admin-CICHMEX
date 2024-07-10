@@ -125,7 +125,7 @@ const Categories = () => {
   }
 
   return (
-    <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
+    <div>
        <Grid
         item
         marginTop={{ xs: "-30px" }}

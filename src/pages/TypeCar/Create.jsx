@@ -2,7 +2,7 @@ import Titles from "../../components/ui/Titles";
 import Box from "@mui/material/Box";
 import { useFormik } from "formik";
 import TextField from "@mui/material/TextField";
-import { Grid, Button } from "@mui/material";
+import { Grid, Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useTypeCars } from "../../hooks/UseTypeCars";
 
@@ -33,13 +33,14 @@ const CreateTypeCar = () => {
   });
 
   return (
-    <Box component="form" onSubmit={formik.handleSubmit} marginX={"10%"}>
-      <Titles name={<h2 align="center">Crear tipo de auto</h2>} />
+    <Box component="form" onSubmit={formik.handleSubmit}>
+     <Grid item marginTop={{xs:'-30px'}} xs={12} minHeight={'100px'} className="Titles">   
+      <Typography textAlign={'center'} variant="h1" fontSize={{xs:'20px', sm:'30px', lg:'40px'}} >
+        Crear tipo de Auto
+      </Typography>
+      </Grid>
       <Grid
-        color="#F7BFBF"
-        borderRadius={5}
         mt={3}
-        sx={{ border: 10, p: 5 }}
         container
         spacing={4}
       >
@@ -55,7 +56,7 @@ const CreateTypeCar = () => {
           onChange={formik.handleChange}
         />
       </Grid>
-      <Button type="submit" variant="contained" color="secondary">
+      <Button fullWidth type="submit" variant="contained" color="success">
         Crear
       </Button>
     </Box>

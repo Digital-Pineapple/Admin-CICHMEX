@@ -17,8 +17,7 @@ import { useSelector, useStore } from "react-redux";
 import { useServices } from "../../hooks/useServices";
 import MuiPagination from "@mui/material/Pagination";
 import { Download, Edit } from "@mui/icons-material";
-import Title from "antd/es/typography/Title";
-import WarningAlert from "../../components/ui/WarningAlert";
+
 import { useNavigate, useParams } from "react-router-dom";
 import { redirectPages } from '../../helpers';
 import { Button, ButtonGroup, Modal, Box, Typography, TextField } from "@mui/material";
@@ -164,7 +163,7 @@ createStockProduct(id,{stock:quantity, product_id:values._id} )
 
   return (
     <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-      <Title>Productos en el alamcen: {products?.name} </Title>
+     
       <Button onClick={()=>Out()} variant="contained" color="primary">
         regresar
       </Button>

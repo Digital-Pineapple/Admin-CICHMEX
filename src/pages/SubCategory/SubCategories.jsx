@@ -121,7 +121,7 @@ const SubCategories = () => {
   }
 
   return (
-    <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
+    <div >
        <Grid
         item
         marginTop={{ xs: "-30px" }}
@@ -137,19 +137,10 @@ const SubCategories = () => {
           Subcategorías
         </Typography>
       </Grid>
-      <Button
-        variant="contained"
-        disableElevation
-        sx={{ my: 5, p: 2, borderRadius: 5 }}
-        color="secondary"
-        onClick={createSubCategory}
-      >
-        Registrar nueva Subcategoría
-      </Button>
-     
+
 
       <DataGrid
-        sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
+        sx={{ marginTop:5, fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
           {
             field: "name",

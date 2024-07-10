@@ -18,8 +18,7 @@ import { useSelector } from "react-redux";
 import MuiPagination from "@mui/material/Pagination";
 import { Button } from "@mui/material";
 import { Download, Edit } from "@mui/icons-material";
-import Title from "antd/es/typography/Title";
-import WarningAlert from "../../components/ui/WarningAlert";
+
 import { useNavigate } from "react-router-dom";
 import { redirectPages } from '../../helpers';
 import { useCommissions } from "../../hooks/useCommissions";
@@ -128,7 +127,7 @@ const Commissions = () => {
 
   return (
     <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-      <Title>Descuentos</Title>
+      
       <Button
           variant="contained"
           disableElevation
@@ -172,10 +171,7 @@ const Commissions = () => {
             sortable: false,
             type: "actions",
             getActions: (params) => [
-              <WarningAlert
-                title="¿Estas seguro que deseas eliminar la comisión?"
-                callbackToDeleteItem={() => deleteCommission(params.row._id)}
-              />,
+        
               <GridActionsCellItem icon={<Edit />} onClick={()=>redirectPages(navigate,(params.row._id))}  label="Editar comisión" showInMenu />,
                              
             ],

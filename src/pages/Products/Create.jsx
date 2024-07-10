@@ -1,5 +1,4 @@
 import { replace, useFormik } from "formik";
-import TextField from "@mui/material/TextField";
 import {
   Grid,
   Badge,
@@ -14,6 +13,7 @@ import {
   FormHelperText,
   Typography,
   InputAdornment,
+  TextField,
   
 } from "@mui/material";
 import { useProducts } from "../../hooks/useProducts";
@@ -74,7 +74,7 @@ const CreateProduct = () => {
   
 
   return (
-    <Grid component="form" gap={2} container onSubmit={formik.handleSubmit} paddingLeft={{xs:'75px'}} paddingRight={'10px'} boxSizing={'border-box'} >
+    <Grid component="form" gap={2} container onSubmit={formik.handleSubmit} >
       <Grid item marginTop={{xs:'-30px'}} xs={12} minHeight={'100px'} className="Titles">   
       <Typography textAlign={'center'} variant="h1" fontSize={{xs:'20px', sm:'30px', lg:'40px'}} >
         Registar nuevo producto

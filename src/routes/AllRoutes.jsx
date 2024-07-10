@@ -62,12 +62,12 @@ export const AllRoutes = [
 
   { type: 1, path: '/servicios', element: <Services/>},
   { type: 1, path: '/servicios/:id', element: <EditServices/>},
-  { type: 1, path: '/createService', element: <CreateServices/>},
+  { type: 1, path: '/crearServicio', element: <CreateServices/>},
   
 
 
-  { type: 1, path: '/typeCar', element: <TypeCar/>},
-  { type: 1, path: '/createTypeCar', element: <CreateTypeCar/>},
+  { type: 1, path: '/Tipo-de-Auto', element: <TypeCar/>},
+  { type: 1, path: '/crear-tipo-de-auto', element: <CreateTypeCar/>},
   { type: 1, path: '/typeCar/:id', element: <EditTypeCar/>},
   
   { type: 1, path: '/Categorias', element: <Categories/>},
@@ -80,8 +80,6 @@ export const AllRoutes = [
 
   { type: 1, path: '/Tipos-Usuario', element: <TypeUser/>},
   { type: 1, path: '/crear-tipo-usuario', element: <CreateTypeUser/>},
-  { type: 1, path: '/SubCategorias/:id', element: <EditSubCategory/>},
-
   { type: 1, path: '/Comisiones', element: <Commissions/>},
   { type: 1, path: '/CrearComisiones', element: <CreateCommission/>},
   { type: 1, path: '/Comisiones/:id', element: <EditCommission/>},

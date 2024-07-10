@@ -18,13 +18,10 @@ import { useSelector } from "react-redux";
 import { useServices } from "../../hooks/useServices";
 import MuiPagination from "@mui/material/Pagination";
 import { Download, Edit } from "@mui/icons-material";
-import Title from "antd/es/typography/Title";
-import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
 import { redirectPages } from '../../helpers';
 import { Button, Grid, Typography } from "@mui/material";
 import { Workbook } from "exceljs";
-import AlertDelete from "../../components/ui/AlertDelete";
 import DeleteAlert from "../../components/ui/DeleteAlert";
 import EditButton from "../../components/Buttons/EditButton";
 
@@ -73,10 +70,6 @@ const Services = () => {
     id: _id.toString(),
     ...service,
   }));
-
-  const createService = () => {
-    navigate('/auth/createService')
-  }
   
   const exportToExcel = () => {
     const workbook = new Workbook();
@@ -131,7 +124,7 @@ const Services = () => {
 
 
   return (
-    <Grid container style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
+    <Grid container>
        <Grid
         item
         marginTop={{ xs: "-30px" }}
@@ -147,33 +140,15 @@ const Services = () => {
           Servicios Globales
         </Typography>
       </Grid>
-      <Grid item xs={12}>
-        <Button
-          variant="contained"
-          disableElevation
-          sx={{  my: 5, p: 2, borderRadius: 5 }}
-          onClick={createService}
-          color="secondary"
-        >
-          Registrar nuevo servicio
-        </Button>
-      </Grid>
       
       <DataGrid
-        sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
+        sx={{ marginTop:5, fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
-          // {
-          //   field: "_id",
-          //   hideable: false,
-          //   headerName: "Id",
-          //   flex: 1,
-          //   sortable: "false",
-          // },
           {
             field: "name",
             hideable: false,
             headerName: "Nombre del servicio",
-            flex: 2,
+            flex: 1,
             sortable: false,
           },
           {

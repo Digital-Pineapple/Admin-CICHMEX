@@ -7,11 +7,11 @@ const Create = () => {
   const { control, handleSubmit } = useForm({ defaultValues: { name: "" } });
   const {createTypeUser} = useTypeUser()
   const createTU = (values) => {
-    addCarrier(values);
+    createTypeUser(values);
   };
 
   return (
-    <Grid container display={'flex'} flexDirection={'column'} spacing={2} padding={2} justifyContent={'center'} marginX={"10%"}>
+    <Grid container display={'flex'}>
     <Grid
         item
         marginTop={{ xs: "-30px" }}
@@ -31,9 +31,10 @@ const Create = () => {
         onSubmit={handleSubmit(createTU)}
         component={"form"}
         item
+        xs={12}
+        mt={5}
         display={'flex'}
         flexDirection={'column'}
-        maxWidth={{xs:'250px', md:'500px'}}
 
       >
         <Controller

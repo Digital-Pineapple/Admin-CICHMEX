@@ -8,6 +8,7 @@ import Divider from "@mui/material/Divider";
 import MenuDrawer from "../Drawers/MenuDrawer";
 import {
   Button,
+  Collapse,
   IconButton,
   List,
   ListItem,
@@ -15,8 +16,8 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import { Inbox, Mail, Menu } from "@mui/icons-material";
-import { useState } from "react";
+import { ExpandLess, ExpandMore, Inbox, Mail, Menu } from "@mui/icons-material";
+import { Fragment, useState } from "react";
 import { Links } from "../../routes/Links";
 import { useAuthStore } from "../../hooks";
 import AvatarCustom from "../ui/AvatarCustom";
@@ -27,6 +28,15 @@ const heigthToolbar = 100;
 export const Navbar = (props) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { user } = useAuthStore();
+  const { navigate } = useAuthStore();
+  const [open, setOpen] = useState({});
+
+  const handleClick = (title) => {
+    setOpen((prevOpen) => ({
+      ...prevOpen,
+      [title]: !prevOpen[title],
+    }));
+  };
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -40,8 +50,6 @@ export const Navbar = (props) => {
   const handleButtonClick = () => {
     setDrawerOpen(!drawerOpen);
   };
-
-  console.log(user);
   const list = () => (
     <Box
       sx={{ width: drawerWidth, mt: "60px" }}
@@ -49,22 +57,48 @@ export const Navbar = (props) => {
       onClick={toggleDrawer(false)}
       onKeyDown={toggleDrawer(false)}
     >
-      <List component={"nav"}>
-        {Links?.map(({ title, path, Icon }, index) => {
-          return (
+      <List
+        sx={{ width: '100%', maxWidth: 360 }}
+        component="nav"
+        aria-labelledby="nested-list-subheader"
+      >
+        {Links.map((item, index) => (
+          <Fragment key={index}>
             <ListItemButton
-              key={index}
-              onClick={() =>
-                navigate(path, {
-                  replace: true,
-                })
-              }
+              onClick={() => {
+                if (item.subRoutes) {
+                  handleClick(item.title);
+                } else {
+                  navigate(item.pathMain || item.path, { replace: true });
+                }
+              }}
             >
-              <ListItemIcon>{Icon}</ListItemIcon>
-              <ListItemText primary={title} />
+              <ListItemIcon>
+                {item.Icon}
+              </ListItemIcon>
+              <ListItemText primary={item.title} />
+              {item.subRoutes ? (open[item.title] ? <ExpandLess /> : <ExpandMore />) : null}
             </ListItemButton>
-          );
-        })}
+            {item.subRoutes && (
+              <Collapse in={open[item.title]} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  {item.subRoutes.map((subItem, subIndex) => (
+                    <ListItemButton
+                      key={subIndex}
+                      sx={{ pl: 4 }}
+                      onClick={() => navigate(subItem.path, { replace: true })}
+                    >
+                      <ListItemIcon>
+                        {subItem.Icon}
+                      </ListItemIcon>
+                      <ListItemText primary={subItem.title} />
+                    </ListItemButton>
+                  ))}
+                </List>
+              </Collapse>
+            )}
+          </Fragment>
+        ))}
       </List>
     </Box>
   );
@@ -76,7 +110,8 @@ export const Navbar = (props) => {
         position="fixed"
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          bgcolor: "primary.main",
+          bgcolor: "primary.contrastText",
+          color:"primary.main"
         }}
       >
         <Toolbar
@@ -87,7 +122,7 @@ export const Navbar = (props) => {
           }}
         >
           <IconButton
-            sx={{ display: { xs: "flex", md: "none" }, color: "primary.contrastText" }}
+            sx={{ display: { xs: "flex", md: "none" }, color: "primary.main" }}
             onClick={handleButtonClick}
           >
             <Menu/>

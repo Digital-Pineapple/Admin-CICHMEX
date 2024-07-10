@@ -11,84 +11,178 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import MuseumIcon from '@mui/icons-material/Museum';
 import PeopleIcon from '@mui/icons-material/People';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import { Home } from "@mui/icons-material";
+import { Add, Grading, Home, Receipt } from "@mui/icons-material";
 
 export const Links = [
   {
     title : "Inicio",
-    path : "/",
-    Icon : <Home/>
+    Icon : <Home/>,
+    pathMain:'/'
+  },
+  {
+    title: "Categorías",
+    Icon: <CategoryIcon />,
+    subRoutes:[
+      {
+        title:'Todos las Subcategorías',
+        path:'/auth/SubCategorias',
+        Icon: <Grading/>
+      },
+      {
+        title:'Crear Subcategoría',
+        path:'/auth/CrearSubCategoria',
+        Icon: <Add/>
+      }
+    ]
+  },
+  {
+    title : "Membresias",
+    Icon : <CardMembershipIcon/>,
+    subRoutes:[
+      {
+        title:'Todos las Membresías',
+        path:'/auth/Membresias',
+        Icon: <Grading/>
+      },
+      {
+        title:'Crear Membresia',
+        path:'/auth/CrearMembresia',
+        Icon: <Add/>
+      }
+    ]
 
   },
   {
-    title : "Almacen",
-    path : "/auth/MiAlmacen",
-    Icon : <MuseumIcon/>
+    title : "Productos",
+    Icon : <Receipt/>,
+    subRoutes:[
+      {
+        title:'Todos los productos',
+        path:'/auth/Productos',
+        Icon: <Grading/>
+      },
+      {
+        title:'Crear Producto',
+        path:'/auth/CrearProducto',
+        Icon: <Add/>
+      }
+    ]
+
 
   },
   {
     title : "Puntos de entrega",
-    path : "/auth/Puntos-de-entrega",
-    Icon : <StoreIcon/>
+    Icon : <StoreIcon/>,
+    subRoutes:[
+      {
+        title:'Todos los puntos de entrega',
+        path:'/auth/Puntos-de-entrega',
+        Icon: <Grading/>
+      },
+      {
+        title:'Pendientes por activar',
+        path:'/auth/Puntos-de-entrega/pending',
+        Icon: <Add/>
+      }
+    ]
+
 
   },
+  {
+    title: "Servicios Globales",
+    Icon: <CleaningServicesIcon />,
+    subRoutes:[
+      {
+        title:'Todos los servicios',
+        path:'/auth/servicios',
+        Icon: <Grading/>
+      },
+      {
+        title:'Crear servicio global',
+        path:'/auth/crearServicio',
+        Icon: <Add/>
+      }
+    ]
+  },
+  {
+    title: "Sub-Categorias",
+    Icon: <KeyboardTabIcon />,
+    subRoutes:[
+      {
+        title:'Todos las Subcategorias',
+        path:'/auth/SubCategorias',
+        Icon: <Grading/>
+      },
+      {
+        title:'Crear subcategoría',
+        path:'/auth/CrearSubCategoria',
+        Icon: <Add/>
+      }
+    ]
+  },
+ 
+  {
+    title : "Transportistas",
+    Icon : <LocalShippingIcon/>,
+    subRoutes:[
+      {
+        title:'Todos los Transportistas',
+        path:'/auth/Transportistas',
+        Icon: <Grading/>
+      },
+      {
+        title:'Registro de transportista',
+        path:'/auth/AltaTransportista',
+        Icon: <Add/>
+      }
+    ]
+
+  },
+  {
+    title: "Tipo de automovil",
+    Icon: <DriveEtaIcon />,
+    subRoutes:[
+      {
+        title:'Todos los tipos de auto',
+        path:'/auth/Tipo-de-Auto',
+        Icon: <Grading/>
+      },
+      {
+        title:'Crear tipo de Auto',
+        path:'/auth/crear-tipo-de-auto',
+        Icon: <Add/>
+      }
+    ]
+  },
+  {
+    title : "Tipos de usuario",
+    Icon : <PeopleIcon/>,
+    subRoutes:[
+      {
+        title:'Todos los tipos de usuario',
+        path:'/auth/Tipos-Usuario',
+        Icon: <Grading/>
+      },
+      {
+        title:'Crear tipo de usuario',
+        path:'/auth/crear-tipo-usuario',
+        Icon: <Add/>
+      }
+    ]
+
+  },
+  
+  
   {
     title: "Usuarios",
     path: "/auth/usuarios",
     Icon: <Inbox />,
   },
-  {
-    title: "Servicios",
-    path: "/auth/servicios",
-    Icon: <CleaningServicesIcon />,
-  },
-  {
-    title: "Tipo de automovil",
-    path: "/auth/typeCar",
-    Icon: <DriveEtaIcon />,
-  },
-  {
-    title: "Categorías",
-    path: "/auth/Categorias",
-    Icon: <CategoryIcon />,
-  },
-  {
-    title: "Sub-Categorias",
-    path: "/auth/SubCategorias",
-    Icon: <KeyboardTabIcon />,
-  },
-  {
-    title : "Membresias",
-    path : "/auth/Membresias",
-    Icon : <CardMembershipIcon/>
-
-  },
-  {
-    title : "Tipos de usuario",
-    path : "/auth/Tipos-Usuario",
-    Icon : <PeopleIcon/>
-
-  },
-  {
-    title : "Transportistas",
-    path : "/auth/Transportistas",
-    Icon : <LocalShippingIcon/>
-
-  },
-  // {
-  //   title : "Productos",
-  //   path : "/auth/Productos",
-  //   Icon : <StorefrontIcon/>
-
-  // },
-  // {
-  //   title : "Almacenes",
-  //   path : "/auth/Almacenes",
-  //   Icon : <MuseumIcon/>
-
-  // },
-
+  
+ 
+ 
   
 
- 
+
+
 ];

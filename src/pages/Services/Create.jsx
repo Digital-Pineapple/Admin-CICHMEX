@@ -72,7 +72,7 @@ const CreateService = () => {
           variant="h1"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-          Servicios Globales
+         Crear Servicio Global
         </Typography>
       </Grid>
       <Grid

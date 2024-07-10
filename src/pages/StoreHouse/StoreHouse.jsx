@@ -18,8 +18,6 @@ import { useSelector, useStore } from "react-redux";
 import { useServices } from "../../hooks/useServices";
 import MuiPagination from "@mui/material/Pagination";
 import { Download, Edit } from "@mui/icons-material";
-import Title from "antd/es/typography/Title";
-import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
 import { redirectPages } from '../../helpers';
 import { Button } from "@mui/material";
@@ -130,7 +128,6 @@ const StoreHouse = () => {
 
   return (
     <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-      <Title>Mis Almacenes</Title>
       <Button
           variant="contained"
           disableElevation
@@ -170,10 +167,7 @@ const StoreHouse = () => {
             sortable: false,
             type: "actions",
             getActions: (params) => [
-              <WarningAlert
-                title="¿Estas seguro que deseas eliminar el producto?"
-                callbackToDeleteItem={() => deleteStoreHouse(params.row._id)}
-              />,
+            
               <GridActionsCellItem icon={<Edit />} onClick={()=>redirectPages(navigate,(params.row._id))}  label="Editar Productos de almacen" showInMenu />,            
             ],
           },

@@ -1,11 +1,8 @@
-import Titles from "../../components/ui/Titles";
-
 import Box from "@mui/material/Box";
 
 import { useFormik } from "formik";
 import TextField from "@mui/material/TextField";
 import { Grid, TextareaAutosize, Button, FormControl, FormLabel, Select, MenuItem, FormHelperText } from "@mui/material";
-import { Typography } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useServices } from "../../hooks/useServices";
 import { useSubCategories } from "../../hooks/useSubCategories";
@@ -44,7 +41,6 @@ const CreateStoreHouse = () => {
 
   return (
     <Box component="form" onSubmit={formik.handleSubmit} marginX={"10%"}>
-      <Titles name={<h2 align="center">Crear Almacen</h2>} />
       <Grid
         color="#F7BFBF"
         borderRadius={5}

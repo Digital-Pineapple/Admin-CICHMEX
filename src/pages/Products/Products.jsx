@@ -18,15 +18,12 @@ import { useSelector } from "react-redux";
 import { useServices } from "../../hooks/useServices";
 import MuiPagination from "@mui/material/Pagination";
 import { Download, Edit } from "@mui/icons-material";
-import Title from "antd/es/typography/Title";
-import WarningAlert from "../../components/ui/WarningAlert";
 import { useNavigate } from "react-router-dom";
 import { redirectPages } from '../../helpers';
 import { Button, IconButton, Tooltip, Grid, Typography } from "@mui/material";
 import { Workbook } from "exceljs";
 import { useProducts } from "../../hooks/useProducts";
 import { editOneProduct } from "../../store/actions/productsActions";
-import AlertDelete from "../../components/ui/AlertDelete";
 import DeleteAlert from "../../components/ui/DeleteAlert";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 
@@ -63,16 +60,12 @@ function CustomPagination(props) {
 }
 
 const Products = () => {
-  const { loadProducts, products, navigate, deleteProduct, isLoading } = useProducts();
+  const { loadProducts, navigate, deleteProduct, isLoading, rowsProducts } = useProducts();
 
   useEffect(() => {
     loadProducts()
   }, []);
 
-  const rowsWithIds = products.map((item, _id) => ({
-    id: _id.toString(),
-    ...item,
-  }));
 
   const createProduct = () => {
     navigate('/auth/CrearProducto')
@@ -96,7 +89,7 @@ const Products = () => {
     });
 
     // Agregar datos de las filas
-    rowsWithIds.forEach((row) => {
+    rowsProducts.forEach((row) => {
       worksheet.addRow([row._id, row.name, row.description, row.price, row.size, row.tag]);
     });
 
@@ -134,32 +127,16 @@ const Products = () => {
     );
   }
 
-
   return (
-    <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
+    <div>
       <Grid item marginTop={{xs:'-30px'}} xs={12} minHeight={'100px'} className="Titles">   
       <Typography textAlign={'center'} variant="h1" fontSize={{xs:'20px', sm:'30px', lg:'40px'}} >
         Productos
       </Typography>
       </Grid>
-      <Button
-          variant="contained"
-          disableElevation
-          sx={{ color: "primary", my: 5, p: 2, borderRadius: 3 }}
-          onClick={createProduct}
-        >
-          Registrar nuevo producto
-        </Button>
       <DataGrid
-        sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
+        sx={{ marginTop:5, fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
-          // {
-          //   field: "_id",
-          //   hideable: false,
-          //   headerName: "Id",
-          //   flex: 1,
-          //   sortable: "false",
-          // },
           {
             field: "tag",
             headerName: "Código",
@@ -180,20 +157,14 @@ const Products = () => {
             align: "center",
           },
           {
-            field: "description",
-            headerName: "Descripción",
+            field: "Category",
+            headerName: "Categoria",
             flex: 1,
             align: "center",
           },
           {
-            field: "size",
-            headerName: "Tamaño",
-            flex: 1,
-            align: "center",
-          },
-          {
-            field: "weight",
-            headerName: "Peso",
+            field: "SubCategory",
+            headerName: "Subcategoria",
             flex: 1,
             align: "center",
           },
@@ -221,7 +192,7 @@ const Products = () => {
           },
         ]}
         
-        rows={rowsWithIds}
+        rows={rowsProducts}
         pagination
         slots={{
           pagination: CustomPagination,

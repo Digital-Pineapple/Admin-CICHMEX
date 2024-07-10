@@ -139,7 +139,7 @@ export default function Memberships() {
   }
 
   return (
-    <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
+    <div>
      <Grid
         item
         marginTop={{ xs: "-30px" }}
@@ -155,21 +155,9 @@ export default function Memberships() {
           Membresías
         </Typography>
       </Grid>
-      <Grid container my={2} >
-      <Button
-          variant="contained"
-          disableElevation
-          color="secondary"
-          sx={{  my: 10, p: 2, borderRadius: 5 }}
-          onClick={()=>navigate('/auth/CrearMembresia', {replace:true})}
-          
-        >
-          Registrar nueva membresía
-        </Button>
-        
-      </Grid>
+    
       <DataGrid
-        sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
+        sx={{ marginTop:5, fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
 
           {

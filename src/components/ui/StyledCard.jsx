@@ -6,7 +6,6 @@ import CardActions from "@mui/material/CardActions";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { Delete } from "@mui/icons-material";
-import WarningAlert from "./WarningAlert";
 import { useState } from "react";
 import {
   Dialog,

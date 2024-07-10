@@ -3,6 +3,7 @@ import { LoadOneProduct, addOneProduct, deleteOneProduct, editOneProduct, startL
 import { useNavigate } from "react-router-dom";
 import { cleanProductDetail } from "../store/reducer/productsReducer";
 import { useForm } from "react-hook-form";
+import { Category } from "@mui/icons-material";
 
 export const useProducts = () => {
 
@@ -40,5 +41,12 @@ export const useProducts = () => {
         ...item,
       }));
 
-    return { loadProducts,rowsOutOfStockProducts,stockProducts,loadNoStockProducts,  loadProduct, createProduct, editProduct, deleteProduct,rowsStockProducts, product, products, navigate, isLoading, cleanProductD, loadStockProducts }
+      const rowsProducts = products?.map((item, _id) => ({
+        id: _id.toString(),
+        Category: item.category.name,
+        SubCategory: item.subCategory.name,
+        ...item,
+      }));
+
+    return { loadProducts,rowsOutOfStockProducts,stockProducts, rowsProducts,loadNoStockProducts,  loadProduct, createProduct, editProduct, deleteProduct,rowsStockProducts, product, products, navigate, isLoading, cleanProductD, loadStockProducts }
 }

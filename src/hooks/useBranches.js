@@ -21,7 +21,7 @@ export const useBranches = () => {
         let ok = num.length;
         return ok
     }
-    const pendingBranches = (branches) => {
+    const pendingBranches = () => {
         let num = branches.filter((item) => item.activated === false);
         return num
     }
@@ -36,12 +36,16 @@ export const useBranches = () => {
         id: _id.toString(),
         ...i,
       }));
+      const rowsPendingBranches = pendingBranches()?.map((i, _id) => ({
+        id: _id.toString(),
+        ...i,
+      }))
 
       const deleteOneBranch = async (id) => await dispatch(startDeleteBranch(id));
 
 
 
-    return { branch, branches, loadBranches, pendingToVerify, activeBranches, navigate, pendingBranches, loadOneBranch, verifyOneBranch, rowsBranches, deleteOneBranch }
+    return { branch, branches,rowsPendingBranches,  loadBranches, pendingToVerify, activeBranches, navigate, pendingBranches, loadOneBranch, verifyOneBranch, rowsBranches, deleteOneBranch }
 
 
 }

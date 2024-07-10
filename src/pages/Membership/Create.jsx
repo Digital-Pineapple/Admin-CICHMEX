@@ -129,14 +129,6 @@ const Create = () => {
       container
       component="form"
       onSubmit={formik.handleSubmit}
-      style={{
-        marginLeft: "10%",
-        height: "70%",
-        width: "85%",
-        display: "flex",
-        justifyContent: "center",
-      }}
-      sx={{ padding: { xs: 2 } }}
     >
       <Grid item marginTop={{ xs: "-30px" }} xs={12} minHeight={"100px"} className="Titles">
         <Typography textAlign={"center"} variant="h1" fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}>
