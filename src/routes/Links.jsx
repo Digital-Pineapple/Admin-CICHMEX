@@ -11,7 +11,7 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import MuseumIcon from '@mui/icons-material/Museum';
 import PeopleIcon from '@mui/icons-material/People';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import { Add, Grading, Home, Receipt } from "@mui/icons-material";
+import { Add, CurrencyExchange, Grading, Home, Receipt } from "@mui/icons-material";
 
 export const Links = [
   {
@@ -100,6 +100,22 @@ export const Links = [
       {
         title:'Crear servicio global',
         path:'/auth/crearServicio',
+        Icon: <Add/>
+      }
+    ]
+  },
+  {
+    title: "Costos de envío",
+    Icon: <CurrencyExchange />,
+    subRoutes:[
+      {
+        title:'Todos los costos de envío',
+        path:'/auth/Costos-de-envio',
+        Icon: <Grading/>
+      },
+      {
+        title:'Crear costo de envío',
+        path:'/auth/Crear-costo-de-envio',
         Icon: <Add/>
       }
     ]

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { instanceApi } from "../apis/configAxios";
 import Cookies from "js-cookie";
 import userApi from "../apis/userApi";
+import { headerConfig } from "../store/actions/headers";
 
 export const useAuthStore = () => {
   const { status, user, errorMessage, logged} = useSelector(
@@ -35,12 +36,7 @@ export const useAuthStore = () => {
 
   const RevalidateToken = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const { data } = await instanceApi.get("/auth/user", {
-        headers: {
-          Token: token,
-        },
-      });
+      const { data } = await instanceApi.get("/auth/user", headerConfig);
       
       dispatch(onLogin(data.data.user))
     } catch (error) {

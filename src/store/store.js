@@ -18,6 +18,8 @@ import productsReducer from "./reducer/productsReducer";
 import storeHouseReducer from "./reducer/storeHouseReducer";
 import productOrdersReducer from "./reducer/productOrdersReducer";
 import carrierDriverReducer from "./reducer/carrierDriverReducer";
+import shippingCostReducer from "./reducer/shippingCostReducer";
+
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -37,8 +39,8 @@ const rootReducer = combineReducers({
   memberships: membershipReducer,
   products : productsReducer,
   storeHouse : storeHouseReducer,
-  carrierDriver : carrierDriverReducer
-
+  carrierDriver : carrierDriverReducer,
+  shippingCost: shippingCostReducer
 });
 
 export const store = configureStore({

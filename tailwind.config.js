@@ -9,6 +9,7 @@ export default {
     // Path to Tremor module
     "./node_modules/@tremor/**/*.{js,ts,jsx,tsx}",
   ],
+  // prefix:'tw-',
   theme: {
     transparent: 'transparent',
     current: 'currentColor',
@@ -132,4 +133,5 @@ export default {
     },
   ],
   plugins: [require('@headlessui/tailwindcss'), require('@tailwindcss/forms')],
+  
 }

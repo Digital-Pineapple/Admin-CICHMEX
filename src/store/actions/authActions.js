@@ -23,7 +23,6 @@ export const startLogin = ({ email, password }) => async (dispatch) => {
       success: true,
     };
   } catch (error) {
-    console.log(error);
     if (axios.isAxiosError(error)) {
       enqueueSnackbar(
         "Error en el inicio de sesión" && error.response.data.message,

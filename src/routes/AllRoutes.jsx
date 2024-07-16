@@ -44,6 +44,9 @@ import TypeUser from '../pages/TypeUser/TypeUser'
 import CreateTypeUser from '../pages/TypeUser/Create'
 import CarrierDrivers from '../pages/CarrierDriver/CarrierDrivers'
 import CreateCarrier from '../pages/CarrierDriver/Create'
+import ShippingCost from '../pages/ShippingCost/ShippingCost'
+import EditShippingCost from '../pages/ShippingCost/Edit'
+import CrateShippingCost from '../pages/ShippingCost/Create'
 
 
 
@@ -95,6 +98,10 @@ export const AllRoutes = [
   { type: 1, path: '/Productos', element: <Products/> },
   { type: 1, path: '/CrearProducto', element: <CreateProduct/>},
   { type: 1, path: '/Productos/:id', element: <EditProduct/>},
+
+  { type: 1, path: '/Costos-de-envio', element: <ShippingCost/> },
+  { type: 1, path: '/Crear-costo-de-envio', element: <CrateShippingCost/>},
+  { type: 1, path: '/Costo-de-envio/:id', element: <EditShippingCost/>},
 
   { type: 1, path: '/Almacenes', element: <StoreHouse/> },
   { type: 1, path: '/CrearAlmacen', element: <CreateStoreHouse/>},

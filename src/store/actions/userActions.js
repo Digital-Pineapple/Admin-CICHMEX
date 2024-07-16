@@ -24,7 +24,7 @@ export const getUsers = () => {
       const { data } = await instanceApi.get("/user", headerConfig);
       dispatch(loadUsers(data.data));
     } catch (error) {
-      enqueueSnackbar(`Error: ${data.data.response?.message}`);
+      enqueueSnackbar(`Error: ${error.response?.data.message}`);
     }
   };
 };

@@ -9,7 +9,6 @@ import { Links } from "../../routes/Links";
 import { Collapse } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import { Add } from "@mui/icons-material";
 
 export default function MenuDrawer() {
   const { navigate } = useAuthStore();
@@ -55,7 +54,7 @@ export default function MenuDrawer() {
                       sx={{ pl: 3 }}
                       onClick={() => navigate(subItem.path, { replace: true })}
                     >
-                      <ListItemIcon sx={{bgcolor:"primary.main"}} >
+                      <ListItemIcon sx={{color:"primary.contrastText"}} >
                         {subItem.Icon}
                       </ListItemIcon>
                       <ListItemText primary={subItem.title} />

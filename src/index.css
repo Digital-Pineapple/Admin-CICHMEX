@@ -1,7 +1,7 @@
     
-    @tailwind base;
+    /* @tailwind base;
     @tailwind components;
-    @tailwind utilities;
+    @tailwind utilities; */
     
 .banner_img{
     animation: movimiento 2.5s linear infinite;
