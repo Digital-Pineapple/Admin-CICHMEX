@@ -23,7 +23,7 @@ export const useProducts = () => {
         dispatch((LoadOneProduct(_id)));
     } 
    
-    const createProduct = async (values, images ) => dispatch(addOneProduct(values, images, navigate))
+    const createProduct = async (values, images ) =>{ dispatch(addOneProduct(values, images, navigate))}
 
     const editProduct = async (id, values, images) => dispatch(editOneProduct(id, values, images, navigate))
 

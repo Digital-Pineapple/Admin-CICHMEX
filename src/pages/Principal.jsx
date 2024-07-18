@@ -111,15 +111,7 @@ const Principal = () => {
             );
           })}
         </Grid>
-        <Grid container marginTop={2} gap={2} >
-           <Grid item xs={8}>
-            <LineChartCustom info={resumeOrders} />
-          </Grid>
-          <Grid item xs={3.8}>
-          <DonutChartCustom info={resumeOrders}/>
-          </Grid>
-         
-        </Grid>
+       
       </Grid>
     </>
   );

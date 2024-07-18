@@ -16,7 +16,7 @@ export  const headerConfigApplication = {
   
   export  const headerConfigFormData = {
     headers: {
-        "Content-type": `/multipart/form-data`,
+        "Content-Type": 'multipart/form-data',
          "Authorization": `Bearer ${localStorage.getItem("token")}`,
     },
   }; 

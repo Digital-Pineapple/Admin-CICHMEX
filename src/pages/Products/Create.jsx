@@ -22,9 +22,10 @@ import FilterIcon from "@mui/icons-material/Filter";
 import { styled } from "@mui/material/styles";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useSubCategories } from "../../hooks/useSubCategories";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useCategories } from "../../hooks/useCategories";
 import { AttachMoney } from "@mui/icons-material";
+import VideoUploadField from "../../components/Forms/VideoUploadField";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -39,6 +40,7 @@ const CreateProduct = () => {
   const { categories, loadCategories } = useCategories();
   const { images, handleImageChange, deleteImage, imagesFiles } =
     useImages();
+  const [video, setVideo] = useState(null)
 
   const formik = useFormik({
     initialValues: {
@@ -53,7 +55,11 @@ const CreateProduct = () => {
     },
     onSubmit: (values) => {
       try {
-        createProduct(values, imagesFiles());
+        const values2 ={
+          ...values,
+          video:video
+        }
+        createProduct(values2, imagesFiles());
   
       } catch (error) {
         return enqueueSnackbar(`Error: ${error.data.response?.message}`, {
@@ -98,6 +104,7 @@ const CreateProduct = () => {
           fullWidth
           id="price"
           name="price"
+          type="number"
           label="Precio del producto"
           variant="outlined"
           value={formik.values.price}
@@ -130,6 +137,7 @@ const CreateProduct = () => {
           id="weight"
           name="weight"
           label="Peso del producto"
+          type="number"
           variant="outlined"
           value={formik.values.weight}
           onChange={formik.handleChange}
@@ -143,10 +151,12 @@ const CreateProduct = () => {
           name="tag"
           label="Código"
           variant="outlined"
+          type="number"
           value={formik.values.tag}
           onChange={formik.handleChange}
         />
      </Grid>
+   
      <Grid item xs={12} sm={6}lg={3} >
          <FormControl fullWidth >
             <FormLabel>Categoría</FormLabel>
@@ -221,6 +231,9 @@ const CreateProduct = () => {
             </label>
           </Grid>
         )}
+         <Grid item xs={12}  > 
+       <VideoUploadField setVideo={setVideo} label={'Subir video'}/>
+     </Grid>
 
         <Typography marginTop={"10px"}> peso max de imagen(500 kb)</Typography>
           {
@@ -296,6 +309,7 @@ const CreateProduct = () => {
               </Grid>
             )
           }
+           
        
       
 <Grid item xs={12} minHeight={'130px'}   >

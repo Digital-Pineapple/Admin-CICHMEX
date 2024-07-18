@@ -108,24 +108,28 @@ export const LoadOneProduct = (_id) => {
 };
 
 export const addOneProduct =
-  ({name,price,description, tag, size, category, subCategory, weight}, images, navigate) => async (dispatch) => {
-   dispatch(startLoading())
+  ({name,price,description, tag, size, category, subCategory, weight, video}, images, navigate) => async (dispatch) => {
+    dispatch(startLoading())
     try {
-      const formData = new FormData()
-      formData.append("name", name)
-      formData.append("price", price)
-      formData.append("description",description)
-      formData.append("tag", tag)
-      formData.append("size", size)
-      formData.append("subCategory", subCategory)
-      formData.append("category", category)
-      formData.append('weight', weight)
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("price", price);
+      formData.append("description", description);
+      formData.append("tag", tag);
+      formData.append("size", size);
+      formData.append("subCategory", subCategory);
+      formData.append("category", category);
+      formData.append("weight", weight);
+      formData.append("video", video);
       for (let i = 0; i < images.length; i++) {
         formData.append("images", images[i]);
       }
+      
       const { data } = await instanceApi.post(
-        `/product`,
-        formData, headerConfigFormData);
+        `/product/create-product/ok`,
+        formData,
+        headerConfigFormData
+      );
       dispatch(onAddNewProduct(data.data));
       enqueueSnackbar("Agregado con éxito", {
         variant: "success",
@@ -159,7 +163,6 @@ export const addOneProduct =
       formData.append('category', category)
       formData.append('subCategory', subCategory)
       formData.append('weight', weight)
-
       for (let i = 0; i < images.length; i++) {
         formData.append("images", images[i]);
       }
