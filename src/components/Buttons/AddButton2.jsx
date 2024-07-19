@@ -45,7 +45,7 @@ const AddButton2 = ({ title, product }) => {
   });
 
   const sendInfo = async (data) => {
-    const num1 = parseInt(data.stock)
+    const num1 = parseInt(data.stock) | 0
     const num2 = parseInt(product.stock)
     const text = `Cantidad :${num2} + ${num1} = ${num1+num2}`
     setopenForm(false)

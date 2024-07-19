@@ -21,10 +21,10 @@ import {
 } from "@mui/material";
 import { Workbook } from "exceljs";
 import { useProducts } from "../../hooks/useProducts";
-import AddButton from "../../components/Buttons/AddButton";
 import { useStoreHouse } from "../../hooks/useStoreHouse";
 import AddButton2 from "../../components/Buttons/AddButton2";
 import { orange } from "@mui/material/colors";
+import { useAuthStore } from "../../hooks";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -58,22 +58,17 @@ function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
-const MyStockProducts = () => {
+const ProductEntries = () => {
   const {
-    loadStockProducts,
-    loadNoStockProducts,
-    rowsStockProducts,
-    navigate,
-    rowsOutOfStockProducts,
+    loadEntriesProducts,
+    rowsEntriesProducts
   } = useProducts();
-  const { createStockProduct } = useStoreHouse();
+  const { user } = useAuthStore();
 
   useEffect(() => {
-    loadStockProducts();
-    loadNoStockProducts();
-  }, []);
+    loadEntriesProducts()
+  }, [user]);
 
-  const rowsWithIds = rowsStockProducts;
   const createProduct = () => {
     navigate("/auth/CrearProducto");
   };
@@ -95,7 +90,7 @@ const MyStockProducts = () => {
     });
 
     // Agregar datos de las filas
-    rowsWithIds.forEach((row) => {
+    rowsEntriesProducts.forEach((row) => {
       worksheet.addRow([
         row._id,
         row.name,
@@ -150,89 +145,10 @@ const MyStockProducts = () => {
           variant="h1"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-          Stock
+          Entradas de producto
         </Typography>
       </Grid>
-      {rowsOutOfStockProducts.length > 0 ? (
-        <Grid item xs={6} lg={5} mr={1}>
-          <Typography
-          bgcolor={orange[900]}
-          variant="h3"
-          color={"#fff"}
-          borderRadius={2}
-          marginY={2}
-          textAlign={"center"}
-          fontSize={"30px"}
-        >
-          Productos sin almacen
-        </Typography>
-          <DataGrid
-            sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
-            columns={[
-              {
-                field: "tag",
-                headerName: "Código",
-                flex: 1,
-                align: "center",
-              },
-              {
-                field: "name",
-                hideable: false,
-                headerName: "Nombre del prodcto",
-                flex: 1,
-                sortable: false,
-              },
-              {
-                field: "price",
-                headerName: "Precio",
-                flex: 1,
-                align: "center",
-              },
-              {
-                field: "Opciones",
-                headerName: "Opciones",
-                align: "center",
-                flex: 1,
-                sortable: false,
-                type: "actions",
-                getActions: (params) => [
-                  <AddButton
-                    title={`Agregar`}
-                    product={params?.row}
-                    text={`¿Quiere agregar al almacen el producto ${params.row.name}?`}
-                  />,
-                ],
-              },
-            ]}
-            rows={rowsOutOfStockProducts}
-            pagination
-            slots={{
-              pagination: CustomPagination,
-              toolbar: CustomToolbar,
-              columnSortedDescendingIcon: SortedDescendingIcon,
-              columnSortedAscendingIcon: SortedAscendingIcon,
-              columnUnsortedIcon: UnsortedIcon,
-            }}
-            disableColumnFilter
-            disableColumnMenu
-            disableColumnSelector
-            disableDensitySelector
-            slotProps={{
-              toolbar: {
-                showQuickFilter: true,
-                quickFilterProps: { debounceMs: 500 },
-              },
-            }}
-            printOptions={{
-              hideFooter: true,
-              hideToolbar: true,
-            }}
-          />
-        </Grid>
-      ) : (
-        ""
-      )}
-      <Grid item xs={12} lg={rowsOutOfStockProducts.length > 0 ? 6 : 12}>
+      <Grid item xs={12} >
         <Typography
           bgcolor={orange[900]}
           variant="h3"
@@ -242,9 +158,8 @@ const MyStockProducts = () => {
           textAlign={"center"}
           fontSize={"30px"}
         >
-          Stock de productos
+          Entradas
         </Typography>
-
         <DataGrid
           sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
           columns={[
@@ -273,29 +188,23 @@ const MyStockProducts = () => {
               flex: 1,
               align: "center",
             },
-            {
-              field: "total",
-              headerName: "Total",
-              flex: 1,
-              align: "center",
-            },
             
-            // {
-            //   field: "Opciones",
-            //   headerName: "Opciones",
-            //   align: "center",
-            //   flex: 1,
-            //   sortable: false,
-            //   type: "actions",
-            //   getActions: (params) => [
-            //     <AddButton2
-            //       title={`Agregar`}
-            //       product={params?.row}
-            //     />,
-            //   ],
-            // },
+            {
+              field: "Opciones",
+              headerName: "Opciones",
+              align: "center",
+              flex: 1,
+              sortable: false,
+              type: "actions",
+              getActions: (params) => [
+                <AddButton2
+                  title={`Agregar`}
+                  product={params?.row}
+                />,
+              ],
+            },
           ]}
-          rows={rowsWithIds}
+          rows={rowsEntriesProducts}
           pagination
           slots={{
             pagination: CustomPagination,
@@ -324,4 +233,5 @@ const MyStockProducts = () => {
   );
 };
 
-export default MyStockProducts;
+
+export default ProductEntries

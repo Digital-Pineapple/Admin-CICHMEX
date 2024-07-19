@@ -14,10 +14,17 @@ export const useTypeUser = () => {
     
     const createTypeUser = async(values)=> await dispatch(startCreateTypeUser(values, navigate))
 
-    const rowsTypeUser = typeUsers?.map((i, _id) => ({
-        id: _id.toString(),
-        ...i,
-      }));
+    const rowsTypeUser = typeUsers?.map((i, _id) => {
+       let row = { id: _id.toString(),
+        _id : i._id,
+        role: i.role,
+        system: i.system,
+      }
+      return row
+    }
+       
+       
+  );
 
     return { loadTypeUsers, typeUsers, rowsTypeUser, navigate, createTypeUser }
 

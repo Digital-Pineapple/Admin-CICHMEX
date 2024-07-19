@@ -6,6 +6,7 @@ export const productsReducer = createSlice({
         products: [],
         stockProducts:[],
         product: {},
+        entries:[],
         isLoading: false,
     },
     reducers: {
@@ -19,6 +20,10 @@ export const productsReducer = createSlice({
             state.product = payload;
             state.isLoading = false;
         },
+        loadProductEntries: (state, { payload }) => {
+          state.entries = payload;
+          state.isLoading = false;
+      },
         onAddNewProduct: (state, { payload }) => {
             state.product = payload;
             state.isLoading = false;
@@ -49,6 +54,6 @@ export const productsReducer = createSlice({
             });
           }}})
 
-export const { deleteProduct,editProduct,loadProduct, loadStockProducts,loadProducts,onAddNewProduct, startLoading, cleanProductDetail, stopLoading } = productsReducer.actions;
+export const { deleteProduct,editProduct,loadProduct, loadStockProducts,loadProducts,onAddNewProduct, startLoading, cleanProductDetail, stopLoading, loadProductEntries } = productsReducer.actions;
 
 export default productsReducer.reducer;

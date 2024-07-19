@@ -94,7 +94,7 @@ const Create = () => {
           fullWidth
           id="name"
           name="name"
-          label="Nombre del servicio"
+          label="Nombre de la Subcategoría"
           variant="outlined"
           value={formik.values.name}
           sx={{ margin: 2 }}

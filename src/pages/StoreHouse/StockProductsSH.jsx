@@ -74,7 +74,7 @@ function CustomPagination(props) {
 }
 
 const StockProductsSH = () => {
-  const { navigate, loadOneStoreHouse, StoreHouseDetail, loadAllStock, AllStock, addStockProduct, removeStockProduct } = useStoreHouse();
+  const { navigate, loadOneStoreHouse, StoreHouseDetail, loadAllStock, rowsStocks, addStockProduct, removeStockProduct } = useStoreHouse();
   const [openAddModal, setOpenAddModal] = useState(false)
   const [openRemoveModal, setOpenRemoveModal] = useState(false)
   const [info, setInfo] = useState('')
@@ -86,13 +86,8 @@ const StockProductsSH = () => {
     loadAllStock(id)
   }, [id]);
 
-  const rowsWithIds = AllStock?.map((item, _id) => ({
-
-    id: _id.toString(),
-    name:item.product_id.name,
-    ...item, 
-  }));
-
+  
+  
   const createStoreHouse = () => {
     navigate(`/auth/agregar-productos/${id}`)
   }
@@ -130,7 +125,7 @@ const StockProductsSH = () => {
     });
 
     // Agregar datos de las filas
-    rowsWithIds.forEach((row) => {
+    rowsStocks.forEach((row) => {
       worksheet.addRow([row._id, row.product_id, row.stock]);
     });
 
@@ -242,7 +237,7 @@ const StockProductsSH = () => {
           },
         ]}
         
-        rows={rowsWithIds}
+        rows={rowsStocks}
         pagination
         slots={{
           pagination: CustomPagination,

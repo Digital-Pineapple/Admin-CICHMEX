@@ -59,7 +59,7 @@ function CustomPagination(props) {
 
 const AddProductsToSH = () => {
   const { loadProducts, products, navigate } = useProducts();
-  const {loadAllStock, AllStock}=useStoreHouse()
+  const {loadAllStock, rowsStocks}=useStoreHouse()
   const [openModal, setOpenModal] = useState(false);
   const {createStockProduct}= useStoreHouse()
 
@@ -74,11 +74,7 @@ const AddProductsToSH = () => {
     
   }, [id]);
 
- 
-  const rowsWithIds = products?.map((item, _id) => ({
-    id: _id.toString(),
-    ...item,
-  }));
+
 
   const style = {
     position: 'absolute',
@@ -159,6 +155,7 @@ createStockProduct(id,{stock:quantity, product_id:values._id} )
       </GridToolbarContainer>
     );
   }
+  console.log(rowsStocks);
 
 
   return (
@@ -171,9 +168,9 @@ createStockProduct(id,{stock:quantity, product_id:values._id} )
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
           {
-            field: "_id",
+            field: "tag",
             hideable: false,
-            headerName: "Id",
+            headerName: "Código",
             flex: 1,
             sortable: "false",
           },
@@ -181,6 +178,13 @@ createStockProduct(id,{stock:quantity, product_id:values._id} )
             field: "name",
             hideable: false,
             headerName: "Nombre del producto",
+            flex: 2,
+            sortable: false,
+          },
+          {
+            field: "stock",
+            hideable: false,
+            headerName: "Existencias",
             flex: 2,
             sortable: false,
           },
@@ -204,7 +208,7 @@ createStockProduct(id,{stock:quantity, product_id:values._id} )
           },
         ]}
         
-        rows={rowsWithIds}
+        rows={rowsStocks}
         pagination
         slots={{
           pagination: CustomPagination,

@@ -47,6 +47,7 @@ import CreateCarrier from '../pages/CarrierDriver/Create'
 import ShippingCost from '../pages/ShippingCost/ShippingCost'
 import EditShippingCost from '../pages/ShippingCost/Edit'
 import CrateShippingCost from '../pages/ShippingCost/Create'
+import ProductEntries from '../pages/MyStoreHouse/ProductEntries'
 
 
 
@@ -110,6 +111,8 @@ export const AllRoutes = [
 
   { type: 1, path: '/MiAlmacen', element: <MyStoreHouse/> },
   { type: 1, path: '/MiAlmacen/stock', element: <MyStockProducts/> },
+  { type: 1, path: '/MiAlmacen/entradas', element: <ProductEntries/> },
+
   { type: 1, path: '/MiAlmacen/product-orders', element: <MyProductOrders/> },
 
   { type: 1, path: '/surtir-orden/:id', element: <FillOrder/> },

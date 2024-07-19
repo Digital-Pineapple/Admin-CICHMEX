@@ -141,19 +141,9 @@ const Categories = () => {
           Categorías
         </Typography>
       </Grid>
-      <Button
-        variant="contained"
-        disableElevation
-        sx={{ my: 5, p: 2, borderRadius: 5 }}
-        color="secondary"
-        onClick={createCategory}
-      >
-        Registrar nuevo Categoría
-      </Button>
-     
 
       <DataGrid
-        sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
+        sx={{ fontSize: "20px", marginTop:2, fontFamily: "BikoBold" }}
         columns={[
           {
             field: "name",

@@ -4,6 +4,7 @@ import {
   deleteProduct,
   editProduct,
   loadProduct,
+  loadProductEntries,
   loadProducts,
   loadStockProducts,
   onAddNewProduct,
@@ -17,6 +18,7 @@ import {
   headerConfigFormData,
 } from "../../apis/headersConfig";
 import Swal from "sweetalert2";
+import { headerConfig } from "./headers";
 
 export const startLoadProducts = () => {
   return async (dispatch) => {
@@ -72,6 +74,26 @@ export const startLoadNonExistProduct = () => {
         headerConfigApplication
       );
       dispatch(loadProducts(data.data));
+    } catch (error) {
+      enqueueSnackbar(
+        `${error.response.data.message}`||'Error al consultar la información',
+        {
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+          variant: "error",
+        }
+      );
+    }
+  };
+};
+
+export const startLoadEntriesProduct = () => {
+  return async (dispatch) => {
+    try {
+      const { data } = await instanceApi.get(
+        `/stock-StoreHouse/product/entries`,
+        headerConfig
+      );
+      dispatch(loadProductEntries(data.data));
     } catch (error) {
       enqueueSnackbar(
         `${error.response.data.message}`||'Error al consultar la información',

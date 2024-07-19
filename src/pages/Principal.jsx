@@ -3,12 +3,6 @@ import {
   Typography,
   Card,
   CardContent,
-  CardActions,
-  Button,
-  Icon,
-  IconButton,
-  CardHeader,
-  Avatar,
   SvgIcon,
 } from "@mui/material";
 import { useAuthStore } from "../hooks";
@@ -18,9 +12,8 @@ import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import { Link } from "react-router-dom";
 import { useProductOrder } from "../hooks/useProductOrder";
 import { useEffect } from "react";
-import {LineChartCustom} from "../components/Charts/LineChartCustom";
-import DonutChartCustom from "../components/Charts/DonutChartCustom";
-
+import { LineChartCustom } from "../components";
+import { DonutChartCustom } from "../components/Charts/DonutChartCustom";
 
 const Principal = () => {
   const { user } = useAuthStore();
@@ -60,7 +53,7 @@ const Principal = () => {
   return (
     <>
       <Grid
-        contsianer
+        contaianer
         display={"flex"}
         flexDirection={"column"}
         sx={{ padding: { xs: 0, md: 4 } }}
@@ -110,6 +103,15 @@ const Principal = () => {
               </Grid>
             );
           })}
+        </Grid>
+
+        <Grid container width={'100%'} marginTop={6} >
+          <Grid item xs={7}>  
+          <LineChartCustom/>
+          </Grid>
+          <Grid item xs={4}padding={6} >
+            <DonutChartCustom/>
+          </Grid>
         </Grid>
        
       </Grid>

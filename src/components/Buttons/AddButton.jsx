@@ -74,16 +74,15 @@ const AddButton = ({title,text, product}) => {
     return (
         <>
         <Tooltip title={title? title:''}>
-                <IconButton
+                <Button
                 color='success'
                 onClick={() => ModalSweet()}
                 title='Activar Punto de entrega'
-                startIcon={<Add/>}
                 variant='contained'
                 fullWidth
                 >
-               <Add/>
-                </IconButton>
+                  Agregar al almacen
+                </Button>
         </Tooltip>
         <Modal
         open={openForm}

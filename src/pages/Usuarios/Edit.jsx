@@ -136,7 +136,7 @@ const Edit = () => {
               ? typeUsers.map((item, index) => {
                   return (
                     <MenuItem key={index} value={item?._id}>
-                      {item.name}
+                     Rol: {item.role} Sistema: {item.system}
                     </MenuItem>
                   );
                 })

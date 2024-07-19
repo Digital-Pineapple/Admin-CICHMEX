@@ -12,6 +12,7 @@ import MuseumIcon from '@mui/icons-material/Museum';
 import PeopleIcon from '@mui/icons-material/People';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { Add, CurrencyExchange, Grading, Home, Receipt } from "@mui/icons-material";
+import LocalConvenienceStoreIcon from '@mui/icons-material/LocalConvenienceStore';
 
 export const Links = [
   {
@@ -20,17 +21,33 @@ export const Links = [
     pathMain:'/'
   },
   {
+    title: "Mi almacen",
+    Icon: <LocalConvenienceStoreIcon/>,
+    subRoutes:[
+      {
+        title:'Stock',
+        path:`/auth/MiAlmacen/stock`,
+        Icon: <Grading/>
+      },
+      {
+        title:'Entradas',
+        path:'/auth/MiAlmacen/entradas',
+        Icon: <Add/>
+      }
+    ]
+  },
+  {
     title: "Categorías",
     Icon: <CategoryIcon />,
     subRoutes:[
       {
-        title:'Todos las Subcategorías',
-        path:'/auth/SubCategorias',
+        title:'Todos las Categorías',
+        path:'/auth/Categorias',
         Icon: <Grading/>
       },
       {
-        title:'Crear Subcategoría',
-        path:'/auth/CrearSubCategoria',
+        title:'Crear Categoría',
+        path:'/auth/CrearCategoria',
         Icon: <Add/>
       }
     ]

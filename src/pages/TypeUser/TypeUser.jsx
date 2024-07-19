@@ -10,9 +10,8 @@ import { useAuthStore } from "../../hooks";
 
 
 const TypeUser = () => {
-  const { loadTypeUsers, rowsTypeUser, navigate } = useTypeUser();
+  const { loadTypeUsers, rowsTypeUser } = useTypeUser();
   const {user} =useAuthStore()
-
 
   useEffect(() => {
  loadTypeUsers();
@@ -33,18 +32,9 @@ const TypeUser = () => {
           variant="h1"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-          Tipos de auto
+          Tipos de usuario
         </Typography>
       </Grid>
-      <Button
-          variant="contained"
-          disableElevation
-          color="secondary"
-          sx={{ my: 5, p: 2, borderRadius: 5 }}
-          onClick={()=>navigate('/auth/crear-tipo-usuario')}
-        >
-          Registrar nuevo tipo de usuario
-        </Button>
 
         {
             rowsTypeUser ? (
@@ -52,16 +42,16 @@ const TypeUser = () => {
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
           {
-            field: "name",
+            field: "role",
             hideable: false,
             headerName: "Tipo de usuario",
             flex: 2,
             sortable: false,
           },
           {
-            field: "type",
+            field: "system",
             hideable: false,
-            headerName: "ID",
+            headerName: "sistema",
             flex: 2,
             sortable: false,
           },
