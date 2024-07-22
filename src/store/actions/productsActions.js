@@ -5,6 +5,7 @@ import {
   editProduct,
   loadProduct,
   loadProductEntries,
+  loadProductOutputs,
   loadProducts,
   loadStockProducts,
   onAddNewProduct,
@@ -102,6 +103,27 @@ export const startLoadEntriesProduct = () => {
           variant: "error",
         }
       );
+    }
+  };
+};
+export const startLoadOutputsProduct = () => {
+  return async (dispatch) => {
+    dispatch(startLoading())
+    try {
+      const { data } = await instanceApi.get(
+        `/stock-StoreHouse/product/output`,
+        headerConfig
+      );
+      dispatch(loadProductOutputs(data.data));
+    } catch (error) {
+      enqueueSnackbar(
+        `${error.response.data.message}`||'Error al consultar la información',
+        {
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+          variant: "error",
+        }
+      );
+      dispatch(stopLoading())
     }
   };
 };

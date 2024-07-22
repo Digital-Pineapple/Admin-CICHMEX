@@ -6,6 +6,7 @@ import {
   editOneProduct,
   startLoadEntriesProduct,
   startLoadNonExistProduct,
+  startLoadOutputsProduct,
   startLoadProducts,
   startLoadStockProducts,
 } from "../store/actions/productsActions";
@@ -20,13 +21,14 @@ export const useProducts = () => {
   const navigate = useNavigate();
   const { reset } = useForm();
 
-  const { products, product, isLoading, stockProducts, entries } = useSelector(
+  const { products, product, isLoading, stockProducts, entries, outputs } = useSelector(
     (state) => state.products
   );
 
   const loadProducts = async () => dispatch(startLoadProducts());
 
   const loadEntriesProducts = async () => dispatch(startLoadEntriesProduct());
+  const loadOutputsProducts = async () => dispatch(startLoadOutputsProduct());
 
   const loadStockProducts = async () => dispatch(startLoadStockProducts());
 
@@ -72,7 +74,7 @@ export const useProducts = () => {
         newQuantity: item1?.newQuantity,
         day: dayjs(item1?.createdAt).format('DD/MM/YYYY'),
         hour: dayjs(item1?.createdAt).format('HH:mm:ss'), // Cambiado para obtener la hora en el formato correcto
-        responsible: item1?.responsible?.fullname
+        responsible: item1?.responsible?.fullname || '',
       };
     });
     const row = {
@@ -83,6 +85,28 @@ export const useProducts = () => {
       tag: item?.product[0]?.tag,
       stock: item.stock,
       inputs: allInputs
+    };
+    return row;
+  });
+
+  const rowsOutputsProducts = outputs?.map((item, index) => {
+    const allOutputs = item.Outputs.map((item1) => {
+      return {
+        quantity: item1?.quantity,
+        newQuantity: item1?.newQuantity,
+        day: dayjs(item1?.createdAt).format('DD/MM/YYYY'),
+        hour: dayjs(item1?.createdAt).format('HH:mm:ss'), // Cambiado para obtener la hora en el formato correcto
+        responsible: item1?.responsible?.fullname
+      };
+    });
+    const row = {
+      id: index,
+      stock_id:item?._id,
+      name: item?.product[0]?.name,
+      price: item?.product[0]?.price,
+      tag: item?.product[0]?.tag,
+      stock: item.stock,
+      inputs: allOutputs
     };
     return row;
   });
@@ -107,6 +131,8 @@ export const useProducts = () => {
     loadStockProducts,
     entries,
     loadEntriesProducts,
-    rowsEntriesProducts
+    rowsEntriesProducts,
+    loadOutputsProducts,
+    rowsOutputsProducts
   };
 };

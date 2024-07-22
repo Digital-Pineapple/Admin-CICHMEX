@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import { Workbook } from "exceljs";
 import { useProducts } from "../../hooks/useProducts";
+import { useStoreHouse } from "../../hooks/useStoreHouse";
 import AddButton2 from "../../components/Buttons/AddButton2";
 import { orange } from "@mui/material/colors";
 import { useAuthStore } from "../../hooks";
@@ -57,14 +58,18 @@ function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
-const ProductEntries = () => {
+const ProductOutputs = () => {
   const {
-    loadEntriesProducts,
-    rowsEntriesProducts
+    loadOutputsProducts,
+    rowsOutputsProducts,
   } = useProducts();
   const { user } = useAuthStore();
   const [open, setOpen] = useState(false);
   const [details, setDetails] = useState('')
+
+  useEffect(() => {
+    loadOutputsProducts()
+  }, [user]);
 
   const handleClickOpen = (detail) => {
     setOpen(true);
@@ -74,12 +79,6 @@ const ProductEntries = () => {
   const handleClose = () => {
     setOpen(false);
   };
-
-
-  useEffect(() => {
-    loadEntriesProducts()
-  }, [user]);
-
 
   const exportToExcel = () => {
     const workbook = new Workbook();
@@ -98,7 +97,7 @@ const ProductEntries = () => {
     });
 
     // Agregar datos de las filas
-    rowsEntriesProducts.forEach((row) => {
+    rowsOutputsProducts.forEach((row) => {
       worksheet.addRow([
         row._id,
         row.name,
@@ -138,7 +137,6 @@ const ProductEntries = () => {
       </GridToolbarContainer>
     );
   }
-
   return (
     <Grid container >
       <Grid
@@ -153,7 +151,7 @@ const ProductEntries = () => {
           variant="h1"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-          Entradas de producto
+          Salidas de producto
         </Typography>
       </Grid>
       <Grid item xs={12} >
@@ -166,7 +164,7 @@ const ProductEntries = () => {
           textAlign={"center"}
           fontSize={"30px"}
         >
-          Entradas
+          Salidas
         </Typography>
         <DataGrid
           sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
@@ -192,7 +190,7 @@ const ProductEntries = () => {
             },
             {
               field: "stock",
-              headerName: "Existencia",
+              headerName: "Stock",
               flex: 1,
               align: "center",
             },
@@ -205,17 +203,13 @@ const ProductEntries = () => {
               sortable: false,
               type: "actions",
               getActions: (params) => [
-                <AddButton2
-                  title={`Agregar`}
-                  product={params?.row}
-                />,
                 <Button variant="contained" onClick={()=>handleClickOpen(params?.row)}  color="info">
-                  Detalle
-                </Button>
+                Detalle
+              </Button>
               ],
             },
           ]}
-          rows={rowsEntriesProducts}
+          rows={rowsOutputsProducts}
           pagination
           slots={{
             pagination: CustomPagination,
@@ -246,4 +240,4 @@ const ProductEntries = () => {
 };
 
 
-export default ProductEntries
+export default ProductOutputs

@@ -11,7 +11,7 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import MuseumIcon from '@mui/icons-material/Museum';
 import PeopleIcon from '@mui/icons-material/People';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import { Add, CurrencyExchange, Grading, Home, Receipt } from "@mui/icons-material";
+import { Add, CurrencyExchange, Delete, Grading, Home, Receipt, Remove } from "@mui/icons-material";
 import LocalConvenienceStoreIcon from '@mui/icons-material/LocalConvenienceStore';
 
 export const Links = [
@@ -33,6 +33,11 @@ export const Links = [
         title:'Entradas',
         path:'/auth/MiAlmacen/entradas',
         Icon: <Add/>
+      },
+      {
+        title:'Salidas',
+        path:'/auth/MiAlmacen/salidas',
+        Icon: <Remove/>
       }
     ]
   },
@@ -96,11 +101,6 @@ export const Links = [
         path:'/auth/Puntos-de-entrega',
         Icon: <Grading/>
       },
-      {
-        title:'Pendientes por activar',
-        path:'/auth/Puntos-de-entrega/pending',
-        Icon: <Add/>
-      }
     ]
 
 

@@ -129,17 +129,8 @@ const TypeCar = () => {
           Tipos de auto
         </Typography>
       </Grid>
-      <Button
-          variant="contained"
-          disableElevation
-          color="secondary"
-          sx={{ my: 5, p: 2, borderRadius: 5 }}
-          onClick={createTypeCar}
-        >
-          Registrar nuevo tipo de auto
-        </Button>
       <DataGrid
-        sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
+        sx={{ fontSize: "20px", mt:2, fontFamily: "BikoBold" }}
         columns={[
           {
             field: "name",

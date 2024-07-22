@@ -36,7 +36,7 @@ import StockProductsSH from '../pages/StoreHouse/StockProductsSH'
 import AddProductsToSH from '../pages/StoreHouse/AddProductsToSH'
 import { MyStoreHouse } from '../pages/MyStoreHouse/MyStoreHouse'
 import MyStockProducts from '../pages/MyStoreHouse/MyStockProducts'
-import MyProductOrders from '../pages/MyStoreHouse/MyProductOrders'
+import MyProductOrders from '../pages/ProductOrders/MyProductOrders'
 import Principal from '../pages/Principal'
 import FillOrder from '../pages/MyStoreHouse/FillOrder'
 import AssignRoute from '../pages/MyStoreHouse/ AssignRoute'
@@ -48,6 +48,7 @@ import ShippingCost from '../pages/ShippingCost/ShippingCost'
 import EditShippingCost from '../pages/ShippingCost/Edit'
 import CrateShippingCost from '../pages/ShippingCost/Create'
 import ProductEntries from '../pages/MyStoreHouse/ProductEntries'
+import ProductOutputs from '../pages/MyStoreHouse/ProductOutputs'
 
 
 
@@ -112,6 +113,7 @@ export const AllRoutes = [
   { type: 1, path: '/MiAlmacen', element: <MyStoreHouse/> },
   { type: 1, path: '/MiAlmacen/stock', element: <MyStockProducts/> },
   { type: 1, path: '/MiAlmacen/entradas', element: <ProductEntries/> },
+  { type: 1, path: '/MiAlmacen/salidas', element: <ProductOutputs/> },
 
   { type: 1, path: '/MiAlmacen/product-orders', element: <MyProductOrders/> },
 
