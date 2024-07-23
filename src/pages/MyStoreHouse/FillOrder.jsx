@@ -48,7 +48,7 @@ const FillOrder = () => {
       </Grid>
       <Grid container spacing={0}>
         <Grid item xs={12}>  
-        <h2>Id de orden:{productOrder?._id}</h2>
+        <h2>Id de orden: {productOrder?.order_id}</h2>
         <h2>Lista de productos</h2>
         </Grid>
         <Grid item xs={12}>    

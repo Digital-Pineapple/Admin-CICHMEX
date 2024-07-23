@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux"
-import {LoadOneProductOrder, StartCompleteProductOrder, StartLoadResumeSales, startLoadProductOrders } from "../store/actions/productOrderActions";
+import {LoadOneProductOrder, StartCompleteProductOrder, StartLoadResumeSales, startLoadProductOrders, startLoadProductOrdersPaid } from "../store/actions/productOrderActions";
 import { useNavigate } from "react-router-dom";
 
 export const useProductOrder = () => {
@@ -10,6 +10,9 @@ export const useProductOrder = () => {
     const { productOrders, productOrder, isLoading, resumeOrders   } = useSelector(state => state.allProductOrders);
 
     const loadProductOrders = async () => dispatch((startLoadProductOrders()))
+
+    const loadProductOrdersPaid = async () => dispatch((startLoadProductOrdersPaid()))
+
 
     const loadProductOrder = async (id) => dispatch((LoadOneProductOrder(id)))
 
@@ -28,6 +31,7 @@ export const useProductOrder = () => {
           });
 
     }
+    
 
-    return { dispatch, navigate, rowsProducts,  loadResumeProductOrder, productOrder,productOrders, isLoading, loadProductOrders, loadProductOrder, resumeOrders, completeProductOrder}
+    return { dispatch, navigate, rowsProducts,loadProductOrdersPaid,  loadResumeProductOrder, productOrder,productOrders, isLoading, loadProductOrders, loadProductOrder, resumeOrders, completeProductOrder}
 }

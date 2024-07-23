@@ -31,6 +31,27 @@ export const startLoadProductOrders = () => {
   };
 }
 
+export const startLoadProductOrdersPaid = () => {
+  return async (dispatch) => {
+    try {
+      const { data } = await instanceApi.get(
+        `/product-order/paid`,
+        headerConfigApplication
+      );  
+    
+      dispatch(loadProductOrders(data.data));
+    } catch (error) {
+      enqueueSnackbar(
+        `${error.response.data.message}|| 'Error al consultar información'`,
+        {
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+          variant: "error",
+        }
+      );
+    }
+  };
+}
+
 export const LoadOneProductOrder = (id) => {
  
   return async (dispatch) => {

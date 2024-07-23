@@ -49,6 +49,7 @@ import EditShippingCost from '../pages/ShippingCost/Edit'
 import CrateShippingCost from '../pages/ShippingCost/Create'
 import ProductEntries from '../pages/MyStoreHouse/ProductEntries'
 import ProductOutputs from '../pages/MyStoreHouse/ProductOutputs'
+import PaidProductOrders from '../pages/ProductOrders/PaidProductOrders'
 
 
 
@@ -115,7 +116,8 @@ export const AllRoutes = [
   { type: 1, path: '/MiAlmacen/entradas', element: <ProductEntries/> },
   { type: 1, path: '/MiAlmacen/salidas', element: <ProductOutputs/> },
 
-  { type: 1, path: '/MiAlmacen/product-orders', element: <MyProductOrders/> },
+  { type: 1, path: '/Ordenes-de-producto', element: <MyProductOrders/> },
+  { type: 1, path: '/Ordenes-de-producto/surtir', element: <PaidProductOrders/> },
 
   { type: 1, path: '/surtir-orden/:id', element: <FillOrder/> },
   { type: 1, path: '/asignar-ruta/:id', element: <AssignRoute/> },

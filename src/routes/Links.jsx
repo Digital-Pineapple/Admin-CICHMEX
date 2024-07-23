@@ -11,7 +11,7 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import MuseumIcon from '@mui/icons-material/Museum';
 import PeopleIcon from '@mui/icons-material/People';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import { Add, CurrencyExchange, Delete, Grading, Home, Receipt, Remove } from "@mui/icons-material";
+import { Add, CasesSharp, CurrencyExchange, Delete, Grading, Home, ProductionQuantityLimits, Receipt, Remove } from "@mui/icons-material";
 import LocalConvenienceStoreIcon from '@mui/icons-material/LocalConvenienceStore';
 
 export const Links = [
@@ -73,6 +73,22 @@ export const Links = [
       }
     ]
 
+  },
+  {
+    title : "Ordenes de producto",
+    Icon : <ProductionQuantityLimits/>,
+    subRoutes:[
+      {
+        title:'Todos las Ordenes de producto',
+        path:'/auth/Ordenes-de-producto',
+        Icon: <Grading/>
+      },
+      {
+        title:'Pendientes por surtir',
+        path:'/auth/Ordenes-de-producto/surtir',
+        Icon: <CasesSharp/>
+      },
+    ]
   },
   {
     title : "Productos",
