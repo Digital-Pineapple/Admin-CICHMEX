@@ -151,7 +151,6 @@ const CreateProduct = () => {
           name="tag"
           label="Código"
           variant="outlined"
-          type="number"
           value={formik.values.tag}
           onChange={formik.handleChange}
         />
