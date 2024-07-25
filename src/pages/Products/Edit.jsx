@@ -46,6 +46,7 @@ const Edit = () => {
   useEffect(() => {
     loadProduct(id);
   }, [id]);
+  console.log(product);
   useEffect(() => {
     formik.setValues({
       name: product.name ? product.name : "",
@@ -54,12 +55,12 @@ const Edit = () => {
       size: product.size || "",
       tag: product.tag || "",
       images: product.images || "",
-      category: product.category || "",
-      subCategory: product.subCategory || "",
+      category: product.category?._id || "",
+      subCategory: product.subCategory?._id || "",
       weight: product.weight || "",
     });
     loadCategories();
-    loadSubcategoriesByCategory(product?.category);
+    loadSubcategoriesByCategory(product?.category?._id);
   }, [product]);
 
   const formik = useFormik({

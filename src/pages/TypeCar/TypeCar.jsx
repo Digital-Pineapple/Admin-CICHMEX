@@ -113,7 +113,7 @@ const TypeCar = () => {
   }
 
   return (
-    <Grid style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
+    <Grid maxWidth={'85vw'} style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
        <Grid
         item
         marginTop={{ xs: "-30px" }}

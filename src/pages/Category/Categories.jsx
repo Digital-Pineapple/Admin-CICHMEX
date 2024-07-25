@@ -125,7 +125,7 @@ const Categories = () => {
   }
 
   return (
-    <div>
+    <Grid container maxWidth={'85vw'}>
        <Grid
         item
         marginTop={{ xs: "-30px" }}
@@ -206,7 +206,7 @@ const Categories = () => {
           hideToolbar: true,
         }}
       />
-    </div>
+    </Grid>
   );
 };
 

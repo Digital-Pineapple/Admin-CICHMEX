@@ -57,6 +57,7 @@ const Principal = () => {
         display={"flex"}
         flexDirection={"column"}
         sx={{ padding: { xs: 0, md: 4 } }}
+        maxWidth={'85vw'}
       >
         <Grid container spacing={{ xs: 1, sm: 4 }}>
           {cards.map((item, index) => {

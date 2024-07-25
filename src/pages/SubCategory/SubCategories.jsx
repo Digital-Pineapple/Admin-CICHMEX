@@ -121,7 +121,7 @@ const SubCategories = () => {
   }
 
   return (
-    <div >
+    <Grid conyainer maxWidth={'85vw'} >
        <Grid
         item
         marginTop={{ xs: "-30px" }}
@@ -203,7 +203,7 @@ const SubCategories = () => {
           hideToolbar: true,
         }}
       />
-    </div>
+    </Grid>
   );
 };
 

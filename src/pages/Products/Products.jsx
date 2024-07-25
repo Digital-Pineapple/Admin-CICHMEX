@@ -130,7 +130,7 @@ const Products = () => {
   }
 
   return (
-    <div>
+    <Grid container maxWidth={'85vw'}>
       <Grid item marginTop={{xs:'-30px'}} xs={12} minHeight={'100px'} className="Titles">   
       <Typography textAlign={'center'} variant="h1" fontSize={{xs:'20px', sm:'30px', lg:'40px'}} >
         Productos
@@ -218,7 +218,7 @@ const Products = () => {
           hideToolbar: true,
         }}
       />
-    </div>
+    </Grid>
   );
 }
 

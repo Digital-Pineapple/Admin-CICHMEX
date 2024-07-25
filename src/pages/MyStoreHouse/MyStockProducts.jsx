@@ -137,7 +137,7 @@ const MyStockProducts = () => {
   }
 
   return (
-    <Grid container >
+    <Grid container  maxWidth={'85vw'} >
       <Grid
         item
         marginTop={{ xs: "-30px" }}

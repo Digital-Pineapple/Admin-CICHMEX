@@ -124,7 +124,7 @@ const Services = () => {
 
 
   return (
-    <Grid container>
+    <Grid maxWidth={'85vw'} container>
        <Grid
         item
         marginTop={{ xs: "-30px" }}

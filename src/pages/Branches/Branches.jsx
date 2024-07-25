@@ -18,6 +18,7 @@ export const Branches = () => {
         xs={12}
         minHeight={"100px"}
         className="Titles"
+        maxWidth={'85vw'}
       >
         <Typography
           textAlign={"center"}

@@ -139,7 +139,7 @@ export default function Memberships() {
   }
 
   return (
-    <div>
+    <Grid container maxWidth={'85vw'}>
      <Grid
         item
         marginTop={{ xs: "-30px" }}
@@ -241,6 +241,6 @@ export default function Memberships() {
           hideToolbar: true,
         }}
       />
-    </div>
+    </Grid>
   );
 }
