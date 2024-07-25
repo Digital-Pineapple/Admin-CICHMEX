@@ -214,6 +214,12 @@ const CreateProduct = () => {
      </Grid>
 
 
+        
+         <Grid item xs={12}  > 
+       <VideoUploadField setVideo={setVideo} label={'Subir video'}/>
+     </Grid>
+
+        <Typography marginTop={"10px"}> peso max de imagen(500 kb)</Typography>
         {images.length > 0 && (
           <Grid item xs={12}>
             <input
@@ -231,11 +237,6 @@ const CreateProduct = () => {
             </label>
           </Grid>
         )}
-         <Grid item xs={12}  > 
-       <VideoUploadField setVideo={setVideo} label={'Subir video'}/>
-     </Grid>
-
-        <Typography marginTop={"10px"}> peso max de imagen(500 kb)</Typography>
           {
             images.length ? (
               <>

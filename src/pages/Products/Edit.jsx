@@ -115,11 +115,11 @@ const Edit = () => {
               Editar
             </Typography>
           </Grid>
-          <Grid container boxSizing={"border-box"}>
+          <Grid container maxWidth={'70vw'} >
             {product.images?.length ? (
               <SlideBranchesImages
                 images={product?.images}
-                altura={isSmallScreen ? "200px" : "300px"}
+                altura={"300px"}
               />
             ) : (
               <Typography marginY={"80px"}>
@@ -129,7 +129,7 @@ const Edit = () => {
           </Grid>
           <Grid container>
             {images.length > 0 && (
-              <Grid item xs={12}>
+              <Grid item  xs={12}>
                 <input
                   id="image"
                   name="image"
