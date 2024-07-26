@@ -50,6 +50,10 @@ import CrateShippingCost from '../pages/ShippingCost/Create'
 import ProductEntries from '../pages/MyStoreHouse/ProductEntries'
 import ProductOutputs from '../pages/MyStoreHouse/ProductOutputs'
 import PaidProductOrders from '../pages/ProductOrders/PaidProductOrders'
+import ShippingDeliveryPoint from '../pages/Logistic/ShippingDeliveryPoint'
+import ShippingDelivery from '../pages/Logistic/ShippingDelivery'
+import LoadPackage from '../pages/Logistic/LoadPackage'
+import VerifyPackage from '../pages/Logistic/VerifyPackage'
 
 
 
@@ -119,10 +123,18 @@ export const AllRoutes = [
   { type: 1, path: '/Ordenes-de-producto', element: <MyProductOrders/> },
   { type: 1, path: '/Ordenes-de-producto/surtir', element: <PaidProductOrders/> },
 
-  { type: 1, path: '/surtir-orden/:id', element: <FillOrder/> },
+  { type: 1, path: '/Envios/punto-de-entrega', element: <ShippingDeliveryPoint/> },
+  { type: 1, path: '/Envios/domicilio', element: <ShippingDelivery/> },
+  { type: 1, path: '/cargar-paquetes', element: <LoadPackage/> },
+  { type: 1, path: '/cargar-paquetes/verificar/:id', element: <VerifyPackage/> },
+
   { type: 1, path: '/asignar-ruta/:id', element: <AssignRoute/> },
+
+  { type: 1, path: '/surtir-orden/:id', element: <FillOrder/> },
 
   { type: 1, path: '/Transportistas', element: <CarrierDrivers/> },
   { type: 1, path: '/AltaTransportista', element: <CreateCarrier/> },
+
+
 
 ]

@@ -49,6 +49,7 @@ const Create = () => {
       }
     },
   });
+  
   const outCreate = () => {
     navigate("/auth/SubCategorias", { replace: true });
   };

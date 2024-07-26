@@ -30,11 +30,6 @@ import {
 } from "@mui/material";
 import { Workbook } from "exceljs";
 import { useProductOrder } from "../../hooks/useProductOrder";
-import PaidIcon from "@mui/icons-material/Paid";
-import PendingIcon from "@mui/icons-material/Pending";
-import CarCrashIcon from "@mui/icons-material/CarCrash";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import ScheduleSendIcon from '@mui/icons-material/ScheduleSend';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import Swal from "sweetalert2";
@@ -69,16 +64,16 @@ export function UnsortedIcon() {
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
+const ShippingDeliveryPoint = () => {
 
-const MyProductOrders = () => {
   const {
-    loadProductOrders,
+    loadPOPaidAndSuplyToPoint,
     navigate,
     productOrders,
   } = useProductOrder();
 
   useEffect(() => {
-    loadProductOrders();
+    loadPOPaidAndSuplyToPoint();
   }, []);
 
   const rowsWithIds = productOrders.map((item, index) => {
@@ -88,10 +83,12 @@ const MyProductOrders = () => {
     }, 0);
 
     const TD = item.branch ? "En Punto de entrega" : "A domicilio";
+    const statusRoute = item.route_detail.route_status ? item.route_detail.route_status:'No signado'
     return {
       quantityProduct: suma,
       typeDelivery: TD,
       id: index.toString(),
+      status_route: statusRoute,
       ...item,
     };
   });
@@ -180,14 +177,14 @@ const MyProductOrders = () => {
       );
     } else if (!values.row.route_status) {
       return (
-        <Tooltip title="Asignar Ruta">
+        <Tooltip title="Asignar ruta">
           <Button
-            aria-label="Asignar Ruta"
+            aria-label="Asignar ruta"
             color="info"
             variant="outlined"
             onClick={() =>navigate(`/auth/asignar-ruta/${values.row._id}`)}
           >
-            Ruta
+            Enviar
           </Button>
         </Tooltip>
       );
@@ -216,8 +213,6 @@ const MyProductOrders = () => {
       );
     }
   };
-  
-
   return (
     <Grid container style={{ marginLeft: "10%", height: "70%", width: "85%" }}>
       <Grid
@@ -232,7 +227,7 @@ const MyProductOrders = () => {
           variant="h1"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-         Pedidos
+         Pedidos pendientes de envio a punto de entrega
         </Typography>
       </Grid>
       <Grid item xs={12} marginY={2}>
@@ -247,123 +242,27 @@ const MyProductOrders = () => {
             },
             {
               field: "order_id",
-              headerName: "Código de pedido",
+              headerName: "Id de pedido",
               flex: 1,
               align: "center",
             },
             {
-              field: "typeDelivery",
+              field: "status_route",
               hideable: false,
-              headerName: "Tipo de envio",
+              headerName: "Estado de ruta",
               flex: 1,
               sortable: false,
             },
-            {
-              field: "payment_status",
-              headerName: "Status de pago",
-              flex: 1,
-              align: "center",
-              renderCell: (params) =>
-                params.value === "approved" ? (
-                  <>
-                    <Chip
-                      icon={<PaidIcon />}
-                      label="Pagado"
-                      variant="outlined"
-                      color="success"
-                    />
-                  </>
-                ) : (
-                  <>
-                    <Chip
-                      icon={<PendingIcon />}
-                      label="Pendiente"
-                      variant="outlined"
-                      color="info"
-                    />
-                  </>
-                ),
-            },
-            {
-              field: "storeHouseStatus",
-              headerName: "Orden preparada",
-              flex: 1,
-              align: "center",
-              renderCell: (params) =>
-                params.value === true ? (
-                  <>
-                    <Chip
-                      icon={<Done />}
-                      label="Surtido"
-                      variant="outlined"
-                      color="success"
-                    />
-                  </>
-                ) : (
-                  <>
-                    <Chip
-                      icon={<Clear />}
-                      label="Pendiente"
-                      variant="outlined"
-                      color="error"
-                    />
-                  </>
-                ),
-            },
-            {
-              field: "route_status",
-              headerName: "Ruta",
-              flex: 1,
-              align: "center",
-              renderCell: (params) =>
-                params.value === true ? (
-                  <>
-                    <Chip
-                      icon={<LocalShippingIcon />}
-                      label="En camino"
-                      variant="outlined"
-                      color="success"
-                    />
-                  </>
-                ) : (
-                  <>
-                    <Chip
-                      icon={<CarCrashIcon />}
-                      label="Sin ruta"
-                      variant="outlined"
-                      color="error"
-                    />
-                  </>
-                ),
-            },
-            {
-              field: "deliveryStatus",
-              headerName: "Entregado",
-              flex: 1,
-              align: "center",
-              renderCell: (params) =>
-                params.value === true ? (
-                  <>
-                    <Chip
-                      icon={<LocalShipping />}
-                      label="Entregado"
-                      variant="outlined"
-                      color="success"
-                    />
-                  </>
-                ) : (
-                  <>
-                    <Chip
-                      icon={<CancelScheduleSend />}
-                      label="Pendiente"
-                      variant="outlined"
-                      color="error"
-                    />
-                  </>
-                ),
-            },
 
-            
+            {
+              field: "Opciones",
+              headerName: "Opciones",
+              align: "center",
+              flex: 1,
+              sortable: false,
+              type: "actions",
+              getActions: (params) => [renderIcon(params)],
+            },
           ]}
           rows={rowsWithIds}
           pagination
@@ -394,4 +293,6 @@ const MyProductOrders = () => {
   );
 };
 
-export default MyProductOrders;
+
+
+export default ShippingDeliveryPoint

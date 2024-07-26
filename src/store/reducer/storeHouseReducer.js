@@ -34,9 +34,6 @@ export const StoreHouseReducer = createSlice({
         if (product._id === payload._id) {
           return {
             ...product,
-            name: payload.name,
-            description: payload.description,
-            status: payload.status,
           };
         }
         return product; // Mantener los elementos no modificados tal como están

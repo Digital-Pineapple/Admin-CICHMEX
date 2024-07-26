@@ -9,6 +9,7 @@ import {
   headerConfigForm,
   headerConfigFormData,
 } from "../../apis/headersConfig";
+import { replace } from "formik";
 
 export const startLoadProductOrders = () => {
   return async (dispatch) => {
@@ -43,6 +44,74 @@ export const startLoadProductOrdersPaid = () => {
     } catch (error) {
       enqueueSnackbar(
         `${error.response.data.message}|| 'Error al consultar información'`,
+        {
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+          variant: "error",
+        }
+      );
+    }
+  };
+}
+
+export const startLoadPOPaidAndSupplyToPonit= () => {
+  return async (dispatch) => {
+    try {
+      const { data } = await instanceApi.get(
+        `/product-order/paidAndSupplyToPoint`,
+        headerConfigApplication
+      );  
+      dispatch(loadProductOrders(data.data));
+    } catch (error) {
+      enqueueSnackbar(
+        `${error.response.data.message}|| 'Error al consultar información'`,
+        {
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+          variant: "error",
+        }
+      );
+    }
+  };
+}
+
+export const startLoadPOPaidAndSupply= () => {
+  return async (dispatch) => {
+    try {
+      const { data } = await instanceApi.get(
+        `/product-order/paidAndSupply`,
+        headerConfigApplication
+      );  
+      dispatch(loadProductOrders(data.data));
+    } catch (error) {
+      enqueueSnackbar(
+        `${error.response.data.message}|| 'Error al consultar información'`,
+        {
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+          variant: "error",
+        }
+      );
+    }
+  };
+}
+
+export const startLoadAssignRoute= ({user_id, order_id}, navigate) => {
+  return async (dispatch) => {
+    try {
+      const { data } = await instanceApi.post(
+        `/product-order/assignRoute`,{user_id,order_id},
+        headerConfigApplication
+      );  
+      enqueueSnackbar(
+        `${data.message}`,
+        {
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+          variant: "success",
+        }
+      );
+      navigate('/auth/Envios/punto-de-entrega', {replace:true})
+    } catch (error) {
+      console.log(error);
+      enqueueSnackbar(
+        `${error.response.data.message}`,
         {
           anchorOrigin: { horizontal: "center", vertical: "top" },
           variant: "error",
@@ -104,7 +173,7 @@ export const StartCompleteProductOrder = (id, navigate) => {
               variant: "success",
             }
           );
-          navigate(`/auth/MiAlmacen/product-orders`,{replace:true})
+          navigate(`/auth/Ordenes-de-producto`,{replace:true})
           
        
       } catch (error) {

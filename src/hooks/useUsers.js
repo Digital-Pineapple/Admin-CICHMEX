@@ -38,7 +38,7 @@ export const useUsers = () => {
         ...i,
       }));
 
-    return { user, users, loadUser,addCarrier, loadUsers, deleteUser, verifyUser, editUser, navigate, loadCarrierDrivers, rowsCarrierDrivers, CarrierDriver, loading }
+    return { user, users, loadUser,addCarrier, loadUsers, deleteUser, verifyUser, editUser, navigate, loadCarrierDrivers, rowsCarrierDrivers, CarrierDriver, loading, CarrierDrivers }
 
 
 }

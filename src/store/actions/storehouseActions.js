@@ -108,11 +108,13 @@ export const startCreateStockProduct =
       Swal.fire({
         icon: "success",
         title: "Agregado con éxito",
-        showDenyButton: false,
-        timer: 5000, // 5000 ms = 5 segundos. Ajusta según sea necesario
-      }).then((result) => {
+        showConfirmButton: false,
+        showLoaderOnConfirm:true,
+        timer: 1000, // 5000 ms = 5 segundos. Ajusta según sea necesario
+      }).then(async(result) => {
         if (result.dismiss === Swal.DismissReason.timer) {
-          window.location.href = window.location.href; // Ajusta la URL según sea necesario
+          // dispatch(editStockProduct(data.data))
+          window.location.href = window.location.href;
         }
       });
       
