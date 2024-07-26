@@ -54,6 +54,7 @@ import ShippingDeliveryPoint from '../pages/Logistic/ShippingDeliveryPoint'
 import ShippingDelivery from '../pages/Logistic/ShippingDelivery'
 import LoadPackage from '../pages/Logistic/LoadPackage'
 import VerifyPackage from '../pages/Logistic/VerifyPackage'
+import PackagesSent from '../pages/Logistic/PackagesSent'
 
 
 
@@ -127,6 +128,8 @@ export const AllRoutes = [
   { type: 1, path: '/Envios/domicilio', element: <ShippingDelivery/> },
   { type: 1, path: '/cargar-paquetes', element: <LoadPackage/> },
   { type: 1, path: '/cargar-paquetes/verificar/:id', element: <VerifyPackage/> },
+
+  { type: 1, path: '/paquetes-enviados', element: <PackagesSent/> },
 
   { type: 1, path: '/asignar-ruta/:id', element: <AssignRoute/> },
 

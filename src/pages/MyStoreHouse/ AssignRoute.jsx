@@ -33,7 +33,7 @@ const AssignRoute = () => {
 
   const formik = useFormik({
     initialValues: {
-      user_id: productOrder.route_detail.user
+      user_id: productOrder?.route_detail?.user
         ? productOrder.route_detail.user
         : "",
       order_id: id ? id : productOrder?._id,
@@ -42,6 +42,7 @@ const AssignRoute = () => {
       loadAssignRoute(values);
     },
   });
+  console.log(productOrder);
 
   const date = localDate(productOrder?.supply_detail?.date);
 
@@ -77,18 +78,41 @@ const AssignRoute = () => {
         </Typography>
         <Typography>Fecha de empaque: {date}</Typography>
 
-        <h2>Sucursal de Entrega:</h2>
+        {productOrder.branch ? (
+          <>
+            <h2>Sucursal de Entrega:</h2>
 
-        <Typography>
-          Nombre de la sucursal: {productOrder?.branch?.name}
-        </Typography>
-        <Typography>Estado: {productOrder?.branch?.location?.state}</Typography>
-        <Typography>
-          Municipio: {productOrder?.branch?.location?.municipality}
-        </Typography>
-        <Typography>
-          Dirección: {productOrder?.branch?.location?.direction}
-        </Typography>
+            <Typography>
+              Nombre de la sucursal: {productOrder?.branch?.name}
+            </Typography>
+            <Typography>
+              Estado: {productOrder?.branch?.location?.state}
+            </Typography>
+            <Typography>
+              Municipio: {productOrder?.branch?.location?.municipality}
+            </Typography>
+            <Typography>
+              Dirección: {productOrder?.branch?.location?.direction}
+            </Typography>
+          </>
+        ) : (
+          <>
+            <h2>Dirección de entrega:</h2>
+
+            <Typography>
+              Código Postal: {productOrder?.deliveryLocation?.cp}
+            </Typography>
+            <Typography>
+              Estado: {productOrder?.deliveryLocation?.state}
+            </Typography>
+            <Typography>
+              Municipio: {productOrder?.deliveryLocation?.municipality}
+            </Typography>
+            <Typography>
+              Dirección: {productOrder?.deliveryLocation?.direction}
+            </Typography>
+          </>
+        )}
       </Grid>
       <Grid item xs={12} md={6}>
         <h2>Lista de productos</h2>
@@ -148,7 +172,14 @@ const AssignRoute = () => {
           >
             Asignar transportista
           </Button>
-          <Button onClick={()=>navigate('/auth/Envios/punto-de-entrega', {replace:true})} variant="contained" color="warning" startIcon={<Close />}>
+          <Button
+            onClick={() =>
+              navigate("/auth/Envios/punto-de-entrega", { replace: true })
+            }
+            variant="contained"
+            color="warning"
+            startIcon={<Close />}
+          >
             Cancelar
           </Button>
         </ButtonGroup>

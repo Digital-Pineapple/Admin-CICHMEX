@@ -91,7 +91,7 @@ export const Links = [
     ]
   },
   {
-    title : "Logistica",
+    title : "Envios",
     Icon : <Face6/>,
     subRoutes:[
       {
@@ -107,6 +107,11 @@ export const Links = [
       {
         title:'Cargar Paquetes',
         path:'/auth/cargar-paquetes',
+        Icon: <CarCrash/>
+      },
+      {
+        title:'Paquetes enviados',
+        path:'/auth/paquetes-enviados',
         Icon: <CarCrash/>
       },
     ]

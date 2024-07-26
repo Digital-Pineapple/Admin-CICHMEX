@@ -21,16 +21,22 @@ import { AssistantDirection, Close } from "@mui/icons-material";
 
 const VerifyPackage = () => {
   const { id } = useParams();
-  const { loadProductOrder, productOrder } =
+  const { loadProductOrder, productOrder, navigate, loadVerifyStartRoute } =
     useProductOrder();
 
   const { loadUser, user } = useUsers();
   useEffect(() => {
     loadProductOrder(id);
-    loadUser(productOrder.route_detail.user);
   }, [id]);
+  useEffect(() => {
+    loadUser(productOrder?.route_detail?.user);
+  }, [productOrder]);
 
   const date = localDate(productOrder?.supply_detail?.date);
+
+  const startRoute =()=>{
+    loadVerifyStartRoute({order_id:id, user:productOrder?.route_detail?.user})
+  }
   return (
     <Grid
       container
@@ -118,6 +124,12 @@ const VerifyPackage = () => {
             ? user?.phone_id?.phone_number
             : "Sin numero"}
         </Typography>
+      </Grid>
+      <Grid mt={2} item xs={12} md={6}>
+        <ButtonGroup fullWidth variant="contained" color="inherit">
+          <Button color="success" onClick={()=>startRoute()}>Verificar y comenzar ruta</Button>
+          <Button color="error" onClick={()=>navigate(`/auth/cargar-paquetes`, {replace:true})} >Cancelar</Button>
+        </ButtonGroup>
       </Grid>
     </Grid>
   );

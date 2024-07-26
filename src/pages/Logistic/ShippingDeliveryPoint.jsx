@@ -76,14 +76,14 @@ const ShippingDeliveryPoint = () => {
     loadPOPaidAndSuplyToPoint();
   }, []);
 
-  const rowsWithIds = productOrders.map((item, index) => {
+  const rowsWithIds = productOrders?.map((item, index) => {
     const quantities = item.products.map((i) => i.quantity);
     const suma = quantities.reduce((valorAnterior, valorActual) => {
       return valorAnterior + valorActual;
     }, 0);
 
     const TD = item.branch ? "En Punto de entrega" : "A domicilio";
-    const statusRoute = item.route_detail.route_status ? item.route_detail.route_status:'No signado'
+    const statusRoute = item?.route_detail?.route_status ? item?.route_detail?.route_status:'No signado'
     return {
       quantityProduct: suma,
       typeDelivery: TD,

@@ -4,10 +4,13 @@ import {
   StartCompleteProductOrder,
   StartLoadResumeSales,
   startLoadAssignRoute,
+  startLoadAssignedPO,
   startLoadPOPaidAndSupply,
   startLoadPOPaidAndSupplyToPonit,
+  startLoadPackageSent,
   startLoadProductOrders,
   startLoadProductOrdersPaid,
+  startLoadVerifyStartRoute,
 } from "../store/actions/productOrderActions";
 import { useNavigate } from "react-router-dom";
 
@@ -27,16 +30,23 @@ export const useProductOrder = () => {
   const loadPOPaidAndSuplyToPoint = async () =>
     dispatch(startLoadPOPaidAndSupplyToPonit());
 
-  const loadPOPaidAndSuply = async () =>
-    dispatch(startLoadPOPaidAndSupply());
+  const loadPOPaidAndSuply = async () =>dispatch(startLoadPOPaidAndSupply())
+  
+  const loadAssignedPO = async () =>
+    dispatch(startLoadAssignedPO())
 
 
   const loadAssignRoute = async (values) =>
     dispatch(startLoadAssignRoute(values, navigate));
 
+  const loadVerifyStartRoute = async (values) =>
+    dispatch(startLoadVerifyStartRoute(values, navigate));
+
   const loadProductOrder = async (id) => dispatch(LoadOneProductOrder(id));
 
   const loadResumeProductOrder = async () => dispatch(StartLoadResumeSales());
+
+  const loadPackagesSent = async () => dispatch(startLoadPackageSent())
 
   const completeProductOrder = (id) =>
     dispatch(StartCompleteProductOrder(id, navigate));
@@ -68,5 +78,8 @@ export const useProductOrder = () => {
     loadProductOrder,
     resumeOrders,
     completeProductOrder,
+    loadAssignedPO,
+    loadVerifyStartRoute,
+    loadPackagesSent
   };
 };

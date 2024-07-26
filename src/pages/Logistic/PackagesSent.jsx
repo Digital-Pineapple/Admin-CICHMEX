@@ -64,16 +64,16 @@ export function UnsortedIcon() {
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
-const ShippingDelivery = () => {
+const PackagesSent = () => {
 
   const {
-    loadPOPaidAndSuply,
+    loadPackagesSent,
     navigate,
     productOrders,
   } = useProductOrder();
 
   useEffect(() => {
-    loadPOPaidAndSuply();
+    loadPackagesSent();
   }, []);
 
   const rowsWithIds = productOrders?.map((item, index) => {
@@ -227,7 +227,7 @@ const ShippingDelivery = () => {
           variant="h1"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-         Pedidos pendientes de envio a domicilio
+         Paquetes enviados
         </Typography>
       </Grid>
       <Grid item xs={12} marginY={2}>
@@ -294,4 +294,4 @@ const ShippingDelivery = () => {
 };
 
 
-export default ShippingDelivery
+export default PackagesSent

@@ -36,8 +36,12 @@ export const startLoadProductOrdersPaid = () => {
   return async (dispatch) => {
     try {
       const { data } = await instanceApi.get(
-        `/product-order/paid`,
-        headerConfigApplication
+        `/product-order/paid`,{
+        headers: {
+          "Content-type": "application/json",
+           "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      }
+    }
       );  
     
       dispatch(loadProductOrders(data.data));
@@ -62,8 +66,51 @@ export const startLoadPOPaidAndSupplyToPonit= () => {
       );  
       dispatch(loadProductOrders(data.data));
     } catch (error) {
+      console.log(error);
       enqueueSnackbar(
-        `${error.response.data.message}|| 'Error al consultar información'`,
+        `${error.response.data.message}`,
+        {
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+          variant: "error",
+        }
+      );
+    }
+  };
+}
+
+export const startLoadAssignedPO= () => {
+  return async (dispatch) => {
+    try {
+      const { data } = await instanceApi.get(
+        `/product-order/AssignedPO`,
+        headerConfigApplication
+      );  
+      dispatch(loadProductOrders(data.data));
+    } catch (error) {
+      console.log(error);
+      enqueueSnackbar(
+        `${error.response.data.message}`,
+        {
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+          variant: "error",
+        }
+      );
+    }
+  };
+}
+
+export const startLoadPackageSent= () => {
+  return async (dispatch) => {
+    try {
+      const { data } = await instanceApi.get(
+        `/product-order/deliveries`,
+        headerConfigApplication
+      );  
+      dispatch(loadProductOrders(data.data));
+    } catch (error) {
+      console.log(error);
+      enqueueSnackbar(
+        `${error.response.data.message}`,
         {
           anchorOrigin: { horizontal: "center", vertical: "top" },
           variant: "error",
@@ -110,6 +157,33 @@ export const startLoadAssignRoute= ({user_id, order_id}, navigate) => {
       navigate('/auth/Envios/punto-de-entrega', {replace:true})
     } catch (error) {
       console.log(error);
+      enqueueSnackbar(
+        `${error.response.data.message}`,
+        {
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+          variant: "error",
+        }
+      );
+    }
+  };
+}
+
+export const startLoadVerifyStartRoute= ({order_id, user}, navigate) => {
+  return async (dispatch) => {
+    try {
+      const { data } = await instanceApi.post(
+        `/product-order/verifyStartRoute`,{id: order_id, user_id:user},
+        headerConfigApplication
+      );  
+      enqueueSnackbar(
+        `${data.message}`,
+        {
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+          variant: "success",
+        }
+      );
+      navigate('/auth/cargar-paquetes', {replace:true})
+    } catch (error) {
       enqueueSnackbar(
         `${error.response.data.message}`,
         {
