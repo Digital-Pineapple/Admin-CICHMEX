@@ -98,13 +98,10 @@ const VerifyPackage = () => {
               Municipio: {productOrder?.deliveryLocation?.municipality}
             </Typography>
             <Typography>
-              Calle: {productOrder?.deliveryLocation?.address}
+              Calle: {productOrder?.deliveryLocation?.direction}
             </Typography>
             <Typography>
-              Numero exterior: {productOrder?.deliveryLocation?.extNumber}
-            </Typography>
-            <Typography>
-              Numero interior: {productOrder?.deliveryLocation?.intNumber}
+              Código postal: {productOrder?.deliveryLocation?.cp}
             </Typography>
             <Typography>
               Referencias: {productOrder?.deliveryLocation?.references}

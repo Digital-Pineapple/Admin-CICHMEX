@@ -64,15 +64,14 @@ const LoadPackage = () => {
   useEffect(() => {
     loadAssignedPO();
   }, []);
-   
 
-  const rowsWithIds = async() => await productOrders?.map((item, index) => {
+  const rowsWithIds = productOrders?.map((item, index) => {
     const quantities = item.products.map((i) => i.quantity);
     const suma = quantities.reduce((valorAnterior, valorActual) => valorAnterior + valorActual, 0);
-
+  
     const TD = item.branch ? "En Punto de entrega" : "A domicilio";
     const statusRoute = item?.route_detail?.route_status ? item?.route_detail?.route_status : 'No asignado';
-
+  
     return {
       quantityProduct: suma,
       typeDelivery: TD,
@@ -81,6 +80,7 @@ const LoadPackage = () => {
       ...item,
     };
   });
+  
 
   const exportToExcel = () => {
     const workbook = new Workbook();
@@ -171,9 +171,7 @@ const LoadPackage = () => {
         </Typography>
       </Grid>
       <Grid item xs={12} marginY={2}>
-        {rowsWithIds.length === 0 ? (
-          'No hay pedidos pendientes'
-        ) : (
+        
           <DataGrid
             sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
             columns={[
@@ -230,7 +228,7 @@ const LoadPackage = () => {
               hideToolbar: true,
             }}
           />
-        )}
+      
       </Grid>
     </Grid>
   );

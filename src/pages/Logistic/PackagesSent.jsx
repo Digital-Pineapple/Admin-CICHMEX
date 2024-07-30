@@ -19,6 +19,7 @@ import {
   Done,
   Download,
   LocalShipping,
+  VolunteerActivism,
 } from "@mui/icons-material";
 import {
   Button,
@@ -190,12 +191,13 @@ const PackagesSent = () => {
       );
     } else if (!values.row.deliveryStatus)  {
       return (
-        <Tooltip title="En envio">
+        <Tooltip title="Entregar">
           <IconButton
             aria-label="secondary"
             color="secondary"
+            onClick={()=>navigate(`/auth/entrega/${values.row._id}`, {replace:true})}
           >
-            <ScheduleSendIcon />
+            <VolunteerActivism />
           </IconButton>
         </Tooltip>
       );
@@ -227,7 +229,7 @@ const PackagesSent = () => {
           variant="h1"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-         Paquetes enviados
+         Entregar paquetes
         </Typography>
       </Grid>
       <Grid item xs={12} marginY={2}>

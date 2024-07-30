@@ -3,6 +3,8 @@ import {
   LoadOneProductOrder,
   StartCompleteProductOrder,
   StartLoadResumeSales,
+  StartLoadVerifyQr,
+  StartLoadVerifyToPoint,
   startLoadAssignRoute,
   startLoadAssignedPO,
   startLoadPOPaidAndSupply,
@@ -44,6 +46,10 @@ export const useProductOrder = () => {
 
   const loadProductOrder = async (id) => dispatch(LoadOneProductOrder(id));
 
+  const loadVerifyQR = async (values) => dispatch(StartLoadVerifyQr(values));
+
+  const loadVerifyQRtoPoint = async (values) => dispatch(StartLoadVerifyToPoint(values));
+
   const loadResumeProductOrder = async () => dispatch(StartLoadResumeSales());
 
   const loadPackagesSent = async () => dispatch(startLoadPackageSent())
@@ -80,6 +86,8 @@ export const useProductOrder = () => {
     completeProductOrder,
     loadAssignedPO,
     loadVerifyStartRoute,
-    loadPackagesSent
+    loadPackagesSent,
+    loadVerifyQR,
+    loadVerifyQRtoPoint
   };
 };

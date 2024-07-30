@@ -55,6 +55,7 @@ import ShippingDelivery from '../pages/Logistic/ShippingDelivery'
 import LoadPackage from '../pages/Logistic/LoadPackage'
 import VerifyPackage from '../pages/Logistic/VerifyPackage'
 import PackagesSent from '../pages/Logistic/PackagesSent'
+import DeliverPackage from '../pages/Logistic/DeliverPackage'
 
 
 
@@ -129,7 +130,8 @@ export const AllRoutes = [
   { type: 1, path: '/cargar-paquetes', element: <LoadPackage/> },
   { type: 1, path: '/cargar-paquetes/verificar/:id', element: <VerifyPackage/> },
 
-  { type: 1, path: '/paquetes-enviados', element: <PackagesSent/> },
+  { type: 1, path: '/entregar-paquetes', element: <PackagesSent/> },
+  { type: 1, path: '/entrega/:id', element: <DeliverPackage/> },
 
   { type: 1, path: '/asignar-ruta/:id', element: <AssignRoute/> },
 

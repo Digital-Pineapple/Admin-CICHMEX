@@ -11,7 +11,7 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import MuseumIcon from '@mui/icons-material/Museum';
 import PeopleIcon from '@mui/icons-material/People';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import { Add, CarCrash, CasesSharp, CurrencyExchange, Delete, Face6, Grading, Home, HomeMax, Place, ProductionQuantityLimits, Receipt, Remove, Send } from "@mui/icons-material";
+import { Add, CarCrash, CasesSharp, CurrencyExchange, Delete, Face6, Grading, Home, HomeMax, MarkEmailUnread, Place, ProductionQuantityLimits, Receipt, Remove, Send } from "@mui/icons-material";
 import LocalConvenienceStoreIcon from '@mui/icons-material/LocalConvenienceStore';
 
 export const Links = [
@@ -110,9 +110,9 @@ export const Links = [
         Icon: <CarCrash/>
       },
       {
-        title:'Paquetes enviados',
-        path:'/auth/paquetes-enviados',
-        Icon: <CarCrash/>
+        title:'Entrega de paquetes',
+        path:'/auth/entregar-paquetes',
+        Icon: <MarkEmailUnread/>
       },
     ]
   },
