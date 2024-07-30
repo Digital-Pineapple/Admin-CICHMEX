@@ -14,7 +14,7 @@ import { useProductOrder } from "../hooks/useProductOrder";
 import { useEffect } from "react";
 import { LineChartCustom } from "../components";
 import { DonutChartCustom } from "../components/Charts/DonutChartCustom";
-
+import LoadingScreenBlue from '../components/ui/LoadingScreenBlue'
 const Principal = () => {
   const { user } = useAuthStore();
   const { loadResumeProductOrder, resumeOrders } = useProductOrder();
@@ -65,6 +65,7 @@ const Principal = () => {
       path: "",
     },
   ]
+  
 
   return (
     <>
@@ -125,7 +126,10 @@ const Principal = () => {
 
         <Grid container width={'100%'} marginTop={6} >
           <Grid item xs={7}>  
-          <LineChartCustom salesDay={resumeOrders.salesDayByHour}/>
+          
+
+              <LineChartCustom salesDay={resumeOrders?.salesDayByHour}/>
+            
           </Grid>
           <Grid item xs={4}padding={6} >
             <DonutChartCustom/>

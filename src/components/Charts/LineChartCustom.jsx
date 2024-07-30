@@ -1,16 +1,21 @@
 import { LineChart } from '@mui/x-charts/LineChart';
 import Typography from '@mui/material/Typography'
+import { Skeleton } from '@mui/material';
 
 
 export const LineChartCustom = ({salesDay}) => {
-
+console.log(salesDay);
   
-  const hours = salesDay.map(data => data.hour);
-  const sales = salesDay.map(data => data.sales);
+  const hours = salesDay?.map(data => data.hour);
+  const sales = salesDay?.map(data => data.sales);
+  
+  
   return (
     <>
     <Typography variant="h4" color="primary">Ventas por dia</Typography>
-     <LineChart
+     {
+      salesDay ? (
+         <LineChart
       xAxis={[{ data: hours, label:'hora' }]}
       series={[
         {
@@ -21,6 +26,11 @@ export const LineChartCustom = ({salesDay}) => {
       margin={{ left: 30, right: 30, top: 30, bottom: 30 }}
       grid={{ vertical: true, horizontal: true }}
     />
+      ):(
+        <Skeleton variant='rectangular' animation="wave" width={'100%'} height={'100%'}/>
+      )
+     }
+    
     </>
    
   );
