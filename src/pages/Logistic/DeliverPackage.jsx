@@ -1,18 +1,12 @@
 
 import { useEffect, useState } from "react";
 import {
-  Button,
   Grid,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import { useProductOrder } from "../../hooks/useProductOrder";
 import { useParams } from "react-router-dom";
 import QRLoader from "../../components/QR/QRLoader";
-
-
-
-
 
 const DeliverPackage = () => {
   const { loadProductOrder, productOrder, loadVerifyQR, navigate, loadVerifyQRtoPoint } = useProductOrder();
