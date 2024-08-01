@@ -10,8 +10,7 @@ import {
   loadStockProducts,
   onAddNewProduct,
   productsReducer,
-  startLoading,
-  stopLoading,
+
 } from "../reducer/productsReducer";
 import {
   headerConfigApplication,
@@ -108,7 +107,7 @@ export const startLoadEntriesProduct = () => {
 };
 export const startLoadOutputsProduct = () => {
   return async (dispatch) => {
-    dispatch(startLoading())
+   
     try {
       const { data } = await instanceApi.get(
         `/stock-StoreHouse/product/output`,
@@ -123,7 +122,7 @@ export const startLoadOutputsProduct = () => {
           variant: "error",
         }
       );
-      dispatch(stopLoading())
+     
     }
   };
 };
@@ -133,7 +132,7 @@ export const LoadOneProduct = (_id) => {
   return async (dispatch) => {
     if (typeof _id == "string") {   
       try {
-        dispatch(startLoading());
+        
         const { data } = await instanceApi.get(
           `/product/${_id}`, headerConfigApplication );
         dispatch(loadProduct(data.data));
@@ -153,7 +152,7 @@ export const LoadOneProduct = (_id) => {
 
 export const addOneProduct =
   ({name,price,description, tag, size, category, subCategory, weight, video}, images, navigate) => async (dispatch) => {
-    dispatch(startLoading())
+    
     try {
       const formData = new FormData();
       formData.append("name", name);
@@ -184,7 +183,7 @@ export const addOneProduct =
       });
       navigate("/auth/productos", { replace: true });
     } catch (error) {
-      dispatch(stopLoading())
+     
       enqueueSnackbar(`Error: ${error.response.data.message}`, {
         variant: "error",
         anchorOrigin: {

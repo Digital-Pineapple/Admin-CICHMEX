@@ -1,32 +1,28 @@
 import { enqueueSnackbar } from "notistack";
 import { instanceApi } from "../../apis/configAxios";
 import {
-  cleanProductOrderDetail,
-  deleteProductOrder,
-  editProductOrder,
   loadProductOrder,
   loadProductOrders,
-  onAddNewProductOrder,
-  productOrdersReducer,
   startLoadResume,
+  
 } from "../reducer/productOrdersReducer";
 import {
   headerConfigApplication,
-  headerConfigForm,
-  headerConfigFormData,
 } from "../../apis/headersConfig";
-import { replace } from "formik";
 import Swal from "sweetalert2";
+import { startLoading, stopLoading } from "../reducer/uiReducer";
 
 export const startLoadProductOrders = () => {
   return async (dispatch) => {
+    dispatch(startLoading())
     try {
       const { data } = await instanceApi.get(
         `/product-order`,
         headerConfigApplication
       );
 
-      dispatch(loadProductOrders(data.data));
+      dispatch(loadProductOrders(data.data), stopLoading());
+      
     } catch (error) {
       enqueueSnackbar(
         `${error.response.data.message}|| 'Error al consultar información'`,
@@ -36,6 +32,7 @@ export const startLoadProductOrders = () => {
         }
       );
     }
+    dispatch(stopLoading())
   };
 };
 
@@ -204,12 +201,18 @@ export const LoadOneProductOrder = (id) => {
 
 export const StartLoadResumeSales = () => {
   return async (dispatch) => {
+   dispatch(startLoading())
     try {
       const { data } = await instanceApi.get(
-        `/product-order/resume`,
-        headerConfigApplication
+        `/product-order/resume`,{
+        headers: {
+          "Content-type": "application/json",
+           "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
       );
-      dispatch(startLoadResume(data.data));
+      dispatch(startLoadResume(data.data), stopLoading());
+
     } catch (error) {
       enqueueSnackbar(
         `${error.response.data.message}|| 'Error al consultar información'`,
@@ -218,7 +221,9 @@ export const StartLoadResumeSales = () => {
           variant: "error",
         }
       );
+   
     }
+    dispatch(stopLoading())
   };
 };
 export const StartLoadVerifyQr = ({ order, user, code }) => {
@@ -300,9 +305,6 @@ export const StartLoadVerifyToPoint = ({ order, user, code, branch_id } ) => {
            },
          }
        );
-       console.log(response);
-
-       const id = response.data.data._id
        Swal.fire({
          title: `Entrega de pedido${response.data.data.order_id}`,
          text: 'Se validó codigo correctamente',

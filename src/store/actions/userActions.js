@@ -8,7 +8,7 @@ import {
   verifyUser,
 } from "../reducer/userReducer";
 import { enqueueSnackbar } from "notistack";
-import { loadCarrierDrivers, startLoading, stopLoading } from "../reducer";
+import { loadCarrierDrivers } from "../reducer";
 import { headerConfigFormData } from "../../apis/headersConfig";
 
 const headerConfig = {
@@ -145,7 +145,7 @@ export const editOneUser = (user_id, {fullname,type_user,profile_image}) => {
 
 export const addOneCarrier = (values, navigate) => {
   return async (dispatch) => {
-    dispatch(startLoading());
+  
     try {
       const { data } = await instanceApi.post(
         `/user/carrier-driver`,
@@ -160,7 +160,7 @@ export const addOneCarrier = (values, navigate) => {
           horizontal: "right",
         },
       });
-      dispatch(stopLoading());
+      
     } catch (error) {
       enqueueSnackbar(`${error.response.data.message}`, {
         variant: "error",
@@ -170,7 +170,7 @@ export const addOneCarrier = (values, navigate) => {
         },
       });
       if (error) {
-        dispatch(stopLoading());
+        
       }
     }
   };

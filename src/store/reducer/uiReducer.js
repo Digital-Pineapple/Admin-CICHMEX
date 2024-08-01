@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 export const uiReducer = createSlice({
   name: 'ui',
   initialState: {
-    loading: true,
+    loading: false,
   },
   reducers: {
     startLoading: (state) => {

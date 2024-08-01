@@ -6,25 +6,21 @@ export const productOrdersReducer = createSlice({
     initialState: {
         productOrders: [],
         productOrder: {},
-        isLoading: false,
         resumeOrders :[]
     },
     reducers: {
-        loadProductOrders: (state, { type, payload }) => {
+      
+        loadProductOrders: (state, { payload }) => {
             state.productOrders = payload;
         },
-        loadProductOrder: (state, { type, payload }) => {
+        loadProductOrder: (state, {  payload }) => {
             state.productOrder = payload;
-            state.isLoading = false;
         },
         onAddNewProductOrder: (state, { payload }) => {
             state.productOrder = payload;
         },
-        deleteProductOrder: (state, { type, payload }) => {
+        deleteProductOrder: (state, { payload }) => {
             state.productOrder = state.productOrders.filter(i => i._id !== payload);
-        },
-        startLoading(state){
-          state.isLoading=true
         },
         startLoadResume: (state, { payload }) => {
           state.resumeOrders =  payload;
@@ -46,6 +42,6 @@ export const productOrdersReducer = createSlice({
             });
           }}})
 
-export const { cleanProductOrderDetail, startLoadResume, deleteProductOrder, editProductOrder, loadProductOrder, loadProductOrders, onAddNewProductOrder } = productOrdersReducer.actions;
+export const { cleanProductOrderDetail, startLoadResume, deleteProductOrder, editProductOrder, loadProductOrder, loadProductOrders, onAddNewProductOrder, startLoader } = productOrdersReducer.actions;
 
 export default productOrdersReducer.reducer;

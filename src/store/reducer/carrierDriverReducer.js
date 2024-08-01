@@ -8,12 +8,7 @@ export const CarrierDriverReducer = createSlice({
     loading: false,
   },
   reducers: {
-    startLoading: (state) => {
-      state.loading = true;
-    },
-    stopLoading: (state) => {
-      state.loading = false;
-    },
+  
     loadCarrierDrivers: (state, action) => {
       state.CarrierDrivers = action.payload;
     },
@@ -47,7 +42,6 @@ export const {
   editcarrierDriver,
   loadCarrierDriver,
   loadCarrierDrivers,
-  startLoading,stopLoading
 } = CarrierDriverReducer.actions;
 
 export default CarrierDriverReducer.reducer;

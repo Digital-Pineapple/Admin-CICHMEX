@@ -20,9 +20,15 @@ export const useProductOrder = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+
   const { productOrders, productOrder, isLoading, resumeOrders } = useSelector(
     (state) => state.allProductOrders
   );
+  const { loading } = useSelector(
+    (state) => state.ui
+  );
+
+
 
   const loadProductOrders = async () => dispatch(startLoadProductOrders());
 
@@ -88,6 +94,8 @@ export const useProductOrder = () => {
     loadVerifyStartRoute,
     loadPackagesSent,
     loadVerifyQR,
-    loadVerifyQRtoPoint
+    loadVerifyQRtoPoint,
+    loading
+    
   };
 };

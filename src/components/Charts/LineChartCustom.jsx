@@ -4,7 +4,6 @@ import { Skeleton } from '@mui/material';
 
 
 export const LineChartCustom = ({salesDay}) => {
-console.log(salesDay);
   
   const hours = salesDay?.map(data => data.hour);
   const sales = salesDay?.map(data => data.sales);
@@ -12,7 +11,7 @@ console.log(salesDay);
   
   return (
     <>
-    <Typography variant="h4" color="primary">Ventas por dia</Typography>
+    <Typography variant="h4" textAlign={'center'} color="primary">Ventas por dia</Typography>
      {
       salesDay ? (
          <LineChart
@@ -22,9 +21,10 @@ console.log(salesDay);
           data: sales,
         },
       ]}
-      height={300}
+      height={400}
       margin={{ left: 30, right: 30, top: 30, bottom: 30 }}
       grid={{ vertical: true, horizontal: true }}
+      
     />
       ):(
         <Skeleton variant='rectangular' animation="wave" width={'100%'} height={'100%'}/>

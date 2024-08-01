@@ -3,10 +3,10 @@ import Cookies from "js-cookie";
 import { instanceApi } from "../../apis/configAxios";
 import { enqueueSnackbar } from "notistack";
 import { onLogin } from '../reducer/authReducer'
+import { startLoading } from "../reducer/uiReducer";
 
 
 export const startLogin = ({ email, password }) => async (dispatch) => {
- 
   try {
     const { data } = await instanceApi.post("/auth/login", {
       email,

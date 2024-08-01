@@ -15,12 +15,15 @@ import { useEffect } from "react";
 import { LineChartCustom } from "../components";
 import { DonutChartCustom } from "../components/Charts/DonutChartCustom";
 import LoadingScreenBlue from '../components/ui/LoadingScreenBlue'
+import BarTopTenProducts from "../components/Charts/BarTopTenProducts";
+import LastTenTable from "../components/Tables/LastTenTable";
 const Principal = () => {
   const { user } = useAuthStore();
-  const { loadResumeProductOrder, resumeOrders } = useProductOrder();
+  const { loadResumeProductOrder, resumeOrders, loading } = useProductOrder();
   useEffect(() => {
     loadResumeProductOrder();
   }, [user]);
+
   const cards = [
     {
       title: "Ingresos por día",
@@ -30,53 +33,57 @@ const Principal = () => {
       color: "secondary.main",
       textColor: "secondary.contrastText",
     },
+    
     {
+      title: "Ingresos por semana",
+      icon: <CalendarMonthIcon />,
+      number: `$ ${resumeOrders.recivedCashWeek}`,
+      path: "",
+    },
+   {
       title: "Ingresos por mes",
       icon: <CalendarMonthIcon />,
       number: `$${resumeOrders.recivedCashMonth}`,
       path: "",
     },
-    {
-      title: "Ingresos por año",
-      icon: <CalendarMonthIcon />,
-      number: `$ ${resumeOrders.recivedCashYear}`,
-      path: "",
-    },
-   
   ];
 
   const cards2 =[
  {
-      title: "Ventas al día",
+      title: "Ventas del día",
       icon: <TrendingUpIcon />,
       number: `${resumeOrders.ordersDay}`,
       path: "",
+      color: "secondary.main",
+      textColor: "secondary.contrastText",
     },
     {
-      title: "Ventas al mes",
+      title: "Ventas de la semana",
+      icon: <TrendingUpIcon />,
+      number: `${resumeOrders.ordersWeek}`,
+      path: "",
+    },
+    {
+      title: "Ventas del mes",
       icon: <TrendingUpIcon />,
       number: `${resumeOrders.ordersMonth}`,
       path: "",
     },
-    {
-      title: "Ventas al año",
-      icon: <TrendingUpIcon />,
-      number: `${resumeOrders.ordersYear}`,
-      path: "",
-    },
   ]
   
+  if (loading) {
+    return ( <LoadingScreenBlue/>)
+  }
 
   return (
     <>
       <Grid
         contaianer
-        display={"flex"}
-        flexDirection={"column"}
         sx={{ padding: { xs: 0, md: 4 } }}
         maxWidth={'85vw'}
+        gap={2}
       >
-        <Grid container spacing={{ xs: 1, sm: 4 }}>
+        <Grid container spacing={2}>  
           {cards.map((item, index) => {
             return (
               <Grid key={index} item xs={6} lg={4}>
@@ -121,24 +128,23 @@ const Principal = () => {
               </Grid>
             );
           })}
+      
         </Grid>
 
 
-        <Grid container width={'100%'} marginTop={6} >
+  <Grid container marginY={2} spacing={2}>
           <Grid item xs={7}>  
-          
-
               <LineChartCustom salesDay={resumeOrders?.salesDayByHour}/>
-            
           </Grid>
           <Grid item xs={4}padding={6} >
-            <DonutChartCustom/>
+              <DonutChartCustom commissionPayedDay={resumeOrders?.commissionPayedDay}recivedCashDay={resumeOrders?.recivedCashDay} cashDay={resumeOrders?.cashDay} />
           </Grid>
-        </Grid>
-       <Grid container spacing={{ xs: 1, sm: 4 }}>
+  </Grid>
+   
+      <Grid container marginY={2} spacing={2}>
           {cards2.map((item, index) => {
             return (
-              <Grid key={index} item xs={6} lg={3}>
+              <Grid key={index} item xs={6} lg={4}>
                 <Link to={item.path} style={{ textDecoration: "none" }}>
                   <Card
                     variant="outlined"
@@ -180,7 +186,19 @@ const Principal = () => {
               </Grid>
             );
           })}
-        </Grid>
+      </Grid>
+       
+
+<Grid container alignItems={'center'} spacing={2}>
+  
+        <Grid item xs={6} >
+              <BarTopTenProducts topProducts={resumeOrders?.topProductsMonth} />
+          </Grid>
+
+          <Grid item xs={5}  >
+              <LastTenTable rows={resumeOrders?.lastTen}/>
+          </Grid>
+</Grid>
       </Grid>
     </>
   );
