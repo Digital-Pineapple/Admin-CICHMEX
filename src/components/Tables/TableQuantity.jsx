@@ -1,0 +1,145 @@
+import * as React from "react";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/DeleteOutlined";
+import SaveIcon from "@mui/icons-material/Save";
+import CancelIcon from "@mui/icons-material/Close";
+import {
+  GridRowModes,
+  DataGrid,
+  GridActionsCellItem,
+  GridRowEditStopReasons,
+} from "@mui/x-data-grid";
+import Typography from "@mui/material/Typography";
+import { Grid } from "@mui/material";
+
+const TableQuantity = ({ values, setValues }) => {
+  const [rowModesModel, setRowModesModel] = React.useState({});
+
+  const handleRowEditStop = (params, event) => {
+    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+      event.defaultMuiPrevented = true;
+    }
+  };
+
+  const handleEditClick = (id) => () => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+  };
+
+  const handleSaveClick = (id) => () => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+  };
+
+  const handleDeleteClick = (id) => () => {
+    setValues(values.filter((row) => row.id !== id));
+  };
+
+  const handleCancelClick = (id) => () => {
+    setRowModesModel({
+      ...rowModesModel,
+      [id]: { mode: GridRowModes.View, ignoreModifications: true },
+    });
+
+    const editedRow = values.find((row) => row.id === id);
+    if (editedRow.isNew) {
+      setValues(values.filter((row) => row.id !== id));
+    }
+  };
+
+  const processRowUpdate = (newRow) => {
+    const updatedRow = { ...newRow, isNew: false };
+    setValues(values.map((row) => (row.id === newRow.id ? updatedRow : row)));
+    return updatedRow;
+  };
+
+  const handleRowModesModelChange = (newRowModesModel) => {
+    setRowModesModel(newRowModesModel);
+  };
+
+  const columns = [
+    {
+      field: "tag",
+      headerName: "Codigo",
+      type: "number",
+      align: "left",
+      headerAlign: "left",
+      editable: false,
+    },
+    { field: "name", headerName: "Name", width: 180, editable: false },
+    {
+      field: "quantity",
+      headerName: "Cantidad",
+      type: "number",
+      width: 180,
+      editable: true,
+    },
+    {
+      field: "actions",
+      type: "actions",
+      headerName: "Acciones",
+      width: 100,
+      cellClassName: "actions",
+      getActions: ({ id }) => {
+        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+
+        if (isInEditMode) {
+          return [
+            <GridActionsCellItem
+              icon={<SaveIcon />}
+              label="Save"
+              sx={{
+                color: "primary.main",
+              }}
+              onClick={handleSaveClick(id)}
+            />,
+            <GridActionsCellItem
+              icon={<CancelIcon />}
+              label="Cancel"
+              className="textPrimary"
+              onClick={handleCancelClick(id)}
+              color="inherit"
+            />,
+          ];
+        }
+
+        return [
+          <GridActionsCellItem
+            icon={<EditIcon />}
+            label="Edit"
+            className="textPrimary"
+            onClick={handleEditClick(id)}
+            color="inherit"
+          />,
+          <GridActionsCellItem
+            icon={<DeleteIcon />}
+            label="Delete"
+            onClick={handleDeleteClick(id)}
+            color="inherit"
+          />,
+        ];
+      },
+    },
+  ];
+
+  return (
+    <Grid>
+      <Typography variant="h5" color="inherit">
+        Productos seleccionados:
+      </Typography>
+      <DataGrid
+        rows={values}
+        columns={columns}
+        editMode="row"
+        rowModesModel={rowModesModel}
+        onRowModesModelChange={handleRowModesModelChange}
+        onRowEditStop={handleRowEditStop}
+        processRowUpdate={processRowUpdate}
+        pageSizeOptions={[10, 15, 20]}
+        disableRowSelectionOnClick
+        density="compact"
+        sx={{minHeight:'200px'}}
+      />
+    </Grid>
+  );
+};
+
+export default TableQuantity;

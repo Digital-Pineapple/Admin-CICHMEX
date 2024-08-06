@@ -56,6 +56,8 @@ import LoadPackage from '../pages/Logistic/LoadPackage'
 import VerifyPackage from '../pages/Logistic/VerifyPackage'
 import PackagesSent from '../pages/Logistic/PackagesSent'
 import DeliverPackage from '../pages/Logistic/DeliverPackage'
+import StockMovements from '../pages/MyStoreHouse/StockMovements'
+import AddEntries from '../pages/MyStoreHouse/AddEntries'
 
 
 
@@ -118,8 +120,11 @@ export const AllRoutes = [
   { type: 1, path: '/agregar-productos/:id', element: <AddProductsToSH/>},
 
   { type: 1, path: '/MiAlmacen', element: <MyStoreHouse/> },
-  { type: 1, path: '/MiAlmacen/stock', element: <MyStockProducts/> },
+  { type: 1, path: '/MiAlmacen/stock', element: <StockMovements/> },
   { type: 1, path: '/MiAlmacen/entradas', element: <ProductEntries/> },
+  { type: 1, path: '/MiAlmacen/AgregarEntradas', element: <AddEntries/> },
+  
+
   { type: 1, path: '/MiAlmacen/salidas', element: <ProductOutputs/> },
 
   { type: 1, path: '/Ordenes-de-producto', element: <MyProductOrders/> },

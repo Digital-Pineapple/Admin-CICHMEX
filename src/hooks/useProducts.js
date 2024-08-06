@@ -4,6 +4,9 @@ import {
   addOneProduct,
   deleteOneProduct,
   editOneProduct,
+  startAddMultipleEntries,
+  startLoadAllInputs,
+  startLoadAllOutputs,
   startLoadEntriesProduct,
   startLoadNonExistProduct,
   startLoadOutputsProduct,
@@ -29,6 +32,8 @@ export const useProducts = () => {
 
   const loadEntriesProducts = async () => dispatch(startLoadEntriesProduct());
   const loadOutputsProducts = async () => dispatch(startLoadOutputsProduct());
+  const loadAllInputs  = async () =>dispatch(startLoadAllInputs())
+  const loadAllOutputs  = async () =>dispatch(startLoadAllOutputs())
 
   const loadStockProducts = async () => dispatch(startLoadStockProducts());
 
@@ -41,6 +46,9 @@ export const useProducts = () => {
   const createProduct = async (values, images) => {
     dispatch(addOneProduct(values, images, navigate));
   };
+  const addMultipleEntries = async(values)=>{
+    dispatch(startAddMultipleEntries(values,navigate))
+  }
 
   const editProduct = async (id, values, images) =>
     dispatch(editOneProduct(id, values, images, navigate));
@@ -66,50 +74,16 @@ export const useProducts = () => {
     SubCategory: item?.subCategory?.name,
     ...item,
   }));
+  const rowsAllInputs = entries?.map((item, index) => ({
+    id: index,
+    
+    ...item,
+  }));
+  const rowsAllOutputs = outputs?.map((item, index) => ({
+    id: index,
+    ...item,
+  }));
 
-  const rowsEntriesProducts = entries?.map((item, index) => {
-    const allInputs = item.Inputs.map((item1) => {
-      return {
-        quantity: item1?.quantity,
-        newQuantity: item1?.newQuantity,
-        day: dayjs(item1?.createdAt).format('DD/MM/YYYY'),
-        hour: dayjs(item1?.createdAt).format('HH:mm:ss'), // Cambiado para obtener la hora en el formato correcto
-        responsible: item1?.responsible?.fullname || '',
-      };
-    });
-    const row = {
-      id: index,
-      stock_id:item?._id,
-      name: item?.product[0]?.name,
-      price: item?.product[0]?.price,
-      tag: item?.product[0]?.tag,
-      stock: item.stock,
-      inputs: allInputs
-    };
-    return row;
-  });
-
-  const rowsOutputsProducts = outputs?.map((item, index) => {
-    const allOutputs = item.Outputs.map((item1) => {
-      return {
-        quantity: item1?.quantity,
-        newQuantity: item1?.newQuantity,
-        day: dayjs(item1?.createdAt).format('DD/MM/YYYY'),
-        hour: dayjs(item1?.createdAt).format('HH:mm:ss'), // Cambiado para obtener la hora en el formato correcto
-        responsible: item1?.responsible?.fullname
-      };
-    });
-    const row = {
-      id: index,
-      stock_id:item?._id,
-      name: item?.product[0]?.name,
-      price: item?.product[0]?.price,
-      tag: item?.product[0]?.tag,
-      stock: item.stock,
-      inputs: allOutputs
-    };
-    return row;
-  });
   
 
   return {
@@ -131,8 +105,12 @@ export const useProducts = () => {
     loadStockProducts,
     entries,
     loadEntriesProducts,
-    rowsEntriesProducts,
+  rowsAllInputs,
     loadOutputsProducts,
-    rowsOutputsProducts
+    loadAllInputs,
+    loadAllOutputs,
+    rowsAllOutputs,
+    addMultipleEntries,
+
   };
 };
