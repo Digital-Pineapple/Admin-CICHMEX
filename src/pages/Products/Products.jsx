@@ -62,16 +62,12 @@ function CustomPagination(props) {
 
 const Products = () => {
   const {user} = useAuthStore()
-  const { loadProducts, navigate, deleteProduct, isLoading, rowsProducts } = useProducts();
+  const { loadProducts, navigate, deleteProduct, rowsProducts, loading } = useProducts();
 
   useEffect(() => {
     loadProducts()
   }, [user]);
 
-
-  const createProduct = () => {
-    navigate('/auth/CrearProducto')
-  }
   
   const exportToExcel = () => {
     const workbook = new Workbook();
@@ -79,7 +75,6 @@ const Products = () => {
 
     // Agregar encabezados de columna
     const headerRow = worksheet.addRow([
-      "ID",
       "Nombre del producto",
       "Descripción",
       "Precio",
@@ -92,7 +87,7 @@ const Products = () => {
 
     // Agregar datos de las filas
     rowsProducts.forEach((row) => {
-      worksheet.addRow([row._id, row.name, row.description, row.price, row.size, row.tag]);
+      worksheet.addRow([row.name, row.description, row.price, row.size, row.tag]);
     });
 
     // Crear un Blob con el archivo Excel y guardarlo
@@ -110,7 +105,7 @@ const Products = () => {
   
     const handleGoToPage1 = () => apiRef.current.setPage(1);
 
-    if (isLoading) return (<LoadingScreenBlue/>)
+   
   
     return (
       <GridToolbarContainer sx={{justifyContent:'space-between'}}>
@@ -128,6 +123,8 @@ const Products = () => {
       </GridToolbarContainer>
     );
   }
+
+  if (loading) return (<LoadingScreenBlue/>)
 
   return (
     <Grid container maxWidth={'85vw'}>
@@ -193,7 +190,15 @@ const Products = () => {
             ],
           },
         ]}
-        
+        initialState={{
+          sorting: {
+            sortModel: [{ field: "name", sort: "desc" }],
+          },
+          pagination:{
+            paginationModel:{pageSize:20}
+          }
+        }}
+        density="compact"
         rows={rowsProducts}
         pagination
         slots={{
@@ -217,6 +222,7 @@ const Products = () => {
           hideFooter: true,
           hideToolbar: true,
         }}
+        style={{fontFamily:'sans-serif', fontSize:'15px'}}
       />
     </Grid>
   );

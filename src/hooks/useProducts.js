@@ -15,18 +15,15 @@ import {
 } from "../store/actions/productsActions";
 import { useNavigate } from "react-router-dom";
 import { cleanProductDetail } from "../store/reducer/productsReducer";
-import { useForm } from "react-hook-form";
-import { Category } from "@mui/icons-material";
-import dayjs, { Dayjs } from "dayjs";
 
 export const useProducts = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { reset } = useForm();
 
-  const { products, product, isLoading, stockProducts, entries, outputs } = useSelector(
+  const { products, product, stockProducts, entries, outputs } = useSelector(
     (state) => state.products
   );
+  const { loading } = useSelector((state) => state.ui);
 
   const loadProducts = async () => dispatch(startLoadProducts());
 
@@ -100,17 +97,17 @@ export const useProducts = () => {
     product,
     products,
     navigate,
-    isLoading,
     cleanProductD,
     loadStockProducts,
     entries,
     loadEntriesProducts,
-  rowsAllInputs,
+    rowsAllInputs,
     loadOutputsProducts,
     loadAllInputs,
     loadAllOutputs,
     rowsAllOutputs,
     addMultipleEntries,
+    loading
 
   };
 };

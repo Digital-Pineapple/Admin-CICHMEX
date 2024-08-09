@@ -4,11 +4,15 @@ export const subCategoryReducer = createSlice({
   name: 'subCategories',
   initialState: {
     subCategories: [],
+    subCategoriesByCategory:[],
     subCategory: {}
   },
   reducers: {
     loadSubCategories: (state, action) => {
       state.subCategories = action.payload;
+    },
+    loadSubCategoriesByCategory: (state, action) => {
+      state.subCategoriesByCategory = action.payload;
     },
     loadSubCategory: (state, { type, payload }) => {
       state.subCategory = payload;
@@ -34,6 +38,6 @@ export const subCategoryReducer = createSlice({
       });
     }}})
 
-export const { loadSubCategories, loadSubCategory, onAddNewSubCategory, deleteSubCategory, editSubCategory } = subCategoryReducer.actions;
+export const { loadSubCategories,loadSubCategoriesByCategory, loadSubCategory, onAddNewSubCategory, deleteSubCategory, editSubCategory } = subCategoryReducer.actions;
 
 export default subCategoryReducer.reducer;

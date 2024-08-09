@@ -23,6 +23,7 @@ import { saveAs } from 'file-saver';
 import DeleteAlert from "../../components/ui/DeleteAlert";
 import EditButton from "../../components/Buttons/EditButton";
 import { useSubCategories } from "../../hooks/useSubCategories";
+import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 
 
 function Pagination({ page, onPageChange, className }) {
@@ -58,16 +59,11 @@ function CustomPagination(props) {
 }
 
 const SubCategories = () => {
-  const { loadSubCategories, rowsSubCategories, navigate, deleteSubCategory} = useSubCategories()
+  const { loadSubCategories, rowsSubCategories, navigate, deleteSubCategory, loading} = useSubCategories()
 
   useEffect(() => {
     loadSubCategories();
   }, []);
-
- 
-  const createSubCategory = () => {
-    navigate("/auth/CrearSubCategoria");
-  };
 
   const exportToExcel = () => {
     const workbook = new Workbook();
@@ -75,17 +71,15 @@ const SubCategories = () => {
 
     // Agregar encabezados de columna
     const headerRow = worksheet.addRow([
-      "ID",
       "Nombre de la subcategoria",
-      "Imagen",
     ]);
     headerRow.eachCell((cell) => {
       cell.font = { bold: true };
     });
 
     // Agregar datos de las filas
-    rowsWithIds.forEach((row) => {
-      worksheet.addRow([row._id, row.name]);
+    rowsSubCategories.forEach((row) => {
+      worksheet.addRow([ row.name,]);
     });
 
     // Crear un Blob con el archivo Excel y guardarlo
@@ -100,8 +94,7 @@ const SubCategories = () => {
 
   function CustomToolbar() {
     const apiRef = useGridApiContext();
-  
-    const handleGoToPage1 = () => apiRef.current.setPage(1);
+    const handleGoToPage1 = () => apiRef.current.setPage(0);
   
     return (
       <GridToolbarContainer sx={{justifyContent:'space-between'}}>
@@ -118,6 +111,10 @@ const SubCategories = () => {
       </Button>
       </GridToolbarContainer>
     );
+  }
+
+  if (loading) {
+    return(<LoadingScreenBlue/> )
   }
 
   return (
@@ -175,10 +172,14 @@ const SubCategories = () => {
         ]}
         initialState={{
           sorting: {
-            sortModel: [{ field: "type_customer", sort: "desc" }],
+            sortModel: [{ field: "name", sort: "asc" }],
           },
+          pagination:{
+            paginationModel:{pageSize:20}
+          }
         }}
         rows={rowsSubCategories}
+        density="standard"
         pagination
         slots={{
           pagination: CustomPagination,
@@ -202,6 +203,7 @@ const SubCategories = () => {
           hideFooter: true,
           hideToolbar: true,
         }}
+        style={{fontFamily:'sans-serif', fontSize:'15px'}}
       />
     </Grid>
   );

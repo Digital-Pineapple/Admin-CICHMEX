@@ -8,6 +8,7 @@ export const useCategories = () => {
     const navigate = useNavigate()
     
     const { categories, category } = useSelector(state => state.categories)
+    const { loading } = useSelector(state => state.ui)
 
     const loadCategories = async () => await dispatch(startLoadCategories());
 
@@ -21,7 +22,7 @@ export const useCategories = () => {
 
     const searchCategory = async value => await dispatch(searchCategories(value));
 
-    return { navigate, categories, category, loadCategories, loadCategory, deleteCategory, editCategory, addCategory, searchCategory }
+    return { navigate, categories, category, loadCategories, loadCategory, deleteCategory, editCategory, addCategory, searchCategory, loading }
 
 
 }

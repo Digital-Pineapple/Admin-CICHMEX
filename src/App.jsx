@@ -18,7 +18,7 @@ const App = () => {
   return (
     <>
     {
-      loading ? <LoadingScreen /> : <RoutesContainer />
+      loading ? <LoadingScreen /> : <RoutesContainer/>
     }
     </>
   );

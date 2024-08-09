@@ -32,11 +32,10 @@ import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 const Edit = () => {
   const { id } = useParams();
-  const { loadProduct, product, editProduct, navigate, isLoading } =
+  const { loadProduct, product, editProduct, navigate, loading } =
     useProducts();
   const { categories, loadCategories } = useCategories();
-  const { subCatByCategory, loadSubcategoriesByCategory } = useSubCategories();
-  const isSmallScreen = useMediaQuery("(max-width:400px)");
+  const {  subCategoriesByCategory, loadSubCategories, loadSubCategoriesByCategory } = useSubCategories();
   const StyledBadge = styled(Badge)(({ theme }) => ({
     "& .MuiBadge-badge": {
       right: 0,
@@ -46,7 +45,7 @@ const Edit = () => {
   useEffect(() => {
     loadProduct(id);
   }, [id]);
-  console.log(product);
+
   useEffect(() => {
     formik.setValues({
       name: product.name ? product.name : "",
@@ -60,8 +59,10 @@ const Edit = () => {
       weight: product.weight || "",
     });
     loadCategories();
-    loadSubcategoriesByCategory(product?.category?._id);
+    loadSubCategories()
+    loadSubCategoriesByCategory(product.category?._id)
   }, [product]);
+  
 
   const formik = useFormik({
     onSubmit: (values) => {
@@ -88,11 +89,11 @@ const Edit = () => {
     navigate("/auth/productos", { replace: true });
   };
 
+if (loading) {
+  return( <LoadingScreenBlue/>)
+}
   return (
     <>
-      {isLoading && product ? (
-        <LoadingScreenBlue />
-      ) : (
         <Grid
           component="form"
           padding={1}
@@ -116,12 +117,9 @@ const Edit = () => {
               Editar
             </Typography>
           </Grid>
-          <Grid container maxWidth={'70vw'} >
+          <Grid container maxWidth={"70vw"}>
             {product.images?.length ? (
-              <SlideBranchesImages
-                images={product?.images}
-                altura={"300px"}
-              />
+              <SlideBranchesImages images={product?.images} altura={"300px"} />
             ) : (
               <Typography marginY={"80px"}>
                 No tienes imagenes para mostrar
@@ -130,7 +128,7 @@ const Edit = () => {
           </Grid>
           <Grid container>
             {images.length > 0 && (
-              <Grid item  xs={12}>
+              <Grid item xs={12}>
                 <input
                   id="image"
                   name="image"
@@ -320,12 +318,11 @@ const Edit = () => {
               <Select
                 id="category"
                 name="category"
-                value={formik.values?.category}
+                value={formik.values?.category}    
                 label="Categoria"
                 onChange={(e) => {
-                  formik.setFieldValue("subCategory", "");
                   formik.handleChange(e);
-                  loadSubcategoriesByCategory(e.target.value);
+                  loadSubCategoriesByCategory(e.target.value);
                 }}
               >
                 {categories.map((category) => (
@@ -344,15 +341,16 @@ const Edit = () => {
                 id="subCategory"
                 name="subCategory"
                 value={formik.values?.subCategory}
-                label="subcategoria"
+                label="Subcategoria"
                 onChange={formik.handleChange}
               >
-                {formik.values?.category &&
-                  subCatByCategory?.map((subCategory) => (
-                    <MenuItem key={subCategory._id} value={subCategory._id}>
-                      {subCategory.name}
-                    </MenuItem>
-                  ))}
+                {subCategoriesByCategory ?
+                  subCategoriesByCategory?.map((subCategory) => (
+                      <MenuItem key={subCategory._id} value={subCategory._id}>
+                        {subCategory.name}
+                      </MenuItem>
+                    ))
+                  : "Categoría sin subcategorías"}
               </Select>
               <FormHelperText>Selecciona una subcategoria</FormHelperText>
             </FormControl>
@@ -377,7 +375,6 @@ const Edit = () => {
             Cancelar
           </Button>
         </Grid>
-      )}
     </>
   );
 };

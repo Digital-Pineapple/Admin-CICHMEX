@@ -6,6 +6,7 @@ import {
   deleteSubCategory,
   editSubCategory,
   onAddNewSubCategory,
+  loadSubCategoriesByCategory,
 } from "../reducer/subCategoryReducer";
 import { headerConfigApplication } from "../../apis/headersConfig";
 import {
@@ -14,12 +15,20 @@ import {
   headerConfigFormData,
 } from "./headers";
 import { replace } from "formik";
+import { startLoading, stopLoading } from "../reducer/uiReducer";
 
 export const startLoadSubCategories = () => {
   return async (dispatch) => {
+    dispatch(startLoading())
     try {
       const { data } = await instanceApi.get("/sub-category");
-      dispatch(loadSubCategories(data.data), headerConfig);
+      dispatch(loadSubCategories(data.data), {
+        headers: {
+          "Content-type": "application/json",
+           "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      },
+      });
+      dispatch(stopLoading())
     } catch (error) {
       enqueueSnackbar(
         `Ocurrió un error al cargar las sub-categorias + ${error}`,
@@ -31,6 +40,7 @@ export const startLoadSubCategories = () => {
           },
         }
       );
+      dispatch(stopLoading())
     }
   };
 };
@@ -175,15 +185,20 @@ export const searchSubCategories = ({ value }) => {
     }
   };
 };
-export const getSubCategoriesByCategory = (value) => {
-  // console.log(value,"");
+export const getSubCategoriesByCategory = (id) => {
+  
   return async (dispatch) => {
     try {
       const { data } = await instanceApi.get(
-        `/sub-category/subCategory/${value}`,
-        headerConfig
+        `/sub-category/subCategory/${id}`,
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
-      return data.data;
+      dispatch(loadSubCategoriesByCategory(data.data))
     } catch (error) {
       console.error(error);
     }

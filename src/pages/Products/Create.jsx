@@ -36,7 +36,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 const CreateProduct = () => {
   const { createProduct, navigate } = useProducts();
-  const { loadSubCategories, loadSubcategoriesByCategory, subCatByCategory } = useSubCategories()
+  const { loadSubCategories, subCategoriesByCategory, loadSubCategoriesByCategory } = useSubCategories()
   const { categories, loadCategories } = useCategories();
   const { images, handleImageChange, deleteImage, imagesFiles } =
     useImages();
@@ -167,7 +167,7 @@ const CreateProduct = () => {
               onChange={(e)=>{
                 formik.setFieldValue('subCategory','');
                 formik.handleChange(e)
-                loadSubcategoriesByCategory(e.target.value);
+                loadSubCategoriesByCategory(e.target.value);
               }}
             >
               {categories.map((category) => (
@@ -189,7 +189,7 @@ const CreateProduct = () => {
               label="Subcategoria"
               onChange={formik.handleChange}
             >
-              { formik.values.category && subCatByCategory.map((subCategory) => (
+              { formik.values.category && subCategoriesByCategory.map((subCategory) => (
                 <MenuItem key={subCategory._id} value={subCategory._id}>
                   {subCategory.name}
                 </MenuItem>

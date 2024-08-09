@@ -1,13 +1,13 @@
-import { Grid, Typography, TextField, Button } from "@mui/material";
+import { Grid, Typography, TextField, Button, ButtonGroup } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import FormSearch from "../../components/Filters/FormSearch";
 import { useAuthStore, useProducts } from "../../hooks";
 import { useEffect, useState } from "react";
-import TableQuantity from "../../components/Tables/TableQuantity";
 import Swal from "sweetalert2";
+import TableQuantity from "../../components/Tables/TableQuantity";
 
 const AddEntries = () => {
-  const { loadProducts,addMultipleEntries } = useProducts();
+  const { loadProducts,addMultipleEntries, navigate } = useProducts();
   const { user } = useAuthStore();
   const [product, setProduct] = useState(null);
   const [allProducts, setAllProducts] = useState([]);
@@ -134,18 +134,31 @@ const AddEntries = () => {
           )}
         />
       </Grid>
-      <Grid item xs={12}>
+      <Grid container padding={{xs:2,lg:4}} gap={2} justifyContent={'center'} >
         <Typography variant="h4" textAlign={"center"} color="initial">
           Introduzca el nombre o código de barras del producto
         </Typography>
+        <Grid item xs={10}>
         <FormSearch setSelected={setProduct} allValues ={allProducts} titleAlert={'Ya se agrego este producto'} />
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={12} lg={8}>
         <TableQuantity values={rowsIds} setValues={setAllProducts} allValues={allProducts} />
       </Grid>
-      <Button variant="contained" onClick={handleSubmit(onSubmit)} color="primary">
-        Subir entradas
+      <Grid item xs={12} lg={6}>
+      <ButtonGroup fullWidth variant="text" color="primary" aria-label="">
+         <Button  variant="contained" onClick={handleSubmit(onSubmit)} color="primary">
+        Subir entrada
       </Button>
+      <Button  variant="contained" onClick={navigate('/auth/')} color="primary">
+        Salir
+      </Button>
+
+      </ButtonGroup>
+      </Grid>
+
+          
+        </Grid>
+     
     </Grid>
   );
 };

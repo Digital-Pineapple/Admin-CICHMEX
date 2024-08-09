@@ -269,6 +269,9 @@ const ProductEntries = () => {
           initialState={{
             pagination:{
               paginationModel:{pageSize:10}
+            },
+            sorting:{
+              sortModel: [{ field: "date", sort: "desc" }],
             }
           }}
           style={{fontFamily:'sans-serif', fontSize:'15px'}}

@@ -1,24 +1,20 @@
 import { useSelector, useDispatch } from 'react-redux';
-
 import { startLoadSubCategories, getOneSubCategory, deleteOneSubCategory, editOneSubCategory, addOneSubCategory, searchSubCategories, getSubCategoriesByCategory  } from '../store/actions/subCategoryActions'; 
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 
 export const useSubCategories = () => {
-    const [subCatByCategory, setSubCateByCategory] = useState([]);
-    function loadSubcategoriesByCategory(value){
-        dispatch(getSubCategoriesByCategory(value)).then(data=>{
-          setSubCateByCategory([...data]);
-        });        
-    }
     const dispatch = useDispatch();
     const navigate = useNavigate()
     
-    const {subCategories, subCategory} = useSelector(state => state.subCategories)
+    const {subCategories, subCategory, subCategoriesByCategory} = useSelector(state => state.subCategories)
+    const {loading} = useSelector(state => state.ui)
+
 
     const loadSubCategories = async () => await dispatch(startLoadSubCategories());
 
     const loadSubCategory = async subCategory_id => await dispatch(getOneSubCategory(subCategory_id));
+
+    const loadSubCategoriesByCategory = async (id) => await dispatch(getSubCategoriesByCategory(id))
 
     const deleteSubCategory = async id =>{
         const response = await dispatch(deleteOneSubCategory(id));
@@ -40,7 +36,7 @@ export const useSubCategories = () => {
         ...category,
       }));
 
-    return { subCategories,navigate, subCatByCategory,rowsSubCategories, subCategory, loadSubCategories, loadSubCategory, deleteSubCategory, editSubCategory, addSubCategory, searchSubCategory, loadSubcategoriesByCategory }
+    return { subCategories,loading, navigate,rowsSubCategories, subCategory, loadSubCategories, loadSubCategory, deleteSubCategory, editSubCategory, addSubCategory, searchSubCategory, loadSubCategoriesByCategory, subCategoriesByCategory  }
 
 
 }

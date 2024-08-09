@@ -22,6 +22,7 @@ import { Workbook } from "exceljs";
 import { saveAs } from 'file-saver';
 import DeleteAlert from "../../components/ui/DeleteAlert";
 import EditButton from "../../components/Buttons/EditButton";
+import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 
 
 function Pagination({ page, onPageChange, className }) {
@@ -57,10 +58,7 @@ function CustomPagination(props) {
 }
 
 const Categories = () => {
-  const { loadCategories, deleteCategory } = useCategories();
-  const { categories } = useSelector((state) => state.categories);
-  const navigate = useNavigate();
-
+  const { loadCategories, deleteCategory, categories, navigate, loading } = useCategories();
   useEffect(() => {
     loadCategories();
   }, []);
@@ -69,9 +67,6 @@ const Categories = () => {
     id: _id.toString(),
     ...category,
   }));
-  const createCategory = () => {
-    navigate("/auth/CrearCategoria");
-  };
 
   const exportToExcel = () => {
     const workbook = new Workbook();
@@ -122,6 +117,9 @@ const Categories = () => {
       </Button>
       </GridToolbarContainer>
     );
+  }
+  if (loading) {
+    return (<LoadingScreenBlue/>)
   }
 
   return (
@@ -178,9 +176,13 @@ const Categories = () => {
         ]}
         initialState={{
           sorting: {
-            sortModel: [{ field: "type_customer", sort: "desc" }],
+            sortModel: [{ field: "createdAt", sort: "desc" }],
           },
+          pagination:{
+            paginationModel:{pageSize:10}
+          }
         }}
+        density="standard"
         rows={rowsWithIds}
         pagination
         slots={{
@@ -205,6 +207,7 @@ const Categories = () => {
           hideFooter: true,
           hideToolbar: true,
         }}
+        style={{fontFamily:'sans-serif', fontSize:'15px'}}
       />
     </Grid>
   );

@@ -26,6 +26,7 @@ const drawerWidth = 240;
 const heigthToolbar = 100;
 
 export const Navbar = (props) => {
+  
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { user } = useAuthStore();
   const { navigate } = useAuthStore();
@@ -62,7 +63,7 @@ export const Navbar = (props) => {
         component="nav"
         aria-labelledby="nested-list-subheader"
       >
-        {Links.map((item, index) => (
+        {props.navArrayLinks?.map((item, index) => (
           <Fragment key={index}>
             <ListItemButton
               onClick={() => {

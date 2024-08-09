@@ -12,7 +12,7 @@ const LoadingScreenBlue = () => {
                 visible={true}
                 height="250"
                 width="250"
-                color='#0E2E73'
+                color='primary.main'
                 wrapperClass="dna-wrapper"
             />
         </Box>

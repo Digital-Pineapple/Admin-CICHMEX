@@ -17,15 +17,19 @@ import {
 import Swal from "sweetalert2";
 import { headerConfig } from "./headers";
 import { green } from "@mui/material/colors";
+import { startLoading, stopLoading } from "../reducer/uiReducer";
 
 export const startLoadProducts = () => {
   return async (dispatch) => {
+    dispatch(startLoading())
     try {
       const { data } = await instanceApi.get(
         `/product`,
         headerConfigApplication
       );
       dispatch(loadProducts(data.data));
+      dispatch(stopLoading())
+
     } catch (error) {
       enqueueSnackbar(
         `${error.response.data.message}|| 'Error al consultar información'`,
@@ -35,6 +39,7 @@ export const startLoadProducts = () => {
         }
       );
     }
+   dispatch(stopLoading()) 
   };
 };
 export const startLoadStockProducts = () => {
@@ -153,7 +158,12 @@ export const startLoadOutputsProduct = () => {
     try {
       const { data } = await instanceApi.get(
         `/stock-StoreHouse/product/output`,
-        headerConfig
+       {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+       }
       );
       dispatch(loadProductOutputs(data.data));
     } catch (error) {
@@ -170,14 +180,19 @@ export const startLoadOutputsProduct = () => {
 
 export const LoadOneProduct = (_id) => {
   return async (dispatch) => {
-    if (typeof _id == "string") {
+    dispatch (startLoading())
       try {
         const { data } = await instanceApi.get(
           `/product/${_id}`,
-          headerConfigApplication
+          {
+            headers: {
+              "Content-type": "application/json",
+               "Authorization": `Bearer ${localStorage.getItem("token")}`,
+          },
+          }
         );
         dispatch(loadProduct(data.data));
-        return data;
+        dispatch(stopLoading())
       } catch (error) {
         enqueueSnackbar(
           `${error.response.data.message}|| 'Error al consultar información'`,
@@ -186,9 +201,9 @@ export const LoadOneProduct = (_id) => {
             variant: "error",
           }
         );
+        dispatch(stopLoading())
       }
     }
-  };
 };
 
 export const addOneProduct =

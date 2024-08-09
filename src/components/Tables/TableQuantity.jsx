@@ -62,14 +62,16 @@ const TableQuantity = ({ values, setValues }) => {
       type: "number",
       align: "left",
       headerAlign: "left",
+      width: 150,
       editable: false,
     },
-    { field: "name", headerName: "Name", width: 180, editable: false },
+    { field: "name", headerName: "Nombre ", width: 250, editable: false },
+    { field: "price", headerName: "Precio", width: 100, editable: false },
     {
       field: "quantity",
       headerName: "Cantidad",
       type: "number",
-      width: 180,
+      width: 100,
       editable: true,
     },
     {
@@ -136,7 +138,7 @@ const TableQuantity = ({ values, setValues }) => {
         pageSizeOptions={[10, 15, 20]}
         disableRowSelectionOnClick
         density="compact"
-        sx={{minHeight:'200px'}}
+        sx={{ minHeight: "200px", width: "100%" }}
       />
     </Grid>
   );

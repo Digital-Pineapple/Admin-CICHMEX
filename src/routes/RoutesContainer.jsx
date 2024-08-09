@@ -4,42 +4,78 @@ import { Route, Routes } from "react-router-dom";
 import PublicPages from "./PublicPages";
 import PrivateRoutes from "./PrivateRoutes";
 import { FooterParthners, Navbar } from "../components";
-import { Links } from "./Links";
+import { Links, LinksAdminCichmex } from "./Links";
+import { useAuthStore } from "../hooks";
+import { useState, useEffect } from "react";
+import { themeAdminCarWashLight, themeAdminCichmexLight, themeSuperAdmin } from "../theme";
+import { ThemeProvider } from "@mui/material";
+import LoadingScreenBlue from "../components/ui/LoadingScreenBlue";
 
 const RoutesContainer = () => {
+  const { user, logged } = useAuthStore();
+  const [theme, setTheme] = useState(themeSuperAdmin);
+  const [links, setLinks] = useState(null);
+  
+
+  useEffect(() => {
+    const valuateLinks = () => {
+      const system = user.type_user?.system;
+      if (system.includes("CICHMEX") && system.includes("CARWASH")) {
+        setTheme(themeSuperAdmin);
+        setLinks(Links);
+      } else if (system.includes("CICHMEX")) {
+        setLinks(LinksAdminCichmex);
+        setTheme(themeAdminCichmexLight);
+      } else if (system.includes("CARWASH")) {
+        setTheme(themeAdminCarWashLight);
+        setLinks(); // Asegúrate de definir los links correctos para CARWASH si son diferentes
+      }
+    };
+
+    if (logged) {
+      valuateLinks()
+    } 
+  }, [user, logged]);
+  
+  if (theme === null) {
+    return<LoadingScreenBlue/>
+  }
+
   return (
-    <Routes>
-      <Route
-        path="/*"
-        element={
-          <PublicPages> 
-            <Routes>
-              {AllRoutes.filter(({ type }) => type === 0).map(
-                ({ path, element }, index) => (
-                  <Route path={path} element={element} key={index} />
-                )
-              )}
-            </Routes>
-          </PublicPages>
-        }
-      />
-      <Route
-        path="/auth/*"
-        element={
-          <PrivateRoutes>
-           <Navbar navArrayLinks={Links}>
-            <Routes>
-              {AllRoutes.filter(({ type }) => type === 1).map(
-                ({ path, element }, index) => (
-                  <Route path={path} element={element} key={index} />
-                )
-              )}
-            </Routes>
-            </Navbar>   
-          </PrivateRoutes>
-        }
-      />
-    </Routes>
+    <ThemeProvider theme={theme}>
+      <Routes>
+        <Route
+          path="/*"
+          element={
+            <PublicPages>
+              <Routes>
+                {AllRoutes.filter(({ type }) => type === 0).map(
+                  ({ path, element }, index) => (
+                    <Route path={path} element={element} key={index} />
+                  )
+                )}
+              </Routes>
+            </PublicPages>
+          }
+        />
+        <Route
+          path="/auth/*"
+          element={
+            <PrivateRoutes>
+              <Navbar navArrayLinks={links ? links :[]}>
+                <Routes>
+                  {AllRoutes.filter(({ type }) => type === 1).map(
+                    ({ path, element }, index) => (
+                      <Route path={path} element={element} key={index} />
+                    )
+                  )}
+                </Routes>
+              </Navbar>
+            </PrivateRoutes>
+          }
+        />
+      </Routes>
+    </ThemeProvider>
   );
 };
 
