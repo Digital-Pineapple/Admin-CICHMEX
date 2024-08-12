@@ -1,7 +1,8 @@
 import { ThreeDots } from 'react-loader-spinner'
-import { Box, CssBaseline } from '@mui/material'
+import { Box, CssBaseline, useTheme } from '@mui/material'
 
 const LoadingScreenBlue = () => {
+    const theme = useTheme();
     return (
         <Box sx={{
             width: '100%', zIndex: 99, position: 'fixed', display: 'flex', height: '100%',
@@ -12,8 +13,7 @@ const LoadingScreenBlue = () => {
                 visible={true}
                 height="250"
                 width="250"
-                color='primary.main'
-                wrapperClass="dna-wrapper"
+                color={theme.palette.primary.main}
             />
         </Box>
     )

@@ -46,10 +46,8 @@ const AddEntries = () => {
   };
   
   useEffect(() => {
-    if (user.type_user.role.includes('SUPER-ADMIN')) {
-      loadProducts();
-    }
-  }, []);
+    loadProducts()
+  }, [user]);
   
   useEffect(() => {
     if (product) {
@@ -100,20 +98,20 @@ const AddEntries = () => {
             <TextField
               {...field}
               fullWidth
-              id="user_delivers"
-              name="user_delivers"
+              id="user_delivery"
+              name="user_delivery"
               label="Usuario que entrega el producto"
               value={field.value}
               onChange={(e) => field.onChange(e.target.value)}
-              error={!!errors.user_delivers}
-              helperText={errors.user_delivers && errors.user_delivers.message}
+              error={!!errors.user_delivery}
+              helperText={errors.user_delivery && errors.user_delivery.message}
               autoComplete="off"
             />
           )}
         />
         <Controller
           control={control}
-          name="user_receives"
+          name="user_received"
           rules={{
             required: { message: "Campo requerido", value: true },
             pattern: { message: "Ingrese un nombre válido", value: regexName },
@@ -122,13 +120,13 @@ const AddEntries = () => {
             <TextField
               {...field}
               fullWidth
-              id="user_receives"
-              name="user_receives"
+              id="user_received"
+              name="user_received"
               label="Usuario que recibe el producto"
               value={field.value}
               onChange={(e) => field.onChange(e.target.value)}
-              error={!!errors.user_receives}
-              helperText={errors.user_receives && errors.user_receives.message}
+              error={!!errors.user_received}
+              helperText={errors.user_received && errors.user_received.message}
               autoComplete="off"
             />
           )}
@@ -146,11 +144,11 @@ const AddEntries = () => {
       </Grid>
       <Grid item xs={12} lg={6}>
       <ButtonGroup fullWidth variant="text" color="primary" aria-label="">
-         <Button  variant="contained" onClick={handleSubmit(onSubmit)} color="primary">
-        Subir entrada
-      </Button>
-      <Button  variant="contained" onClick={navigate('/auth/')} color="primary">
+      <Button  variant="contained" onClick={()=>navigate('/auth/MiAlmacen/entradas')} color="error">
         Salir
+      </Button>
+         <Button  variant="contained" onClick={handleSubmit(onSubmit)} color="success">
+        Subir entrada
       </Button>
 
       </ButtonGroup>

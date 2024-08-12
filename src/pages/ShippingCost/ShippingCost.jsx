@@ -62,7 +62,7 @@ function CustomPagination(props) {
 }
 
 const ShippingCost = () => {
-  const { loadShippingCosts, deleteShippingCost, rowsShippingCosts } = useShippingCost();
+  const { loadShippingCosts, deleteShippingCost, rowsShippingCosts, loading } = useShippingCost();
   const {user, navigate} = useAuthStore()
 
   useEffect(() => {
@@ -119,6 +119,10 @@ const ShippingCost = () => {
       </Button>
       </GridToolbarContainer>
     );
+  }
+
+  if (loading) {
+    return(<LoadingScreenBlue/>)
   }
 
   return (
@@ -197,6 +201,11 @@ const ShippingCost = () => {
         printOptions={{
           hideFooter: true,
           hideToolbar: true,
+        }}
+        initialState={{
+          sorting: {
+            sortModel: [{ field: 'starting_weight', sort: 'asc' }],
+          },
         }}
       />
     </Grid>

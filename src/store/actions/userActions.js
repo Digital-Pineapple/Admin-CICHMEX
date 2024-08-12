@@ -10,6 +10,7 @@ import {
 import { enqueueSnackbar } from "notistack";
 import { loadCarrierDrivers } from "../reducer";
 import { headerConfigFormData } from "../../apis/headersConfig";
+import { startLoading, stopLoading } from "../reducer/uiReducer";
 
 const headerConfig = {
   headers: {
@@ -31,14 +32,28 @@ export const getUsers = () => {
 
 export const getCarrierDrivers = () => {
   return async (dispatch) => {
+    dispatch(startLoading())
     try {
       const { data } = await instanceApi.get(
         "/user/carrier-driver/all",
-        headerConfig
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
       dispatch(loadCarrierDrivers(data.data));
+      dispatch(stopLoading())
     } catch (error) {
-      enqueueSnackbar(`Error: ${data.data.response?.message}`);
+      enqueueSnackbar(`${error.response.data.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center",
+        },
+      });
+      dispatch(stopLoading())
     }
   };
 };

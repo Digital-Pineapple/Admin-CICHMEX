@@ -64,6 +64,7 @@ export const getOneSubCategory = (subCategory_id) => async (dispatch) => {
 };
 export const addOneSubCategory = ({name, category_id, subCategory_image}, navigate) => {
   return async (dispatch) => {
+    dispatch(startLoading())
     try {
       const formData = new FormData();
       formData.append("name", name);
@@ -72,7 +73,12 @@ export const addOneSubCategory = ({name, category_id, subCategory_image}, naviga
       const { data } = await instanceApi.post(
         `/sub-category`,
         formData,
-        headerConfigForm
+        {
+          headers: {
+            "Content-type": "/multipart/form-data",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
       enqueueSnackbar(`${data.message}`, {
         variant: "success",
@@ -82,25 +88,32 @@ export const addOneSubCategory = ({name, category_id, subCategory_image}, naviga
         },
       });
       navigate('/auth/SubCategorias', {replace:true})
+      stopLoading()
     } catch (error) {
-      enqueueSnackbar(`Error al dar de alta`, {
+      enqueueSnackbar(`${error.response.data.message}`, {
         variant: "error",
         anchorOrigin: {
           vertical: "top",
           horizontal: "right",
         },
       });
+      stopLoading()
     }
   };
 };
-export const deleteOneSubCategory = (id) => async (dispatch) => {
+export const deleteOneSubCategory = (id, navigate) => async (dispatch) => {
   try {
-    const token = localStorage.getItem("token");
+    dispatch(startLoading())
     const { data } = await instanceApi.delete(
       `/sub-category/${id}`,
-      headerConfig
+      {
+        headers: {
+          "Content-type": "application/json",
+           "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      },
+      }
     );
-    enqueueSnackbar("Se eliminó con éxito", {
+    enqueueSnackbar(`${data.message}`, {
       variant: "success",
       anchorOrigin: {
         horizontal: "right",
@@ -108,10 +121,11 @@ export const deleteOneSubCategory = (id) => async (dispatch) => {
       },
     });
     dispatch(deleteSubCategory(id));
-    return data;
+    navigate('/auth/SubCategorias', {replace:true})
+    dispatch(stopLoading())
   } catch (error) {
     enqueueSnackbar(
-      `Ocurrió un error al eliminar la subcategoria + ${error.response.data.message}`,
+      `${error.response.data.message}`,
       {
         variant: "error",
         anchorOrigin: {
@@ -120,6 +134,7 @@ export const deleteOneSubCategory = (id) => async (dispatch) => {
         },
       }
     );
+    dispatch(stopLoading())
   }
 };
 
@@ -128,15 +143,21 @@ export const editOneSubCategory = (
   { name, subCategory_image, category_id }, navigate
 ) => {
   return async (dispatch) => {
+    dispatch(startLoading())
     try {
       const formData = new FormData();
       formData.append("name", name);
       formData.append("subCategory_image", subCategory_image);
       formData.append("category", category_id);
-      const { data } = await instanceApi.post(
+      const { data } = await instanceApi.patch(
         `/sub-category/${subCategory_id}`,
         formData,
-        headerConfigFormData
+        {
+          headers: {
+            "Content-type": "/multipart/form-data",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
       enqueueSnackbar(`${data.message}`, {
         variant: "success",
@@ -146,14 +167,16 @@ export const editOneSubCategory = (
         },
       });
       navigate('/auth/SubCategorias',{replace:true})
+      dispatch(stopLoading())
     } catch (error) {
-      enqueueSnackbar(`Error al editar`, {
+      enqueueSnackbar(`${error.response.data.message}`, {
         variant: "error",
         anchorOrigin: {
           vertical: "top",
           horizontal: "right",
         },
       });
+      dispatch(stopLoading())
     }
   };
 };

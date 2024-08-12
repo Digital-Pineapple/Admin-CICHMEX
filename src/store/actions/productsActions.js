@@ -25,7 +25,12 @@ export const startLoadProducts = () => {
     try {
       const { data } = await instanceApi.get(
         `/product`,
-        headerConfigApplication
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
       dispatch(loadProducts(data.data));
       dispatch(stopLoading())
@@ -223,6 +228,7 @@ export const addOneProduct =
     navigate
   ) =>
   async (dispatch) => {
+    dispatch(startLoading())
     try {
       const formData = new FormData();
       formData.append("name", name);
@@ -241,7 +247,12 @@ export const addOneProduct =
       const { data } = await instanceApi.post(
         `/product/create-product/ok`,
         formData,
-        headerConfigFormData
+        {
+          headers: {
+            "Content-Type": 'multipart/form-data',
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
       dispatch(onAddNewProduct(data.data));
       enqueueSnackbar("Agregado con éxito", {
@@ -252,14 +263,16 @@ export const addOneProduct =
         },
       });
       navigate("/auth/productos", { replace: true });
+      dispatch(stopLoading())
     } catch (error) {
-      enqueueSnackbar(`Error: ${error.response.data.message}`, {
+      enqueueSnackbar(`${error.response.data.message}`, {
         variant: "error",
         anchorOrigin: {
           vertical: "top",
           horizontal: "right",
         },
       });
+      dispatch(stopLoading())
     }
   };
 

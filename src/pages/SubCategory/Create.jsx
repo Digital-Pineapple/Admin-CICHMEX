@@ -17,14 +17,15 @@ import { useSubCategories } from "../../hooks/useSubCategories";
 import { useEffect } from "react";
 import ProfileImageUploader from "../../components/ui/ProfileImageUploader";
 import { useCategories } from "../../hooks/useCategories";
+import { useAuthStore } from "../../hooks";
 
 const Create = () => {
   const { addSubCategory, navigate} = useSubCategories();
   const { loadCategories, categories } = useCategories();
-
+  const {user} = useAuthStore()
   useEffect(() => {
     loadCategories();
-  }, []);
+  }, [user]);
 
   const formik = useFormik({
     initialValues: {

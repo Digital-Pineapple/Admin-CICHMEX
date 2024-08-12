@@ -16,12 +16,7 @@ export const useSubCategories = () => {
 
     const loadSubCategoriesByCategory = async (id) => await dispatch(getSubCategoriesByCategory(id))
 
-    const deleteSubCategory = async id =>{
-        const response = await dispatch(deleteOneSubCategory(id));
-        if (response) {
-            navigate('/auth/SubCategorias', {replace:true})
-        }
-    } 
+    const deleteSubCategory = async id =>await dispatch(deleteOneSubCategory(id, navigate))
     
     const editSubCategory = async (subCategory_id, values) =>  await dispatch(editOneSubCategory(subCategory_id,values, navigate));
  

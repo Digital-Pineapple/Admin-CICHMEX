@@ -43,12 +43,11 @@ const FillOrder = () => {
           variant="h2"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-          Surtir Producto
+          Surtir orden: {productOrder?.order_id}
         </Typography>
       </Grid>
       <Grid container spacing={0}>
         <Grid item xs={12}>  
-        <h2>Id de orden: {productOrder?.order_id}</h2>
         <h2>Lista de productos</h2>
         </Grid>
         <Grid item xs={12}>    

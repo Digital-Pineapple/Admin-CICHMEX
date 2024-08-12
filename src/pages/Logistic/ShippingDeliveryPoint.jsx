@@ -33,6 +33,8 @@ import { useProductOrder } from "../../hooks/useProductOrder";
 import ScheduleSendIcon from '@mui/icons-material/ScheduleSend';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import Swal from "sweetalert2";
+import { useAuthStore } from "../../hooks";
+import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -70,11 +72,13 @@ const ShippingDeliveryPoint = () => {
     loadPOPaidAndSuplyToPoint,
     navigate,
     productOrders,
+    loading,
   } = useProductOrder();
+  const {user} = useAuthStore()
 
   useEffect(() => {
     loadPOPaidAndSuplyToPoint();
-  }, []);
+  }, [user]);
 
   const rowsWithIds = productOrders?.map((item, index) => {
     const quantities = item.products.map((i) => i.quantity);
@@ -213,6 +217,10 @@ const ShippingDeliveryPoint = () => {
       );
     }
   };
+
+  if (loading) {
+    return(<LoadingScreenBlue/>)
+  }
   return (
     <Grid container style={{ marginLeft: "10%", height: "70%", width: "85%" }}>
       <Grid

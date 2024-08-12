@@ -64,7 +64,7 @@ import {
                   variant="filled"
                   fullWidth
                   type="number"
-                  label="Peso inicial"
+                  label="Peso inicial (gr)"
                   
                   helperText={
                     fieldState.error ? <b>{fieldState.error.message}</b> : ""
@@ -86,10 +86,10 @@ import {
               }}
               render={({ field, fieldState }) => (
                 <TextField
-                  variant="outlined"
+                  variant="filled"
                   fullWidth
                   type="number"
-                  label="Peso final"
+                  label="Peso final (gr)"
                   helperText={
                     fieldState.error ? <b>{fieldState.error.message}</b> : ""
                   }
@@ -110,7 +110,7 @@ import {
               }}
               render={({ field, fieldState }) => (
                 <TextField
-                  variant="filled"
+                  variant="outlined"
                   label="Precio de envio"
                   fullWidth
                   helperText={

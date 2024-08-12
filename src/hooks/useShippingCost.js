@@ -8,6 +8,7 @@ export const useShippingCost = () => {
     const navigate = useNavigate()
 
     const { shippingCosts, shippingCost } = useSelector(state => state.shippingCost); 
+    const { loading } = useSelector(state => state.ui); 
 
     const loadShippingCosts  = async () => await dispatch(startLoadShippingCosts())
 
@@ -27,5 +28,5 @@ export const useShippingCost = () => {
 
 
 
-    return { shippingCost,shippingCosts, loadShippingCosts, loadOneShippingCost, createShippingCost,updateShippingCost, deleteShippingCost, rowsShippingCosts }
+    return { shippingCost,shippingCosts,loading, loadShippingCosts, loadOneShippingCost, createShippingCost,updateShippingCost, deleteShippingCost, rowsShippingCosts }
 }

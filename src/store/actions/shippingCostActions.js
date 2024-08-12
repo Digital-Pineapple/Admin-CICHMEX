@@ -3,17 +3,34 @@ import { instanceApi } from "../../apis/configAxios";
 import { deleteShippingCost, editShippingCost, loadOneShippingCost, loadShippingCosts } from "../reducer/shippingCostReducer";
 import {headerConfig} from './headers'
 import { Zoom } from "@mui/material";
+import { startLoading, stopLoading } from "../reducer/uiReducer";
 
 export const startLoadShippingCosts = () => {
   return async (dispatch) => {
+    dispatch(startLoading())
     try {
-      const { data } = await instanceApi.get(`/shipping-cost`, headerConfig);
+      const { data } = await instanceApi.get(`/shipping-cost`, {
+        headers: {
+          "Content-type": "application/json",
+           "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      },
+      });
       dispatch(loadShippingCosts(data.data));
+      dispatch(stopLoading())
     } catch (error) {
-      enqueueSnackbar(`${(error.response.data.message)}`, "error");
+      enqueueSnackbar(`${error.response.data.message}`,{
+        anchorOrigin:{
+          horizontal:'center',
+          vertical:'top'
+        },
+        autoHideDuration:1000,
+        variant:'error',
+        TransitionComponent:Zoom,
+      })
+      dispatch(stopLoading())
     }
-  };
-};
+  }
+}
 
 export const startLoadOneShippingCost = (id, navigate) => {
     return async (dispatch) => {
@@ -28,9 +45,14 @@ export const startLoadOneShippingCost = (id, navigate) => {
 
   export const startCreateShippingCost = (values, navigate) => {
     return async (dispatch) => {
+      dispatch(startLoading())
       try {
-        const { data } = await instanceApi.post(`/shipping-cost`, {values:values}, headerConfig );
-        dispatch(loadOneShippingCost(data.data));
+        const { data } = await instanceApi.post(`/shipping-cost`, {values:values}, {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        } );
         enqueueSnackbar(`${data.message}`,{
           anchorOrigin:{
             horizontal:'center',
@@ -41,8 +63,19 @@ export const startLoadOneShippingCost = (id, navigate) => {
           TransitionComponent:Zoom,
         })
         navigate('/auth/Costos-de-envio')
+        dispatch(stopLoading())
       } catch (error) {
-        enqueueSnackbar(`${(error.response, data.message)}`, "error");
+        
+        enqueueSnackbar(`${error.response.data.message}`,{
+          anchorOrigin:{
+            horizontal:'center',
+            vertical:'top'
+          },
+          autoHideDuration:2000,
+          variant:'error',
+          TransitionComponent:Zoom,
+        })
+        dispatch(stopLoading())
       }
     };
   };
@@ -62,7 +95,6 @@ export const startLoadOneShippingCost = (id, navigate) => {
         })
         navigate('/auth/Costos-de-envio')
       } catch (error) {
-        
         enqueueSnackbar(`${error.response.data.message}`,{
           anchorOrigin:{
             horizontal:'center',
@@ -78,11 +110,36 @@ export const startLoadOneShippingCost = (id, navigate) => {
 
   export const startDeleteShippingCost = (id) => {
     return async (dispatch) => {
+        dispatch(startLoading())
       try {
-        const { data } = await instanceApi.delete(`/shipping-cost/${id}`, headerConfig );
+        const { data } = await instanceApi.delete(`/shipping-cost/${id}`, {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        } );
+        enqueueSnackbar(`${data.message}`,{
+          anchorOrigin:{
+            horizontal:'center',
+            vertical:'top'
+          },
+          autoHideDuration:1000,
+          variant:'success',
+          TransitionComponent:Zoom,
+        })
         dispatch(deleteShippingCost(data.data));
+        dispatch(stopLoading())
       } catch (error) {
-        enqueueSnackbar(`${(error.response.data.message)}`, "error");
+        enqueueSnackbar(`${error.response.data.message}`,{
+          anchorOrigin:{
+            horizontal:'center',
+            vertical:'top'
+          },
+          autoHideDuration:1000,
+          variant:'error',
+          TransitionComponent:Zoom,
+        })
+        dispatch(stopLoading())
       }
     };
   };

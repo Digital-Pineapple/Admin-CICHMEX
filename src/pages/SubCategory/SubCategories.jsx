@@ -24,6 +24,7 @@ import DeleteAlert from "../../components/ui/DeleteAlert";
 import EditButton from "../../components/Buttons/EditButton";
 import { useSubCategories } from "../../hooks/useSubCategories";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
+import { useAuthStore } from "../../hooks";
 
 
 function Pagination({ page, onPageChange, className }) {
@@ -60,10 +61,10 @@ function CustomPagination(props) {
 
 const SubCategories = () => {
   const { loadSubCategories, rowsSubCategories, navigate, deleteSubCategory, loading} = useSubCategories()
-
+const {user} = useAuthStore()
   useEffect(() => {
     loadSubCategories();
-  }, []);
+  }, [user]);
 
   const exportToExcel = () => {
     const workbook = new Workbook();

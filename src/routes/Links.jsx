@@ -333,16 +333,7 @@ export const LinksAdminCichmex = [
         path:'/auth/Envios/domicilio',
         Icon: <HomeMax/>
       },
-      {
-        title:'Cargar Paquetes',
-        path:'/auth/cargar-paquetes',
-        Icon: <CarCrash/>
-      },
-      {
-        title:'Entrega de paquetes',
-        path:'/auth/entregar-paquetes',
-        Icon: <MarkEmailUnread/>
-      },
+     
     ]
   },
   
@@ -397,23 +388,33 @@ export const LinksAdminCichmex = [
     ]
   },
  
-  {
-    title : "Transportistas",
-    Icon : <LocalShippingIcon/>,
-    subRoutes:[
-      {
-        title:'Todos los Transportistas',
-        path:'/auth/Transportistas',
-        Icon: <Grading/>
-      },
-      {
-        title:'Registro de transportista',
-        path:'/auth/AltaTransportista',
-        Icon: <Add/>
-      }
-    ]
+  // {
+  //   title : "Transportistas",
+  //   Icon : <LocalShippingIcon/>,
+  //   subRoutes:[
+  //     {
+  //       title:'Todos los Transportistas',
+  //       path:'/auth/Transportistas',
+  //       Icon: <Grading/>
+  //     },
+  //     {
+  //       title:'Registro de transportista',
+  //       path:'/auth/AltaTransportista',
+  //       Icon: <Add/>
+  //     },
+  //     {
+  //       title:'Cargar Paquetes',
+  //       path:'/auth/cargar-paquetes',
+  //       Icon: <CarCrash/>
+  //     },
+  //     {
+  //       title:'Entrega de paquetes',
+  //       path:'/auth/entregar-paquetes',
+  //       Icon: <MarkEmailUnread/>
+  //     },
+  //   ]
 
-  },  
+  // },  
 ];
 
 export const LinksAdminCarWash = [

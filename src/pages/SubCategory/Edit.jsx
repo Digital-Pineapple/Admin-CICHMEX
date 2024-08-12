@@ -21,11 +21,12 @@ import { useSubCategories } from "../../hooks/useSubCategories";
 import { useCategories } from "../../hooks/useCategories";
 import { useSelector } from "react-redux";
 import ProfileImageUploader from "../../components/ui/ProfileImageUploader";
+import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 
 
 const Edit = () => {
   const { id } = useParams();
-  const { loadSubCategory,editSubCategory, navigate, subCategory } = useSubCategories();
+  const { loadSubCategory,editSubCategory, navigate, subCategory, loading } = useSubCategories();
   const { loadCategories, categories } = useCategories();
 
 
@@ -67,6 +68,9 @@ const Edit = () => {
   const outEdit = () => {
     navigate("/auth/SubCategorias");
   };
+  if (loading) {
+    return(<LoadingScreenBlue/>)
+  }
 
   return (
     <Grid
@@ -121,8 +125,8 @@ const Edit = () => {
         <FormControl fullWidth>
           <FormLabel>Categoría</FormLabel>
           <Select
-            id="category"
-            name="category"
+            id="category_id"
+            name="category_id"
             value={formik.values.category_id}
             label="Categoría"
             onChange={formik.handleChange}

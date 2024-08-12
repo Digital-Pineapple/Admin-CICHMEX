@@ -26,6 +26,8 @@ import { useEffect, useState } from "react";
 import { useCategories } from "../../hooks/useCategories";
 import { AttachMoney } from "@mui/icons-material";
 import VideoUploadField from "../../components/Forms/VideoUploadField";
+import { useAuthStore } from "../../hooks";
+import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -35,7 +37,8 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 const CreateProduct = () => {
-  const { createProduct, navigate } = useProducts();
+  const {user} = useAuthStore()
+  const { createProduct, navigate, loading } = useProducts();
   const { loadSubCategories, subCategoriesByCategory, loadSubCategoriesByCategory } = useSubCategories()
   const { categories, loadCategories } = useCategories();
   const { images, handleImageChange, deleteImage, imagesFiles } =
@@ -76,7 +79,11 @@ const CreateProduct = () => {
   useEffect(() => {
     loadSubCategories()
     loadCategories()
-  }, [])
+  }, [user])
+
+  if (loading) {
+    return(<LoadingScreenBlue/>)
+  }
   
 
   return (
@@ -136,7 +143,7 @@ const CreateProduct = () => {
           fullWidth
           id="weight"
           name="weight"
-          label="Peso del producto"
+          label="Peso del producto (gr)"
           type="number"
           variant="outlined"
           value={formik.values.weight}

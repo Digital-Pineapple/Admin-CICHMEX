@@ -38,6 +38,8 @@ import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import ScheduleSendIcon from '@mui/icons-material/ScheduleSend';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import Swal from "sweetalert2";
+import LoadingScreenBlue from '../../components/ui/LoadingScreenBlue'
+import { useAuthStore } from "../../hooks";
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -75,11 +77,13 @@ const MyProductOrders = () => {
     loadProductOrders,
     navigate,
     productOrders,
+    loading,
   } = useProductOrder();
+  const {user} = useAuthStore()
 
   useEffect(() => {
     loadProductOrders();
-  }, []);
+  }, [user]);
 
   const rowsWithIds = productOrders.map((item, index) => {
     const quantities = item.products.map((i) => i.quantity);
@@ -216,6 +220,10 @@ const MyProductOrders = () => {
       );
     }
   };
+  
+  if (loading) {
+    return(<LoadingScreenBlue/>)
+  }
   
 
   return (

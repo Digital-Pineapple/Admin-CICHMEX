@@ -63,7 +63,7 @@ export const Navbar = (props) => {
         component="nav"
         aria-labelledby="nested-list-subheader"
       >
-        {props.navArrayLinks?.map((item, index) => (
+        {props.navLinks?.map((item, index) => (
           <Fragment key={index}>
             <ListItemButton
               onClick={() => {
@@ -154,7 +154,7 @@ export const Navbar = (props) => {
         }}
       >
         <Toolbar />
-        <MenuDrawer />
+        <MenuDrawer navLinks={props.navLinks}/>
       </Drawer>
 
       <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>

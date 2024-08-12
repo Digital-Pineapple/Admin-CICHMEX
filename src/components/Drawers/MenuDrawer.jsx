@@ -10,7 +10,7 @@ import { Collapse } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
-export default function MenuDrawer() {
+export default function MenuDrawer({navLinks}) {
   const { navigate } = useAuthStore();
   const [open, setOpen] = useState({});
 
@@ -28,7 +28,7 @@ export default function MenuDrawer() {
         component="nav"
         aria-labelledby="nested-list-subheader"
       >
-        {Links.map((item, index) => (
+        {navLinks?.map((item, index) => (
           <React.Fragment key={index}>
             <ListItemButton
               onClick={() => {

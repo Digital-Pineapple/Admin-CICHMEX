@@ -20,13 +20,15 @@ const RoutesContainer = () => {
   useEffect(() => {
     const valuateLinks = () => {
       const system = user.type_user?.system;
-      if (system.includes("CICHMEX") && system.includes("CARWASH")) {
+      console.log(system);
+      
+      if (system[0] === 'CICHMEX' && system[1] === "CARWASH") {
         setTheme(themeSuperAdmin);
         setLinks(Links);
-      } else if (system.includes("CICHMEX")) {
+      } else if (system[0] === 'CICHMEX') {
         setLinks(LinksAdminCichmex);
         setTheme(themeAdminCichmexLight);
-      } else if (system.includes("CARWASH")) {
+      } else if (system[0] === "CARWASH") {
         setTheme(themeAdminCarWashLight);
         setLinks(); // Asegúrate de definir los links correctos para CARWASH si son diferentes
       }
@@ -62,7 +64,7 @@ const RoutesContainer = () => {
           path="/auth/*"
           element={
             <PrivateRoutes>
-              <Navbar navArrayLinks={links ? links :[]}>
+              <Navbar navLinks={links ? links :[]}>
                 <Routes>
                   {AllRoutes.filter(({ type }) => type === 1).map(
                     ({ path, element }, index) => (

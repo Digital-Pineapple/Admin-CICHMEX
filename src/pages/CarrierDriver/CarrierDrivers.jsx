@@ -10,10 +10,11 @@ import {
 import { useUsers } from "../../hooks/useUsers";
 import { Delete, Edit } from "@mui/icons-material";
 import DeleteAlert from "../../components/ui/DeleteAlert";
+import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 
 
   const CarrierDrivers = () => {
-   const {rowsCarrierDrivers, loadCarrierDrivers, navigate} =  useUsers()
+   const {rowsCarrierDrivers, loadCarrierDrivers, navigate, loading} =  useUsers()
    const {user} =useAuthStore()
 
 useEffect(() => {
@@ -23,10 +24,13 @@ useEffect(() => {
 const Delete = (value)=>{
 console.log(value);
 }
+if (loading) {
+  return(<LoadingScreenBlue/>)
+}
 
 
     return (
-      <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
+      <Grid container gap={2} style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
         <Grid
         item
         marginTop={{ xs: "-30px" }}
@@ -42,17 +46,8 @@ console.log(value);
           Transportistas
         </Typography>
       </Grid>
-        <Button
-             variant="contained"
-             disableElevation
-             color="secondary"
-             sx={{ my: 5, p: 2, borderRadius: 5 }}
-            onClick={()=>navigate('/auth/AltaTransportista')}
-          >
-            Registrar nuevo transportista
-          </Button>
-
-          {
+      <Grid item xs={12}>
+         {
               rowsCarrierDrivers ? (
   <DataGrid
           sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
@@ -96,11 +91,23 @@ console.log(value);
             hideFooter: true,
             hideToolbar: true,
           }}
+          style={{fontFamily:'sans-serif', fontSize:'15px'}}
+          initialState={{
+            sorting: {
+              sortModel: [{ field: "name", sort: "desc" }],
+            },
+            pagination:{
+              paginationModel:{pageSize:20, page:0}
+            }
+          }}
+          
         />
               ):(<Skeleton  title="Cargando..." variant="rectangular" />)
           }
+      </Grid>
+         
 
-      </div>
+      </Grid>
     );
   }
 
