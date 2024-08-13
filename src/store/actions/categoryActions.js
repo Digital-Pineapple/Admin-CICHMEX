@@ -61,7 +61,12 @@ export const addOneCategory =
       const formData = new FormData();
       formData.append("name", name);
       formData.append("image", image);
-      await instanceApi.post(`/category/`, formData, headerConfigForm);
+      await instanceApi.post(`/category/`, formData, {
+        headers: {
+          "Content-type": "/multipart/form-data",
+           "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      },
+      });
       enqueueSnackbar("Categoria creada con éxito", {
         variant: "success",
         anchorOrigin: {

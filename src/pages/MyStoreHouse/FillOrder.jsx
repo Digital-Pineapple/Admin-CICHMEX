@@ -7,7 +7,7 @@ import { replace } from "formik";
 
 const FillOrder = () => {
   const { id } = useParams();
-  const { loadProductOrder, productOrder, rowsProducts,completeProductOrder } = useProductOrder();
+  const { loadProductOrder, productOrder, rowsProducts,completeProductOrder, loadPrintPDFOrder } = useProductOrder();
   const [rowSelection, setRowSelection] = useState([])
   const [activeButton1, setActiveButton] = useState(false)
   useEffect(() => {
@@ -26,6 +26,9 @@ const FillOrder = () => {
 
   const completeOrder =()=>{
     completeProductOrder(id)
+  }
+  const printPDF = (id)=>{
+    loadPrintPDFOrder(id)
   }
 
 
@@ -50,6 +53,9 @@ const FillOrder = () => {
         <Grid item xs={12}>  
         <h2>Lista de productos</h2>
         </Grid>
+        <Button variant="text" onClick={()=>printPDF(id)} color="secondary">
+          imprimir PDF
+        </Button>
         <Grid item xs={12}>    
         {rows ? (
           <DataGrid

@@ -107,7 +107,8 @@ export const useProducts = () => {
     loadAllOutputs,
     rowsAllOutputs,
     addMultipleEntries,
-    loading
+    loading,
+    rowsAllOutputs
 
   };
 };

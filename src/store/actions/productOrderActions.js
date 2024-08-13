@@ -131,6 +131,45 @@ export const startLoadPackageSent = () => {
     }
   };
 };
+export const startLoadPrintOrderPDF = (id) => {
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      const { data } = await instanceApi.get(`/product-order/pdfOrder/${id}`, {
+        headers: {
+          "Content-type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        responseType: 'blob', // Asegura que la respuesta sea tratada como un archivo Blob
+      });
+
+      // Crear un URL para el Blob
+      const pdfUrl = URL.createObjectURL(new Blob([data], { type: 'application/pdf' }));
+
+      // Abrir el PDF en una nueva pestaña del navegador
+      const pdfWindow = window.open(pdfUrl);
+
+      // Opcional: Si deseas imprimirlo directamente al abrirlo
+      pdfWindow.onload = () => {
+        pdfWindow.print();
+      };
+
+    } catch (error) {
+      console.log(error);
+
+      const errorMessage =
+        error.response?.data?.message || "Ocurrió un error inesperado";
+
+      enqueueSnackbar(errorMessage, {
+        anchorOrigin: { horizontal: "center", vertical: "top" },
+        variant: "error",
+      });
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
+};
+
 
 export const startLoadPOPaidAndSupply = () => {
   return async (dispatch) => {

@@ -10,6 +10,7 @@ import {
   startLoadPOPaidAndSupply,
   startLoadPOPaidAndSupplyToPonit,
   startLoadPackageSent,
+  startLoadPrintOrderPDF,
   startLoadProductOrders,
   startLoadProductOrdersPaid,
   startLoadVerifyStartRoute,
@@ -60,6 +61,8 @@ export const useProductOrder = () => {
 
   const loadPackagesSent = async () => dispatch(startLoadPackageSent())
 
+  const loadPrintPDFOrder = async (id) => dispatch(startLoadPrintOrderPDF(id))
+
   const completeProductOrder = (id) =>
     dispatch(StartCompleteProductOrder(id, navigate));
 
@@ -95,7 +98,8 @@ export const useProductOrder = () => {
     loadPackagesSent,
     loadVerifyQR,
     loadVerifyQRtoPoint,
-    loading
+    loading,
+    loadPrintPDFOrder
     
   };
 };

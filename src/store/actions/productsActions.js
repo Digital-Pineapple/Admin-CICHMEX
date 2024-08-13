@@ -160,9 +160,10 @@ export const startLoadAllOutputs = () => {
 
 export const startLoadOutputsProduct = () => {
   return async (dispatch) => {
+    dispatch(startLoading())
     try {
       const { data } = await instanceApi.get(
-        `/stock-StoreHouse/product/output`,
+        `/stock-StoreHouse/all-outputs`,
        {
         headers: {
           "Content-type": "application/json",
@@ -171,6 +172,7 @@ export const startLoadOutputsProduct = () => {
        }
       );
       dispatch(loadProductOutputs(data.data));
+      dispatch(stopLoading())
     } catch (error) {
       enqueueSnackbar(
         `${error.response.data.message}` || "Error al consultar la información",
@@ -180,6 +182,7 @@ export const startLoadOutputsProduct = () => {
         }
       );
     }
+    dispatch(stopLoading)
   };
 };
 

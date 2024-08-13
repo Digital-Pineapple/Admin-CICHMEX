@@ -61,7 +61,8 @@ function CustomPagination(props) {
 const ProductOutputs = () => {
   const {
     loadOutputsProducts,
-    rowsOutputsProducts,
+    rowsAllOutputs,
+    loading
   } = useProducts();
   const { user } = useAuthStore();
   const [open, setOpen] = useState(false);
@@ -97,7 +98,7 @@ const ProductOutputs = () => {
     });
 
     // Agregar datos de las filas
-    rowsOutputsProducts.forEach((row) => {
+    rowsAllOutputs.forEach((row) => {
       worksheet.addRow([
         row._id,
         row.name,
@@ -209,7 +210,7 @@ const ProductOutputs = () => {
               ],
             },
           ]}
-          rows={rowsOutputsProducts}
+          rows={rowsAllOutputs}
           pagination
           slots={{
             pagination: CustomPagination,
