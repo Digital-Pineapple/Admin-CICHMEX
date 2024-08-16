@@ -1,7 +1,4 @@
-import * as React from "react";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import SortIcon from "@mui/icons-material/Sort";
+import React, { useEffect } from "react";
 import {
   DataGrid,
   GridPagination,
@@ -11,35 +8,28 @@ import {
   useGridApiContext,
   useGridSelector,
 } from "@mui/x-data-grid";
-import { useEffect } from "react";
 import MuiPagination from "@mui/material/Pagination";
 import {
-  CancelScheduleSend,
-  Clear,
-  Done,
-  Download,
-  LocalShipping,
-} from "@mui/icons-material";
-import {
   Button,
-  Chip,
   Grid,
   IconButton,
   Tooltip,
-  Typography,
 } from "@mui/material";
 import { Workbook } from "exceljs";
-import { useProductOrder } from "../../hooks/useProductOrder";
-import PaidIcon from "@mui/icons-material/Paid";
-import PendingIcon from "@mui/icons-material/Pending";
-import CarCrashIcon from "@mui/icons-material/CarCrash";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
-import ScheduleSendIcon from '@mui/icons-material/ScheduleSend';
-import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
+import {
+  ExpandLess as ExpandLessIcon,
+  ExpandMore as ExpandMoreIcon,
+  Sort as SortIcon,
+  Download as DownloadIcon,
+  ScheduleSend as ScheduleSendIcon,
+  ThumbUpAlt as ThumbUpAltIcon,
+} from "@mui/icons-material";
 import Swal from "sweetalert2";
+import { useProductOrder } from "../../hooks/useProductOrder";
 import { useAuthStore } from "../../hooks";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
+import CustomNoRows from "../../components/Tables/CustomNoRows";
+
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -56,6 +46,7 @@ function Pagination({ page, onPageChange, className }) {
     />
   );
 }
+
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
@@ -72,6 +63,61 @@ function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
+function CustomToolbar() {
+  const apiRef = useGridApiContext();
+
+  const handleGoToPage1 = () => apiRef.current.setPage(1);
+  const exportToExcel = () => {
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet("Pedidos");
+
+    // Agregar encabezados de columna
+    const headerRow = worksheet.addRow([
+      "Cantidad de productos",
+      "Tipo de envio",
+      "Id de Pedido",
+      "Fecha de solicitud"
+    ]);
+    headerRow.eachCell((cell) => {
+      cell.font = { bold: true };
+    });
+
+    // Agregar datos de las filas
+    rowsWithIds.forEach((row) => {
+      worksheet.addRow([
+        row.quantityProduct,
+        row.typeDelivery,
+        row.order_id,
+        row.createdAt
+      ]);
+    });
+
+    // Crear un Blob con el archivo Excel y guardarlo
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      saveAs(blob, "Pedidos.xlsx");
+    });
+  };
+
+  return (
+    <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
+      <Button onClick={handleGoToPage1}>Regresar a la página 1</Button>
+      <GridToolbarQuickFilter />
+      <Button
+        variant="text"
+        startIcon={<DownloadIcon />}
+        disableElevation
+        sx={{ color: "secondary" }}
+        onClick={exportToExcel}
+      >
+        Descargar Excel
+      </Button>
+    </GridToolbarContainer>
+  );
+}
+
 const PaidProductOrders = () => {
   const {
     loadProductOrdersPaid,
@@ -79,11 +125,13 @@ const PaidProductOrders = () => {
     productOrders,
     loading
   } = useProductOrder();
-  const {user} = useAuthStore()
+  const { user } = useAuthStore();
 
   useEffect(() => {
     loadProductOrdersPaid();
   }, [user]);
+
+  
 
   const rowsWithIds = productOrders.map((item, index) => {
     const quantities = item.products.map((i) => i.quantity);
@@ -99,74 +147,16 @@ const PaidProductOrders = () => {
       ...item,
     };
   });
-  const exportToExcel = () => {
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Stock de productos");
 
-    // Agregar encabezados de columna
-    const headerRow = worksheet.addRow([
-      "Cantidad de productos",
-      "Tipo de envio",
-      "Existencias",
-      "Precio",
-      "Tamaño",
-    ]);
-    headerRow.eachCell((cell) => {
-      cell.font = { bold: true };
-    });
+ 
 
-    // Agregar datos de las filas
-    rowsWithIds.forEach((row) => {
-      worksheet.addRow([
-        row._id,
-        row.name,
-        row.description,
-        row.price,
-        row.size,
-        row.tag,
-      ]);
-    });
-
-    // Crear un Blob con el archivo Excel y guardarlo
-    workbook.xlsx.writeBuffer().then((buffer) => {
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      saveAs(blob, "Pedidos.xlsx");
-    });
-  };
-
-  function CustomToolbar() {
-    const apiRef = useGridApiContext();
-
-    const handleGoToPage1 = () => apiRef.current.setPage(1);
-
-    return (
-      <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
-        <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-        <GridToolbarQuickFilter />
-        <Button
-          variant="text"
-          startIcon={<Download />}
-          disableElevation
-          sx={{ color: "secondary" }}
-          onClick={exportToExcel}
-        >
-          Descargar Excel
-        </Button>
-      </GridToolbarContainer>
-    );
-  }
-  const paymentValuate = (row)=>{
+  const paymentValuate = (row) => {
     if (row.payment_status !== 'approved') {
-      Swal.fire('Pendiente de pago','','error')
+      Swal.fire('Pendiente de pago', '', 'error');
+    } else {
+      navigate(`/auth/surtir-orden/${row._id}`);
     }
-    else{
-      navigate(`/auth/surtir-orden/${row._id}`)
-    }
-  }
-
-
+  };
 
   const renderIcon = (values) => {
     if (!values.row.storeHouseStatus) {
@@ -175,7 +165,7 @@ const PaidProductOrders = () => {
           <Button
             aria-label="Surtir"
             color="success"
-            onClick={()=>paymentValuate(values.row)}
+            onClick={() => paymentValuate(values.row)}
             variant="outlined"
           >
             Surtir
@@ -189,25 +179,24 @@ const PaidProductOrders = () => {
             aria-label="Asignar Ruta"
             color="info"
             variant="outlined"
-            onClick={() =>navigate(`/auth/asignar-ruta/${values.row._id}`)}
+            onClick={() => navigate(`/auth/asignar-ruta/${values.row._id}`)}
           >
             Ruta
           </Button>
         </Tooltip>
       );
-    } else if (!values.row.deliveryStatus)  {
+    } else if (!values.row.deliveryStatus) {
       return (
-        <Tooltip title="En envio">
+        <Tooltip title="En envío">
           <IconButton
-            aria-label="secondary"
+            aria-label="En envío"
             color="secondary"
           >
             <ScheduleSendIcon />
           </IconButton>
         </Tooltip>
       );
-    }
-    else{
+    } else {
       return (
         <Tooltip title="Pedido entregado">
           <IconButton
@@ -222,29 +211,14 @@ const PaidProductOrders = () => {
   };
 
   if (loading) {
-    return(<LoadingScreenBlue/>)
+    return <LoadingScreenBlue />;
   }
 
   return (
-    <Grid container style={{ marginLeft: "10%", height: "70%", width: "85%" }}>
-      <Grid
-        item
-        marginTop={{ xs: "-30px" }}
-        xs={12}
-        minHeight={"100px"}
-        className="Titles"
-      >
-        <Typography
-          textAlign={"center"}
-          variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
-        >
-         Pedidos pendientes por surtir
-        </Typography>
-      </Grid>
-      <Grid item xs={12} marginY={2}>
+    <Grid container>
+      <Grid item xs={12}>
         <DataGrid
-          sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
+          sx={{ fontSize: "14px", fontFamily: "sans-serif" }}
           columns={[
             {
               field: "createdAt",
@@ -260,12 +234,10 @@ const PaidProductOrders = () => {
             },
             {
               field: "typeDelivery",
-              hideable: false,
               headerName: "Tipo de envio",
               flex: 1,
               sortable: false,
             },
-
             {
               field: "Opciones",
               headerName: "Opciones",
@@ -277,6 +249,7 @@ const PaidProductOrders = () => {
             },
           ]}
           rows={rowsWithIds}
+          autoHeight
           pagination
           slots={{
             pagination: CustomPagination,
@@ -284,6 +257,7 @@ const PaidProductOrders = () => {
             columnSortedDescendingIcon: SortedDescendingIcon,
             columnSortedAscendingIcon: SortedAscendingIcon,
             columnUnsortedIcon: UnsortedIcon,
+            noRowsOverlay: CustomNoRows,
           }}
           disableColumnFilter
           disableColumnMenu
@@ -305,5 +279,4 @@ const PaidProductOrders = () => {
   );
 };
 
-
-export default PaidProductOrders
+export default PaidProductOrders;

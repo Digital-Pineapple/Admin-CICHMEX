@@ -35,6 +35,7 @@ import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import Swal from "sweetalert2";
 import { useAuthStore } from "../../hooks";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
+import CustomNoRows from "../../components/Tables/CustomNoRows";
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -222,22 +223,8 @@ const ShippingDeliveryPoint = () => {
     return(<LoadingScreenBlue/>)
   }
   return (
-    <Grid container style={{ marginLeft: "10%", height: "70%", width: "85%" }}>
-      <Grid
-        item
-        marginTop={{ xs: "-30px" }}
-        xs={12}
-        minHeight={"100px"}
-        className="Titles"
-      >
-        <Typography
-          textAlign={"center"}
-          variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
-        >
-         Pedidos pendientes de envio a punto de entrega
-        </Typography>
-      </Grid>
+    <Grid container >
+     
       <Grid item xs={12} marginY={2}>
         <DataGrid
           sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
@@ -245,20 +232,20 @@ const ShippingDeliveryPoint = () => {
             {
               field: "createdAt",
               headerName: "Fecha de solicitud",
-              flex: 1,
+              
               align: "center",
             },
             {
               field: "order_id",
               headerName: "Id de pedido",
-              flex: 1,
+            
               align: "center",
             },
             {
               field: "status_route",
               hideable: false,
               headerName: "Estado de ruta",
-              flex: 1,
+           
               sortable: false,
             },
 
@@ -266,7 +253,7 @@ const ShippingDeliveryPoint = () => {
               field: "Opciones",
               headerName: "Opciones",
               align: "center",
-              flex: 1,
+              
               sortable: false,
               type: "actions",
               getActions: (params) => [renderIcon(params)],
@@ -280,7 +267,9 @@ const ShippingDeliveryPoint = () => {
             columnSortedDescendingIcon: SortedDescendingIcon,
             columnSortedAscendingIcon: SortedAscendingIcon,
             columnUnsortedIcon: UnsortedIcon,
+            noRowsOverlay: CustomNoRows
           }}
+          autoHeight
           disableColumnFilter
           disableColumnMenu
           disableColumnSelector

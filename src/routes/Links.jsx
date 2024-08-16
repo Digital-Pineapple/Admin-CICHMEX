@@ -72,36 +72,14 @@ export const Links = [
 
   },
   {
-    title : "Ordenes de producto",
+    title : "Almacenistas",
     Icon : <ProductionQuantityLimits/>,
     subRoutes:[
       {
-        title:'Todos las Ordenes de producto',
+        title:'Mi almacén',
         path:'/auth/Ordenes-de-producto',
         Icon: <Grading/>
-      },
-      {
-        title:'Pendientes por surtir',
-        path:'/auth/Ordenes-de-producto/surtir',
-        Icon: <CasesSharp/>
-      },
-    ]
-  },
-  {
-    title : "Envios",
-    Icon : <Face6/>,
-    subRoutes:[
-      {
-        title:'Pendientes envio a punto de entrega',
-        path:'/auth/Envios/punto-de-entrega',
-        Icon: <Place/>
-      },
-      {
-        title:'Pendientes envio a domicilio',
-        path:'/auth/Envios/domicilio',
-        Icon: <HomeMax/>
-      },
-      
+      }
     ]
   },
   {
@@ -160,11 +138,6 @@ export const Links = [
         Icon: <Grading/>
       },
       {
-        title:'Registro de transportista',
-        path:'/auth/AltaTransportista',
-        Icon: <Add/>
-      },
-      {
         title:'Cargar Paquetes',
         path:'/auth/cargar-paquetes',
         Icon: <CarCrash/>
@@ -202,11 +175,11 @@ export const Links = [
         path:'/auth/Tipos-Usuario',
         Icon: <Grading/>
       },
-      {
-        title:'Crear tipo de usuario',
-        path:'/auth/crear-tipo-usuario',
-        Icon: <Add/>
-      }
+      // {
+      //   title:'Crear tipo de usuario',
+      //   path:'/auth/crear-tipo-usuario',
+      //   Icon: <Add/>
+      // }
     ]
 
   },
@@ -236,6 +209,21 @@ export const LinksAdminCichmex = [
     Icon: <LocalConvenienceStoreIcon/>,
     subRoutes:[
       {
+        title:'Categorías',
+        path:`/auth/Categorias`,
+        Icon: <CategoryIcon/>
+      },
+      {
+        title:'Subcategorías',
+        path:`/auth/SubCategorias`,
+        Icon: <KeyboardTabIcon/>
+      },
+      {
+        title:'Productos',
+        path:`/auth/Productos`,
+        Icon: <Receipt/>
+      },
+      {
         title:'Stock',
         path:`/auth/MiAlmacen/stock`,
         Icon: <Grading/>
@@ -245,80 +233,23 @@ export const LinksAdminCichmex = [
         path:'/auth/MiAlmacen/entradas',
         Icon: <Add/>
       },
-      // {
-      //   title:'Salidas',
-      //   path:'/auth/MiAlmacen/salidas',
-      //   Icon: <Remove/>
-      // }
-    ]
-  },
-  {
-    title: "Categorías",
-    Icon: <CategoryIcon />,
-    subRoutes:[
       {
-        title:'Todos las Categorías',
-        path:'/auth/Categorias',
-        Icon: <Grading/>
-      },
-      {
-        title:'Crear Categoría',
-        path:'/auth/CrearCategoria',
-        Icon: <Add/>
+        title:'Salidas',
+        path:'/auth/MiAlmacen/salidas',
+        Icon: <Remove/>
       }
     ]
   },
   {
-    title : "Ordenes de producto",
+    title : "Almacenistas",
     Icon : <ProductionQuantityLimits/>,
     subRoutes:[
       {
-        title:'Todos las Ordenes de producto',
+        title:'Mi almacén',
         path:'/auth/Ordenes-de-producto',
         Icon: <Grading/>
-      },
-      {
-        title:'Pendientes por surtir',
-        path:'/auth/Ordenes-de-producto/surtir',
-        Icon: <CasesSharp/>
-      },
-    ]
-  },
-  {
-    title : "Envios",
-    Icon : <Face6/>,
-    subRoutes:[
-      {
-        title:'Pendientes envio a punto de entrega',
-        path:'/auth/Envios/punto-de-entrega',
-        Icon: <Place/>
-      },
-      {
-        title:'Pendientes envio a domicilio',
-        path:'/auth/Envios/domicilio',
-        Icon: <HomeMax/>
-      },
-     
-    ]
-  },
-  
-  {
-    title : "Productos",
-    Icon : <Receipt/>,
-    subRoutes:[
-      {
-        title:'Todos los productos',
-        path:'/auth/Productos',
-        Icon: <Grading/>
-      },
-      {
-        title:'Crear Producto',
-        path:'/auth/CrearProducto',
-        Icon: <Add/>
       }
     ]
-
-
   },
   {
     title: "Costos de envío",
@@ -337,49 +268,28 @@ export const LinksAdminCichmex = [
     ]
   },
   {
-    title: "Sub-Categorias",
-    Icon: <KeyboardTabIcon />,
+    title : "Transportistas",
+    Icon : <LocalShippingIcon/>,
     subRoutes:[
       {
-        title:'Todos las Subcategorias',
-        path:'/auth/SubCategorias',
+        title:'Todos los Transportistas',
+        path:'/auth/Transportistas',
         Icon: <Grading/>
       },
       {
-        title:'Crear subcategoría',
-        path:'/auth/CrearSubCategoria',
-        Icon: <Add/>
-      }
+        title:'Cargar Paquetes',
+        path:'/auth/cargar-paquetes',
+        Icon: <CarCrash/>
+      },
+      {
+        title:'Entrega de paquetes',
+        path:'/auth/entregar-paquetes',
+        Icon: <MarkEmailUnread/>
+      },
     ]
+
   },
  
-  // {
-  //   title : "Transportistas",
-  //   Icon : <LocalShippingIcon/>,
-  //   subRoutes:[
-  //     {
-  //       title:'Todos los Transportistas',
-  //       path:'/auth/Transportistas',
-  //       Icon: <Grading/>
-  //     },
-  //     {
-  //       title:'Registro de transportista',
-  //       path:'/auth/AltaTransportista',
-  //       Icon: <Add/>
-  //     },
-  //     {
-  //       title:'Cargar Paquetes',
-  //       path:'/auth/cargar-paquetes',
-  //       Icon: <CarCrash/>
-  //     },
-  //     {
-  //       title:'Entrega de paquetes',
-  //       path:'/auth/entregar-paquetes',
-  //       Icon: <MarkEmailUnread/>
-  //     },
-  //   ]
-
-  // },  
 ];
 
 export const LinksAdminCarWash = [

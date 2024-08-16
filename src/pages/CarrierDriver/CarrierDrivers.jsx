@@ -4,11 +4,11 @@ import {
     GridActionsCellItem,
   } from "@mui/x-data-grid";
   import { useEffect } from "react";
-  import { Button, Grid, Skeleton, Typography, } from "@mui/material";
+  import { Button, Fab, Grid, Skeleton, Typography, } from "@mui/material";
   import { useTypeUser } from "../../hooks/useTypeUser";
   import { useAuthStore } from "../../hooks";
 import { useUsers } from "../../hooks/useUsers";
-import { Delete, Edit } from "@mui/icons-material";
+import { Add, Delete, Edit } from "@mui/icons-material";
 import DeleteAlert from "../../components/ui/DeleteAlert";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 
@@ -45,6 +45,17 @@ if (loading) {
         >
           Transportistas
         </Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <Fab
+          sx={{ right: "-80%" }}
+          onClick={() => navigate("/auth/AltaTransportista")}
+          color="secondary"
+          aria-label="Alta de transportista"
+          title="Alta de transportista"
+        >
+          <Add />
+        </Fab>
       </Grid>
       <Grid item xs={12}>
          {

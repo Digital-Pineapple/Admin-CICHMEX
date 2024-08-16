@@ -1,6 +1,5 @@
 import {
   Grid,
-  Skeleton,
   Button,
   Typography,
   FormControl,
@@ -13,15 +12,15 @@ import {
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useProductOrder } from "../../hooks/useProductOrder";
-import { DataGrid } from "@mui/x-data-grid";
 import { useFormik } from "formik";
 import { localDate } from "../../Utils/ConvertIsoDate";
 import { useUsers } from "../../hooks/useUsers";
 import { AssistantDirection, Close } from "@mui/icons-material";
+import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 
 const AssignRoute = () => {
   const { id } = useParams();
-  const { loadProductOrder, productOrder, rowsProducts, loadAssignRoute } =
+  const { loadProductOrder, productOrder, loading, loadAssignRoute } =
     useProductOrder();
 
   const { CarrierDrivers, loadCarrierDrivers, navigate } = useUsers();
@@ -29,7 +28,6 @@ const AssignRoute = () => {
     loadProductOrder(id);
     loadCarrierDrivers();
   }, [id]);
-  const rows = rowsProducts();
 
   const formik = useFormik({
     initialValues: {
@@ -42,9 +40,11 @@ const AssignRoute = () => {
       loadAssignRoute(values);
     },
   });
-  console.log(productOrder);
 
   const date = localDate(productOrder?.supply_detail?.date);
+  if (loading) {
+    return(<LoadingScreenBlue/>)
+  }
 
   return (
     <Grid
@@ -53,7 +53,7 @@ const AssignRoute = () => {
       padding={2}
       onSubmit={formik.handleSubmit}
       display={"flex"}
-      justifyContent={"space-between"}
+      justifyContent={"center"}
     >
       <Grid
         item
@@ -114,31 +114,6 @@ const AssignRoute = () => {
           </>
         )}
       </Grid>
-      <Grid item xs={12} md={6}>
-        <h2>Lista de productos</h2>
-        {rows ? (
-          <DataGrid
-            hideFooterSelectedRowCount={true}
-            columns={[
-              {
-                field: "name",
-                headerName: "Nombre del producto",
-                flex: 1,
-                align: "center",
-              },
-              {
-                field: "quantity",
-                headerName: "Cantidad ",
-                flex: 1,
-                align: "center",
-              },
-            ]}
-            rows={rows}
-          />
-        ) : (
-          <Skeleton variant="rectangular" />
-        )}
-      </Grid>
 
       <Grid item xs={12} md={5}>
         <FormControl fullWidth>
@@ -174,7 +149,7 @@ const AssignRoute = () => {
           </Button>
           <Button
             onClick={() =>
-              navigate("/auth/Envios/punto-de-entrega", { replace: true })
+              navigate("/auth/Ordenes-de-producto", { replace: true })
             }
             variant="contained"
             color="warning"

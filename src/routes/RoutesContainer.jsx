@@ -20,8 +20,6 @@ const RoutesContainer = () => {
   useEffect(() => {
     const valuateLinks = () => {
       const system = user.type_user?.system;
-      console.log(system);
-      
       if (system[0] === 'CICHMEX' && system[1] === "CARWASH") {
         setTheme(themeSuperAdmin);
         setLinks(Links);
