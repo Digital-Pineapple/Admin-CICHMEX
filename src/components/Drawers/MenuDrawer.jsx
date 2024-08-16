@@ -42,7 +42,7 @@ export default function MenuDrawer({navLinks}) {
               <ListItemIcon sx={{ color:'#fff'}} >
                 {item.Icon}
               </ListItemIcon>
-              <ListItemText sx={{marginLeft:'-20px'}} primary={item.title} />
+              <ListItemText  sx={{marginLeft:'-20px'}} primary={item.title} />
               {item.subRoutes ? (open[item.title] ? <ExpandLessIcon /> : <ExpandMoreIcon />) : null}
             </ListItemButton>
             {item.subRoutes && (

@@ -1,4 +1,14 @@
-import { Grid, Typography, TextField, Button, ButtonGroup } from "@mui/material";
+import {
+  Grid,
+  Typography,
+  TextField,
+  Button,
+  ButtonGroup,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import FormSearch from "../../components/Filters/FormSearch";
 import { useAuthStore, useProducts } from "../../hooks";
@@ -6,8 +16,8 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import TableQuantity from "../../components/Tables/TableQuantity";
 
-const AddEntries = () => {
-  const { loadProducts,addMultipleEntries, navigate } = useProducts();
+const AddOutputs = () => {
+  const { loadStockProducts, addMultipleOutputs, navigate } = useProducts();
   const { user } = useAuthStore();
   const [product, setProduct] = useState(null);
   const [allProducts, setAllProducts] = useState([]);
@@ -16,11 +26,12 @@ const AddEntries = () => {
     handleSubmit,
     setValue,
     formState: { errors },
-    getValues
+    getValues,
   } = useForm({
     defaultValues: {
       user_delivery: "",
       user_received: "",
+      reason: "",
       products: [],
     },
   });
@@ -31,24 +42,23 @@ const AddEntries = () => {
     // Verificamos si hay alguna fila con cantidad vacía
     return rows.every((row) => row.quantity !== "");
   };
-  
 
   const onSubmit = async (data) => {
-
     if (!validateQuantities(rowsIds)) {
-      Swal.fire("Por favor, completa todas las cantidades.", '','error');
+      Swal.fire("Por favor, completa todas las cantidades.", "", "error");
       return;
     }
-    setValue('products', allProducts)
-    const values = getValues()
-    addMultipleEntries(values)
-    
+    setValue("products", allProducts);
+    const values = getValues();
+    console.log(values);
+
+     addMultipleOutputs(values)
   };
-  
+
   useEffect(() => {
-    loadProducts()
+    loadStockProducts();
   }, [user]);
-  
+
   useEffect(() => {
     if (product) {
       setAllProducts((prevProducts) => [...prevProducts, product]);
@@ -82,7 +92,7 @@ const AddEntries = () => {
           variant="h1"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-          Agregar entrada
+          Agregar salida
         </Typography>
       </Grid>
 
@@ -131,35 +141,77 @@ const AddEntries = () => {
             />
           )}
         />
+        <Controller
+          control={control}
+          name="reason"
+          rules={{
+            required: { message: "Campo requerido", value: true },
+          }}
+          render={({ field }) => (
+            <FormControl fullWidth>
+            <InputLabel>Motivo</InputLabel>
+            <Select
+              {...field}
+              id="reason"
+              label="Motivo"
+              value={field.value}
+              onChange={(e) => field.onChange(e.target.value)}
+              error={!!errors.reason}
+              helperText={errors.reason && errors.reason.message}
+              autoComplete="off"
+            >
+              <MenuItem value={'Muestra'}>Muestra</MenuItem>
+              <MenuItem value={'Exhibición'}>Exhibición</MenuItem>
+              <MenuItem value={'Préstamo'}>Préstamo</MenuItem>
+            </Select>
+            </FormControl>
+          )}
+        />
       </Grid>
-      <Grid container padding={{xs:2,lg:4}} gap={2} justifyContent={'center'} >
+      <Grid
+        container
+        padding={{ xs: 2, lg: 4 }}
+        gap={2}
+        justifyContent={"center"}
+      >
         <Typography variant="h4" textAlign={"center"} color="initial">
           Introduzca el nombre o código de barras del producto
         </Typography>
         <Grid item xs={10}>
-        <FormSearch setSelected={setProduct} allValues ={allProducts} titleAlert={'Ya se agrego este producto'} />
-      </Grid>
-      <Grid item xs={12} lg={8}>
-        <TableQuantity values={rowsIds} setValues={setAllProducts} allValues={allProducts} />
-      </Grid>
-      <Grid item xs={12} lg={6}>
-      <ButtonGroup fullWidth variant="text" color="primary" aria-label="">
-      <Button  variant="contained" onClick={()=>navigate('/auth/MiAlmacen/entradas')} color="error">
-        Salir
-      </Button>
-         <Button  variant="contained" onClick={handleSubmit(onSubmit)} color="success">
-        Subir entrada
-      </Button>
-
-      </ButtonGroup>
-      </Grid>
-
-          
+          <FormSearch
+            setSelected={setProduct}
+            allValues={allProducts}
+            titleAlert={"Ya se agrego este producto"}
+          />
         </Grid>
-     
+        <Grid item xs={12} lg={8}>
+          <TableQuantity
+            values={rowsIds}
+            setValues={setAllProducts}
+            allValues={allProducts}
+          />
+        </Grid>
+        <Grid item xs={12} lg={6}>
+          <ButtonGroup fullWidth variant="text" color="primary" aria-label="">
+            <Button
+              variant="contained"
+              onClick={() => navigate("/auth/MiAlmacen/entradas")}
+              color="error"
+            >
+              Salir
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleSubmit(onSubmit)}
+              color="success"
+            >
+              Subir salida
+            </Button>
+          </ButtonGroup>
+        </Grid>
+      </Grid>
     </Grid>
   );
 };
 
-export default AddEntries;
- 
+export default AddOutputs;

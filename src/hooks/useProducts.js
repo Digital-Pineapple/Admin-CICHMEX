@@ -5,6 +5,7 @@ import {
   deleteOneProduct,
   editOneProduct,
   startAddMultipleEntries,
+  startAddMultipleOutputs,
   startLoadAllInputs,
   startLoadAllOutputs,
   startLoadEntriesProduct,
@@ -45,6 +46,9 @@ export const useProducts = () => {
   };
   const addMultipleEntries = async(values)=>{
     dispatch(startAddMultipleEntries(values,navigate))
+  }
+  const addMultipleOutputs = async(values)=>{
+    dispatch(startAddMultipleOutputs(values,navigate))
   }
 
   const editProduct = async (id, values, images) =>
@@ -108,7 +112,8 @@ export const useProducts = () => {
     rowsAllOutputs,
     addMultipleEntries,
     loading,
-    rowsAllOutputs
+    rowsAllOutputs,
+    addMultipleOutputs
 
   };
 };

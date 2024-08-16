@@ -46,6 +46,12 @@ const TableQuantity = ({ values, setValues }) => {
   };
 
   const processRowUpdate = (newRow) => {
+    // Validate the quantity against the stock
+    if (newRow.quantity > newRow.stock) {
+      alert("La cantidad no puede ser mayor que el stock disponible.");
+      return { ...newRow, quantity: newRow.stock }; // Reset quantity to max stock
+    }
+    
     const updatedRow = { ...newRow, isNew: false };
     setValues(values.map((row) => (row.id === newRow.id ? updatedRow : row)));
     return updatedRow;
@@ -55,6 +61,7 @@ const TableQuantity = ({ values, setValues }) => {
     setRowModesModel(newRowModesModel);
   };
 
+  // Dynamically add the stock column only if the stock value is present
   const columns = [
     {
       field: "tag",
@@ -67,6 +74,15 @@ const TableQuantity = ({ values, setValues }) => {
     },
     { field: "name", headerName: "Nombre ", width: 250, editable: false },
     { field: "price", headerName: "Precio", width: 100, editable: false },
+    ...(values.some(row => row.stock !== undefined)
+      ? [{
+          field: 'stock',
+          headerName: "Stock",
+          type: "number",
+          width: 100,
+          editable: false,
+        }]
+      : []),
     {
       field: "quantity",
       headerName: "Cantidad",

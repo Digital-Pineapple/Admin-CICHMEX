@@ -58,6 +58,7 @@ import PackagesSent from '../pages/Logistic/PackagesSent'
 import DeliverPackage from '../pages/Logistic/DeliverPackage'
 import StockMovements from '../pages/MyStoreHouse/StockMovements'
 import AddEntries from '../pages/MyStoreHouse/AddEntries'
+import AddOutputs from '../pages/MyStoreHouse/AddOutputs'
 
 
 
@@ -126,6 +127,7 @@ export const AllRoutes = [
   
 
   { type: 1, path: '/MiAlmacen/salidas', element: <ProductOutputs/> },
+  { type: 1, path: '/MiAlmacen/AgregarSalidas', element: <AddOutputs/> },
 
   { type: 1, path: '/Ordenes-de-producto', element: <MyProductOrders/> },
   { type: 1, path: '/Ordenes-de-producto/surtir', element: <PaidProductOrders/> },

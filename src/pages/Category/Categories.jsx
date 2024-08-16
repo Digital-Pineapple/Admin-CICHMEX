@@ -14,16 +14,15 @@ import {
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import MuiPagination from "@mui/material/Pagination";
-import { Download } from "@mui/icons-material";
+import { Add, Download } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useCategories } from "../../hooks/useCategories";
-import { Button, Avatar, Grid, Typography } from "@mui/material";
+import { Button, Avatar, Grid, Typography, Fab } from "@mui/material";
 import { Workbook } from "exceljs";
-import { saveAs } from 'file-saver';
+import { saveAs } from "file-saver";
 import DeleteAlert from "../../components/ui/DeleteAlert";
 import EditButton from "../../components/Buttons/EditButton";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
-
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -58,7 +57,8 @@ function CustomPagination(props) {
 }
 
 const Categories = () => {
-  const { loadCategories, deleteCategory, categories, navigate, loading } = useCategories();
+  const { loadCategories, deleteCategory, categories, navigate, loading } =
+    useCategories();
   useEffect(() => {
     loadCategories();
   }, []);
@@ -90,8 +90,7 @@ const Categories = () => {
     // Crear un Blob con el archivo Excel y guardarlo
     workbook.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer], {
-        type:
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
       saveAs(blob, "categorias.xlsx");
     });
@@ -99,32 +98,32 @@ const Categories = () => {
 
   function CustomToolbar() {
     const apiRef = useGridApiContext();
-  
+
     const handleGoToPage1 = () => apiRef.current.setPage(1);
-  
+
     return (
-      <GridToolbarContainer sx={{justifyContent:'space-between'}}>
+      <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
         <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-        <GridToolbarQuickFilter/>
+        <GridToolbarQuickFilter />
         <Button
-        variant="text"
-        startIcon={<Download/>}
-        disableElevation
-        sx={{ color: "secondary" }}
-        onClick={exportToExcel}
-      >
-        Descargar Excel
-      </Button>
+          variant="text"
+          startIcon={<Download />}
+          disableElevation
+          sx={{ color: "secondary" }}
+          onClick={exportToExcel}
+        >
+          Descargar Excel
+        </Button>
       </GridToolbarContainer>
     );
   }
   if (loading) {
-    return (<LoadingScreenBlue/>)
+    return <LoadingScreenBlue />;
   }
 
   return (
-    <Grid container maxWidth={'85vw'}>
-       <Grid
+    <Grid container maxWidth={"85vw"} gap={2}>
+      <Grid
         item
         marginTop={{ xs: "-30px" }}
         xs={12}
@@ -139,9 +138,20 @@ const Categories = () => {
           Categorías
         </Typography>
       </Grid>
+      <Grid item xs={12}>
+        <Fab
+          sx={{ right: "-80%" }}
+          onClick={() => navigate("/auth/CrearCategoria")}
+          color="secondary"
+          aria-label="Agregar categoría"
+          title="Agragar categoría"
+        >
+          <Add />
+        </Fab>
+      </Grid>
 
       <DataGrid
-        sx={{ fontSize: "20px", marginTop:2, fontFamily: "BikoBold" }}
+        sx={{ fontSize: "20px", marginTop: 2, fontFamily: "BikoBold" }}
         columns={[
           {
             field: "name",
@@ -169,8 +179,16 @@ const Categories = () => {
             sortable: false,
             type: "actions",
             getActions: (params) => [
-             <DeleteAlert title={`¿Desea eliminar ${params.row.name}?`} callbackToDeleteItem={()=> deleteCategory(params.row._id)}/>,
-             <EditButton title={`Desea editar ${params.row.name}?`} callbackToEdit={()=>navigate(`/auth/Categoria/${params.row._id}`)} />
+              <DeleteAlert
+                title={`¿Desea eliminar ${params.row.name}?`}
+                callbackToDeleteItem={() => deleteCategory(params.row._id)}
+              />,
+              <EditButton
+                title={`Desea editar ${params.row.name}?`}
+                callbackToEdit={() =>
+                  navigate(`/auth/Categoria/${params.row._id}`)
+                }
+              />,
             ],
           },
         ]}
@@ -178,16 +196,16 @@ const Categories = () => {
           sorting: {
             sortModel: [{ field: "createdAt", sort: "desc" }],
           },
-          pagination:{
-            paginationModel:{pageSize:10}
-          }
+          pagination: {
+            paginationModel: { pageSize: 10 },
+          },
         }}
         density="standard"
         rows={rowsWithIds}
         pagination
         slots={{
           pagination: CustomPagination,
-          toolbar: CustomToolbar ,
+          toolbar: CustomToolbar,
           columnSortedDescendingIcon: SortedDescendingIcon,
           columnSortedAscendingIcon: SortedAscendingIcon,
           columnUnsortedIcon: UnsortedIcon,
@@ -200,14 +218,13 @@ const Categories = () => {
           toolbar: {
             showQuickFilter: true,
             quickFilterProps: { debounceMs: 500 },
-            
           },
         }}
         printOptions={{
           hideFooter: true,
           hideToolbar: true,
         }}
-        style={{fontFamily:'sans-serif', fontSize:'15px'}}
+        style={{ fontFamily: "sans-serif", fontSize: "15px" }}
       />
     </Grid>
   );

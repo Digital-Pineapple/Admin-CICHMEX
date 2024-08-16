@@ -23,6 +23,21 @@ export const Links = [
     Icon: <LocalConvenienceStoreIcon/>,
     subRoutes:[
       {
+        title:'Categorías',
+        path:`/auth/Categorias`,
+        Icon: <CategoryIcon/>
+      },
+      {
+        title:'Subcategorías',
+        path:`/auth/SubCategorias`,
+        Icon: <KeyboardTabIcon/>
+      },
+      {
+        title:'Productos',
+        path:`/auth/Productos`,
+        Icon: <Receipt/>
+      },
+      {
         title:'Stock',
         path:`/auth/MiAlmacen/stock`,
         Icon: <Grading/>
@@ -36,22 +51,6 @@ export const Links = [
         title:'Salidas',
         path:'/auth/MiAlmacen/salidas',
         Icon: <Remove/>
-      }
-    ]
-  },
-  {
-    title: "Categorías",
-    Icon: <CategoryIcon />,
-    subRoutes:[
-      {
-        title:'Todos las Categorías',
-        path:'/auth/Categorias',
-        Icon: <Grading/>
-      },
-      {
-        title:'Crear Categoría',
-        path:'/auth/CrearCategoria',
-        Icon: <Add/>
       }
     ]
   },
@@ -102,36 +101,8 @@ export const Links = [
         path:'/auth/Envios/domicilio',
         Icon: <HomeMax/>
       },
-      {
-        title:'Cargar Paquetes',
-        path:'/auth/cargar-paquetes',
-        Icon: <CarCrash/>
-      },
-      {
-        title:'Entrega de paquetes',
-        path:'/auth/entregar-paquetes',
-        Icon: <MarkEmailUnread/>
-      },
+      
     ]
-  },
-  
-  {
-    title : "Productos",
-    Icon : <Receipt/>,
-    subRoutes:[
-      {
-        title:'Todos los productos',
-        path:'/auth/Productos',
-        Icon: <Grading/>
-      },
-      {
-        title:'Crear Producto',
-        path:'/auth/CrearProducto',
-        Icon: <Add/>
-      }
-    ]
-
-
   },
   {
     title : "Puntos de entrega",
@@ -178,22 +149,6 @@ export const Links = [
       }
     ]
   },
-  {
-    title: "Sub-Categorias",
-    Icon: <KeyboardTabIcon />,
-    subRoutes:[
-      {
-        title:'Todos las Subcategorias',
-        path:'/auth/SubCategorias',
-        Icon: <Grading/>
-      },
-      {
-        title:'Crear subcategoría',
-        path:'/auth/CrearSubCategoria',
-        Icon: <Add/>
-      }
-    ]
-  },
  
   {
     title : "Transportistas",
@@ -208,7 +163,17 @@ export const Links = [
         title:'Registro de transportista',
         path:'/auth/AltaTransportista',
         Icon: <Add/>
-      }
+      },
+      {
+        title:'Cargar Paquetes',
+        path:'/auth/cargar-paquetes',
+        Icon: <CarCrash/>
+      },
+      {
+        title:'Entrega de paquetes',
+        path:'/auth/entregar-paquetes',
+        Icon: <MarkEmailUnread/>
+      },
     ]
 
   },

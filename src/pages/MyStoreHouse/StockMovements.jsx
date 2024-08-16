@@ -112,7 +112,7 @@ const StockMovements = () => {
           variant="h1"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-          Movimientos de Stock
+          Movimiento de Stock
         </Typography>
       </Grid>
       <Grid item xs={12} lg={6} >
@@ -196,7 +196,7 @@ const StockMovements = () => {
           }}
           pageSizeOptions={[5,10,25]}
         />
-      </Grid>ç
+      </Grid>
       <Grid item xs={12} lg={5} >
         <Typography
           bgcolor={orange[900]}

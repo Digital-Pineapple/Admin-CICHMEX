@@ -52,7 +52,12 @@ export const startLoadStockProducts = () => {
     try {
       const { data } = await instanceApi.get(
         `/stock-StoreHouse/available/ok`,
-        headerConfigApplication
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
       const info = data.data.map((item, index) => {
         const info = item.product_id;
@@ -61,7 +66,7 @@ export const startLoadStockProducts = () => {
         const totInfo = { ...info, stock, stock_id };
         return totInfo;
       });
-      dispatch(loadStockProducts(info));
+      dispatch(loadProducts(info));
     } catch (error) {
       enqueueSnackbar(
         `${error.response.data.message}|| 'Error al consultar información'`,
@@ -373,6 +378,38 @@ export const startAddMultipleEntries = (values, navigate) => {
         confirmButtonColor: green[800],
       });
       navigate('/auth/MiAlmacen/entradas',{replace:true})
+    } catch (error) {
+      enqueueSnackbar(`${error.response.data.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    }
+  };
+};
+export const startAddMultipleOutputs = (values, navigate) => {
+  console.log(values);
+  
+  return async (dispatch) => {
+    try {
+      const { data } = await instanceApi.post(
+        `/stock-StoreHouse/add/multiple-outputs`,values,
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      Swal.fire({
+        title: `${data.message}`,
+        text: `Folio de salida: ${data.data}`,
+        icon: "success",
+        confirmButtonColor: green[800],
+      });
+      navigate('/auth/MiAlmacen/salidas',{replace:true})
     } catch (error) {
       console.log(error);
 

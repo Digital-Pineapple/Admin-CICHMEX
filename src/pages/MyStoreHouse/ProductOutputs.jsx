@@ -12,15 +12,15 @@ import {
 } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import MuiPagination from "@mui/material/Pagination";
-import { Download } from "@mui/icons-material";
+import { Add, Download } from "@mui/icons-material";
 import {
   Button,
+  Fab,
   Grid,
   Typography,
 } from "@mui/material";
 import { Workbook } from "exceljs";
 import { useProducts } from "../../hooks/useProducts";
-import { useStoreHouse } from "../../hooks/useStoreHouse";
 import AddButton2 from "../../components/Buttons/AddButton2";
 import { orange } from "@mui/material/colors";
 import { useAuthStore } from "../../hooks";
@@ -60,17 +60,12 @@ function CustomPagination(props) {
 
 const ProductOutputs = () => {
   const {
-    loadOutputsProducts,
+    loadAllOutputs,
     rowsAllOutputs,
-    loading
   } = useProducts();
-  const { user } = useAuthStore();
+  const { user, navigate } = useAuthStore();
   const [open, setOpen] = useState(false);
   const [details, setDetails] = useState('')
-
-  useEffect(() => {
-    loadOutputsProducts()
-  }, [user]);
 
   const handleClickOpen = (detail) => {
     setOpen(true);
@@ -80,6 +75,12 @@ const ProductOutputs = () => {
   const handleClose = () => {
     setOpen(false);
   };
+
+
+  useEffect(() => {
+    loadAllOutputs()
+  }, [user]);
+
 
   const exportToExcel = () => {
     const workbook = new Workbook();
@@ -98,7 +99,7 @@ const ProductOutputs = () => {
     });
 
     // Agregar datos de las filas
-    rowsAllOutputs.forEach((row) => {
+    rowsEntriesProducts.forEach((row) => {
       worksheet.addRow([
         row._id,
         row.name,
@@ -138,14 +139,19 @@ const ProductOutputs = () => {
       </GridToolbarContainer>
     );
   }
+
+  
+  
+
   return (
-    <Grid container >
+    <Grid container gap={1} >
       <Grid
         item
         marginTop={{ xs: "-30px" }}
         xs={12}
         minHeight={"100px"}
         className="Titles"
+        
       >
         <Typography
           textAlign={"center"}
@@ -156,20 +162,37 @@ const ProductOutputs = () => {
         </Typography>
       </Grid>
       <Grid item xs={12} >
-        <Typography
+      <Fab sx={{right:'-80%'}} onClick={()=>navigate('/auth/MiAlmacen/AgregarSalidas')} color="secondary" aria-label="Agregar entrada" title="Agragar entradas" >
+  <Add />
+</Fab>
+      </Grid>
+      <Grid item xs={12} >
+        {/* <Typography
           bgcolor={orange[900]}
           variant="h3"
           color={"#fff"}
           borderRadius={2}
-          marginY={2}
+          marginY={1}
           textAlign={"center"}
           fontSize={"30px"}
         >
-          Salidas
-        </Typography>
+          Entradas
+        </Typography> */}
         <DataGrid
           sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
-          columns={[
+          columns={
+            [
+              {
+                field: "folio",
+                headerName: "Folio",
+                align: "center",
+              },
+            {
+              field: "date",
+              headerName: "Fecha",
+              flex: 1,
+              align: "center",
+            },
             {
               field: "tag",
               headerName: "Código",
@@ -177,41 +200,51 @@ const ProductOutputs = () => {
               align: "center",
             },
             {
-              field: "name",
-              hideable: false,
+              field: "product_name",
               headerName: "Nombre del prodcto",
               flex: 1,
-              sortable: false,
+              align:'center'
             },
             {
-              field: "price",
-              headerName: "Precio",
+              field: "quantity",
+              headerName: "Cantidad",
               flex: 1,
               align: "center",
             },
+            // {
+            //   field: "newQuantity",
+            //   headerName: "Nueva Cantidad",
+            //   flex: 1,
+            //   align: "center",
+            // },
             {
-              field: "stock",
-              headerName: "Stock",
+              field: "nowStock",
+              headerName: "Stock actual",
               flex: 1,
               align: "center",
             },
             
-            {
-              field: "Opciones",
-              headerName: "Opciones",
-              align: "center",
-              flex: 1,
-              sortable: false,
-              type: "actions",
-              getActions: (params) => [
-                <Button variant="contained" onClick={()=>handleClickOpen(params?.row)}  color="info">
-                Detalle
-              </Button>
-              ],
-            },
+            // {
+            //   field: "Opciones",
+            //   headerName: "Opciones",
+            //   align: "center",
+            //   flex: 1,
+            //   sortable: false,
+            //   type: "actions",
+            //   getActions: (params) => [
+            //     <AddButton2
+            //       title={`Agregar`}
+            //       product={params?.row}
+            //     />,
+            //     <Button variant="contained" onClick={()=>handleClickOpen(params?.row)}  color="info">
+            //       Detalle
+            //     </Button>
+            //   ],
+            // },
           ]}
           rows={rowsAllOutputs}
           pagination
+          density="compact"
           slots={{
             pagination: CustomPagination,
             toolbar: CustomToolbar,
@@ -233,6 +266,15 @@ const ProductOutputs = () => {
             hideFooter: true,
             hideToolbar: true,
           }}
+          initialState={{
+            pagination:{
+              paginationModel:{pageSize:10}
+            },
+            sorting:{
+              sortModel: [{ field: "date", sort: "desc" }],
+            }
+          }}
+          style={{fontFamily:'sans-serif', fontSize:'15px'}}
         />
       </Grid>
       <EntriesOutputsModal open={open} handleClose={handleClose} details={details}  />

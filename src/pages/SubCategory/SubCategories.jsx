@@ -14,10 +14,10 @@ import {
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import MuiPagination from "@mui/material/Pagination";
-import { Download } from "@mui/icons-material";
+import { Add, Download } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useCategories } from "../../hooks/useCategories";
-import { Button, Avatar, Grid, Typography } from "@mui/material";
+import { Button, Avatar, Grid, Typography, Fab } from "@mui/material";
 import { Workbook } from "exceljs";
 import { saveAs } from 'file-saver';
 import DeleteAlert from "../../components/ui/DeleteAlert";
@@ -119,7 +119,7 @@ const {user} = useAuthStore()
   }
 
   return (
-    <Grid conyainer maxWidth={'85vw'} >
+    <Grid container gap={2} maxWidth={'85vw'} >
        <Grid
         item
         marginTop={{ xs: "-30px" }}
@@ -135,10 +135,21 @@ const {user} = useAuthStore()
           Subcategorías
         </Typography>
       </Grid>
+      <Grid item xs={12}>
+        <Fab
+          sx={{ right: "-80%" }}
+          onClick={() => navigate("/auth/CrearSubCategoria")}
+          color="secondary"
+          aria-label="Agregar subcategoría"
+          title="Agragar subcategoría"
+        >
+          <Add />
+        </Fab>
+      </Grid>
 
 
       <DataGrid
-        sx={{ marginTop:5, fontSize: "20px", fontFamily: "BikoBold" }}
+        sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
           {
             field: "name",

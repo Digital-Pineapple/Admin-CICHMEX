@@ -17,10 +17,10 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useServices } from "../../hooks/useServices";
 import MuiPagination from "@mui/material/Pagination";
-import { Download, Edit } from "@mui/icons-material";
+import { Add, Download, Edit } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { redirectPages } from '../../helpers';
-import { Button, IconButton, Tooltip, Grid, Typography } from "@mui/material";
+import { Button, IconButton, Tooltip, Grid, Typography, Fab } from "@mui/material";
 import { Workbook } from "exceljs";
 import { useProducts } from "../../hooks/useProducts";
 import { editOneProduct } from "../../store/actions/productsActions";
@@ -127,14 +127,25 @@ const Products = () => {
   if (loading) return (<LoadingScreenBlue/>)
 
   return (
-    <Grid container maxWidth={'85vw'}>
+    <Grid container gap={2} maxWidth={'85vw'}>
       <Grid item marginTop={{xs:'-30px'}} xs={12} minHeight={'100px'} className="Titles">   
       <Typography textAlign={'center'} variant="h1" fontSize={{xs:'20px', sm:'30px', lg:'40px'}} >
         Productos
       </Typography>
       </Grid>
+      <Grid item xs={12}>
+        <Fab
+          sx={{ right: "-80%" }}
+          onClick={() => navigate("/auth/CrearProducto")}
+          color="secondary"
+          aria-label="Crear producto"
+          title="Crear producto"
+        >
+          <Add />
+        </Fab>
+      </Grid>
       <DataGrid
-        sx={{ marginTop:5, fontSize: "20px", fontFamily: "BikoBold" }}
+        sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
           {
             field: "tag",
