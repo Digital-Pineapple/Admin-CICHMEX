@@ -226,11 +226,21 @@ export const addOneProduct =
       price,
       description,
       tag,
-      size,
+      dimensions,
       category,
       subCategory,
       weight,
-      video,
+      videos,
+      brand,
+      discountPrice,
+      porcentDiscount,
+      product_key,
+      seoDescription,
+      shortDescription,
+      thumbnail,
+      seoKeywords
+
+
     },
     images,
     navigate
@@ -243,13 +253,26 @@ export const addOneProduct =
       formData.append("price", price);
       formData.append("description", description);
       formData.append("tag", tag);
-      formData.append("size", size);
+      formData.append("dimensions", dimensions);
       formData.append("subCategory", subCategory);
       formData.append("category", category);
       formData.append("weight", weight);
-      formData.append("video", video);
+      formData.append("brand", brand);
+      formData.append("discountPrice", discountPrice);
+      formData.append("porcentDiscount", porcentDiscount);
+      formData.append("product_key", product_key);
+      formData.append("seoDescription", seoDescription);
+      formData.append("shortDescription", shortDescription);
+      formData.append("thumbnail", thumbnail);
+
       for (let i = 0; i < images.length; i++) {
         formData.append("images", images[i]);
+      }
+      for (let i = 0; i < seoKeywords.length; i++) {
+        formData.append("seoKeywords", seoKeywords[i]);
+      }
+      for (let i = 0; i < videos.length; i++) {
+        formData.append("videos", videos[i]);
       }
 
       const { data } = await instanceApi.post(

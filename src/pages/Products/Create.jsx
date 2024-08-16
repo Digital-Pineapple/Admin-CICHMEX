@@ -4,7 +4,6 @@ import {
   Badge,
   IconButton,
   Avatar,
-  TextareaAutosize,
   Button,
   FormControl,
   FormLabel,
@@ -18,7 +17,7 @@ import {
   CardContent,
   CardActions,
   CardHeader,
-  ButtonGroup,
+  ButtonGroup, Box,
 } from "@mui/material";
 import { useProducts } from "../../hooks/useProducts";
 import useImages from "../../hooks/useImages";
@@ -69,19 +68,20 @@ const CreateProduct = () => {
       subCategory: "",
       category: "",
       weight: "",
-      thumbnail:'',
-      seoDescription:"",
-      seoKeywords:""
+      thumbnail: "",
+      seoDescription: "",
+      seoKeywords: "",
+      images:''
     },
     onSubmit: (values) => {
       try {
         const values2 = {
           ...values,
-          video: video,
+          videos: [video],
+          thumbnail:formik.values?.profile_image,
+          images: imagesFiles()
         };
-        console.log(values2);
-        
-        // createProduct(values2, imagesFiles());
+         createProduct(values2, imagesFiles());
       } catch (error) {
         return enqueueSnackbar(`Error: ${error.data.response?.message}`, {
           variant: "error",
@@ -111,14 +111,14 @@ const CreateProduct = () => {
     let newPorcentDiscount = formik.values.porcentDiscount;
     let newTotalPrice = formik.values.totalPrice;
 
-    if (name === 'price') {
+    if (name === "price") {
       newPrice = newValue;
       if (newPorcentDiscount > 0) {
         newTotalPrice = newPrice - (newPrice * newPorcentDiscount) / 100;
       } else {
         newTotalPrice = newPrice;
       }
-    } else if (name === 'porcentDiscount') {
+    } else if (name === "porcentDiscount") {
       newPorcentDiscount = newValue;
       if (newPorcentDiscount > 0) {
         newTotalPrice = newPrice - (newPrice * newPorcentDiscount) / 100;
@@ -136,7 +136,16 @@ const CreateProduct = () => {
   };
 
   return (
-    <Grid component="form" gap={2} container onSubmit={formik.handleSubmit}>
+   
+      
+    
+    <Grid
+      component="form"
+      onSubmit={formik.handleSubmit}
+      display={'flex'}
+      container
+      gap={2}
+    >
       <Grid
         item
         marginTop={{ xs: "-30px" }}
@@ -152,355 +161,395 @@ const CreateProduct = () => {
           Registar nuevo producto
         </Typography>
       </Grid>
-
-      <Card variant="outlined">
-        <CardHeader title="Detalles" />
-        <CardContent sx={{ display: "flex", gap: 2, flexDirection: "column" }}>
-          <TextField
-            size="small"
-            fullWidth
-            id="name"
-            name="name"
-            label="Nombre del producto "
-            variant="outlined"
-            value={formik.values.name}
-            onChange={formik.handleChange}
-          />
-          <TextField
-            fullWidth
-            size="small"
-            id="brand"
-            name="brand"
-            label="Marca"
-            variant="outlined"
-            value={formik.values.brand}
-            onChange={formik.handleChange}
-          />
-          <TextField
-            fullWidth
-            size="small"
-            id="tag"
-            name="tag"
-            label="Código"
-            variant="outlined"
-            value={formik.values.tag}
-            onChange={formik.handleChange}
-          />
-          <FormControl fullWidth>
-            <FormLabel>Categoría</FormLabel>
-            <Select
-              id="category"
-              name="category"
+      <Grid item 
+       xs={12} lg={3}
+       sx={{
+         gridColumn: 'span 2',
+         gridRow: 'span 4',
+       }}
+      >
+        <Card variant="outlined">
+          <CardHeader title="Detalles" />
+          <CardContent
+            sx={{ display: "flex", gap: 2, flexDirection: "column" }}
+          >
+            <TextField
               size="small"
-              value={formik.values.category}
-              label="Categoria"
-              onChange={(e) => {
-                formik.setFieldValue("subCategory", "");
-                formik.handleChange(e);
-                loadSubCategoriesByCategory(e.target.value);
-              }}
-            >
-              {categories.map((category) => (
-                <MenuItem key={category._id} value={category._id}>
-                  {category.name}
-                </MenuItem>
-              ))}
-            </Select>
-            <FormHelperText>Selecciona una categoria</FormHelperText>
-          </FormControl>
-          <FormControl fullWidth>
-            <FormLabel>Subcategoria</FormLabel>
-            <Select
-              id="subCategory"
-              name="subCategory"
-              size="small"
-              value={formik.values.subCategory}
-              label="Subcategoria"
+              fullWidth
+              id="name"
+              name="name"
+              label="Nombre del producto "
+              variant="outlined"
+              value={formik.values.name}
               onChange={formik.handleChange}
-            >
-              {formik.values.category &&
-                subCategoriesByCategory.map((subCategory) => (
-                  <MenuItem key={subCategory._id} value={subCategory._id}>
-                    {subCategory.name}
+            />
+            <TextField
+              fullWidth
+              size="small"
+              id="brand"
+              name="brand"
+              label="Marca"
+              variant="outlined"
+              value={formik.values.brand}
+              onChange={formik.handleChange}
+            />
+            <TextField
+              fullWidth
+              size="small"
+              id="tag"
+              name="tag"
+              label="Código"
+              variant="outlined"
+              value={formik.values.tag}
+              onChange={formik.handleChange}
+            />
+            <FormControl fullWidth>
+              <FormLabel>Categoría</FormLabel>
+              <Select
+                id="category"
+                name="category"
+                size="small"
+                value={formik.values.category}
+                label="Categoria"
+                onChange={(e) => {
+                  formik.setFieldValue("subCategory", "");
+                  formik.handleChange(e);
+                  loadSubCategoriesByCategory(e.target.value);
+                }}
+              >
+                {categories.map((category) => (
+                  <MenuItem key={category._id} value={category._id}>
+                    {category.name}
                   </MenuItem>
                 ))}
-            </Select>
-            <FormHelperText>Selecciona una sub-categoria</FormHelperText>
-          </FormControl>
-          <TextAreaInput
-            aria-label="Descripcion"
-            placeholder="Descripción"
-            id="description"
-            name="description"
-            minRows={2}
-            maxRows={4}
-            value={formik.values.description}
-            style={{ width: "100%", marginBottom: 20 }}
-            onChange={formik.handleChange}
-          />
-          <TextAreaInput
-            aria-label="Descripcion corta"
-            id="shortDescription"
-            name="shortDescription"
-            minRows={1}
-            maxRows={2}
-            value={formik.values.shortDescription}
-            style={{ width: "100%", marginBottom: 20 }}
-            onChange={formik.handleChange}
-            placeholder="Descripción corta"
-          />
-        </CardContent>
-      </Card>
+              </Select>
+              <FormHelperText>Selecciona una categoria</FormHelperText>
+            </FormControl>
+            <FormControl fullWidth>
+              <FormLabel>Subcategoria</FormLabel>
+              <Select
+                id="subCategory"
+                name="subCategory"
+                size="small"
+                value={formik.values.subCategory}
+                label="Subcategoria"
+                onChange={formik.handleChange}
+              >
+                {formik.values.category &&
+                  subCategoriesByCategory.map((subCategory) => (
+                    <MenuItem key={subCategory._id} value={subCategory._id}>
+                      {subCategory.name}
+                    </MenuItem>
+                  ))}
+              </Select>
+              <FormHelperText>Selecciona una sub-categoria</FormHelperText>
+            </FormControl>
+            <TextAreaInput
+              aria-label="Descripcion"
+              placeholder="Descripción"
+              id="description"
+              name="description"
+              minRows={2}
+              maxRows={4}
+              value={formik.values.description}
+              style={{ width: "100%", marginBottom: 20 }}
+              onChange={formik.handleChange}
+            />
+            <TextAreaInput
+              aria-label="Descripcion corta"
+              id="shortDescription"
+              name="shortDescription"
+              minRows={1}
+              maxRows={2}
+              value={formik.values.shortDescription}
+              style={{ width: "100%", marginBottom: 20 }}
+              onChange={formik.handleChange}
+              placeholder="Descripción corta"
+            />
+          </CardContent>
+        </Card>
+      </Grid>
+      <Grid item 
+       xs={12}  lg={2}
+       sx={{
+         gridColumn: 'span 2',
+         gridRow: 'span 1',
+       }}
+      >
+        <Card variant="outlined">
+          <CardHeader title="Dimensiones" />
+          <CardContent
+            sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+          >
+            <TextField
+              fullWidth
+              size="small"
+              id="dimensions"
+              name="dimensions"
+              label="Ancho,Largo,Alto"
+              variant="outlined"
+              value={formik.values.dimensions}
+              onChange={formik.handleChange}
+            />
+            <TextField
+              fullWidth
+              size="small"
+              id="weight"
+              name="weight"
+              label="Peso"
+              type="number"
+              variant="outlined"
+              value={formik.values.weight}
+              onChange={formik.handleChange}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="start">gr</InputAdornment>
+                ),
+              }}
+            />
+          </CardContent>
+        </Card>
+      </Grid>
+      <Grid item
+       xs={12}  lg={3}
+       sx={{
+         gridColumn: 'span 2',
+         gridRow: 'span 4',
+       }}
+      >
+        <Card variant="outlined">
+          <CardHeader title="Precio y facturación" />
+          <CardContent
+            sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+          >
+            <TextField
+              fullWidth
+              id="price"
+              name="price"
+              type="number"
+              label="Precio neto"
+              variant="outlined"
+              value={formik.values.price}
+              onChange={handleInputChange}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <AttachMoney />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              fullWidth
+              id="porcentDiscount"
+              name="porcentDiscount"
+              type="number"
+              label="Descuento"
+              variant="outlined"
+              value={formik.values.porcentDiscount}
+              onChange={handleInputChange}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="start">%</InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              fullWidth
+              id="discountPrice"
+              name="discountPrice"
+              type="number"
+              label="Precio con descuento"
+              variant="outlined"
+              value={formik.values.discountPrice}
+              onChange={handleInputChange}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <AttachMoney />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              fullWidth
+              id="product_key"
+              name="product_key"
+              type="number"
+              label="Clave SAT"
+              variant="outlined"
+              value={formik.values.product_key}
+              onChange={formik.handleChange}
+            />
+          </CardContent>
+        </Card>
+      </Grid>
+      <Grid item 
+      xs={12}  lg={3}
+      sx={{
+        gridColumn: 'span 2',
+        gridRow: 'span 3',
+      }}
+      >
+        <Card variant="outlined">
+          <CardHeader title="Optimización para motores de búsqueda" />
+          <CardContent
+            sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+          >
+            <TextAreaInput
+              aria-label="Descripcion optimizada"
+              id="seoDescription"
+              name="seoDescription"
+              minRows={1}
+              maxRows={2}
+              value={formik.values.seoDescription}
+              style={{ width: "100%", marginBottom: 20 }}
+              onChange={formik.handleChange}
+              placeholder="Descripción optimizada"
+            />
+            <WordsInput
+              formik={formik}
+              id={"seoKeywords"}
+              name={"seoKeywords"}
+              label={"Palabras clave para CEO"}
+            />
+          </CardContent>
+        </Card>
+      </Grid>
 
-      <Card variant="outlined">
-        <CardHeader title="Dimensiones" />
-        <CardContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <TextField
-            fullWidth
-            size="small"
-            id="dimensions"
-            name="dimensions"
-            label="Ancho,Largo,Alto"
-            variant="outlined"
-            value={formik.values.dimensions}
-            onChange={formik.handleChange}
-          />
-          <TextField
-            fullWidth
-            size="small"
-            id="weight"
-            name="weight"
-            label="Peso"
-            type="number"
-            variant="outlined"
-            value={formik.values.weight}
-            onChange={formik.handleChange}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="start">gr</InputAdornment>
-              ),
-            }}
-          />
-        </CardContent>
-      </Card>
+      <Grid item 
+       xs={12} 
+       sx={{
+         gridColumn: 'span 6',
+         gridRow: 'span 3',
+       }}
+      >
+        <Card variant="outlined">
+          <CardContent>
+            <CardHeader title="Multimedia" />
+            <VideoUploadField setVideo={setVideo} label={"Subir video"} />
+            <Typography marginTop={"10px"}>Imagen principal</Typography>
+            <ProfileImageUploader
+              formik={formik}
+              id={"thumbnail"}
+              name={"thumbnail"}
+            />
 
-      <Card variant="outlined">
-        <CardHeader title="Precio y facturación" />
-        <CardContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <TextField
-            fullWidth
-            id="price"
-            name="price"
-            type="number"
-            label="Precio neto"
-            variant="outlined"
-            value={formik.values.price}
-            onChange={handleInputChange}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <AttachMoney />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <TextField
-            fullWidth
-            id="porcentDiscount"
-            name="porcentDiscount"
-            type="number"
-            label="Descuento"
-            variant="outlined"
-            value={formik.values.porcentDiscount}
-            onChange={handleInputChange}
-            InputProps={{
-              endAdornment: <InputAdornment position="start">%</InputAdornment>,
-            }}
-          />
-          <TextField
-            fullWidth
-            id="discountPrice"
-            name="discountPrice"
-            type="number"
-            label="Precio con descuento"
-            variant="outlined"
-            value={formik.values.discountPrice}
-            onChange={handleInputChange}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <AttachMoney />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <TextField
-            fullWidth
-            id="product_key"
-            name="product_key"
-            type="number"
-            label="Clave SAT"
-            variant="outlined"
-            value={formik.values.product_key}
-            onChange={formik.handleChange}
-          />
-        </CardContent>
-      </Card>
-      <Card variant="outlined">
-        <CardHeader title="Optimización para motores de búsqueda" />
-        <CardContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        <TextAreaInput
-            aria-label="Descripcion optimizada"
-            id="seoDescription"
-            name="seoDescription"
-            minRows={1}
-            maxRows={2}
-            value={formik.values.seoDescription}
-            style={{ width: "100%", marginBottom: 20 }}
-            onChange={formik.handleChange}
-            placeholder="Descripción optimizada"
-          />
-          <WordsInput
-          formik={formik}
-          id={"seoKeywords"}
-          name={"seoKeywords"}
-          label={'Palabras clave para CEO'}
-        />
-        </CardContent>
-      </Card>
-      <Card variant="outlined">
-        <CardContent>
-          <CardHeader title="Multimedia" />
-          <VideoUploadField setVideo={setVideo} label={"Subir video"} />
-          <Typography marginTop={"10px"}>
-            Imagen principal
-          </Typography>
-          <ProfileImageUploader
-          formik={formik}
-          id={"thumbnail"}
-          name={"thumbnail"}
-        />
-
-          <Typography marginTop={"10px"}>
-            {" "}
-            Imagenes de detalle (peso max de imagen:500 kb)
-          </Typography>
-          {images.length > 0 && (
-            <Grid item xs={12}>
-              <input
-                id="image"
-                name="image"
-                type="file"
-                accept="image/jpg"
-                onChange={handleImageChange}
-                hidden
-              />
-              <label htmlFor={"image"}>
-                <Button
-                  fullWidth
-                  component="span"
-                  color="primary"
-                  variant="contained"
+            <Typography marginTop={"10px"}>
+              {" "}
+              Imagenes de detalle (peso max de imagen:500 kb)
+            </Typography>
+            {images.length > 0 && (
+              <Grid item xs={12}>
+                <input
+                  id="image"
+                  name="image"
+                  type="file"
+                  accept="image/jpg"
+                  onChange={handleImageChange}
+                  hidden
+                />
+                <label htmlFor={"image"}>
+                  <Button
+                    fullWidth
+                    component="span"
+                    color="primary"
+                    variant="contained"
+                  >
+                    Agrega Fotos
+                  </Button>
+                </label>
+              </Grid>
+            )}
+            {images.length ? (
+              <>
+                <Grid
+                  container
+                  display={"flex"}
+                  justifyContent={"center"}
+                  padding={"10px"}
+                  marginTop={"20px"}
+                  sx={{ backgroundColor: "#cfd8dc" }}
+                  gap={2}
                 >
-                  Agrega Fotos
-                </Button>
-              </label>
-            </Grid>
-          )}
-          {images.length ? (
-            <>
+                  {images.map(({ id, filePreview }) => (
+                    <Grid item xs={12} sm={3} key={id}>
+                      <StyledBadge
+                        badgeContent={
+                          <IconButton
+                            sx={{ backgroundColor: "black", color: "black" }}
+                            onClick={() => deleteImage(id)}
+                          >
+                            {" "}
+                            <DeleteIcon
+                              sx={{ color: "white", fontSize: "20px" }}
+                            />{" "}
+                          </IconButton>
+                        }
+                      >
+                        <Avatar
+                          src={filePreview}
+                          variant="square"
+                          sx={{ width: "100%", height: "200px" }}
+                        />
+                      </StyledBadge>
+                    </Grid>
+                  ))}
+                </Grid>
+              </>
+            ) : (
               <Grid
                 container
-                display={"flex"}
-                justifyContent={"center"}
-                padding={"10px"}
-                marginTop={"20px"}
                 sx={{ backgroundColor: "#cfd8dc" }}
-                gap={2}
+                display={"flex"}
+                flexDirection={"column"}
+                alignItems={"center"}
+                justifyContent={"center"}
+                marginTop={"20px"}
+                height={"300px"}
+                borderRadius={"5px"}
               >
-                {images.map(({ id, filePreview }) => (
-                  <Grid item xs={12} sm={3} key={id}>
-                    <StyledBadge
-                      badgeContent={
-                        <IconButton
-                          sx={{ backgroundColor: "black", color: "black" }}
-                          onClick={() => deleteImage(id)}
-                        >
-                          {" "}
-                          <DeleteIcon
-                            sx={{ color: "white", fontSize: "20px" }}
-                          />{" "}
-                        </IconButton>
-                      }
-                    >
-                      <Avatar
-                        src={filePreview}
-                        variant="square"
-                        sx={{ width: "100%", height: "200px" }}
-                      />
-                    </StyledBadge>
-                  </Grid>
-                ))}
+                <FilterIcon
+                  style={{
+                    fontSize: "40px",
+                    alignSelf: "center",
+                    marginBottom: "10px",
+                  }}
+                />
+
+                <input
+                  id="image"
+                  name="image"
+                  type="file"
+                  accept="image/png, image/jpeg, image/jpg"
+                  onChange={handleImageChange}
+                  hidden
+                />
+                <label htmlFor={"image"}>
+                  <Button component="span" color="primary" variant="contained">
+                    Agregar Fotos
+                  </Button>
+                </label>
               </Grid>
-            </>
-          ) : (
-            <Grid
-              container
-              sx={{ backgroundColor: "#cfd8dc" }}
-              display={"flex"}
-              flexDirection={"column"}
-              alignItems={"center"}
-              justifyContent={"center"}
-              marginTop={"20px"}
-              height={"300px"}
-              borderRadius={"5px"}
-            >
-              <FilterIcon
-                style={{
-                  fontSize: "40px",
-                  alignSelf: "center",
-                  marginBottom: "10px",
-                }}
-              />
+            )}
+          </CardContent>
+        </Card>
+      </Grid>
 
-              <input
-                id="image"
-                name="image"
-                type="file"
-                accept="image/png, image/jpeg, image/jpg"
-                onChange={handleImageChange}
-                hidden
-              />
-              <label htmlFor={"image"}>
-                <Button component="span" color="primary" variant="contained">
-                  Agregar Fotos
-                </Button>
-              </label>
-            </Grid>
-          )}
-        </CardContent>
-      </Card>
-
-      <ButtonGroup>
-        <Button
-          type="submit"
-          sx={{ minHeight: "60px" }}
-          fullWidth
-          variant="contained"
-          color="success"
-        >
-          Crear
-        </Button>
-        <Button
-          sx={{ minHeight: "50px", mt: 2 }}
-          onClick={() => navigate("/auth/Productos", { replace: true })}
-          fullWidth
-          variant="contained"
-          color="warning"
-        >
-          Salir
-        </Button>
-      </ButtonGroup>
+      <Grid item xs={12}>
+        <ButtonGroup fullWidth>
+          <Button type="submit" variant="contained" color="success">
+            Crear
+          </Button>
+          <Button
+            onClick={() => navigate("/auth/Productos", { replace: true })}
+            variant="contained"
+            color="warning"
+          >
+            Salir
+          </Button>
+        </ButtonGroup>
+      </Grid>
     </Grid>
   );
 };
