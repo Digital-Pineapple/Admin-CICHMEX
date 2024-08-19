@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography, Button, Grid, styled } from "@mui/material";
 import { VideoCallSharp } from "@mui/icons-material";
 
@@ -15,9 +15,14 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-const VideoUploadField = ({ name, label, setVideo }) => {
+const VideoUploadField = ({ name, label, setVideo, initialVideo }) => {
   const [videoPreview, setVideoPreview] = useState(null);
-
+ useEffect(() => {
+   setVideoPreview(initialVideo)
+ }, [initialVideo])
+ 
+  
+  
   const handleVideoChange = (e) => {
     const file = e.target.files[0]; // Get the file object from the event
     setVideo(file); // Set the file object using the provided setter function
@@ -57,14 +62,17 @@ const VideoUploadField = ({ name, label, setVideo }) => {
           display={"flex"}
           justifyContent={"center"}
           flexDirection={"column"}
+          alignItems={'center'}
         >
           <Typography textAlign={"center"} variant="h6" m={2}>
             Vista previa del video:
           </Typography>
-          <video width="500" controls>
-            <source src={videoPreview} type="video/mp4" />
+          <Grid item xs={12}>
+          <video width="250" controls  >
+            <source src={videoPreview} type="video/mp4"  />
             Tu navegador no soporta la reproducción de videos.
           </video>
+          </Grid>
           <Button
             fullWidth
             variant="outlined"

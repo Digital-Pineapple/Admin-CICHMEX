@@ -21,20 +21,16 @@ import { startLoading, stopLoading } from "../reducer/uiReducer";
 
 export const startLoadProducts = () => {
   return async (dispatch) => {
-    dispatch(startLoading())
+    dispatch(startLoading());
     try {
-      const { data } = await instanceApi.get(
-        `/product`,
-        {
-          headers: {
-            "Content-type": "application/json",
-             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      const { data } = await instanceApi.get(`/product`, {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        }
-      );
+      });
       dispatch(loadProducts(data.data));
-      dispatch(stopLoading())
-
+      dispatch(stopLoading());
     } catch (error) {
       enqueueSnackbar(
         `${error.response.data.message}|| 'Error al consultar información'`,
@@ -44,21 +40,18 @@ export const startLoadProducts = () => {
         }
       );
     }
-   dispatch(stopLoading()) 
+    dispatch(stopLoading());
   };
 };
 export const startLoadStockProducts = () => {
   return async (dispatch) => {
     try {
-      const { data } = await instanceApi.get(
-        `/stock-StoreHouse/available/ok`,
-        {
-          headers: {
-            "Content-type": "application/json",
-             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      const { data } = await instanceApi.get(`/stock-StoreHouse/available/ok`, {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        }
-      );
+      });
       const info = data.data.map((item, index) => {
         const info = item.product_id;
         const stock = item.stock;
@@ -165,19 +158,16 @@ export const startLoadAllOutputs = () => {
 
 export const startLoadOutputsProduct = () => {
   return async (dispatch) => {
-    dispatch(startLoading())
+    dispatch(startLoading());
     try {
-      const { data } = await instanceApi.get(
-        `/stock-StoreHouse/all-outputs`,
-       {
+      const { data } = await instanceApi.get(`/stock-StoreHouse/all-outputs`, {
         headers: {
           "Content-type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-       }
-      );
+      });
       dispatch(loadProductOutputs(data.data));
-      dispatch(stopLoading())
+      dispatch(stopLoading());
     } catch (error) {
       enqueueSnackbar(
         `${error.response.data.message}` || "Error al consultar la información",
@@ -187,36 +177,34 @@ export const startLoadOutputsProduct = () => {
         }
       );
     }
-    dispatch(stopLoading)
+    dispatch(stopLoading);
   };
 };
 
 export const LoadOneProduct = (_id) => {
   return async (dispatch) => {
-    dispatch (startLoading())
-      try {
-        const { data } = await instanceApi.get(
-          `/product/${_id}`,
-          {
-            headers: {
-              "Content-type": "application/json",
-               "Authorization": `Bearer ${localStorage.getItem("token")}`,
-          },
-          }
-        );
-        dispatch(loadProduct(data.data));
-        dispatch(stopLoading())
-      } catch (error) {
-        enqueueSnackbar(
-          `${error.response.data.message}|| 'Error al consultar información'`,
-          {
-            anchorOrigin: { horizontal: "center", vertical: "top" },
-            variant: "error",
-          }
-        );
-        dispatch(stopLoading())
-      }
+    dispatch(startLoading());
+    try {
+      const { data } = await instanceApi.get(`/product/${_id}`, {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      dispatch(loadProduct(data.data));
+    } catch (error) {
+      enqueueSnackbar(
+        `${error.response.data.message}|| 'Error al consultar información'`,
+        {
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+          variant: "error",
+        }
+      );
     }
+    finally{
+      dispatch(stopLoading())
+    }
+  };
 };
 
 export const addOneProduct =
@@ -238,15 +226,13 @@ export const addOneProduct =
       seoDescription,
       shortDescription,
       thumbnail,
-      seoKeywords
-
-
+      seoKeywords,
     },
     images,
     navigate
   ) =>
   async (dispatch) => {
-    dispatch(startLoading())
+    dispatch(startLoading());
     try {
       const formData = new FormData();
       formData.append("name", name);
@@ -280,9 +266,9 @@ export const addOneProduct =
         formData,
         {
           headers: {
-            "Content-Type": 'multipart/form-data',
-             "Authorization": `Bearer ${localStorage.getItem("token")}`,
-        },
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
       );
       dispatch(onAddNewProduct(data.data));
@@ -294,7 +280,7 @@ export const addOneProduct =
         },
       });
       navigate("/auth/productos", { replace: true });
-      dispatch(stopLoading())
+      dispatch(stopLoading());
     } catch (error) {
       enqueueSnackbar(`${error.response.data.message}`, {
         variant: "error",
@@ -303,14 +289,32 @@ export const addOneProduct =
           horizontal: "right",
         },
       });
-      dispatch(stopLoading())
+      dispatch(stopLoading());
     }
   };
 
 export const editOneProduct =
   (
     id,
-    { name, price, description, tag, size, category, subCategory, weight },
+    {
+      name,
+      price,
+      description,
+      tag,
+      dimensions,
+      category,
+      subCategory,
+      weight,
+      videos,
+      brand,
+      discountPrice,
+      porcentDiscount,
+      product_key,
+      seoDescription,
+      shortDescription,
+      thumbnail,
+      seoKeywords,
+    },
     images,
     navigate
   ) =>
@@ -321,13 +325,28 @@ export const editOneProduct =
       formData.append("price", price);
       formData.append("description", description);
       formData.append("tag", tag);
-      formData.append("size", size);
-      formData.append("category", category);
+      formData.append("dimensions", dimensions);
       formData.append("subCategory", subCategory);
+      formData.append("category", category);
       formData.append("weight", weight);
+      formData.append("brand", brand);
+      formData.append("discountPrice", discountPrice);
+      formData.append("porcentDiscount", porcentDiscount);
+      formData.append("product_key", product_key);
+      formData.append("seoDescription", seoDescription);
+      formData.append("shortDescription", shortDescription);
+      formData.append("thumbnail", thumbnail);
+
       for (let i = 0; i < images.length; i++) {
         formData.append("images", images[i]);
       }
+      for (let i = 0; i < seoKeywords.length; i++) {
+        formData.append("seoKeywords", seoKeywords[i]);
+      }
+      for (let i = 0; i < videos.length; i++) {
+        formData.append("videos", videos[i]);
+      }
+
       const { data } = await instanceApi.post(
         `/product/${id}`,
         formData,
@@ -343,6 +362,8 @@ export const editOneProduct =
       });
       navigate("/auth/productos", { replace: true });
     } catch (error) {
+      console.log(error);
+
       enqueueSnackbar(`Ocurrió un error + ${error.response.data.message}`, {
         variant: "error",
         anchorOrigin: {
@@ -382,11 +403,11 @@ export const deleteOneProduct = (id) => {
 };
 
 export const startAddMultipleEntries = (values, navigate) => {
-  
   return async (dispatch) => {
     try {
       const { data } = await instanceApi.post(
-        `/stock-StoreHouse/add/multiple-entries`,values,
+        `/stock-StoreHouse/add/multiple-entries`,
+        values,
         {
           headers: {
             "Content-type": "application/json",
@@ -400,7 +421,7 @@ export const startAddMultipleEntries = (values, navigate) => {
         icon: "success",
         confirmButtonColor: green[800],
       });
-      navigate('/auth/MiAlmacen/entradas',{replace:true})
+      navigate("/auth/MiAlmacen/entradas", { replace: true });
     } catch (error) {
       enqueueSnackbar(`${error.response.data.message}`, {
         variant: "error",
@@ -414,11 +435,12 @@ export const startAddMultipleEntries = (values, navigate) => {
 };
 export const startAddMultipleOutputs = (values, navigate) => {
   console.log(values);
-  
+
   return async (dispatch) => {
     try {
       const { data } = await instanceApi.post(
-        `/stock-StoreHouse/add/multiple-outputs`,values,
+        `/stock-StoreHouse/add/multiple-outputs`,
+        values,
         {
           headers: {
             "Content-type": "application/json",
@@ -432,7 +454,7 @@ export const startAddMultipleOutputs = (values, navigate) => {
         icon: "success",
         confirmButtonColor: green[800],
       });
-      navigate('/auth/MiAlmacen/salidas',{replace:true})
+      navigate("/auth/MiAlmacen/salidas", { replace: true });
     } catch (error) {
       console.log(error);
 

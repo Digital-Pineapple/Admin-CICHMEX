@@ -12,7 +12,7 @@ export const SlideBranchesImages = ({ image, images, altura }) => {
     <>
       <Swiper
         navigation={true}
-        style={{ height: altura, backgroundColor: "white" }}
+        style={{ height: altura, backgroundColor: "white", maxWidth:'350px' }}
         centeredSlides={true}
         spaceBetween={30}
         modules={[Navigation, Pagination]}

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Box, TextField, Chip, FormControl } from '@mui/material';
 
-export default function WordsInput({ formik, id, name, label }) {
+export default function WordsInput({ formik, id, name, label, keywords }) {
   const [inputValue, setInputValue] = React.useState('');
-  const [chips, setChips] = React.useState([]);
+  const [chips, setChips] = React.useState(keywords ? keywords : []);
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter' && inputValue.trim()) {

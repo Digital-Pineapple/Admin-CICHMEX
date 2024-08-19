@@ -42,6 +42,7 @@ const useImages = () => {
         deleteImage,
         imagesFiles,
         imagesPreview,
+        setImages
     }
 
 
