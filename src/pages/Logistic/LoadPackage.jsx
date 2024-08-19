@@ -24,6 +24,7 @@ import { useProductOrder } from "../../hooks/useProductOrder";
 import { saveAs } from "file-saver"; // Asegúrate de importar esto
 import Download from "@mui/icons-material/Download";
 import Swal from "sweetalert2";
+import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -59,7 +60,7 @@ function CustomPagination(props) {
 }
 
 const LoadPackage = () => {
-  const { loadAssignedPO, navigate, productOrders } = useProductOrder();
+  const { loadAssignedPO, navigate, productOrders, loading } = useProductOrder();
 
   useEffect(() => {
     loadAssignedPO();
@@ -157,7 +158,9 @@ const LoadPackage = () => {
     }
     return null; // Asegúrate de manejar el caso donde no haya icono a renderizar
   };
-
+if (loading) {
+  return(<LoadingScreenBlue/>)
+}
 
   return (
     <Grid container style={{ marginLeft: "10%", height: "70%", width: "85%" }}>

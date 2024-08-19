@@ -60,6 +60,7 @@
     "react-router-dom": "^6.9.0",
     "react-scroll": "^1.8.9",
     "simplycountdown.js": "^1.7.0",
+    "socket.io-client": "^4.7.5",
     "styled-components": "^5.3.11",
     "sweetalert": "^2.1.2",
     "sweetalert2": "^11.7.10",

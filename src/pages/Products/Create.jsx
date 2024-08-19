@@ -54,6 +54,12 @@ const CreateProduct = () => {
   const { images, handleImageChange, deleteImage, imagesFiles } = useImages();
   const [video, setVideo] = useState(null);
 
+  useEffect(() => {
+    loadSubCategories();
+    loadCategories();
+  }, [user]);
+
+
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -93,11 +99,13 @@ const CreateProduct = () => {
       }
     },
   });
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Previene que el Enter envíe el formulario
+    }
+  };
 
-  useEffect(() => {
-    loadSubCategories();
-    loadCategories();
-  }, [user]);
+ 
 
   if (loading) {
     return <LoadingScreenBlue />;
@@ -202,6 +210,7 @@ const CreateProduct = () => {
               variant="outlined"
               value={formik.values.tag}
               onChange={formik.handleChange}
+              onKeyDown={handleKeyDown}
             />
             <FormControl fullWidth>
               <FormLabel>Categoría</FormLabel>

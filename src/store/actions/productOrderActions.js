@@ -74,7 +74,12 @@ export const startLoadPOPaidAndSupplyToPonit = () => {
     try {
       const { data } = await instanceApi.get(
         `/product-order/paidAndSupplyToPoint`,
-        headerConfigApplication
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
       dispatch(loadProductOrders(data.data));
       dispatch(stopLoading())
@@ -90,10 +95,16 @@ export const startLoadPOPaidAndSupplyToPonit = () => {
 
 export const startLoadAssignedPO = () => {
   return async (dispatch) => {
+    dispatch(startLoading())
     try {
       const { data } = await instanceApi.get(
         `/product-order/AssignedPO`,
-        headerConfigApplication
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
 
       dispatch(loadProductOrders(data.data));
@@ -103,6 +114,9 @@ export const startLoadAssignedPO = () => {
         anchorOrigin: { horizontal: "center", vertical: "top" },
         variant: "error",
       });
+    }
+    finally{
+      dispatch(stopLoading())
     }
   };
 };
@@ -199,35 +213,41 @@ export const startLoadPOPaidAndSupply = () => {
   };
 };
 
-export const startLoadAssignRoute = ({ user_id, order_id }, navigate) => {
+export const startLoadAssignRoute = ({ user_id, order_id, guide, shipping_company }, navigate) => {
   return async (dispatch) => {
-    dispatch(startLoading())
+    dispatch(startLoading());
+
     try {
       const { data } = await instanceApi.post(
         `/product-order/assignRoute`,
-        { user_id, order_id },
+        { user_id, order_id, guide, shipping_company },
         {
           headers: {
             "Content-type": "application/json",
-             "Authorization": `Bearer ${localStorage.getItem("token")}`,
-        },
+            "Authorization": `Bearer ${localStorage.getItem("token")}`,
+          },
         }
       );
+
       enqueueSnackbar(`${data.message}`, {
         anchorOrigin: { horizontal: "center", vertical: "top" },
         variant: "success",
       });
+
       navigate("/auth/Ordenes-de-producto", { replace: true });
-      dispatch(stopLoading())
     } catch (error) {
-      enqueueSnackbar(`${error.response.data.message}`, {
+      const errorMessage = error.response?.data?.message || "Hubo un error en la asignación de la ruta";
+      
+      enqueueSnackbar(errorMessage, {
         anchorOrigin: { horizontal: "center", vertical: "top" },
         variant: "error",
       });
-      dispatch(stopLoading())
+    } finally {
+      dispatch(stopLoading());
     }
   };
 };
+
 
 export const startLoadVerifyStartRoute = ({ order_id, user }, navigate) => {
   return async (dispatch) => {
