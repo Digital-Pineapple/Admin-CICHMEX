@@ -10,6 +10,7 @@ import {
   startLoadPOPaidAndSupply,
   startLoadPOPaidAndSupplyToPonit,
   startLoadPackageSent,
+  startLoadPendingTransfer,
   startLoadPrintOrderPDF,
   startLoadProductOrders,
   startLoadProductOrdersPaid,
@@ -63,6 +64,7 @@ export const useProductOrder = () => {
 
   const loadPrintPDFOrder = async (id) => dispatch(startLoadPrintOrderPDF(id))
 
+  const loadPendingTransferPO = async () => dispatch(startLoadPendingTransfer()) 
   const completeProductOrder = (id) =>
     dispatch(StartCompleteProductOrder(id, navigate));
 
@@ -76,6 +78,21 @@ export const useProductOrder = () => {
       };
     });
   };
+  const rowsWithIds = productOrders.map((item, index) => {
+    const quantities = item.products.map((i) => i.quantity);
+    const suma = quantities.reduce((valorAnterior, valorActual) => {
+      return valorAnterior + valorActual;
+    }, 0);
+
+    const TD = item.branch ? "En Punto de entrega" : "A domicilio";
+    return {
+      quantityProduct: suma,
+      typeDelivery: TD,
+      id: index.toString(),
+      ...item,
+    };
+  });
+
 
   return {
     dispatch,
@@ -99,7 +116,10 @@ export const useProductOrder = () => {
     loadVerifyQR,
     loadVerifyQRtoPoint,
     loading,
-    loadPrintPDFOrder
+    loadPrintPDFOrder,
+    loadPendingTransferPO,
+    rowsProducts,
+    rowsWithIds
     
   };
 };

@@ -227,7 +227,7 @@ const ShippingDelivery = () => {
     <Grid container >
       <Grid item xs={12} marginY={2}>
         <DataGrid
-          sx={{ fontSize: "20px", fontFamily: "sans-serif", width:'100%' }}
+          sx={{ fontSize: "14px", fontFamily: "sans-serif" }}
           columns={[
             {
               field: "createdAt",
@@ -260,6 +260,7 @@ const ShippingDelivery = () => {
             },
           ]}
           rows={rowsWithIds}
+          autoHeight
           pagination
           slots={{
             pagination: CustomPagination,

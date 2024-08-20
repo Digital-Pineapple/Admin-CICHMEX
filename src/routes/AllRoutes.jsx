@@ -59,6 +59,8 @@ import DeliverPackage from '../pages/Logistic/DeliverPackage'
 import StockMovements from '../pages/MyStoreHouse/StockMovements'
 import AddEntries from '../pages/MyStoreHouse/AddEntries'
 import AddOutputs from '../pages/MyStoreHouse/AddOutputs'
+import VerifySales from '../pages/Sales/VerifySales'
+import DetailSale from '../pages/Sales/DetailSale'
 
 
 
@@ -146,6 +148,9 @@ export const AllRoutes = [
 
   { type: 1, path: '/Transportistas', element: <CarrierDrivers/> },
   { type: 1, path: '/AltaTransportista', element: <CreateCarrier/> },
+  
+  { type: 1, path: '/validar-ventas', element: <VerifySales/> },
+  { type: 1, path: '/venta/:id', element: <DetailSale/> },
 
 
 

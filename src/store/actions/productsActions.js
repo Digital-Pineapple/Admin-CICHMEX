@@ -77,7 +77,12 @@ export const startLoadNonExistProduct = () => {
     try {
       const { data } = await instanceApi.get(
         `/product/non-existent/get`,
-        headerConfigApplication
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },  
+        }
       );
       dispatch(loadProducts(data.data));
     } catch (error) {

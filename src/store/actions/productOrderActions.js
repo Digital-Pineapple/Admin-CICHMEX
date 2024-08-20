@@ -475,3 +475,32 @@ export const deleteOneProductOrder = (id) => {
     }
   };
 };
+
+export const startLoadPendingTransfer = () => {
+  return async (dispatch) => {
+    dispatch(startLoading())
+    try {
+      const { data } = await instanceApi.get(
+        `/product-order/pending-transfer`,
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      
+      dispatch(loadProductOrders(data.data));
+    } catch (error) {
+      enqueueSnackbar(`${error.response.data.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    }finally{
+      dispatch(stopLoading())
+    }
+  };
+};

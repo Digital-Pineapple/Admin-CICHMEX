@@ -227,7 +227,7 @@ const ShippingDeliveryPoint = () => {
      
       <Grid item xs={12} marginY={2}>
         <DataGrid
-          sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
+          sx={{ fontSize: "14px", fontFamily: "sans-serif" }}
           columns={[
             {
               field: "createdAt",

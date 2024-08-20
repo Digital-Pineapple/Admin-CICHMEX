@@ -9,7 +9,7 @@ import StoreIcon from '@mui/icons-material/Store';
 import CardMembershipIcon from '@mui/icons-material/CardMembership';
 import PeopleIcon from '@mui/icons-material/People';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import { Add, CarCrash, CasesSharp, CurrencyExchange, Delete, Face6, Grading, Home, HomeMax, MarkEmailUnread, Place, ProductionQuantityLimits, Receipt, Remove, Send } from "@mui/icons-material";
+import { Add, CarCrash, CasesSharp, CurrencyExchange, Delete, Face6, Grading, Home, HomeMax, MarkEmailUnread, Place, ProductionQuantityLimits, Receipt, Remove, Send, SimCardAlert, SimCardAlertOutlined } from "@mui/icons-material";
 import LocalConvenienceStoreIcon from '@mui/icons-material/LocalConvenienceStore';
 
 export const Links = [
@@ -52,6 +52,18 @@ export const Links = [
         path:'/auth/MiAlmacen/salidas',
         Icon: <Remove/>
       }
+    ]
+  },
+  {
+    title: "Ventas",
+    Icon: <SimCardAlert/>,
+    subRoutes:[
+      {
+        title:'Contaduría',
+        path:`/auth/validar-ventas`,
+        Icon: <SimCardAlertOutlined/>
+      },
+      
     ]
   },
   {

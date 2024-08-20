@@ -197,4 +197,25 @@
         color: #fff;
         align-content: center;
     }
-
+    .zoom{
+        height: 100%;
+        width: 100%; 
+        position: relative;
+        background-size: contain;
+        border: "2px solid #0d2b6b",                               
+    
+    }
+    .zoom::after{
+        display: var(--display);
+        content: "";
+        height: 100%;
+        width: 100%;
+        background-color: whitesmoke;
+        background-image: var(--url);
+        background-size: 200%;
+        background-position: var(--zoom-x) var(--zoom-y);
+        position: absolute;
+        left: 0;
+        top: 0;
+        cursor: zoom-in;
+    }
