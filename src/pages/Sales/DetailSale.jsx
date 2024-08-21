@@ -11,20 +11,22 @@ import {
   CardHeader,
   Box,
   Stack, CardMedia,
-  Skeleton, Avatar, IconButton, ButtonGroup,
+  Skeleton, Avatar, IconButton, ButtonGroup, TableContainer, Paper, Table, TableHead, TableRow, TableBody, TableCell,
 } from "@mui/material";
 import Image from "mui-image";
 import { ThumbUp, Visibility } from "@mui/icons-material";
+import { DataGrid } from "@mui/x-data-grid";
+import SuccessButton from "../../components/Buttons/SuccessButton";
+import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 
 const DetailSale = () => {
   const { id } = useParams();
-  const { loadProductOrder, productOrder, navigate } = useProductOrder();
+  const { loadProductOrder, productOrder, navigate, rowsProducts, loading, validateSale } = useProductOrder();
   const [display, setDisplay] = useState("none");
   const divRef = useRef();
   useEffect(() => {
     loadProductOrder(id);
   }, [id]);
-  console.log(productOrder);
   const statusPayment = (value) => {
     if (value.payment_status === "pending" && value.verification) {
       return "Liquidado pendiente por validar";
@@ -50,11 +52,17 @@ const DetailSale = () => {
     };
     setPointer(pointer);
   };
+  
 
   const onMouseLeave = () => {
     setDisplay("none");
     setPointer({ x: 0, y: 0 });
   };
+
+  if (loading) {
+    return <LoadingScreenBlue />;
+  }
+
   return (
     <Grid container gap={2}>
       <Grid
@@ -125,6 +133,48 @@ const DetailSale = () => {
           </CardContent>
         </Card>
       </Grid>
+      <Grid item xs={6}>
+          {productOrder ? (
+            <Grid container display={"flex"} flexDirection={"column"} width={'400px'}>
+              <Typography variant="body1" textAlign={"center"} color="inherit">
+                Lista de productos
+              </Typography>
+              <DataGrid
+                // onRowSelectionModelChange={(value) => {
+                //   setRowSelection(value);
+                //   activeButton(value.length);
+                // }}
+                // rowSelectionModel={rowSelection}
+                hideFooterSelectedRowCount={true}
+                columns={[
+                  {
+                    field: "name",
+                    headerName: "Nombre del producto",
+                    flex: 1,
+                    align: "center",
+                  },
+                  {
+                    field: "price",
+                    headerName: "Precio",
+                    flex: 1,
+                    align: "center",
+                  },
+                  {
+                    field: "quantity",
+                    headerName: "Cantidad",
+                    flex: 1,
+                    align: "center",
+                  },
+                ]}
+                rows={rowsProducts()? rowsProducts():''}
+              />
+            </Grid>
+          ) : (
+            <Skeleton variant="rectangular" />
+          )}
+
+        
+      </Grid>
       <Grid item xs={6} >
         {productOrder?.payment_status === "pending" &&
         productOrder?.verification ? (
@@ -159,17 +209,22 @@ const DetailSale = () => {
                 Total a pagar: ${productOrder.total}
               </Typography>
                 </CardContent>
-                <CardActions>
-                    <ButtonGroup fullWidth variant="contained" color="primary" aria-label="">
+                <CardActions >
+                    <ButtonGroup fullWidth  variant="contained" color="primary" aria-label="">
                     <Button
                 variant="text"
                 color="primary"
                 size="small"
-                onClick={() => console.log("ok")}
+                onClick={() => navigate('/auth/validar-ventas',{replace:true})}
               >
                 Regresar
               </Button>
-                      <Button>Aprobar</Button>
+              <SuccessButton
+        text={'Autorizar'}
+        title={`¿Desea autorizar la venta: ${productOrder.order_id}?`}
+        titleConfirm={'Se esta a autorizando la venta'}
+        callbackAction={()=>validateSale(productOrder.order_id)}
+        />
                       
                     </ButtonGroup>
               

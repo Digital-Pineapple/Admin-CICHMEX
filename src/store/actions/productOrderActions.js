@@ -1,6 +1,7 @@
 import { enqueueSnackbar } from "notistack";
 import { instanceApi } from "../../apis/configAxios";
 import {
+  deleteProductOrder,
   loadProductOrder,
   loadProductOrders,
   startLoadResume,
@@ -455,7 +456,7 @@ export const deleteOneProductOrder = (id) => {
         `/product-order/${id}`,
         headerConfigApplication
       );
-      dispatch(deleteOneProductOrder(data.data?._id));
+      dispatch(deleteProductOrder(data.data?._id));
       enqueueSnackbar("Producto eliminado", {
         variant: "success",
         anchorOrigin: {
@@ -472,6 +473,35 @@ export const deleteOneProductOrder = (id) => {
           horizontal: "right",
         },
       });
+    }
+  };
+};
+export const startValidateSale = (id, navigate) => {
+  return async (dispatch) => {
+    dispatch(startLoading())
+    try {
+      const { data } = await instanceApi.post(
+        `/payments/validateSale`,{order_id:id},
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
+      );
+       dispatch(deleteProductOrder(data.data?._id));
+       navigate('/auth/validar-ventas',{replace:true})
+    } catch (error) {
+      console.log(error);
+      enqueueSnackbar(`Ocurrió un error + ${error}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    }finally{
+      dispatch(stopLoading())
     }
   };
 };

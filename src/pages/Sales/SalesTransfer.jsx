@@ -22,6 +22,7 @@ import {
   Pending,
   Looks,
   Visibility,
+  Verified,
 } from "@mui/icons-material";
 import Swal from "sweetalert2";
 import { useProductOrder } from "../../hooks/useProductOrder";
@@ -29,6 +30,7 @@ import { useAuthStore } from "../../hooks";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import CustomNoRows from "../../components/Tables/CustomNoRows";
 import dayjs from "dayjs";
+import SuccessButton from "../../components/Buttons/SuccessButton";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -154,6 +156,7 @@ const SalesTransfer = () => {
   const renderIcon = (values) => {
     if (values.row.verification) {
       return (
+        <>
         <IconButton
           sx={{ display: {} }}
           aria-label="Ver detalle"
@@ -162,20 +165,21 @@ const SalesTransfer = () => {
           onClick={() => navigate(`/auth/venta/${values.row._id}`)}
         >
           <Visibility />
-        </IconButton>
+        </IconButton> 
+        
+        </>
       );
     } else  {
       return (
-        <Tooltip title="Asignar Ruta">
-          <Button
-            aria-label="Asignar Ruta"
-            color="info"
-            variant="outlined"
-            onClick={() => navigate(`/auth/asignar-ruta/${values.row._id}`)}
-          >
-            Ruta
-          </Button>
-        </Tooltip>
+        <IconButton
+        sx={{ display: {} }}
+        aria-label="Ver detalle"
+        color="primary"
+        title="Ver detalle"
+        disabled
+      >
+        <Visibility />
+      </IconButton> 
       );
     }
   };
@@ -183,8 +187,6 @@ const SalesTransfer = () => {
   if (loading) {
     return <LoadingScreenBlue />;
   }
-
-  console.log(rowsWithIds);
 
   return (
     <Grid container>
@@ -214,7 +216,7 @@ const SalesTransfer = () => {
                   <>
                     <Chip
                       icon={<Paid />}
-                      label="Liquidada no verificada"
+                      label="Pendiente validar"
                       variant="filled"
                       color="info"
                     />
