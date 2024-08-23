@@ -18,50 +18,33 @@ import { ThumbUp, Visibility } from "@mui/icons-material";
 import { DataGrid } from "@mui/x-data-grid";
 import SuccessButton from "../../components/Buttons/SuccessButton";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
+import ZoomImage from "../../components/cards/ZoomImage";
+import RejectedButton from "../../components/Buttons/RejectedButton";
 
 const DetailSale = () => {
   const { id } = useParams();
-  const { loadProductOrder, productOrder, navigate, rowsProducts, loading, validateSale } = useProductOrder();
-  const [display, setDisplay] = useState("none");
-  const divRef = useRef();
+  const { loadProductOrder, productOrder, navigate, rowsProducts, loading, validateSale, rejectTicket } = useProductOrder();
+
   useEffect(() => {
     loadProductOrder(id);
   }, [id]);
-  const statusPayment = (value) => {
-    if (value.payment_status === "pending" && value.verification) {
-      return "Liquidado pendiente por validar";
-    }
-    if (value.payment_status === "pending") {
-      return "No liquidado";
-    } else {
-      return "Pagado";
-    }
-  };
-  const [pointer, setPointer] = useState({
-    x: 0,
-    y: 0,
-  });
-  const onMouseMove = (event) => {
-    if (!divRef.current) return;
-    const { offsetWidth, offsetHeight } = divRef.current;
-    setDisplay("block");
-    // Calcula la posición del cursor en porcentaje
-    let pointer = {
-      x: (event.nativeEvent.offsetX * 100) / offsetWidth,
-      y: (event.nativeEvent.offsetY * 100) / offsetHeight,
-    };
-    setPointer(pointer);
-  };
-  
 
-  const onMouseLeave = () => {
-    setDisplay("none");
-    setPointer({ x: 0, y: 0 });
-  };
+  function statusPayment (status){
+    const availableStatus ={
+      'pending': 'pendiente',
+      'pending_to_verify':'pendiente por verificar',
+      'approved':'pago liquidado'
+    }
+    const defaultValue = 'Sin estado de pago'
+    const value = availableStatus[status] || defaultValue
+    return value
+  }
+
 
   if (loading) {
     return <LoadingScreenBlue />;
   }
+  
 
   return (
     <Grid container gap={2}>
@@ -100,7 +83,7 @@ const DetailSale = () => {
           <CardHeader title="Estatus venta" />
           <CardContent>
             <Typography variant="body1" color="initial">
-              {statusPayment(productOrder)}
+              {statusPayment(productOrder.payment_status)}
             </Typography>
           </CardContent>
         </Card>
@@ -140,11 +123,6 @@ const DetailSale = () => {
                 Lista de productos
               </Typography>
               <DataGrid
-                // onRowSelectionModelChange={(value) => {
-                //   setRowSelection(value);
-                //   activeButton(value.length);
-                // }}
-                // rowSelectionModel={rowSelection}
                 hideFooterSelectedRowCount={true}
                 columns={[
                   {
@@ -176,61 +154,59 @@ const DetailSale = () => {
         
       </Grid>
       <Grid item xs={6} >
-        {productOrder?.payment_status === "pending" &&
-        productOrder?.verification ? (
-          <>
-            <Card sx={{display:'flex', flexDirection:'column', alignItems:'center'}} >
-           <CardHeader
-             title="Detalle de de pago"
-             subheader={`Pedido:${productOrder.order_id}`}
-           />
-            <div
-                onMouseMove={onMouseMove}
-                onMouseLeave={onMouseLeave}
-                ref={divRef}
-                className="zoom"
-                style={{
-                  "--url": `url(${productOrder.verification?.photo_proof})`,
-                  "--display": display,
-                  "--zoom-x": `${pointer.x}%`,
-                  "--zoom-y": `${pointer.y}%`,
-                  maxWidth:'500px'
+        {productOrder?.payment_status === "pending_to_verify" &&
+        productOrder?.payment.verification.payment_vouchers ? (
+          productOrder?.payment.verification.payment_vouchers.map((item, index)=>{
+            return(
+                <Card key={index} variant="outlined"
+                sx={{
+                  bgcolor: (theme) => {
+                    if (item.status === 'approved') return theme.palette.success.main;
+                    if (item.status === 'rejected') return theme.palette.warning.main;
+                    return theme.palette.primary.main;  // Use theme's GrayText equivalent
+                  }
                 }}
-              >
-                <CardMedia 
-                component={'img'}
-              src={productOrder.verification?.photo_proof}
-                title="Imagen ticket" 
-                />
-                </div>
-                <CardContent>
-                <Typography variant="h6" color="inherit">
-                Referencia: {productOrder.verification?.verification_reference}, <br />
-                Total a pagar: ${productOrder.total}
-              </Typography>
-                </CardContent>
-                <CardActions >
-                    <ButtonGroup fullWidth  variant="contained" color="primary" aria-label="">
-                    <Button
-                variant="text"
-                color="primary"
-                size="small"
-                onClick={() => navigate('/auth/validar-ventas',{replace:true})}
-              >
-                Regresar
-              </Button>
-              <SuccessButton
-        text={'Autorizar'}
-        title={`¿Desea autorizar la venta: ${productOrder.order_id}?`}
-        titleConfirm={'Se esta a autorizando la venta'}
-        callbackAction={()=>validateSale(productOrder.order_id)}
-        />
+                >
+                  <CardHeader
+                    title={`Referencia: No.${item.reference}`}
+                    subheader={`Monto: $ ${item.amount}`}
+                  />
+                  <CardContent>
+                    <ZoomImage
+                    src={item.url}
+                    alt="Imagen de la referencia"
+                    />
+                  </CardContent>
+                  <CardActions>
+                    {
+                      item.status === 'pending'? (
+                    <ButtonGroup variant="contained" aria-label="Verification Button">
+                      <SuccessButton 
+                      title={'Autorizar pago'} 
+                      text={`Esta seguro de autorizar el ticket con referencia : ${item.reference}`}
+                      callbackAction={()=>validateSale({id:productOrder.payment._id, createdAt:item.createdAt}) }
+                      textButton={'Autorizar'}
+                      />
+                      <RejectedButton
+                       title={'Rechazar pago'} 
+                       text={`Esta seguro de rechazar el ticket con referencia : ${item.reference}`}
+                       callbackAction={rejectTicket}
+                       values={{id:productOrder.payment._id, createdAt:item.createdAt}}
+                       textButton={'Rechazar'}
+                       inputLabel={'Motivo de rechazo:'}
+                       inputText={'Proporcione los motivos de rechazo'}
+                      />
                       
                     </ButtonGroup>
-              
-            </CardActions>
-            </Card>
-          </>
+
+                      ):''
+                    }
+                  </CardActions>
+                </Card>
+
+
+            )
+          })
         ) : (
           "no"
         )}

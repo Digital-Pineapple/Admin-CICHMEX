@@ -15,6 +15,7 @@ import {
   startLoadProductOrders,
   startLoadProductOrdersPaid,
   startLoadVerifyStartRoute,
+  startRejectTicket,
   startValidateSale,
 } from "../store/actions/productOrderActions";
 import { useNavigate } from "react-router-dom";
@@ -65,7 +66,8 @@ export const useProductOrder = () => {
 
   const loadPrintPDFOrder = async (id) => dispatch(startLoadPrintOrderPDF(id))
 
-  const validateSale = async (id) => dispatch(startValidateSale(id, navigate))
+  const validateSale = async (values) => dispatch(startValidateSale(values, navigate))
+  const rejectTicket = async (values) => dispatch(startRejectTicket(values, navigate))
   const loadPendingTransferPO = async () => dispatch(startLoadPendingTransfer()) 
   const completeProductOrder = (id) =>
     dispatch(StartCompleteProductOrder(id, navigate));
@@ -122,7 +124,8 @@ export const useProductOrder = () => {
     loadPendingTransferPO,
     rowsProducts,
     rowsWithIds,
-    validateSale
+    validateSale, 
+    rejectTicket
     
   };
 };

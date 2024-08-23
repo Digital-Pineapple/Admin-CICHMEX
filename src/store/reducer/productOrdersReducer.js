@@ -29,17 +29,7 @@ export const productOrdersReducer = createSlice({
           state.productOrder = {}
         },
         editProductOrder: ( state, { payload } ) => {
-            state.productOrder = state.productOrder.map(i => {
-              if (i._id === payload._id) {
-                return {
-                  ...i,
-                  name: payload.name,
-                  description: payload.description,
-                  status: payload.status,
-                };
-              }
-              return i; // Mantener los elementos no modificados tal como están
-            });
+            state.productOrder = payload
           }}})
 
 export const { cleanProductOrderDetail, startLoadResume, deleteProductOrder, editProductOrder, loadProductOrder, loadProductOrders, onAddNewProductOrder, startLoader } = productOrdersReducer.actions;

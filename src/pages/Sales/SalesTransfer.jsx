@@ -145,16 +145,11 @@ const SalesTransfer = () => {
     };
   });
 
-  const paymentValuate = (row) => {
-    if (row.payment_status !== "approved") {
-      Swal.fire("Pendiente de pago", "", "error");
-    } else {
-      navigate(`/auth/surtir-orden/${row._id}`);
-    }
-  };
+  
 
   const renderIcon = (values) => {
-    if (values.row.verification) {
+    
+    if (values.row.payment?.verification) {
       return (
         <>
         <IconButton
@@ -184,6 +179,32 @@ const SalesTransfer = () => {
     }
   };
 
+  const renderChip = (values) => {
+    if (values.row.payment_status === "pending_to_verify") {
+      return (
+        <>
+          <Chip
+            icon={<Paid />}
+            label="Pendiente validar"
+            variant="filled"
+            color="info"
+          />
+        </>
+      );
+    } else {
+      return (
+        <>
+          <Chip
+            icon={<Paid />}
+            label="No liquidada"
+            variant="filled"
+            color="warning"
+          />
+        </>
+      );
+    }
+  };
+
   if (loading) {
     return <LoadingScreenBlue />;
   }
@@ -207,30 +228,11 @@ const SalesTransfer = () => {
               align: "center",
             },
             {
-              field: "verification",
+              field: "payment",
               headerName: "Estatus",
               flex: 1,
               sortable: false,
-              renderCell: (params) =>
-                params.value ? (
-                  <>
-                    <Chip
-                      icon={<Paid />}
-                      label="Pendiente validar"
-                      variant="filled"
-                      color="info"
-                    />
-                  </>
-                ) : (
-                  <>
-                    <Chip
-                      icon={<Paid />}
-                      label="No liquidada"
-                      variant="filled"
-                      color="warning"
-                    />
-                  </>
-                ),
+              renderCell: (params) => [renderChip(params)],
             },
             {
               field: "subTotal",

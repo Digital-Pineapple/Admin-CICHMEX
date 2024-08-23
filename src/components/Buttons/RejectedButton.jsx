@@ -1,33 +1,26 @@
 import { Button, IconButton } from '@mui/material';
-import { Add, Verified, } from '@mui/icons-material';
+import { Add, Cancel, Verified, } from '@mui/icons-material';
 import Swal from 'sweetalert2';
 import { green, red } from '@mui/material/colors';
 
 
-const SuccessButton = ({title, titleConfirm,callbackAction,text, textButton}) => {
+const RejectedButton = ({title,callbackAction,text, textButton, inputText, inputLabel, values}) => {
 
+    
     const ModalSweet = () => {
        
         Swal.fire({
             title: title,
             showDenyButton: true,
             text: text,
-            // input:'text',
-            // inputLabel:'¿Desea agregar comentarios?',
+            input:"text",
+            inputLabel:inputLabel,
             denyButtonText:'Cancelar',
-            confirmButtonText: "Confirmar",
+            confirmButtonText: "Rechazar",
             confirmButtonColor: green[700]
           }).then((result) => {
             if (result.isConfirmed) {
-                 callbackAction()
-                // Swal.fire({
-                //     title:titleConfirm,
-                //     icon:'success',
-                //     confirmButtonColor:green[800],
-                //     timer:3000,
-                //     timerProgressBar:true
-    
-                //   });
+                 callbackAction({id:values.id,createdAt:values.createdAt,notes:result.value})
             } else if (result.isDenied) {
               Swal.fire({
                 title:'Cancelado',
@@ -47,15 +40,15 @@ const SuccessButton = ({title, titleConfirm,callbackAction,text, textButton}) =>
         <>
         <IconButton
           aria-label="Ver detalle"
-          color="success"
+          color="warning"
           title={text}
           onClick={() => ModalSweet()}
 
         >
-         {textButton} <Verified />
+         {textButton} <Cancel/>
         </IconButton> 
         </>
     )
 }
 
-export default SuccessButton
+export default RejectedButton

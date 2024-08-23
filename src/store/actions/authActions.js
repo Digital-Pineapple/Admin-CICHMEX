@@ -18,11 +18,13 @@ export const startLogin = ({ email, password }) => async (dispatch) => {
     },
     });
     dispatch(onLogin(data.data.user));
+    
     localStorage.setItem("token", data.data.token, { expires: 7 });
     return {
       success: true,
     };
   } catch (error) {
+    
     if (axios.isAxiosError(error)) {
       enqueueSnackbar(
         "Error en el inicio de sesión" && error.response.data.message,
