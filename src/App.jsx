@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import RoutesContainer from "./routes/RoutesContainer";
 import LoadingScreen from "./components/ui/LoadingScreen";
 import { useAuthStore } from "./hooks";
-import { socket } from "./services/socket";
+// import { socket } from "./services/socket";
 
 
 const App = () => {

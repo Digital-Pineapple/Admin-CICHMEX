@@ -276,7 +276,6 @@ export const addOneProduct =
           },
         }
       );
-      dispatch(onAddNewProduct(data.data));
       enqueueSnackbar("Agregado con éxito", {
         variant: "success",
         anchorOrigin: {
@@ -286,7 +285,6 @@ export const addOneProduct =
       });
       navigate("/auth/productos", { replace: true });
     } catch (error) {
-      console.log(error);
       
       enqueueSnackbar(`${error.response.data.message}`, {
         variant: "error",
@@ -295,7 +293,6 @@ export const addOneProduct =
           horizontal: "right",
         },
       });
-      dispatch(stopLoading());
     }
     finally{
       dispatch(stopLoading());
