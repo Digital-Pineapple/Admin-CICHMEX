@@ -15,26 +15,26 @@ const App = () => {
       setLoading(false)
     }, 500)
   }, []);
-  useEffect(() => {
-    socket.on("connection", () => {
-      console.log("Connected to socket server");
-    });
+  // useEffect(() => {
+  //   socket.on("connection", () => {
+  //     console.log("Connected to socket server");
+  //   });
 
-    socket.on("disconnect", () => {
-      console.log("Disconnected from socket server");
-    });
+  //   socket.on("disconnect", () => {
+  //     console.log("Disconnected from socket server");
+  //   });
 
-    // Manejo de otros eventos
-    socket.on("some_event", (data) => {
-      console.log("Received data:", data);
-    });
+  //   // Manejo de otros eventos
+  //   socket.on("some_event", (data) => {
+  //     console.log("Received data:", data);
+  //   });
 
-    return () => {
-      socket.off("connect");
-      socket.off("disconnect");
-      socket.off("some_event");
-    };
-  }, []);
+  //   return () => {
+  //     socket.off("connect");
+  //     socket.off("disconnect");
+  //     socket.off("some_event");
+  //   };
+  // }, []);
   return (
     <>
     {

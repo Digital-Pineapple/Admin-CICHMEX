@@ -45,15 +45,15 @@ const SuccessButton = ({title, titleConfirm,callbackAction,text, textButton}) =>
 
     return (
         <>
-        <IconButton
+        <Button
           aria-label="Ver detalle"
-          color="success"
           title={text}
+          color={'success'}
           onClick={() => ModalSweet()}
-
+          startIcon={<Verified />}
         >
-         {textButton} <Verified />
-        </IconButton> 
+         {textButton} 
+        </Button> 
         </>
     )
 }

@@ -153,17 +153,18 @@ const DetailSale = () => {
 
         
       </Grid>
-      <Grid item xs={6} >
-        {productOrder?.payment_status === "pending_to_verify" &&
-        productOrder?.payment.verification.payment_vouchers ? (
+      <Grid container gap={1}>
+        {
+        productOrder?.payment?.verification?.payment_vouchers ? (
           productOrder?.payment.verification.payment_vouchers.map((item, index)=>{
             return(
+              <Grid key={index} item xs={12} lg={5.9} xl={3.9}>
                 <Card key={index} variant="outlined"
                 sx={{
                   bgcolor: (theme) => {
                     if (item.status === 'approved') return theme.palette.success.main;
                     if (item.status === 'rejected') return theme.palette.warning.main;
-                    return theme.palette.primary.main;  // Use theme's GrayText equivalent
+                    return theme.palette.text.disabled;  // Use theme's GrayText equivalent
                   }
                 }}
                 >
@@ -171,13 +172,13 @@ const DetailSale = () => {
                     title={`Referencia: No.${item.reference}`}
                     subheader={`Monto: $ ${item.amount}`}
                   />
-                  <CardContent>
-                    <ZoomImage
+                  <CardContent >
+                    <ZoomImage     
                     src={item.url}
                     alt="Imagen de la referencia"
                     />
                   </CardContent>
-                  <CardActions>
+                  <CardActions sx={{display:'flex', justifyContent:'center'}} >
                     {
                       item.status === 'pending'? (
                     <ButtonGroup variant="contained" aria-label="Verification Button">
@@ -203,13 +204,13 @@ const DetailSale = () => {
                     }
                   </CardActions>
                 </Card>
-
-
+              </Grid>
             )
           })
-        ) : (
-          "no"
-        )}
+        )  :('')
+        
+        }
+       
       </Grid>
     </Grid>
   );

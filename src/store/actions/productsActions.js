@@ -267,7 +267,7 @@ export const addOneProduct =
       }
 
       const { data } = await instanceApi.post(
-        `/product/create-product/ok`,
+        `/product/addProduct`,
         formData,
         {
           headers: {
@@ -285,8 +285,9 @@ export const addOneProduct =
         },
       });
       navigate("/auth/productos", { replace: true });
-      dispatch(stopLoading());
     } catch (error) {
+      console.log(error);
+      
       enqueueSnackbar(`${error.response.data.message}`, {
         variant: "error",
         anchorOrigin: {
@@ -294,6 +295,9 @@ export const addOneProduct =
           horizontal: "right",
         },
       });
+      dispatch(stopLoading());
+    }
+    finally{
       dispatch(stopLoading());
     }
   };

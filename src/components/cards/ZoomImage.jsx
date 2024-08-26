@@ -1,7 +1,7 @@
 import { Card, CardHeader } from "@mui/material";
 import React, { useRef, useState } from "react";
 
-const ZoomImage = ({ src, alt }) => {
+const ZoomImage = ({alt,src}) => {
   
   const [display, setDisplay] = useState("none");
   const divRef = useRef();
@@ -37,10 +37,13 @@ const ZoomImage = ({ src, alt }) => {
           "--display": display,
           "--zoom-x": `${pointer.x}%`,
           "--zoom-y": `${pointer.y}%`,
-          maxWidth: "500px",
+          maxWidth: "600px",
+          maxHeight: "600px",
+          display:'flex',
+          justifyContent:'center',
         }}
       >
-        <img src={src} alt={alt} />
+        <img src={src} alt={alt} width={'400px'} style={{borderRadius:'10px'}} height={'400px'}/>
       </div>
     </>
   );

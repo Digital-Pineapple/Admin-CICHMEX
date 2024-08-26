@@ -202,7 +202,7 @@
         width: 100%; 
         position: relative;
         background-size: contain;
-        border: "2px solid #0d2b6b",                               
+        border: "2px solid #0d2b6b";                          
     
     }
     .zoom::after{

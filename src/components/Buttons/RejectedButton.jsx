@@ -38,15 +38,16 @@ const RejectedButton = ({title,callbackAction,text, textButton, inputText, input
 
     return (
         <>
-        <IconButton
+        <Button
           aria-label="Ver detalle"
           color="warning"
           title={text}
           onClick={() => ModalSweet()}
+          endIcon={<Cancel/>}
 
         >
-         {textButton} <Cancel/>
-        </IconButton> 
+         {textButton} 
+        </Button> 
         </>
     )
 }

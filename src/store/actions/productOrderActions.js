@@ -483,8 +483,7 @@ export const startValidateSale = (values, navigate) => {
   };
 };
 export const startRejectTicket = (values) => {
-  console.log(values);
-  
+
   return async (dispatch) => {
     dispatch(startLoading());
     try {
