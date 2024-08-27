@@ -102,7 +102,12 @@ export const startLoadEntriesProduct = () => {
     try {
       const { data } = await instanceApi.get(
         `/stock-StoreHouse/product/entries`,
-        headerConfig
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
       dispatch(loadProductEntries(data.data));
     } catch (error) {
@@ -286,7 +291,6 @@ export const addOneProduct =
       });
       navigate("/auth/productos", { replace: true });
     } catch (error) {
-      console.log(error);
       
       enqueueSnackbar(`${error.response.data.message}`, {
         variant: "error",
@@ -359,7 +363,12 @@ export const editOneProduct =
       const { data } = await instanceApi.post(
         `/product/${id}`,
         formData,
-        headerConfigFormData
+        {
+          headers: {
+            "Content-Type": 'multipart/form-data',
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
       dispatch(editProduct(data.data));
       enqueueSnackbar("Editado con éxito", {
@@ -388,7 +397,12 @@ export const deleteOneProduct = (id) => {
     try {
       const { data } = await instanceApi.delete(
         `/product/${id}`,
-        headerConfigApplication
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
       dispatch(deleteProduct(data.data?._id));
       Swal.fire({
