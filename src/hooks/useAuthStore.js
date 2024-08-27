@@ -5,6 +5,7 @@ import { instanceApi } from "../apis/configAxios";
 import Cookies from "js-cookie";
 import userApi from "../apis/userApi";
 import { headerConfig } from "../store/actions/headers";
+import { AllRoutes } from "../routes/AllRoutes";
 
 export const useAuthStore = () => {
   const { status, user, errorMessage, logged, Links } = useSelector(
@@ -74,6 +75,15 @@ export const useAuthStore = () => {
     dispatch(onLogout());
   };
 
+  const componentLink = Links.map((item, index) => {
+    const matchedRoute = AllRoutes.find((route) => route.component === item.component);
+    return {
+      ...item,
+      component: matchedRoute?.component || null,  // Asegúrate de manejar el caso donde no se encuentre
+    };
+  });
+  
+
   return {
     //* Propiedades
     errorMessage,
@@ -85,6 +95,7 @@ export const useAuthStore = () => {
     StartLogin,
     navigate,
     loading,
-    Links
+    Links,
+    componentLink,
   };
 };

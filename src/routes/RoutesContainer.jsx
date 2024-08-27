@@ -11,8 +11,8 @@ import { themeAdminCarWashLight, themeAdminCichmexLight, themeSuperAdmin } from 
 import { ThemeProvider } from "@mui/material";
 import LoadingScreenBlue from "../components/ui/LoadingScreenBlue";
 
-const RoutesContainer = ({Links}) => {
-  const { user, logged, Links } = useAuthStore();
+const RoutesContainer = () => {
+  const { user, logged, componentLink } = useAuthStore();
   const [theme, setTheme] = useState(themeSuperAdmin);
 
   const valuateLinks = () => {
@@ -31,32 +31,27 @@ const RoutesContainer = ({Links}) => {
       valuateLinks()
     } 
   }, [user, logged]);
+  console.log(componentLink);
+  
 
   return (
 
     <ThemeProvider theme={theme}>
     <Routes>
-      {
-        Links.map((item, index)=>{
-          return(
-            <Route
-            path={item.path}
-            element={
-          )
-        })
-      }
       <Route
         path="/*"
         element={
-          <PublicPages>
             <Routes>
-              {AllRoutes.filter(({ type }) => type === 0).map(
-                ({ path, element }, index) => (
-                  <Route path={path} element={element} key={index} />
+              {componentLink.map((item, index)=>{
+                return (
+                  <Route 
+                  path={item.path}
+                  element={item.component}
+                  key={index}
+                  />
                 )
-              )}
+              })}
             </Routes>
-          </PublicPages>
         }
       />
     </Routes>
