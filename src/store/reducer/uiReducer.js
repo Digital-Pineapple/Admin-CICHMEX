@@ -11,10 +11,13 @@ export const uiReducer = createSlice({
     },
     stopLoading: (state) => {
       state.loading = false;
+    },
+    onLoadLinks:  (state, {payload}) => {
+      state.links = payload;
     }
   },
 })
 
-export const { startLoading, stopLoading } = uiReducer.actions;
+export const { startLoading, stopLoading, onLoadLinks } = uiReducer.actions;
 
 export default uiReducer.reducer;

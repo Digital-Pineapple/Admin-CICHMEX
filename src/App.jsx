@@ -34,7 +34,7 @@ const App = () => {
   return (
     <>
     {
-      loading ? <LoadingScreen /> : 'ok'
+      loading ? <LoadingScreen /> : <RoutesContainer/>
     }
     </>
   );

@@ -18,7 +18,6 @@ const RoutesContainer = () => {
   const valuateLinks = () => {
     const system = user.type_user?.system;
     if (system[0] === 'CICHMEX' && system[1] === "CARWASH") {
-      setLinks(Links);
     } else if (system[0] === 'CICHMEX') {
       setTheme(themeAdminCichmexLight);
     } else if (system[0] === "CARWASH") {
@@ -29,9 +28,10 @@ const RoutesContainer = () => {
   useEffect(() => {
     if (logged) {
       valuateLinks()
+      console.log(componentLink(),'dasjhdj');
     } 
   }, [user, logged]);
-  console.log(componentLink);
+  
   
 
   return (
@@ -42,7 +42,7 @@ const RoutesContainer = () => {
         path="/*"
         element={
             <Routes>
-              {componentLink.map((item, index)=>{
+              {/* {componentLink.map((item, index)=>{
                 return (
                   <Route 
                   path={item.path}
@@ -50,7 +50,7 @@ const RoutesContainer = () => {
                   key={index}
                   />
                 )
-              })}
+              })} */}
             </Routes>
         }
       />

@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { clearErrorMessage, onLogin, onLogout, startLoading, stopLoading } from "../store";
+import { clearErrorMessage, onLoadLinks, onLogin, onLogout, startLoading, stopLoading } from "../store";
 import { useNavigate } from "react-router-dom";
 import { instanceApi } from "../apis/configAxios";
 import Cookies from "js-cookie";
@@ -8,10 +8,11 @@ import { headerConfig } from "../store/actions/headers";
 import { AllRoutes } from "../routes/AllRoutes";
 
 export const useAuthStore = () => {
-  const { status, user, errorMessage, logged, Links } = useSelector(
+  const { status, user, errorMessage, logged } = useSelector(
     (state) => state.auth
   );
-  const { loading } = useSelector(
+
+  const { loading, links } = useSelector(
     (state) => state.ui
   );
   const dispatch = useDispatch();
@@ -46,7 +47,8 @@ export const useAuthStore = () => {
           "Content-type": "application/json",
            "Authorization": `Bearer ${localStorage.getItem("token")}`,
       },
-      });  
+      }); 
+      
       const Links = await instanceApi.get('/dynamic-route/Links',{
         headers: {
           "Content-type": "application/json",
@@ -56,8 +58,10 @@ export const useAuthStore = () => {
           system:'Admin'
         }
       })
-      dispatch(onLogin({user:data.data.user, Links: Links.data.data}));
+      dispatch(onLoadLinks(Links.data.data))
+      dispatch(onLogin(data.data.user));
     } catch (error) {
+      
       dispatch(onLogout());
       setTimeout(() => {
         onLogout(
@@ -75,8 +79,10 @@ export const useAuthStore = () => {
     dispatch(onLogout());
   };
 
-  const componentLink = Links.map((item, index) => {
-    const matchedRoute = AllRoutes.find((route) => route.component === item.component);
+  const componentLink = links?.map((item, index) => {
+    
+    const matchedRoute = AllRoutes.filter((route) => route.component === item.component);
+    
     return {
       ...item,
       component: matchedRoute?.component || null,  // Asegúrate de manejar el caso donde no se encuentre
@@ -95,7 +101,6 @@ export const useAuthStore = () => {
     StartLogin,
     navigate,
     loading,
-    Links,
     componentLink,
   };
 };

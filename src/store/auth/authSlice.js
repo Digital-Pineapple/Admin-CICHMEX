@@ -18,10 +18,10 @@ const authSlice = createSlice({
         },
         onLogin: ( state, { payload } ) =>{
         state.status = 'authenticated';
-        state.user = payload.user;
+        state.user = payload;
         state.errorMessage= undefined
         state.logged = true
-        state.links = payload.links
+        state.links = links
         },
         onLogout: ( state, { payload } ) => {
             state.status = 'not-authenticated';
