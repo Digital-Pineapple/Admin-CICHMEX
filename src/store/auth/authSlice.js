@@ -7,6 +7,7 @@ const authSlice = createSlice({
         user: {},
         errorMessage: undefined,
         logged: false,
+        links:[]
 
     },
     reducers: {
@@ -17,9 +18,10 @@ const authSlice = createSlice({
         },
         onLogin: ( state, { payload } ) =>{
         state.status = 'authenticated';
-        state.user = payload;
+        state.user = payload.user;
         state.errorMessage= undefined
         state.logged = true
+        state.links = payload.links
         },
         onLogout: ( state, { payload } ) => {
             state.status = 'not-authenticated';

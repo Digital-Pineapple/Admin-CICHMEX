@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { clearErrorMessage, onLogin, onLogout } from "../store";
+import { clearErrorMessage, onLogin, onLogout, startLoading, stopLoading } from "../store";
 import { useNavigate } from "react-router-dom";
 import { instanceApi } from "../apis/configAxios";
 import Cookies from "js-cookie";
@@ -7,8 +7,11 @@ import userApi from "../apis/userApi";
 import { headerConfig } from "../store/actions/headers";
 
 export const useAuthStore = () => {
-  const { status, user, errorMessage, logged} = useSelector(
+  const { status, user, errorMessage, logged, Links } = useSelector(
     (state) => state.auth
+  );
+  const { loading } = useSelector(
+    (state) => state.ui
   );
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -35,16 +38,24 @@ export const useAuthStore = () => {
 
 
   const RevalidateToken = async () => {
+    dispatch(startLoading())
     try {
       const { data } = await instanceApi.get("/auth/user", {
         headers: {
           "Content-type": "application/json",
            "Authorization": `Bearer ${localStorage.getItem("token")}`,
       },
-      });
-      console.log(data.data.user._id);
-      
-      dispatch(onLogin(data.data.user))
+      });  
+      const Links = await instanceApi.get('/dynamic-route/Links',{
+        headers: {
+          "Content-type": "application/json",
+          "Authorization": `Bearer ${data.data.token}`,
+        },
+        params:{
+          system:'Admin'
+        }
+      })
+      dispatch(onLogin({user:data.data.user, Links: Links.data.data}));
     } catch (error) {
       dispatch(onLogout());
       setTimeout(() => {
@@ -52,6 +63,8 @@ export const useAuthStore = () => {
           error.response.data?.message || error.response.data.errors[0].message
         )
       }, 10);
+    } finally{
+      dispatch(stopLoading())
     }
   };
 
@@ -70,6 +83,8 @@ export const useAuthStore = () => {
     logged,
     startLogout,
     StartLogin,
-    navigate
+    navigate,
+    loading,
+    Links
   };
 };

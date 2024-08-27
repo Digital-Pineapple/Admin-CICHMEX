@@ -7,13 +7,9 @@ import { useAuthStore } from "./hooks";
 
 
 const App = () => {
-  const { RevalidateToken, user } = useAuthStore();
-  const [loading, setLoading] = useState(true);
+  const { RevalidateToken, loading } = useAuthStore();
   useEffect(() => {
-    setTimeout(async()=>{
-      await RevalidateToken();
-      setLoading(false)
-    }, 500)
+     RevalidateToken();
   }, []);
   // useEffect(() => {
   //   socket.on("connection", () => {
@@ -38,7 +34,7 @@ const App = () => {
   return (
     <>
     {
-      loading ? <LoadingScreen /> : <RoutesContainer/>
+      loading ? <LoadingScreen /> : 'ok'
     }
     </>
   );
