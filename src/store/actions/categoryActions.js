@@ -23,7 +23,7 @@ export const startLoadCategories = () => {
       },}
       );
       dispatch(loadCategories(data.data));
-      dispatch(stopLoading())
+     
     } catch (error) {
       enqueueSnackbar(`Ocurrió un error al cargar las categorias + ${error}`, {
         variant: "error",
@@ -32,6 +32,9 @@ export const startLoadCategories = () => {
           horizontal: "right",
         },
       });
+   
+    }
+    finally{
       dispatch(stopLoading())
     }
   };

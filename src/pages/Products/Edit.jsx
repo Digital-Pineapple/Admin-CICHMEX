@@ -61,13 +61,14 @@ const Edit = () => {
     loadProduct(id);
   }, [id]);
 
+
   useEffect(() => {
     formik.setValues({
       name: product.name ? product.name : "",
       description: product.description || "",
       shortDescription: product.shortDescription || "",
       brand: product.brand || "",
-      dimensions: product.dimensions | "",
+      dimensions: product.dimensions || "",
       price: product.price || "",
       porcentDiscount: product.porcentDiscount || "",
       discountPrice: product.discountPrice || "",
@@ -313,6 +314,7 @@ const Edit = () => {
             <TextField
               fullWidth
               size="small"
+              type="text"
               id="dimensions"
               name="dimensions"
               label="Ancho,Largo,Alto"

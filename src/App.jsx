@@ -5,7 +5,6 @@ import LoadingScreen from "./components/ui/LoadingScreen";
 import { useAuthStore } from "./hooks";
 // import { socket } from "./services/socket";
 
-
 const App = () => {
   const { RevalidateToken, user } = useAuthStore();
   const [loading, setLoading] = useState(true);

@@ -356,7 +356,12 @@ export const editOneProduct =
       const { data } = await instanceApi.post(
         `/product/${id}`,
         formData,
-        headerConfigFormData
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
       dispatch(editProduct(data.data));
       enqueueSnackbar("Editado con éxito", {
