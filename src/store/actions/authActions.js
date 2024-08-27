@@ -7,6 +7,7 @@ import { startLoading } from "../reducer/uiReducer";
 
 
 export const startLogin = ({ email, password }) => async (dispatch) => {
+syste
   try {
     const { data } = await instanceApi.post("/auth/login", {
       email,
@@ -48,6 +49,8 @@ export const startRevalidateToken = () => async (dispatch) => {
         Token: token,
       },
     });
+    
+    
     dispatch(onLogin(data.data.user))
   } catch (error) {
     console.log(error);

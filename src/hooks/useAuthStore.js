@@ -36,11 +36,16 @@ export const useAuthStore = () => {
 
   const RevalidateToken = async () => {
     try {
-      const { data } = await instanceApi.get("/auth/user", headerConfig);
+      const { data } = await instanceApi.get("/auth/user", {
+        headers: {
+          "Content-type": "application/json",
+           "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      },
+      });
+      console.log(data.data.user._id);
       
       dispatch(onLogin(data.data.user))
     } catch (error) {
-      console.log(error);
       dispatch(onLogout());
       setTimeout(() => {
         onLogout(
