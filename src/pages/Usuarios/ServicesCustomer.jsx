@@ -6,7 +6,6 @@ import { useSubCategories } from "../../hooks/useSubCategories";
 import { useCategories } from "../../hooks/useCategories";
 import Typography from "@mui/material/Typography";
 import { useParams } from "react-router-dom";
-import CustomBreadcrumb from "../../components/ui/CustomBreadcrumb";
 import CustomButtonNavigation from "../../components/Buttons/CustomButtonNavigation";
 import { useLayoutEffect } from "react";
 import { useTypeCars } from "../../hooks/UseTypeCars";
@@ -57,7 +56,6 @@ const services_id = serviceCustomer?._id
   return (
     <>
       <Grid container mx={"10%"} minHeight={'100%'}>
-        <CustomBreadcrumb id={id} />
       </Grid>
 
       <Grid paddingX="10%">

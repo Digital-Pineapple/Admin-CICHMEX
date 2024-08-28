@@ -18,11 +18,11 @@ import LoadingScreenBlue from '../components/ui/LoadingScreenBlue'
 import BarTopTenProducts from "../components/Charts/BarTopTenProducts";
 import LastTenTable from "../components/Tables/LastTenTable";
 const Principal = () => {
-  const { user } = useAuthStore();
+  const { logged } = useAuthStore();
   const { loadResumeProductOrder, resumeOrders, loading } = useProductOrder();
   useEffect(() => {
     loadResumeProductOrder();
-  }, [user]);
+  }, [logged]);
 
   const cards = [
     {

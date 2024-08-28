@@ -1,43 +1,29 @@
-import { useEffect, useState } from "react";
-
-import RoutesContainer from "./routes/RoutesContainer";
-import LoadingScreen from "./components/ui/LoadingScreen";
+import { useEffect } from "react";
 import { useAuthStore } from "./hooks";
-// import { socket } from "./services/socket";
+import {PrivateRoutes} from "./routes/PrivateRoutes";
+import PublicRoutes from "./routes/PublicRoutes";
 
 
 const App = () => {
-  const { RevalidateToken, loading } = useAuthStore();
+  const { RevalidateToken, logged, token } = useAuthStore();
   useEffect(() => {
-     RevalidateToken();
-  }, []);
-  // useEffect(() => {
-  //   socket.on("connection", () => {
-  //     console.log("Connected to socket server");
-  //   });
-
-  //   socket.on("disconnect", () => {
-  //     console.log("Disconnected from socket server");
-  //   });
-
-  //   // Manejo de otros eventos
-  //   socket.on("some_event", (data) => {
-  //     console.log("Received data:", data);
-  //   });
-
-  //   return () => {
-  //     socket.off("connect");
-  //     socket.off("disconnect");
-  //     socket.off("some_event");
-  //   };
-  // }, []);
-  return (
-    <>
-    {
-      loading ? <LoadingScreen /> : <RoutesContainer/>
+    if (!!token) {
+      RevalidateToken();
     }
-    </>
-  );
+  }, []);
+
+  
+  if (logged) {
+    return(
+      <PrivateRoutes/>
+    )
+  }else{
+    return (
+      <PublicRoutes/>
+    )
+  }
+  
+
 };
 
 export default App;

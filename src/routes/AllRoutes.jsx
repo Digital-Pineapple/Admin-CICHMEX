@@ -62,14 +62,18 @@ import AddOutputs from "../pages/MyStoreHouse/AddOutputs";
 import VerifySales from "../pages/Sales/VerifySales";
 import DetailSale from "../pages/Sales/DetailSale";
 import { compose } from "@reduxjs/toolkit";
+import { NotFound } from "../pages/ui/NotFound";
+import Unauthorized from "../pages/ui/Unauthorized";
 
 export const AllRoutes = [
-  { component: 1, element: <Login /> },
+  { id: 1000, element: <Unauthorized/> },
+  { id: 0, element: <NotFound/> },
+  { id: 1, element: <Login/> },
 
-  { component: 2, element: <Principal /> },
-  { component: 3, element: <Users /> },
-  { component: 5, element: <EditUser /> },
-  { component: 6, element: <MyStoreHouse /> },
+  { id: 2, element: <Principal /> },
+  { id: 3, element: <Users /> },
+  { id: 5, element: <EditUser /> },
+  { id: 6, element: <MyStoreHouse /> },
 
   // { type: 1, path: '/Home', element: <Principal/>},
   // { type: 1, path: '/usuarios', element: <Users/>},

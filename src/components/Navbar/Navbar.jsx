@@ -28,9 +28,9 @@ const heigthToolbar = 100;
 export const Navbar = (props) => {
   
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { user } = useAuthStore();
   const { navigate } = useAuthStore();
   const [open, setOpen] = useState({});
+  const {links} = useAuthStore()
 
   const handleClick = (title) => {
     setOpen((prevOpen) => ({
@@ -63,42 +63,43 @@ export const Navbar = (props) => {
         component="nav"
         aria-labelledby="nested-list-subheader"
       >
-        {props.navLinks?.map((item, index) => (
-          <Fragment key={index}>
-            <ListItemButton
-              onClick={() => {
-                if (item.subRoutes) {
-                  handleClick(item.title);
-                } else {
-                  navigate(item.pathMain || item.path, { replace: true });
-                }
-              }}
-            >
-              <ListItemIcon>
-                {item.Icon}
-              </ListItemIcon>
-              <ListItemText primary={item.title} />
-              {item.subRoutes ? (open[item.title] ? <ExpandLess /> : <ExpandMore />) : null}
-            </ListItemButton>
-            {item.subRoutes && (
-              <Collapse in={open[item.title]} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  {item.subRoutes.map((subItem, subIndex) => (
-                    <ListItemButton
-                      key={subIndex}
-                      sx={{ pl: 4 }}
-                      onClick={() => navigate(subItem.path, { replace: true })}
-                    >
-                      <ListItemIcon>
-                        {subItem.Icon}
-                      </ListItemIcon>
-                      <ListItemText primary={subItem.title} />
-                    </ListItemButton>
-                  ))}
-                </List>
-              </Collapse>
-            )}
-          </Fragment>
+        {links?.map((item, index) => (
+          // <Fragment key={index}>
+          //   <ListItemButton
+          //     onClick={() => {
+          //       if (item.subRoutes) {
+          //         handleClick(item.title);
+          //       } else {
+          //         navigate(item.pathMain || item.path, { replace: true });
+          //       }
+          //     }}
+          //   >
+          //     <ListItemIcon>
+          //       {item.Icon}
+          //     </ListItemIcon>
+          //     <ListItemText primary={item.title} />
+          //     {item.subRoutes ? (open[item.title] ? <ExpandLess /> : <ExpandMore />) : null}
+          //   </ListItemButton>
+          //   {item.subRoutes && (
+          //     <Collapse in={open[item.title]} timeout="auto" unmountOnExit>
+          //       <List component="div" disablePadding>
+          //         {item.subRoutes.map((subItem, subIndex) => (
+          //           <ListItemButton
+          //             key={subIndex}
+          //             sx={{ pl: 4 }}
+          //             onClick={() => navigate(subItem.path, { replace: true })}
+          //           >
+          //             <ListItemIcon>
+          //               {subItem.Icon}
+          //             </ListItemIcon>
+          //             <ListItemText primary={subItem.title} />
+          //           </ListItemButton>
+          //         ))}
+          //       </List>
+          //     </Collapse>
+          //   )}
+          // </Fragment>
+          <ListItem key={item.index} title={item.name}/>
         ))}
       </List>
     </Box>
@@ -134,9 +135,9 @@ export const Navbar = (props) => {
             noWrap
             component="div"
           >
-            {user.fullname}
+            {props.user.fullname}
           </Typography>
-          <AvatarCustom ProfileImage={user.profile_image} />
+          <AvatarCustom ProfileImage={props.user.profile_image} />
         </Toolbar>
       </AppBar>
       <Drawer
@@ -154,7 +155,7 @@ export const Navbar = (props) => {
         }}
       >
         <Toolbar />
-        <MenuDrawer navLinks={props.navLinks}/>
+        <MenuDrawer navLinks={links}/>
       </Drawer>
 
       <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>

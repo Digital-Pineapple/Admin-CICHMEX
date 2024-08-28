@@ -7,7 +7,7 @@ export const userReducer = createSlice({
         logged  : false,
     },
     reducers: {
-        onLogin: (state,{ payload }) => {
+        onLogin: (state,{payload}) => {
             state.user   = payload;
             state.logged = true;
         },

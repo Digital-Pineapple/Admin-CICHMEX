@@ -29,41 +29,54 @@ export default function MenuDrawer({navLinks}) {
         aria-labelledby="nested-list-subheader"
       >
         {navLinks?.map((item, index) => (
-          <React.Fragment key={index}>
-            <ListItemButton
-              onClick={() => {
-                if (item.subRoutes) {
-                  handleClick(item.title);
-                } else {
-                  navigate(item.pathMain || item.path, { replace: true });
-                }
-              }}
-            >
-              <ListItemIcon sx={{ color:'#fff'}} >
-                {item.Icon}
-              </ListItemIcon>
-              <ListItemText  sx={{marginLeft:'-20px'}} primary={item.title} />
-              {item.subRoutes ? (open[item.title] ? <ExpandLessIcon /> : <ExpandMoreIcon />) : null}
-            </ListItemButton>
-            {item.subRoutes && (
-              <Collapse in={open[item.title]} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  {item.subRoutes.map((subItem, subIndex) => (
-                    <ListItemButton
-                      key={subIndex}
-                      sx={{ pl: 3 }}
-                      onClick={() => navigate(subItem.path, { replace: true })}
-                    >
-                      <ListItemIcon sx={{color:"primary.contrastText"}} >
-                        {subItem.Icon}
-                      </ListItemIcon>
-                      <ListItemText primary={subItem.title} />
-                    </ListItemButton>
-                  ))}
-                </List>
-              </Collapse>
-            )}
-          </React.Fragment>
+          // <React.Fragment key={index}>
+          //   <ListItemButton
+          //     onClick={() => {
+          //       if (item.subRoutes) {
+          //         handleClick(item.title);
+          //       } else {
+          //         navigate(item.pathMain || item.path, { replace: true });
+          //       }
+          //     }}
+          //   >
+          //     <ListItemIcon sx={{ color:'#fff'}} >
+          //       {item.Icon}
+          //     </ListItemIcon>
+          //     <ListItemText  sx={{marginLeft:'-20px'}} primary={item.title} />
+          //     {item.subRoutes ? (open[item.title] ? <ExpandLessIcon /> : <ExpandMoreIcon />) : null}
+          //   </ListItemButton>
+          //   {item.subRoutes && (
+          //     <Collapse in={open[item.title]} timeout="auto" unmountOnExit>
+          //       <List component="div" disablePadding>
+          //         {item.subRoutes.map((subItem, subIndex) => (
+          //           <ListItemButton
+          //             key={subIndex}
+          //             sx={{ pl: 3 }}
+          //             onClick={() => navigate(subItem.path, { replace: true })}
+          //           >
+          //             <ListItemIcon sx={{color:"primary.contrastText"}} >
+          //               {subItem.Icon}
+          //             </ListItemIcon>
+          //             <ListItemText primary={subItem.title} />
+          //           </ListItemButton>
+          //         ))}
+          //       </List>
+          //     </Collapse>
+          //   )}
+          // </React.Fragment>
+          <>
+          <ListItemButton
+          key={item.index}
+          onClick={()=>{
+            navigate(`${item.path}`, {replace:true})
+          }}
+          >
+
+          <ListItemText >
+            {item.name}
+          </ListItemText>
+          </ListItemButton>
+          </>
         ))}
         
       </List>

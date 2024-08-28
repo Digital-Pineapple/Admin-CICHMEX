@@ -14,12 +14,9 @@ import { useSelector } from 'react-redux';
 import { useAuthStore } from '../../hooks';
 
 const AvatarCustom = ({ProfileImage}) => {
-  const {startLogout, navigate}= useAuthStore()
+  const {Logout, navigate, user}= useAuthStore()
 
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const {user} = useSelector(
-    (state) => state.auth
-  );
 
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -29,10 +26,10 @@ const AvatarCustom = ({ProfileImage}) => {
     setAnchorEl(null);
   };
   const NavigateToProfile = () =>{
-    navigate('/Home', {replace :true})
+    navigate('/', {replace :true})
   }
   const CloseSession = () => {
-    startLogout()
+    Logout()
   }
 
   return (
@@ -92,7 +89,7 @@ const AvatarCustom = ({ProfileImage}) => {
           <Avatar  src={ProfileImage? ProfileImage:''} /> Mi cuenta
         </MenuItem>
         <Divider />
-        <MenuItem onClick={CloseSession}>
+        <MenuItem onClick={()=>CloseSession}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>

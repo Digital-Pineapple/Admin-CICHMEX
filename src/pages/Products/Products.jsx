@@ -26,7 +26,7 @@ import { useProducts } from "../../hooks/useProducts";
 import { editOneProduct } from "../../store/actions/productsActions";
 import DeleteAlert from "../../components/ui/DeleteAlert";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
-import { useAuth, useAuthStore } from "../../hooks";
+import {  useAuthStore } from "../../hooks";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
