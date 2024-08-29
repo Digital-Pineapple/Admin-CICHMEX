@@ -21,7 +21,7 @@ export const useAuthStore = () => {
 
   const RevalidateToken = async () => dispatch(startRevalidateToken());
   const LoadPublicRoutes = async ()=>  dispatch(startPublicLinks());
-  const Logout = async () => dispatch(startLogout(navigate));
+  const loadLogout = async () => dispatch(startLogout(navigate));
 
   const PrivateLinks = () => {
     const elLink = []
@@ -41,6 +41,11 @@ export const useAuthStore = () => {
       })
       return elLink;
   };
+
+
+
+  
+
   const PublicLinks = () => {
     const elLink = []
     const routeNotFound = AllRoutes.find((r) => r.id === 0);
@@ -67,11 +72,11 @@ export const useAuthStore = () => {
     user,
     logged,
     navigate,
-    Logout,
+    loadLogout,
     PrivateLinks,
     links,
     LoadPublicRoutes,
     PublicLinks,
-    token
+    token,
   };
 };

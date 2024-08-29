@@ -86,8 +86,8 @@ export const startPublicLinks = () => {
   return async (dispatch)=>{
     dispatch(startLoading());
     try {
-      localStorage.clear();
       dispatch(onLogout());
+      localStorage.clear();
       navigate('/login',{replace:true})
     } catch (error) {
       console.log(error); 

@@ -5,81 +5,40 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { useAuthStore } from "../../hooks";
-import { Links } from "../../routes/Links";
-import { Collapse } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Collapse, Typography } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
-export default function MenuDrawer({navLinks}) {
+export default function MenuDrawer({ navLinks }) {
   const { navigate } = useAuthStore();
   const [open, setOpen] = useState({});
 
-  const handleClick = (title) => {
-    setOpen((prevOpen) => ({
-      ...prevOpen,
-      [title]: !prevOpen[title],
-    }));
-  };
+  const [expanded, setExpanded] = useState('');
 
+  const handleChange = (panel) => (event, newExpanded) => {
+    setExpanded(newExpanded ? panel : false);
+  };
   return (
     <Box sx={{ width: 250 }}>
-      <List
-        sx={{ width: '100%', maxWidth: 350 }}
-        component="nav"
-        aria-labelledby="nested-list-subheader"
+      
+        {navLinks.map((group, index) => (
+      <Accordion
+        key={index}
+        expanded={expanded === `panel${index}`}
+        onChange={handleChange(`panel${index}`)}
       >
-        {navLinks?.map((item, index) => (
-          // <React.Fragment key={index}>
-          //   <ListItemButton
-          //     onClick={() => {
-          //       if (item.subRoutes) {
-          //         handleClick(item.title);
-          //       } else {
-          //         navigate(item.pathMain || item.path, { replace: true });
-          //       }
-          //     }}
-          //   >
-          //     <ListItemIcon sx={{ color:'#fff'}} >
-          //       {item.Icon}
-          //     </ListItemIcon>
-          //     <ListItemText  sx={{marginLeft:'-20px'}} primary={item.title} />
-          //     {item.subRoutes ? (open[item.title] ? <ExpandLessIcon /> : <ExpandMoreIcon />) : null}
-          //   </ListItemButton>
-          //   {item.subRoutes && (
-          //     <Collapse in={open[item.title]} timeout="auto" unmountOnExit>
-          //       <List component="div" disablePadding>
-          //         {item.subRoutes.map((subItem, subIndex) => (
-          //           <ListItemButton
-          //             key={subIndex}
-          //             sx={{ pl: 3 }}
-          //             onClick={() => navigate(subItem.path, { replace: true })}
-          //           >
-          //             <ListItemIcon sx={{color:"primary.contrastText"}} >
-          //               {subItem.Icon}
-          //             </ListItemIcon>
-          //             <ListItemText primary={subItem.title} />
-          //           </ListItemButton>
-          //         ))}
-          //       </List>
-          //     </Collapse>
-          //   )}
-          // </React.Fragment>
-          <>
-          <ListItemButton
-          key={item.index}
-          onClick={()=>{
-            navigate(`${item.path}`, {replace:true})
-          }}
-          >
-
-          <ListItemText >
-            {item.name}
-          </ListItemText>
+        <AccordionSummary aria-controls={`panel${index}d-content`} id={`panel${index}d-header`}>
+          <Typography>{group.title}</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          {group.subRoutes.map((item, subIndex) => (
+            <ListItemButton key={subIndex} component="a" href={item.path}>
+            <ListItemText primary={item.name} />
           </ListItemButton>
-          </>
-        ))}
-        
-      </List>
+          ))}
+        </AccordionDetails>
+      </Accordion>
+    ))}
     </Box>
   );
 }
