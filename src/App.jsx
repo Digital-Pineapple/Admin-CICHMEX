@@ -1,29 +1,19 @@
 import { useEffect } from "react";
 import { useAuthStore } from "./hooks";
-import {PrivateRoutes} from "./routes/PrivateRoutes";
-import PublicRoutes from "./routes/PublicRoutes";
-
+import LoadingScreenBlue from "./components/ui/LoadingScreenBlue";
+import RoutesContainer from "./routes/RoutesContainer";
 
 const App = () => {
-  const { RevalidateToken, logged, token } = useAuthStore();
+  const { RevalidateToken, token, loading } = useAuthStore();
+
   useEffect(() => {
-    if (!!token) {
       RevalidateToken();
-    }
-  }, []);
-
-  
-  if (logged) {
-    return(
-      <PrivateRoutes/>
-    )
-  }else{
-    return (
-      <PublicRoutes/>
-    )
+  }, [])
+  if (loading) {
+    return <LoadingScreenBlue />;
   }
-  
 
+   return <RoutesContainer />;
 };
 
 export default App;

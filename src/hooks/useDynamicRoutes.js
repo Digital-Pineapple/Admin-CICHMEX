@@ -1,19 +1,46 @@
 import { useDispatch, useSelector } from "react-redux";
-import {
-  startLogin,
-  startLogout,
-  startPublicLinks,
-  startRevalidateToken,
-} from "../store";
 import { useNavigate } from "react-router-dom";
-import { AllRoutes } from "../routes/AllRoutes";
 import { startAddRoute } from "../store/actions/uiActions";
+import { AllRoutes } from "../routes/AllRoutes";
+import { startPrivateLinks, startPublicLinks } from "../store";
+import { useAuthStore } from "./useAuthStore";
+import { useEffect, useMemo } from "react";
 
 export const useDynamicRoutes = () => {
   const { loading, links } = useSelector((state) => state.ui);
+  const {logged}= useAuthStore()
   const dispatch = useDispatch();
   const navigate = useNavigate();
-    
+
+  const loadPrivateLinks = ()=> dispatch(startPrivateLinks())
+
+  const loadPublicLinks = () => dispatch(startPublicLinks())
+
+  useEffect(() => {
+      if (logged) {
+        loadPrivateLinks();
+      } else {
+        loadPublicLinks();
+      }
+  }, [logged]); // Se dispara cuando cambia `logged`
+
+
+  const componentLinks = () => {
+    const elLink = links.map((rdb) => {
+      const matchedComponent = AllRoutes.find((i) => i.id === rdb.component);
+      return {
+        path: rdb.path,
+        name: rdb.name,
+        element: matchedComponent
+          ? matchedComponent.element
+          : routeNotFound.element,
+      };
+    });
+    return elLink;
+  };
+
+  const memoizedComponentLinks = useMemo(() => componentLinks(), [links]);
+
 // Función para agrupar rutas
 const groupRoutes = (routes) => {
     const groupedRoutes = [];
@@ -24,6 +51,11 @@ const groupRoutes = (routes) => {
       
       // El título común será el primer segmento del path que no sea vacío
       const commonTitle = pathParts[1];
+
+       // Excluimos rutas que tienen parámetros dinámicos en su path, como :id
+    if (pathParts.some(part => part.startsWith(':'))) {
+      return; // Salimos del bucle sin procesar esta ruta
+    }
   
       if (commonTitle && !seenPaths[commonTitle]) {
         // Si no se ha visto antes, creamos un nuevo objeto con este título y subrutas
@@ -42,8 +74,14 @@ const groupRoutes = (routes) => {
         groupedRoutes.push(route);
       }
     });
-  
-    return groupedRoutes;
+  // Separar el primer grupo (si existe)
+  const [firstGroup, ...restGroups] = groupedRoutes;
+
+  // Ordenar alfabéticamente los grupos restantes por título
+  const sortedGroups = restGroups.sort((a, b) => a.title.localeCompare(b.title));
+
+  // Unir el primer grupo con los ordenados, manteniendo el primero intacto
+  return firstGroup ? [firstGroup, ...sortedGroups] : sortedGroups;
   };
   
   
@@ -54,6 +92,9 @@ const groupRoutes = (routes) => {
     groupRoutes,
     links,
     loading,
-    addRoute
+    addRoute,
+    componentLinks: memoizedComponentLinks,
+    loadPrivateLinks,
+    loadPublicLinks
   };
 };

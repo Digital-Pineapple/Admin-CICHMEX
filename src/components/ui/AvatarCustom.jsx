@@ -29,8 +29,6 @@ export default function AvatarCustom() {
   return (
     <React.Fragment>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-        <Typography sx={{ minWidth: 100 }}>Contact</Typography>
-        <Typography sx={{ minWidth: 100 }}>Profile</Typography>
         <Tooltip title="Account settings">
           <IconButton
             onClick={handleClick}
@@ -85,23 +83,17 @@ export default function AvatarCustom() {
           <Avatar /> {user?.email}
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <PersonAdd fontSize="small" />
-          </ListItemIcon>
-          Add another account
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
+        {/* <MenuItem onClick={handleClose}>
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
           Settings
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem onClick={()=>handleLogout()}>
           <ListItemIcon >
             <Logout fontSize="small" />
           </ListItemIcon>
-          Logout
+          Cerrar sesión
         </MenuItem>
       </Menu>
     </React.Fragment>

@@ -3,7 +3,6 @@ import { startLoading, stopLoading } from "../reducer/uiReducer";
 import { instanceApi } from "../../apis/configAxios";
 
 export const startAddRoute = (values,navigate) => {
-    console.log(values);
     
   return async (dispatch) => {
     dispatch(startLoading())

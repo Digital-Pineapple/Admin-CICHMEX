@@ -25,13 +25,7 @@ export const useUsers = () => {
 
     const addCarrier = async values => await dispatch(addOneCarrier(values,navigate))
 
-    const editUser = async (user_id, values) => 
-    {
-       const response =  await dispatch(editOneUser(user_id,values))
-        if(response){
-            navigate('/auth/usuarios', {replace:true})
-        }
-    }
+    const editUser = async (user_id, values) =>  await dispatch(editOneUser(user_id,values, navigate))
 
     const rowsCarrierDrivers = CarrierDrivers?.map((i, _id) => ({
         id: _id.toString(),

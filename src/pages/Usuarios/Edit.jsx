@@ -58,8 +58,12 @@ const Edit = () => {
       profile_image: "",
     },
     onSubmit: (values) => {
+      const values2 = {
+        ...values,
+        profile_image: values?.profile_image ? values?.profile_image : null,
+      };
       try {
-        editUser(user._id, values);
+        editUser(user._id, values2);
       } catch (error) {
         return enqueueSnackbar(`Error: ${error.response.data?.message}`, {
           variant: "error",
@@ -72,7 +76,7 @@ const Edit = () => {
     },
   });
   const outEdit = () => {
-    navigate("/auth/usuarios", { replace: true });
+    navigate("/usuarios", { replace: true });
   };
 
   return (

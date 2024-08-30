@@ -1,23 +1,18 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuthStore } from "../hooks";
-import { useEffect } from "react";
-import { themeSuperAdmin } from "../theme";
+import { useEffect, useState } from "react";
+import { themeAdminCarWashLight, themeAdminCichmexLight, themeSuperAdmin } from "../theme";
 import { ThemeProvider } from "@mui/material";
 import { NotFound } from "../pages/ui/NotFound";
-import { useDynamicRoutes } from "../hooks/useDynamicRoutes";
 import { Navbar } from "../components";
-const PublicRoutes = () => {
+import { useDynamicRoutes } from "../hooks/useDynamicRoutes";
+import LoadingScreenBlue from "../components/ui/LoadingScreenBlue";
+const RoutesContainer = () => {
   const { logged, user } = useAuthStore();
-  const { links, componentLinks, loadPublicLinks, loadPrivateLinks } = useDynamicRoutes();
-
-  useEffect(() => {
-    loadPublicLinks();
-    if (logged) {
-      loadPrivateLinks();
-    }
-  }, []);
-
-  const valuateLinks = () => {
+  const { componentLinks } = useDynamicRoutes();
+  const [theme, setTheme] = useState(themeSuperAdmin);
+  
+  const valuateTheme = () => {
     const system = user?.type_user?.system || [];
     let newTheme = themeSuperAdmin;
 
@@ -35,15 +30,15 @@ const PublicRoutes = () => {
   };
 
   return (
-    <ThemeProvider theme={themeSuperAdmin}>
+    <ThemeProvider theme={theme}>
       <Routes>
-        {componentLinks(links)?.map((item, index) => (
+        {componentLinks?.map((item, index) => (
           <Route key={index} path={item.path} element={item.element} />
         ))}
 
         {logged ? (
           <>
-            {componentLinks(links)?.map((item, index) => (
+            {componentLinks?.map((item, index) => (
               <Route
                 key={index}
                 path={item.path}
@@ -54,6 +49,7 @@ const PublicRoutes = () => {
                 }
               />
             ))}
+            <Route path="/" element={<Navigate to="/principal" replace />} />
             <Route path="*" element={<Navigate to="/principal" replace />} />
           </>
         ) : (
@@ -67,4 +63,4 @@ const PublicRoutes = () => {
   );
 };
 
-export default PublicRoutes;
+export default RoutesContainer;

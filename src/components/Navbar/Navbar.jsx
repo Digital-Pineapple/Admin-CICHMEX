@@ -10,13 +10,14 @@ import { useState } from "react";
 import AvatarCustom from "../ui/AvatarCustom";
 import { useDynamicRoutes } from "../../hooks/useDynamicRoutes";
 import MenuDrawer from "../Drawers/MenuDrawer";
-import { styled } from '@mui/material/styles';
-import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
-import MuiAccordion from '@mui/material/Accordion';
-import MuiAccordionSummary from '@mui/material/AccordionSummary';
-import MuiAccordionDetails from '@mui/material/AccordionDetails';
+import { styled } from "@mui/material/styles";
+import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
+import MuiAccordion from "@mui/material/Accordion";
+import MuiAccordionSummary from "@mui/material/AccordionSummary";
+import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import { useAuthStore } from "../../hooks";
 import { ListItemButton, ListItemText } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -24,55 +25,59 @@ const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
 ))(({ theme }) => ({
   border: `1px solid ${theme.palette.divider}`,
-  '&:not(:last-child)': {
+  "&:not(:last-child)": {
     borderBottom: 0,
   },
-  '&::before': {
-    display: 'none',
+  "&::before": {
+    display: "none",
   },
+  backgroundColor: `${theme.palette.primary.main}`,
+  color: `${theme.palette.primary.contrastText}`,
 }));
 
 const AccordionSummary = styled((props) => (
   <MuiAccordionSummary
-    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
+    expandIcon={
+      <ArrowForwardIosSharpIcon
+        sx={{ fontSize: "0.9rem", color: "primary.contrastText" }}
+      />
+    }
     {...props}
   />
 ))(({ theme }) => ({
-  backgroundColor: 'rgba(0, 0, 0, .03)',
-  flexDirection: 'row-reverse',
-  '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
-    transform: 'rotate(90deg)',
+  backgroundColor: "rgba(0, 0, 0, .03)",
+  flexDirection: "row-reverse",
+  "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
+    transform: "rotate(90deg)",
   },
-  '& .MuiAccordionSummary-content': {
+  "& .MuiAccordionSummary-content": {
     marginLeft: theme.spacing(1),
   },
 }));
 
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   padding: theme.spacing(2),
-  borderTop: '1px solid rgba(0, 0, 0, .125)',
+  borderTop: "1px solid rgba(0, 0, 0, .125)",
 }));
 
 export const Navbar = (props) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { links, groupRoutes } = useDynamicRoutes();
-  const [expanded, setExpanded] = useState('');
+  const [expanded, setExpanded] = useState("");
 
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
   };
-  const { navigate } = useAuthStore();
+  const { navigate, user } = useAuthStore();
 
   const listLinks = groupRoutes(links);
-  console.log(listLinks);
-  
 
   const handleButtonClick = () => {
     setDrawerOpen(!drawerOpen);
   };
-
-  const handleNavigation = (path) => {
-    navigate(path, { replace: true });
+  const handleNavigateClick = (value) => {
+    navigate(value, { replace: true });
+    setDrawerOpen(!drawerOpen);
   };
 
   return (
@@ -105,9 +110,9 @@ export const Navbar = (props) => {
             noWrap
             component="div"
           >
-            {props.user.fullname}
+            {user.fullname}
           </Typography>
-          <AvatarCustom ProfileImage={props.user.profile_image} />
+          <AvatarCustom />
         </Toolbar>
       </AppBar>
 
@@ -119,8 +124,8 @@ export const Navbar = (props) => {
           [`& .MuiDrawer-paper`]: {
             width: drawerWidth,
             boxSizing: "border-box",
-            bgcolor: "primary.main",
-            color: "primary.contrastText",
+            color: "primary.main",
+            backgroundColor: "primary.main",
           },
           display: { xs: "none", sm: "none", md: "flex" },
         }}
@@ -129,28 +134,46 @@ export const Navbar = (props) => {
         <MenuDrawer navLinks={listLinks} />
       </Drawer>
 
-      <Drawer anchor="left" open={drawerOpen} onClose={handleButtonClick}>
-  <Box sx={{ width: drawerWidth }}>
-    {listLinks.map((group, index) => (
-      <Accordion
-        key={index}
-        expanded={expanded === `panel${index}`}
-        onChange={handleChange(`panel${index}`)}
+      <Drawer
+        anchor="left"
+        sx={{
+          [`& .MuiDrawer-paper`]: {
+            width: drawerWidth,
+            boxSizing: "border-box",
+            color: "primary.main",
+            backgroundColor: "primary.main",
+          },
+        }}
+        open={drawerOpen}
+        onClose={handleButtonClick}
       >
-        <AccordionSummary aria-controls={`panel${index}d-content`} id={`panel${index}d-header`}>
-          <Typography>{group.title}</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          {group.subRoutes.map((item, subIndex) => (
-            <ListItemButton key={subIndex} component="a" href={item.path}>
-            <ListItemText primary={item.name} />
-          </ListItemButton>
+        <Box sx={{ width: drawerWidth, mt: { xs: "56px", sm: "65px" } }}>
+          {listLinks.map((group, index) => (
+            <Accordion
+              key={index}
+              expanded={expanded === `panel${index}`}
+              onChange={handleChange(`panel${index}`)}
+            >
+              <AccordionSummary
+                aria-controls={`panel${index}d-content`}
+                id={`panel${index}d-header`}
+              >
+                <Typography>{group.title}</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                {group.subRoutes.map((item, subIndex) => (
+                  <ListItemButton
+                    onClick={() => handleNavigateClick(item.path)}
+                    key={subIndex}
+                  >
+                    <ListItemText primary={item.name} />
+                  </ListItemButton>
+                ))}
+              </AccordionDetails>
+            </Accordion>
           ))}
-        </AccordionDetails>
-      </Accordion>
-    ))}
-  </Box>
-</Drawer>
+        </Box>
+      </Drawer>
 
       <Box component="main" sx={{ flexGrow: 1, p: 5 }}>
         <Toolbar />

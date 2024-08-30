@@ -149,7 +149,6 @@ export const AllRoutes = [
   { id: 58, element: <VerifySales /> },
   { id: 59, element: <DetailSale /> },
 
-  {id:60, element :<DynamicRoutes/>},
-  {id:61, element: <AddDynamicRoute/>}
+  { id: 60, element: <DynamicRoutes /> },
+  { id: 61, element: <AddDynamicRoute /> },
 ];
-

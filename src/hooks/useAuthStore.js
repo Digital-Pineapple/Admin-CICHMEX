@@ -23,47 +23,7 @@ export const useAuthStore = () => {
   const LoadPublicRoutes = async ()=>  dispatch(startPublicLinks());
   const loadLogout = async () => dispatch(startLogout(navigate));
 
-  const PrivateLinks = () => {
-    const elLink = []
-    const routeNotFound = AllRoutes.find((r) => r.id === 0);
-      links.map( (rdb) => {
-        const matchedComponent = AllRoutes.find(
-          (i) => i.id === rdb.component 
-        );
-        const elem = {
-          path:rdb.path,
-          name:rdb.name,
-          element: matchedComponent
-            ? matchedComponent.element
-            : routeNotFound.element,
-        };
-        elLink.push(elem)
-      })
-      return elLink;
-  };
-
-
-
-  
-
-  const PublicLinks = () => {
-    const elLink = []
-    const routeNotFound = AllRoutes.find((r) => r.id === 0);
-      links.map( (rdb) => {
-        const matchedComponent = AllRoutes.find(
-          (i) => i.id === rdb.component  
-        );
-        const elem = {
-          path:rdb.path,
-          name:rdb.name,
-          element: matchedComponent
-            ? matchedComponent.element
-            : routeNotFound.element,
-        };
-        elLink.push(elem)
-      })
-      return elLink;
-  };
+ 
   
   return {
     StartLogin,
@@ -73,10 +33,9 @@ export const useAuthStore = () => {
     logged,
     navigate,
     loadLogout,
-    PrivateLinks,
     links,
     LoadPublicRoutes,
-    PublicLinks,
     token,
+    dispatch
   };
 };
