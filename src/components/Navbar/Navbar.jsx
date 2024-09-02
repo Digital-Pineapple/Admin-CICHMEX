@@ -62,15 +62,15 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 
 export const Navbar = (props) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { links, groupRoutes } = useDynamicRoutes();
+  const { groupRoutes } = useDynamicRoutes();
   const [expanded, setExpanded] = useState("");
 
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
   };
-  const { navigate, user } = useAuthStore();
+  const { navigate, user, routes } = useAuthStore();
 
-  const listLinks = groupRoutes(links);
+  const listLinks = groupRoutes(routes);
 
   const handleButtonClick = () => {
     setDrawerOpen(!drawerOpen);

@@ -2,6 +2,20 @@ import { replace } from "formik";
 import { instanceApi } from "../../apis/configAxios";
 import { onLogin, onLogout } from "../reducer/authReducer";
 import { setLinks, startLoading, stopLoading } from "../reducer/uiReducer";
+import { createAsyncThunk } from "@reduxjs/toolkit/dist";
+
+export const fetchRoutes = createAsyncThunk('/auth/fetchRoutes', async (token) => {
+  const {data} = await instanceApi.get(`/dynamic-route/links`,{
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    params:{
+      system:"Admin"
+    }
+  });
+  return data.data;
+});
 
 export const startLogin = ( email, password, navigate ) => {
   return async (dispatch) => {
@@ -13,6 +27,7 @@ export const startLogin = ( email, password, navigate ) => {
       });
       localStorage.setItem("token", data.data.token);
       dispatch(onLogin(data.data.user));
+      await dispatch(fetchRoutes(data.data.token))
       navigate('/principal',  { replace: true });
     } catch (error) {
       dispatch(
@@ -36,7 +51,7 @@ export const startRevalidateToken = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-     
+      await dispatch(fetchRoutes(data.data.token))
       dispatch(onLogin(data.data.user))
     } catch (error) {
       dispatch(onLogout( error.response.data?.message || error.response.data.errors[0].message));
@@ -44,38 +59,6 @@ export const startRevalidateToken = () => {
       dispatch(stopLoading())
     }
 
-  };
-};
-export const startPublicLinks = () => {
-  return async (dispatch) => {
-    try {
-      const Links = await instanceApi.get("/dynamic-route/public-links", {
-        params: {
-          system: "Admin",
-        },
-      });
-      dispatch(setLinks(Links.data.data))
-    } catch (error) {
-      console.log(error);
-    }
-  };
-};
-export const startPrivateLinks = () => {
-  return async (dispatch) => {
-    try {
-      const Links = await instanceApi.get("/dynamic-route/Links", {
-        params: {
-          system: "Admin",
-        },
-        headers: {
-          "Content-type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      dispatch(setLinks(Links.data.data))
-    } catch (error) {
-      console.log(error);
-    }
   };
 };
 

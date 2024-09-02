@@ -1,70 +1,11 @@
-import { Navigate, Route, Routes } from "react-router-dom";
-import { useAuthStore } from "../hooks";
-import { useEffect } from "react";
-import { themeSuperAdmin } from "../theme";
-import { ThemeProvider } from "@mui/material";
-import { NotFound } from "../pages/ui/NotFound";
-import { useDynamicRoutes } from "../hooks/useDynamicRoutes";
-import { Navbar } from "../components";
-const PublicRoutes = () => {
-  const { logged, user } = useAuthStore();
-  const { links, componentLinks, loadPublicLinks, loadPrivateLinks } = useDynamicRoutes();
+import { Navigate, Outlet } from "react-router-dom";
 
-  useEffect(() => {
-    loadPublicLinks();
-    if (logged) {
-      loadPrivateLinks();
-    }
-  }, []);
-
-  const valuateLinks = () => {
-    const system = user?.type_user?.system || [];
-    let newTheme = themeSuperAdmin;
-
-    if (system.includes('CICHMEX') && system.includes("CARWASH")) {
-      newTheme = themeSuperAdmin;
-    } else if (system.includes('CICHMEX')) {
-      newTheme = themeAdminCichmexLight;
-    } else if (system.includes("CARWASH")) {
-      newTheme = themeAdminCarWashLight;
-    }
-
-    if (newTheme !== theme) {
-      setTheme(newTheme);
-    }
-  };
-
+export const PublicRoutes = ({children, redirectTo="/principal", isAllowed}) => {
+  if( isAllowed )
+{
   return (
-    <ThemeProvider theme={themeSuperAdmin}>
-      <Routes>
-        {componentLinks(links)?.map((item, index) => (
-          <Route key={index} path={item.path} element={item.element} />
-        ))}
-
-        {logged ? (
-          <>
-            {componentLinks(links)?.map((item, index) => (
-              <Route
-                key={index}
-                path={item.path}
-                element={
-                  <Navbar>
-                    {item.element}
-                  </Navbar>
-                }
-              />
-            ))}
-            <Route path="*" element={<Navigate to="/principal" replace />} />
-          </>
-        ) : (
-          <>
-            <Route path="/" element={<Navigate to="/login" replace />} />
-            <Route path="*" element={<NotFound />} />
-          </>
-        )}
-      </Routes>
-    </ThemeProvider>
+    <Navigate to={redirectTo} />
   );
+}
+return children ? children : <Outlet/>
 };
-
-export default PublicRoutes;

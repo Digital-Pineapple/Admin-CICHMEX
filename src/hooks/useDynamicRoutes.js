@@ -2,31 +2,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { startAddRoute } from "../store/actions/uiActions";
 import { AllRoutes } from "../routes/AllRoutes";
-import { startPrivateLinks, startPublicLinks } from "../store";
-import { useAuthStore } from "./useAuthStore";
-import { useEffect, useMemo } from "react";
 
 export const useDynamicRoutes = () => {
-  const { loading, links } = useSelector((state) => state.ui);
-  const {logged}= useAuthStore()
+  const { loading } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const loadPrivateLinks = ()=> dispatch(startPrivateLinks())
-
-  const loadPublicLinks = () => dispatch(startPublicLinks())
-
-  useEffect(() => {
-      if (logged) {
-        loadPrivateLinks();
-      } else {
-        loadPublicLinks();
-      }
-  }, [logged]); // Se dispara cuando cambia `logged`
 
 
-  const componentLinks = () => {
-    const elLink = links.map((rdb) => {
+  const componentLinks = (routes) => {
+    const routeNotFound =routes.find((e)=> e.id === 1)
+    const elLink = routes.map((rdb) => {
       const matchedComponent = AllRoutes.find((i) => i.id === rdb.component);
       return {
         path: rdb.path,
@@ -38,8 +24,6 @@ export const useDynamicRoutes = () => {
     });
     return elLink;
   };
-
-  const memoizedComponentLinks = useMemo(() => componentLinks(), [links]);
 
 // Función para agrupar rutas
 const groupRoutes = (routes) => {
@@ -89,12 +73,9 @@ const groupRoutes = (routes) => {
   
   
   return {
-    groupRoutes,
-    links,
-    loading,
-    addRoute,
-    componentLinks: memoizedComponentLinks,
-    loadPrivateLinks,
-    loadPublicLinks
+   loading,
+   componentLinks,
+   groupRoutes,
+   addRoute
   };
 };

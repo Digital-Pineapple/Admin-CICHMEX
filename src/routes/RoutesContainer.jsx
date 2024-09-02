@@ -1,17 +1,42 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuthStore } from "../hooks";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { themeAdminCarWashLight, themeAdminCichmexLight, themeSuperAdmin } from "../theme";
 import { ThemeProvider } from "@mui/material";
 import { NotFound } from "../pages/ui/NotFound";
 import { Navbar } from "../components";
 import { useDynamicRoutes } from "../hooks/useDynamicRoutes";
 import LoadingScreenBlue from "../components/ui/LoadingScreenBlue";
+import { Login } from "../pages/Login";
+import { PrivateRoutes } from "./PrivateRoutes";
+import Principal from "../pages/Principal";
+import { PublicRoutes } from "./PublicRoutes";
 const RoutesContainer = () => {
-  const { logged, user } = useAuthStore();
+  const { logged, user, routes } = useAuthStore();
   const { componentLinks } = useDynamicRoutes();
   const [theme, setTheme] = useState(themeSuperAdmin);
-  
+
+  useEffect(() => {
+    function valuateLayout() {
+      if (!!user && !!routes) {
+        valuateTheme()
+      }
+    }
+    valuateLayout()
+  }, [user, routes])
+
+  const match = useMemo(() => (componentLinks(routes)), [routes])
+
+  const routesList = () => {
+    const list = match.map((item, index) => {
+      return (
+        <Route path={item.path} element={item.element} key={index} />
+      )
+    })
+    return list
+  }
+
+
   const valuateTheme = () => {
     const system = user?.type_user?.system || [];
     let newTheme = themeSuperAdmin;
@@ -32,32 +57,15 @@ const RoutesContainer = () => {
   return (
     <ThemeProvider theme={theme}>
       <Routes>
-        {componentLinks?.map((item, index) => (
-          <Route key={index} path={item.path} element={item.element} />
-        ))}
-
-        {logged ? (
-          <>
-            {componentLinks?.map((item, index) => (
-              <Route
-                key={index}
-                path={item.path}
-                element={
-                  <Navbar>
-                    {item.element}
-                  </Navbar>
-                }
-              />
-            ))}
-            <Route path="/" element={<Navigate to="/principal" replace />} />
-            <Route path="*" element={<Navigate to="/principal" replace />} />
-          </>
-        ) : (
-          <>
-            <Route path="/" element={<Navigate to="/login" replace />} />
-            <Route path="*" element={<NotFound />} />
-          </>
-        )}
+      <Route element={<PublicRoutes isAllowed={!!logged} />}>
+        <Route path="/login" element={<Login />} />
+        <Route path="/*" element={<Login />} />
+        </Route>
+        <Route element={<Navbar><PrivateRoutes isAllowed={!!logged} redirectTo="/login" /></Navbar>}>
+          {routesList()}
+        <Route path="/principal" element={<Principal />} />
+        </Route>
+        
       </Routes>
     </ThemeProvider>
   );
