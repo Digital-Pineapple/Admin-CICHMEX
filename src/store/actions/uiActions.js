@@ -1,7 +1,7 @@
 import { enqueueSnackbar } from "notistack";
-import { startLoading, stopLoading } from "../reducer/uiReducer";
 import { instanceApi } from "../../apis/configAxios";
-import { createAsyncThunk } from "@reduxjs/toolkit/dist";
+import { startLoading, stopLoading } from "../reducer/uiReducer";
+import { loadDynamicRoutes } from "../reducer";
 
 export const startAddRoute = (values,navigate) => {
     
@@ -14,7 +14,7 @@ export const startAddRoute = (values,navigate) => {
              "Authorization": `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      enqueueSnackbar(`Error + ${data.message}`, {
+      enqueueSnackbar(`${data.message}`, {
         variant: "success",
         anchorOrigin: {
           vertical: "top",
@@ -36,6 +36,34 @@ export const startAddRoute = (values,navigate) => {
     }
   };
 };
+
+export const loadAllRoutes = () => {
+    
+  return async (dispatch) => {
+    dispatch(startLoading())
+    try {
+       const {data} = await instanceApi.get("/dynamic-route/all", {
+        headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      dispatch(loadDynamicRoutes(data.data))
+    } catch (error) {
+      enqueueSnackbar(`${error.response.data?.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    }finally{
+        dispatch(stopLoading())
+    }
+  };
+};
+
+
 
 
 

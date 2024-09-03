@@ -4,18 +4,20 @@ import LoadingScreenBlue from "./components/ui/LoadingScreenBlue";
 import RoutesContainer from "./routes/RoutesContainer";
 
 const App = () => {
-  const { RevalidateToken, token, loading } = useAuthStore();
+  const { RevalidateToken, token } = useAuthStore();
   const [loader, setLoader] = useState(false)
 
   useEffect(() => {
-    function check (){
+    setLoader(true)
+   async function check (){
       if(token)
-        RevalidateToken();
+       await RevalidateToken();
+      setLoader(false)
       }
       check();
   }, [token])
 
-  if (loading) {
+  if (loader) {
     return <LoadingScreenBlue />;
   }
    return <RoutesContainer />;

@@ -66,6 +66,7 @@ import { NotFound } from "../pages/ui/NotFound";
 import Unauthorized from "../pages/ui/Unauthorized";
 import AddDynamicRoute from "../pages/DynamicRoutes/AddDynamicRoute";
 import DynamicRoutes from "../pages/DynamicRoutes/DynamicRoutes";
+import EditDynamicRoute from "../pages/DynamicRoutes/EditDynamicRoute";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -151,4 +152,5 @@ export const AllRoutes = [
 
   { id: 60, element: <DynamicRoutes /> },
   { id: 61, element: <AddDynamicRoute /> },
+  { id: 62, element: <EditDynamicRoute /> },
 ];

@@ -27,6 +27,8 @@ import { editOneProduct } from "../../store/actions/productsActions";
 import DeleteAlert from "../../components/ui/DeleteAlert";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import {  useAuthStore } from "../../hooks";
+import { useDynamicRoutes } from "../../hooks/useDynamicRoutes";
+import CustomNoRows from "../../components/Tables/CustomNoRows";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -62,44 +64,13 @@ function CustomPagination(props) {
 
 const DynamicRoutes = () => {
   const {user} = useAuthStore()
-  const { loadProducts, navigate, deleteProduct, rowsProducts, loading } = useProducts();
+  const { loadDynamicRoutes, rowsRoutes, loading, navigate, deleteDynamicRoute } = useDynamicRoutes()
 
   useEffect(() => {
-    loadProducts()
+    loadDynamicRoutes()
   }, [user]);
 
   
-  const exportToExcel = () => {
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Productos");
-
-    // Agregar encabezados de columna
-    const headerRow = worksheet.addRow([
-      "Nombre del producto",
-      "Descripción",
-      "Precio",
-      "Tamaño",
-      "Código"
-    ]);
-    headerRow.eachCell((cell) => {
-      cell.font = { bold: true };
-    });
-
-    // Agregar datos de las filas
-    rowsProducts.forEach((row) => {
-      worksheet.addRow([row.name, row.description, row.price, row.size, row.tag]);
-    });
-
-    // Crear un Blob con el archivo Excel y guardarlo
-    workbook.xlsx.writeBuffer().then((buffer) => {
-      const blob = new Blob([buffer], {
-        type:
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      saveAs(blob, "productos.xlsx");
-    });
-  };
-
   function CustomToolbar() {
     const apiRef = useGridApiContext();
   
@@ -111,35 +82,27 @@ const DynamicRoutes = () => {
       <GridToolbarContainer sx={{justifyContent:'space-between'}}>
         <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
         <GridToolbarQuickFilter/>
-        <Button
-        variant="text"
-        startIcon={<Download/>}
-        disableElevation
-        sx={{ color: "secondary" }}
-        onClick={exportToExcel}
-      >
-        Descargar Excel
-      </Button>
       </GridToolbarContainer>
     );
   }
 
   if (loading) return (<LoadingScreenBlue/>)
+    
 
   return (
     <Grid container gap={2} maxWidth={'85vw'}>
       <Grid item marginTop={{xs:'-30px'}} xs={12} minHeight={'100px'} className="Titles">   
       <Typography textAlign={'center'} variant="h1" fontSize={{xs:'20px', sm:'30px', lg:'40px'}} >
-        Productos
+        Rutas
       </Typography>
       </Grid>
       <Grid item xs={12}>
         <Fab
           sx={{ right: "-80%" }}
-          onClick={() => navigate("/auth/CrearProducto")}
+          onClick={() => navigate("/Rutas/agregar")}
           color="secondary"
-          aria-label="Crear producto"
-          title="Crear producto"
+          aria-label="Agregar ruta"
+          title="Agregar ruta"
         >
           <Add />
         </Fab>
@@ -148,33 +111,27 @@ const DynamicRoutes = () => {
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
           {
-            field: "tag",
-            headerName: "Código",
+            field: "name",
+            headerName: "Nombre",
             flex: 1,
             align: "center",
           },
           {
-            field: "name",
+            field: "path",
             hideable: false,
-            headerName: "Nombre del prodcto",
-            flex: 1,
+            headerName: "Ruta",
+            flex: 2,
             sortable: false,
           },
           {
-            field: "price",
-            headerName: "Precio",
+            field: "authRequired",
+            headerName: "Autenticación",
             flex: 1,
             align: "center",
           },
           {
-            field: "Category",
-            headerName: "Categoria",
-            flex: 1,
-            align: "center",
-          },
-          {
-            field: "SubCategory",
-            headerName: "Subcategoria",
+            field: "rolesAllowed",
+            headerName: "Roles Permitidos",
             flex: 1,
             align: "center",
           },
@@ -188,12 +145,12 @@ const DynamicRoutes = () => {
             type: "actions",
             getActions: (params) => [
               <DeleteAlert
-                title={`¿Estas seguro de eliminar el producto ${params.row?.name}`}
-                callbackToDeleteItem={() => deleteProduct(params.row._id)}
+                title={`¿Estas seguro de eliminar la ruta: ${params.row?.name}`}
+                callbackToDeleteItem={() => deleteDynamicRoute(params.row._id)}
               />,
-              <Tooltip title='Editar Producto' >
+              <Tooltip title='Editar Ruta' >
 
-              <IconButton aria-label="Editar" color="success" onClick={()=>redirectPages(navigate,(params.row._id))} >
+              <IconButton aria-label="Editar" color="success" onClick={()=>(navigate(`/Rutas/editar/${params.row._id}`, {replace:true}))} >
                 <Edit />
               </IconButton> 
               </Tooltip>
@@ -210,7 +167,7 @@ const DynamicRoutes = () => {
           }
         }}
         density="compact"
-        rows={rowsProducts}
+        rows={rowsRoutes}
         pagination
         slots={{
           pagination: CustomPagination,
@@ -218,6 +175,7 @@ const DynamicRoutes = () => {
           columnSortedDescendingIcon: SortedDescendingIcon,
           columnSortedAscendingIcon: SortedAscendingIcon,
           columnUnsortedIcon: UnsortedIcon,
+          noRowsOverlay: CustomNoRows,
         }}
         disableColumnFilter
         disableColumnMenu

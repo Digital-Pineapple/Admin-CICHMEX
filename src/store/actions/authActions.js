@@ -5,7 +5,7 @@ import { setLinks, startLoading, stopLoading } from "../reducer/uiReducer";
 import { createAsyncThunk } from "@reduxjs/toolkit/dist";
 
 export const fetchRoutes = createAsyncThunk('/auth/fetchRoutes', async (token) => {
-  const {data} = await instanceApi.get(`/dynamic-route/links`,{
+  const {data} = await instanceApi.get(`/dynamic-route/links/all`,{
     headers: {
       "Content-type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -14,6 +14,7 @@ export const fetchRoutes = createAsyncThunk('/auth/fetchRoutes', async (token) =
       system:"Admin"
     }
   });
+  
   return data.data;
 });
 
@@ -51,7 +52,8 @@ export const startRevalidateToken = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      await dispatch(fetchRoutes(data.data.token))
+     await dispatch(fetchRoutes(data.data.token))
+     
       dispatch(onLogin(data.data.user))
     } catch (error) {
       dispatch(onLogout( error.response.data?.message || error.response.data.errors[0].message));

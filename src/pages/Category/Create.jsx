@@ -36,7 +36,7 @@ const CreateCategory = () => {
     },
   });
   const outCreate = () => {
-    navigate("/auth/categorias", { replace: true });
+    navigate("/mi-almacen/categorias", { replace: true });
   };
 
   return (

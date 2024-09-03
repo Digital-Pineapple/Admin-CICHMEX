@@ -52,7 +52,7 @@ const Create = () => {
   });
   
   const outCreate = () => {
-    navigate("/auth/SubCategorias", { replace: true });
+    navigate("/mi-almacen/subCategorias", { replace: true });
   };
 
   return (

@@ -87,7 +87,7 @@ export const addOneSubCategory = ({name, category_id, subCategory_image}, naviga
           horizontal: "right",
         },
       });
-      navigate('/auth/SubCategorias', {replace:true})
+      navigate('/mi-almacen/subcategorias', {replace:true})
       stopLoading()
     } catch (error) {
       enqueueSnackbar(`${error.response.data.message}`, {
@@ -121,7 +121,6 @@ export const deleteOneSubCategory = (id, navigate) => async (dispatch) => {
       },
     });
     dispatch(deleteSubCategory(id));
-    navigate('/auth/SubCategorias', {replace:true})
     dispatch(stopLoading())
   } catch (error) {
     enqueueSnackbar(
@@ -166,8 +165,9 @@ export const editOneSubCategory = (
           horizontal: "right",
         },
       });
-      navigate('/auth/SubCategorias',{replace:true})
-      dispatch(stopLoading())
+      console.log(data.data);
+      
+      dispatch(editSubCategory(data.data))
     } catch (error) {
       enqueueSnackbar(`${error.response.data.message}`, {
         variant: "error",
@@ -176,6 +176,8 @@ export const editOneSubCategory = (
           horizontal: "right",
         },
       });
+     
+    }finally{
       dispatch(stopLoading())
     }
   };

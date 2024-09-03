@@ -138,7 +138,7 @@ const {user} = useAuthStore()
       <Grid item xs={12}>
         <Fab
           sx={{ right: "-80%" }}
-          onClick={() => navigate("/auth/CrearSubCategoria")}
+          onClick={() => navigate("/mi-almacen/subcategorias/agregar")}
           color="secondary"
           aria-label="Agregar subcategoría"
           title="Agragar subcategoría"
@@ -178,7 +178,7 @@ const {user} = useAuthStore()
             type: "actions",
             getActions: (params) => [
              <DeleteAlert title={`¿Desea eliminar ${params.row.name}?`} callbackToDeleteItem={()=> deleteSubCategory(params.row._id)}/>,
-             <EditButton title={`Desea editar ${params.row.name}?`} callbackToEdit={()=>navigate(`/auth/SubCategorias/${params.row._id}`)} />
+             <EditButton title={`Desea editar ${params.row.name}?`} callbackToEdit={()=>navigate(`/mi-almacen/subcategorias/editar/${params.row._id}`)} />
             ],
           },
         ]}

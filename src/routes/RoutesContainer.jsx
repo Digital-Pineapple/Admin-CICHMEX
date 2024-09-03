@@ -1,7 +1,11 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuthStore } from "../hooks";
 import { useEffect, useMemo, useState } from "react";
-import { themeAdminCarWashLight, themeAdminCichmexLight, themeSuperAdmin } from "../theme";
+import {
+  themeAdminCarWashLight,
+  themeAdminCichmexLight,
+  themeSuperAdmin,
+} from "../theme";
 import { ThemeProvider } from "@mui/material";
 import { NotFound } from "../pages/ui/NotFound";
 import { Navbar } from "../components";
@@ -13,37 +17,35 @@ import Principal from "../pages/Principal";
 import { PublicRoutes } from "./PublicRoutes";
 const RoutesContainer = () => {
   const { logged, user, routes } = useAuthStore();
+
   const { componentLinks } = useDynamicRoutes();
   const [theme, setTheme] = useState(themeSuperAdmin);
 
   useEffect(() => {
     function valuateLayout() {
       if (!!user && !!routes) {
-        valuateTheme()
+        valuateTheme();
       }
     }
-    valuateLayout()
-  }, [user, routes])
+    valuateLayout();
+  }, [user, routes]);
 
-  const match = useMemo(() => (componentLinks(routes)), [routes])
+  const match = useMemo(() => componentLinks(routes), [routes]);
 
   const routesList = () => {
     const list = match.map((item, index) => {
-      return (
-        <Route path={item.path} element={item.element} key={index} />
-      )
-    })
-    return list
-  }
-
+      return <Route path={item.path} element={item.element} key={index} />;
+    });
+    return list;
+  };
 
   const valuateTheme = () => {
     const system = user?.type_user?.system || [];
     let newTheme = themeSuperAdmin;
 
-    if (system.includes('CICHMEX') && system.includes("CARWASH")) {
+    if (system.includes("CICHMEX") && system.includes("CARWASH")) {
       newTheme = themeSuperAdmin;
-    } else if (system.includes('CICHMEX')) {
+    } else if (system.includes("CICHMEX")) {
       newTheme = themeAdminCichmexLight;
     } else if (system.includes("CARWASH")) {
       newTheme = themeAdminCarWashLight;
@@ -53,19 +55,24 @@ const RoutesContainer = () => {
       setTheme(newTheme);
     }
   };
-
+  
   return (
     <ThemeProvider theme={theme}>
       <Routes>
-      <Route element={<PublicRoutes isAllowed={!!logged} />}>
-        <Route path="/login" element={<Login />} />
-        <Route path="/*" element={<Login />} />
+        <Route element={<PublicRoutes isAllowed={!!logged} />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/*" element={<Login />} />
         </Route>
-        <Route element={<Navbar><PrivateRoutes isAllowed={!!logged} redirectTo="/login" /></Navbar>}>
+        <Route
+          element={
+            <Navbar>
+              <PrivateRoutes isAllowed={!!logged} redirectTo="/principal" />
+            </Navbar>
+          }
+        >
           {routesList()}
-        <Route path="/principal" element={<Principal />} />
+          <Route path="/principal" element={<Principal />} />
         </Route>
-        
       </Routes>
     </ThemeProvider>
   );

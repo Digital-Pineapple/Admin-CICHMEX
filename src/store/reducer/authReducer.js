@@ -30,6 +30,7 @@ export const userReducer = createSlice({
           .addCase(fetchRoutes.fulfilled, (state, action) => {
             state.status = 'succeeded';
             state.routes = action.payload;
+           
           })
           .addCase(fetchRoutes.rejected, (state, action) => {
             state.status = 'failed';

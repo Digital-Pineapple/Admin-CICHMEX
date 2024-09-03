@@ -25,6 +25,7 @@ import AddButton2 from "../../components/Buttons/AddButton2";
 import { orange } from "@mui/material/colors";
 import { useAuthStore } from "../../hooks";
 import EntriesOutputsModal from "../../components/Modals/EntriesOutputsModal";
+import CustomNoRows from "../../components/Tables/CustomNoRows";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -251,6 +252,7 @@ const ProductOutputs = () => {
             columnSortedDescendingIcon: SortedDescendingIcon,
             columnSortedAscendingIcon: SortedAscendingIcon,
             columnUnsortedIcon: UnsortedIcon,
+            noRowsOverlay: CustomNoRows,
           }}
           disableColumnFilter
           disableColumnMenu
