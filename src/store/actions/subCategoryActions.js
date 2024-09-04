@@ -165,9 +165,8 @@ export const editOneSubCategory = (
           horizontal: "right",
         },
       });
-      console.log(data.data);
-      
       dispatch(editSubCategory(data.data))
+      navigate(`/mi-almacen/subcategorias`)
     } catch (error) {
       enqueueSnackbar(`${error.response.data.message}`, {
         variant: "error",

@@ -27,6 +27,7 @@ import { editOneProduct } from "../../store/actions/productsActions";
 import DeleteAlert from "../../components/ui/DeleteAlert";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import {  useAuthStore } from "../../hooks";
+import { replace } from "formik";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -136,7 +137,7 @@ const Products = () => {
       <Grid item xs={12}>
         <Fab
           sx={{ right: "-80%" }}
-          onClick={() => navigate("/auth/CrearProducto")}
+          onClick={() => navigate("/mi-almacen/productos/agregar")}
           color="secondary"
           aria-label="Crear producto"
           title="Crear producto"
@@ -193,7 +194,7 @@ const Products = () => {
               />,
               <Tooltip title='Editar Producto' >
 
-              <IconButton aria-label="Editar" color="success" onClick={()=>redirectPages(navigate,(params.row._id))} >
+              <IconButton aria-label="Editar" color="success" onClick={()=>navigate(`/mi-almacen/productos/editar/${params.row._id}`)} >
                 <Edit />
               </IconButton> 
               </Tooltip>

@@ -39,18 +39,19 @@ import ProfileImageUploader from "../../components/ui/ProfileImageUploader";
 import TextAreaInput from "../../components/inputs/TextAreaInput";
 import { AttachMoney } from "@mui/icons-material";
 import WordsInput from "../../components/inputs/WordsInput";
+import VideoUpdateField from "../../components/Forms/VideoUpdateField";
 
 const Edit = () => {
   const { id } = useParams();
-  const { loadProduct, product, editProduct, navigate, loading } =
+  const { loadProduct, product, editProduct, navigate, loading, updateVideo } =
     useProducts();
   const { categories, loadCategories } = useCategories();
+
   const {
     subCategoriesByCategory,
     loadSubCategories,
     loadSubCategoriesByCategory,
   } = useSubCategories();
-  const [video, setVideo] = useState(null);
   const StyledBadge = styled(Badge)(({ theme }) => ({
     "& .MuiBadge-badge": {
       right: 0,
@@ -67,21 +68,18 @@ const Edit = () => {
       description: product.description || "",
       shortDescription: product.shortDescription || "",
       brand: product.brand || "",
-      dimensions: product.dimensions | "",
+      dimensions: product.dimensions || "",
       price: product.price || "",
       porcentDiscount: product.porcentDiscount || "",
       discountPrice: product.discountPrice || "",
       size: product.size || "",
       tag: product.tag || "",
-      images: product.images || "",
       category: product.category?._id || "",
       subCategory: product.subCategory?._id || "",
       weight: product.weight || "",
-      thumbnail: product.thumbnail || "",
       seoDescription: product.seoDescription || "",
       seoKeywords: product.seoKeywords || "",
       product_key: product.product_key || "",
-      videos: product.videos || "",
     });
     loadCategories();
     loadSubCategories();
@@ -89,16 +87,28 @@ const Edit = () => {
   }, [product]);
 
   const formik = useFormik({
+    initialValues:{
+      name:  "",
+      description:  "",
+      shortDescription:  "",
+      brand:  "",
+      dimensions: "",
+      price:  "",
+      porcentDiscount:  "",
+      discountPrice: "",
+      size: "",
+      tag:  "",
+      category:  "",
+      subCategory: "",
+      weight:  "",
+      thumbnail: "",
+      seoDescription:  "",
+      seoKeywords: "",
+      product_key:  "",
+    },
     onSubmit: (values) => {
       try {
-        const values2 = {
-          ...values,
-          videos: [video],
-          thumbnail: formik.values?.profile_image,
-          images: imagesFiles(),
-        };
-
-        editProduct(id, values2, imagesFiles());
+        editProduct(id, values);
       } catch (error) {
         return enqueueSnackbar(
           `Error al editar ${error.response.data.message}`,
@@ -123,7 +133,7 @@ const Edit = () => {
   const { images, handleImageChange, deleteImage, imagesFiles } = useImages();
 
   const outEdit = () => {
-    navigate("/auth/productos", { replace: true });
+    navigate("/mi-almacen/productos", { replace: true });
   };
 
   if (loading) {
@@ -161,6 +171,7 @@ const Edit = () => {
       discountPrice: newTotalPrice,
     });
   };
+  
 
   return (
     <Grid
@@ -182,7 +193,7 @@ const Edit = () => {
           variant="h1"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-          Registar nuevo producto
+          Editar producto
         </Typography>
       </Grid>
       <Grid
@@ -460,10 +471,10 @@ const Edit = () => {
           <Grid container width={'100%'} display={'flex'} justifyContent={'space-between'} >
             
           <Grid item xs={12} lg={3}>
-            <VideoUploadField
-              setVideo={setVideo}
-              initialVideo={formik.values?.videos[0]}
-              label={"Subir video"}
+            <VideoUpdateField
+            videos={product.videos ? product.videos : null}
+            onSubmit={updateVideo}
+            idProduct={id}
             />
           </Grid>
           <Grid item xs={12} lg={3}>
@@ -595,7 +606,7 @@ const Edit = () => {
             Guardar Cambios
           </Button>
           <Button
-            onClick={() => navigate("/auth/Productos", { replace: true })}
+            onClick={() => outEdit()}
             variant="contained"
             color="warning"
           >

@@ -7,7 +7,7 @@ import {
   loadProductEntries,
   loadProductOutputs,
   loadProducts,
-  loadStockProducts,
+  onEditVideoProduct,
   onAddNewProduct,
 } from "../reducer/productsReducer";
 import {
@@ -289,7 +289,7 @@ export const addOneProduct =
           horizontal: "right",
         },
       });
-      navigate("/auth/productos", { replace: true });
+      navigate("/mi-almacen/productos", { replace: true });
     } catch (error) {
       
       enqueueSnackbar(`${error.response.data.message}`, {
@@ -299,7 +299,7 @@ export const addOneProduct =
           horizontal: "right",
         },
       });
-      dispatch(stopLoading());
+      
     }
     finally{
       dispatch(stopLoading());
@@ -309,60 +309,15 @@ export const addOneProduct =
 export const editOneProduct =
   (
     id,
-    {
-      name,
-      price,
-      description,
-      tag,
-      dimensions,
-      category,
-      subCategory,
-      weight,
-      videos,
-      brand,
-      discountPrice,
-      porcentDiscount,
-      product_key,
-      seoDescription,
-      shortDescription,
-      thumbnail,
-      seoKeywords,
-    },
+    values,
     images,
     navigate
   ) =>
   async (dispatch) => {
     try {
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("price", price);
-      formData.append("description", description);
-      formData.append("tag", tag);
-      formData.append("dimensions", dimensions);
-      formData.append("subCategory", subCategory);
-      formData.append("category", category);
-      formData.append("weight", weight);
-      formData.append("brand", brand);
-      formData.append("discountPrice", discountPrice);
-      formData.append("porcentDiscount", porcentDiscount);
-      formData.append("product_key", product_key);
-      formData.append("seoDescription", seoDescription);
-      formData.append("shortDescription", shortDescription);
-      formData.append("thumbnail", thumbnail);
-
-      for (let i = 0; i < images.length; i++) {
-        formData.append("images", images[i]);
-      }
-      for (let i = 0; i < seoKeywords.length; i++) {
-        formData.append("seoKeywords", seoKeywords[i]);
-      }
-      for (let i = 0; i < videos.length; i++) {
-        formData.append("videos", videos[i]);
-      }
-
       const { data } = await instanceApi.post(
-        `/product/${id}`,
-        formData,
+        `/product/updateInfo/${id}`,
+        {values},
         {
           headers: {
             "Content-Type": 'multipart/form-data',
@@ -378,9 +333,8 @@ export const editOneProduct =
           horizontal: "right",
         },
       });
-      navigate("/auth/productos", { replace: true });
+      // navigate("/m/productos", { replace: true });
     } catch (error) {
-      console.log(error);
 
       enqueueSnackbar(`Ocurrió un error + ${error.response.data.message}`, {
         variant: "error",
@@ -391,6 +345,51 @@ export const editOneProduct =
       });
     }
   };
+
+  export const updateProductVideos = (id, values)=>{  
+    const video2 = []
+    video2.push(values)
+    return async (dispatch) => {
+      dispatch(startLoading())
+      try {
+        const formData = new FormData();
+        for (let i = 0; i <video2.length; i++) {
+          formData.append("videos", video2[i]);
+        }
+        const { data } = await instanceApi.put(
+          `/product/updateVideo/${id}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        dispatch(onEditVideoProduct(data.data.videos));
+        enqueueSnackbar(`${data.message}`, {
+          variant: "success",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        });
+      } catch (error) {
+        console.log(error);
+        
+        enqueueSnackbar(`${error.response.data.message}`, {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        });
+      }finally{
+        dispatch(stopLoading())
+      }
+
+    }
+  }
 
 export const deleteOneProduct = (id) => {
   return async (dispatch) => {

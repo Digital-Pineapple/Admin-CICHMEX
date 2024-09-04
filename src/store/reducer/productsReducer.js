@@ -39,6 +39,9 @@ export const productsReducer = createSlice({
         cleanProductDetail(state){
           state.product = {}
         },
+        onEditVideoProduct(state,{payload}){
+          state.product.videos = payload
+        },
         editProduct: ( state, { payload } ) => {
             state.products = state.products.map(product => {
               if (product._id === payload._id) {
@@ -53,6 +56,6 @@ export const productsReducer = createSlice({
             });
           }}})
 
-export const { deleteProduct,editProduct,loadProduct, loadProductOutputs, loadStockProducts,loadProducts,onAddNewProduct, cleanProductDetail, loadProductEntries } = productsReducer.actions;
+export const { deleteProduct,editProduct,loadProduct,onEditVideoProduct, loadProductOutputs, loadStockProducts,loadProducts,onAddNewProduct, cleanProductDetail, loadProductEntries } = productsReducer.actions;
 
 export default productsReducer.reducer;

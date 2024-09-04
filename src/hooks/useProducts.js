@@ -13,6 +13,7 @@ import {
   startLoadOutputsProduct,
   startLoadProducts,
   startLoadStockProducts,
+  updateProductVideos,
 } from "../store/actions/productsActions";
 import { useNavigate } from "react-router-dom";
 import { cleanProductDetail } from "../store/reducer/productsReducer";
@@ -32,11 +33,8 @@ export const useProducts = () => {
   const loadOutputsProducts = async () => dispatch(startLoadOutputsProduct());
   const loadAllInputs  = async () =>dispatch(startLoadAllInputs())
   const loadAllOutputs  = async () =>dispatch(startLoadAllOutputs())
-
   const loadStockProducts = async () => dispatch(startLoadStockProducts());
-
   const loadNoStockProducts = async () => dispatch(startLoadNonExistProduct());
-
   const loadProduct = async (_id) => {
     dispatch(LoadOneProduct(_id));
   };
@@ -51,9 +49,10 @@ export const useProducts = () => {
     dispatch(startAddMultipleOutputs(values,navigate))
   }
 
-  const editProduct = async (id, values, images) =>
-    dispatch(editOneProduct(id, values, images, navigate));
-
+  const editProduct = async (id, values) =>
+    dispatch(editOneProduct(id, values,  navigate));
+  const updateVideo = ( id , values ) =>  {console.log(id,values)
+  , dispatch(updateProductVideos(id,values))}
   const deleteProduct = async (id) => dispatch(deleteOneProduct(id));
 
   const cleanProductD = () => dispatch(cleanProductDetail());
@@ -113,7 +112,7 @@ export const useProducts = () => {
     addMultipleEntries,
     loading,
     rowsAllOutputs,
-    addMultipleOutputs
-
+    addMultipleOutputs,
+    updateVideo
   };
 };
