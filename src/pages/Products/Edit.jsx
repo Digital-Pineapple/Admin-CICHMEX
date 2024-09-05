@@ -40,10 +40,12 @@ import TextAreaInput from "../../components/inputs/TextAreaInput";
 import { AttachMoney } from "@mui/icons-material";
 import WordsInput from "../../components/inputs/WordsInput";
 import VideoUpdateField from "../../components/Forms/VideoUpdateField";
+import ImageUpdateField from "../../components/Forms/ImageUpdateField";
+import DetailImagesUpdateField from "../../components/Forms/DetailImagesUpdateField";
 
 const Edit = () => {
   const { id } = useParams();
-  const { loadProduct, product, editProduct, navigate, loading, updateVideo } =
+  const { loadProduct, product, editProduct, navigate, loading, updateVideo, updateThumbnail, updateImages } =
     useProducts();
   const { categories, loadCategories } = useCategories();
 
@@ -130,7 +132,7 @@ const Edit = () => {
     }
   };
 
-  const { images, handleImageChange, deleteImage, imagesFiles } = useImages();
+
 
   const outEdit = () => {
     navigate("/mi-almacen/productos", { replace: true });
@@ -479,122 +481,23 @@ const Edit = () => {
           </Grid>
           <Grid item xs={12} lg={3}>
             <Typography marginTop={"10px"}>Imagen principal</Typography>
-            <ProfileImageUploader
-              formik={formik}
-              id={"thumbnail"}
-              name={"thumbnail"}
-              previewImage1={formik.values?.thumbnail}
-            />
+          <ImageUpdateField
+          onSubmit={updateThumbnail}
+          imageProduct={product.thumbnail ? product.thumbnail : null}
+          idProduct={id}
+          />
            
           </Grid>
-          <Grid item xs={12} lg={3}>
-          <Typography marginTop={"10px"}>
-            {" "}
-            Imagenes de detalle (peso max de imagen:500 kb)
-          </Typography>
-          {product.images?.length ? (
-              <SlideBranchesImages images={product?.images} altura={"300px"} />
-            ) : (
-              <Typography variant="body1" color="inherit">
-                No hay imagenes
-              </Typography>
-            )}
-          {images.length > 0 && (
-            <Grid item xs={12}>
-              <input
-                id="image"
-                name="image"
-                type="file"
-                accept="image/jpg"
-                onChange={handleImageChange}
-                hidden
-              />
-              <label htmlFor={"image"}>
-                <Button
-                  fullWidth
-                  component="span"
-                  color="primary"
-                  variant="contained"
-                >
-                  Agrega Fotos
-                </Button>
-              </label>
-            </Grid>
-          )}
-          {images.length ? (
-            <>
-              <Grid
-                container
-                display={"flex"}
-                justifyContent={"center"}
-                padding={"10px"}
-                marginTop={"20px"}
-                sx={{ backgroundColor: "#cfd8dc" }}
-                gap={2}
-              >
-                {images.map(({ id, filePreview }) => (
-                  <Grid item xs={12} sm={3} key={id}>
-                    <StyledBadge
-                      badgeContent={
-                        <IconButton
-                          sx={{ backgroundColor: "black", color: "black" }}
-                          onClick={() => deleteImage(id)}
-                        >
-                          {" "}
-                          <DeleteIcon
-                            sx={{ color: "white", fontSize: "20px" }}
-                          />{" "}
-                        </IconButton>
-                      }
-                    >
-                      <Avatar
-                        src={filePreview}
-                        variant="square"
-                        sx={{ width: "100%", height: "200px" }}
-                      />
-                    </StyledBadge>
-                  </Grid>
-                ))}
-              </Grid>
-            </>
-          ) : (
-            <Grid
-              container
-              sx={{ backgroundColor: "#cfd8dc" }}
-              display={"flex"}
-              flexDirection={"column"}
-              alignItems={"center"}
-              justifyContent={"center"}
-              marginTop={"20px"}
-              height={"300px"}
-              borderRadius={"5px"}
-            >
-              <FilterIcon
-                style={{
-                  fontSize: "40px",
-                  alignSelf: "center",
-                  marginBottom: "10px",
-                }}
-              />
 
-              <input
-                id="image"
-                name="image"
-                type="file"
-                accept="image/png, image/jpeg, image/jpg"
-                onChange={handleImageChange}
-                hidden
-              />
-              <label htmlFor={"image"}>
-                <Button component="span" color="primary" variant="contained">
-                  Agregar Fotos
-                </Button>
-              </label>
-            </Grid>
-          )}
-            
           </Grid>
-          </Grid>
+
+          <DetailImagesUpdateField
+          onSubmit={updateImages}
+          imagesProduct={product.images ? product.images : null}
+          idProduct={id}
+          />
+
+
 
         </CardContent>
       </Card>

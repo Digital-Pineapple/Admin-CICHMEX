@@ -9,6 +9,7 @@ import {
   loadProducts,
   onEditVideoProduct,
   onAddNewProduct,
+  onEditThumbnailProduct,
 } from "../reducer/productsReducer";
 import {
   headerConfigApplication,
@@ -376,6 +377,90 @@ export const editOneProduct =
         });
       } catch (error) {
         console.log(error);
+        
+        enqueueSnackbar(`${error.response.data.message}`, {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        });
+      }finally{
+        dispatch(stopLoading())
+      }
+
+    }
+  }
+
+  export const startUpdateThumbnail = (id, values)=>{    
+    return async (dispatch) => {
+      dispatch(startLoading())
+      try {
+        const formData = new FormData();
+        formData.append("thumbnail", values);
+        const { data } = await instanceApi.put(
+          `/product/updateThumbnail/${id}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        dispatch(onEditThumbnailProduct(data.data.thumbnail));
+        enqueueSnackbar(`${data.message}`, {
+          variant: "success",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        });
+      } catch (error) {
+        
+        enqueueSnackbar(`${error.response.data.message}`, {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        });
+      }finally{
+        dispatch(stopLoading())
+      }
+
+    }
+  }
+
+  export const startUpdateImages = (id, values)=>{    
+    return async (dispatch) => {
+      dispatch(startLoading())
+      const formData = new FormData
+      values.map((item) => {
+        if (item.file) {
+          formData.append(`images[${item.id}]`, item.file);
+        }
+      });      
+      try {
+        const { data } = await instanceApi.post(
+          `/product/updateImages/${id}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        dispatch(onEditThumbnailProduct(data.data.images));
+        enqueueSnackbar(`${data.message}`, {
+          variant: "success",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        });
+      } catch (error) {
         
         enqueueSnackbar(`${error.response.data.message}`, {
           variant: "error",

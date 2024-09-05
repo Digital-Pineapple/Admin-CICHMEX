@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { styled, Card, CardMedia, CardActions, Skeleton, Fab, Grid } from "@mui/material";
 import Swal from "sweetalert2";
 import { Cancel, Close, CloudDone, CloudUpload, Done, Edit } from "@mui/icons-material";
-import noVideo from "../../assets/Images/ui/novideo.png";
+import noImage from "../../assets/Images/ui/no-image.png";
 
 const style = {
   position: "absolute",
@@ -31,43 +31,41 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-const VideoUpdateField = ({
-  videos,
-  idProduct,
-  onSubmit,
-}) => {
+const ImageUpdateField = ({idProduct,imageProduct, onSubmit}) => {
   const [open, setOpen] = useState(false);
   const [loader, setloader] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
-    if(videos.length > 0){
-        setvideoPreview(videos[0])
+    if(imageProduct.length > 0){
+        setImagePreview(imageProduct)
     } 
     setOpen(false)};
-  const [videoPreview, setvideoPreview] = useState(null);
-  const [fileVideo, setFileVideo] = useState([]);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [fileImage, setFileImage] = useState([]);
 
   useEffect(() => {
-    if (videos !== null) {
-      setvideoPreview(videos);
+    if (imageProduct !== null) {
+        setImagePreview(imageProduct);
     }
-  }, [videos]);
+  }, [imageProduct]);
 
-  const handleUploadVideo = (event) => {
+  const handleUploadImage = (event) => {
     setloader(true);
     event.preventDefault();
-    setvideoPreview(null)
     const file = event.target.files[0];
-    setFileVideo(file);
-    const videoUrl = URL.createObjectURL(file);
-    setvideoPreview(videoUrl);
+    setFileImage(file);
+    const imageUrl = URL.createObjectURL(file);
+    setImagePreview(imageUrl);
     setloader(false);
   };
 
-  const handleSaveVideo  = () => {
-     onSubmit(idProduct,fileVideo),
-     setFileVideo([])
+  const handleSaveImage  = () => {
+    onSubmit(idProduct,fileImage);
+     setFileImage('')
      handleClose()
+  }
+  if (loader) {
+    return<Skeleton  variant="circular" width={40} height={40} />;
   }
 
 
@@ -78,10 +76,10 @@ const VideoUpdateField = ({
           <CardMedia>
             {open ? (
               <Skeleton variant="rectangular" width={250} height={'300px'}/>
-            ) : videoPreview !== null ? (
-              <video width="250" src={videoPreview} controls />
+            ) : imagePreview !== null ? (
+              <img width="300" src={imagePreview} />
             ) : (
-              <img src={noVideo} alt="No video available" />
+              <img src={noImage} alt="No image available" />
             )}
           </CardMedia>
         </CardMedia>
@@ -91,10 +89,10 @@ const VideoUpdateField = ({
             role={undefined}
             variant="contained"
             tabIndex={-1}
-            startIcon={videoPreview ? <Edit /> : <CloudUpload />}
+            startIcon={imagePreview ? <Edit /> : <CloudUpload />}
             onClick={() => handleOpen()}
           >
-            {videoPreview ? "Editar video" : "Subir video"}
+            {imagePreview ? "Editar " : "Subir "}
           </Button>
         </CardActions>
       </Card>
@@ -122,10 +120,10 @@ const VideoUpdateField = ({
             <CardMedia>
               {loader ? (
                 <Skeleton />
-              ) : videoPreview !== null ? (
-                <video width="250" src={videoPreview} controls />
+              ) : imagePreview !== null ? (
+                <img style={{objectFit:'contain'}} width="300" height={'500px'}   src={imagePreview}  />
               ) : (
-                <img src={noVideo} alt="No video available" />
+                <img src={noImage} alt="No image available" />
               )}
             </CardMedia>
             <CardActions>
@@ -139,8 +137,8 @@ const VideoUpdateField = ({
                 Editar
                 <VisuallyHiddenInput
                   type="file"
-                  accept="video/mp4"
-                  onChange={(e) => handleUploadVideo(e)}
+                  accept="image/png, image/jpeg "
+                  onChange={(e) => handleUploadImage(e)}
                 />
               </Button>
               <Button
@@ -149,7 +147,7 @@ const VideoUpdateField = ({
                 variant="contained"
                 tabIndex={-1}
                 startIcon={<CloudDone/>}
-                onClick={() => handleSaveVideo()}
+                onClick={() => handleSaveImage()}
               >
                 Guardar
               </Button>
@@ -161,4 +159,5 @@ const VideoUpdateField = ({
   );
 };
 
-export default VideoUpdateField;
+
+export default ImageUpdateField

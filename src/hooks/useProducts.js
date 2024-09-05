@@ -13,6 +13,8 @@ import {
   startLoadOutputsProduct,
   startLoadProducts,
   startLoadStockProducts,
+  startUpdateImages,
+  startUpdateThumbnail,
   updateProductVideos,
 } from "../store/actions/productsActions";
 import { useNavigate } from "react-router-dom";
@@ -51,8 +53,9 @@ export const useProducts = () => {
 
   const editProduct = async (id, values) =>
     dispatch(editOneProduct(id, values,  navigate));
-  const updateVideo = ( id , values ) =>  {console.log(id,values)
-  , dispatch(updateProductVideos(id,values))}
+  const updateVideo = ( id , values ) =>  dispatch(updateProductVideos(id,values))
+  const updateThumbnail = ( id , values ) =>  dispatch(startUpdateThumbnail(id,values))
+  const updateImages = ( id , values ) =>  dispatch(startUpdateImages(id,values))
   const deleteProduct = async (id) => dispatch(deleteOneProduct(id));
 
   const cleanProductD = () => dispatch(cleanProductDetail());
@@ -113,6 +116,8 @@ export const useProducts = () => {
     loading,
     rowsAllOutputs,
     addMultipleOutputs,
-    updateVideo
+    updateVideo,
+    updateThumbnail,
+    updateImages,
   };
 };
