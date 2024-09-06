@@ -14,7 +14,7 @@ const style = {
   transform: "translate(-50%, -50%)",
   width: 400,
   bgcolor: "background.paper",
-  border: "2px solid #000",
+  borderRadius:'20px',
   boxShadow: 24,
   p: 4,
 };
@@ -73,21 +73,22 @@ const VideoUpdateField = ({
 
   return (
     <div>
-      <Card variant="outlined">
+      <Card sx={{padding:2}} variant="outlined">
         <CardMedia>
-          <CardMedia>
+          <CardMedia sx={{display:'flex', justifyContent:'center'}} >
             {open ? (
               <Skeleton variant="rectangular" width={250} height={'300px'}/>
             ) : videoPreview !== null ? (
-              <video width="250" src={videoPreview} controls />
+              <video style={{borderRadius:'10px'}} width="250" src={videoPreview} controls />
             ) : (
               <img src={noVideo} alt="No video available" />
             )}
           </CardMedia>
         </CardMedia>
-        <CardActions>
+        <CardActions sx={{justifyContent:'center'}} >
           <Button
             component="label"
+            fullWidth
             role={undefined}
             variant="contained"
             tabIndex={-1}
@@ -118,17 +119,17 @@ const VideoUpdateField = ({
               <Close />
             </Fab>
             </Grid>
-          <Card variant="outlined">
-            <CardMedia>
+          <Card variant="elevation" >
+            <CardMedia sx={{display:'flex', justifyContent:'center'}}>
               {loader ? (
                 <Skeleton />
               ) : videoPreview !== null ? (
-                <video width="250" src={videoPreview} controls />
+                <video style={{borderRadius:'10px'}} width="250" src={videoPreview} controls />
               ) : (
                 <img src={noVideo} alt="No video available" />
               )}
             </CardMedia>
-            <CardActions>
+            <CardActions sx={{justifyContent:'center'}}>
               <Button
                 component="label"
                 role={undefined}
@@ -150,6 +151,7 @@ const VideoUpdateField = ({
                 tabIndex={-1}
                 startIcon={<CloudDone/>}
                 onClick={() => handleSaveVideo()}
+                color="success"
               >
                 Guardar
               </Button>

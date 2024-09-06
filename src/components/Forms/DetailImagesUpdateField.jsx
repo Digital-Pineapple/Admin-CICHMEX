@@ -12,7 +12,7 @@ import {
   Fab,
   Grid,
   CardContent,
-  ImageList,
+  ImageList,  
   ImageListItem,
   ButtonGroup,
 } from "@mui/material";
@@ -50,34 +50,31 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-const DetailImagesUpdateField = ({ idProduct, imagesProduct, onSubmit }) => {
+const DetailImagesUpdateField = ({ idProduct, imagesProduct, onSubmit, onDelete }) => {
   const [open, setOpen] = useState(false);
   const [loader, setloader] = useState(false);
   const handleOpen = () => setOpen(true);
   const [images, setImages]=useState([]);
-
   useEffect(() => {
     if (imagesProduct !== null) {
-      setImages(imagesProduct.map((item, index) => {
+      setImages(imagesProduct.map((item) => { 
         return {
-          id: index, // Asigna un nuevo id con uuidv4()
-          filePreview: item,
+          id: item._id, 
+          filePreview: item.url,
           file:null
 
         };
       }));
     }
   }, [imagesProduct]);
-  
-
  
   const handleClose = () => {
     setOpen(false);
     if (imagesProduct !== null) {
-        setImages(imagesProduct.map((item, index) => {
+        setImages(imagesProduct.map((item) => {
           return {
-            id: index, // Asigna un nuevo id con uuidv4()
-            filePreview: item,
+            id: item._id,
+            filePreview: item.url,
             file:''
   
           };
@@ -86,37 +83,15 @@ const DetailImagesUpdateField = ({ idProduct, imagesProduct, onSubmit }) => {
     setloader(false);
   };
 
-  const deleteImage=(id)=>{
-    let filteredImages=images.filter(image=>image.id !== id);
-    setImages(filteredImages);
+  const deleteImage=(product_id)=>{
+    onDelete(idProduct,product_id)
 }
 
-const handleImageChange = (e) => {
+const handleSubmitImage = (e) => {
     setloader(true);
     e.preventDefault();
-  
     let file = e.target.files[0];
-    if (!file) {
-      setloader(false); // Si no hay archivo seleccionado, desactiva el loader y termina
-      return;
-    }
-  
-    let filePreview = URL.createObjectURL(file);
-  
-    if (images.length === 5) {
-      setloader(false); // Si ya tienes 3 imágenes, desactiva el loader y termina
-      return;
-    }
-  
-    setImages((prev) => [
-      ...prev,
-      {
-        id: prev.length, // Usamos el índice como id
-        file,
-        filePreview
-      }
-    ]);
-  
+    onSubmit(idProduct,file)
     setloader(false);
   };
   
@@ -134,8 +109,8 @@ const handleImageChange = (e) => {
   return (
    
     <div>
-      <Card variant="elevation">
-        <CardMedia>
+      <Card sx={{padding:2}} variant="elevation">
+        <CardMedia sx={{display:'flex', justifyContent:'center'}}>
           {open ? (
             <Skeleton variant="rectangular" width={250} height={"300px"} />
           ) : images !== null ? (
@@ -161,8 +136,9 @@ const handleImageChange = (e) => {
             tabIndex={-1}
             startIcon={images ? <Edit /> : <CloudUpload />}
             onClick={() => handleOpen()}
+            fullWidth
           >
-            {images ? "Editar " : "Subir "}
+            {images ? "Editar imagenes " : "Subir "}
           </Button>
         </CardActions>
       </Card>
@@ -185,9 +161,9 @@ const handleImageChange = (e) => {
               <Close />
             </Fab>
           </Grid>
-          <Card variant="outlined">
-            <CardMedia>
-              <ImageList sx={{ width: 500, height: 450 }}>
+          <Card sx={{padding:2}} variant="elevation">
+            <CardMedia sx={{display:'flex', justifyContent:'center'}}>
+              <ImageList sx={{ width: '100%', height: 450 }}>
                 {images.map((item, index) => (
                     
                  <ImageListItem key={index}>
@@ -199,7 +175,7 @@ const handleImageChange = (e) => {
                       <Button
                         onClick={() => deleteImage(item.id)}
                         variant="contained"
-                        color="primary"
+                        color="warning"
                       >
                         Eliminar
                       </Button>
@@ -215,23 +191,15 @@ const handleImageChange = (e) => {
                 variant="contained"
                 tabIndex={-1}
                 startIcon={<CloudUpload />}
+                fullWidth
+                color="success"
               >
                 Agregar
                 <VisuallyHiddenInput
                   type="file"
                   accept="image/png, image/jpeg "
-                  onChange={(e) => handleImageChange(e)}
+                  onChange={(e) => handleSubmitImage(e)}
                 />
-              </Button>
-              <Button
-                component="label"
-                role={undefined}
-                variant="contained"
-                tabIndex={-1}
-                startIcon={<CloudDone />}
-                onClick={() => handleSaveImage()}
-              >
-                Guardar
               </Button>
             </CardActions>
           </Card>

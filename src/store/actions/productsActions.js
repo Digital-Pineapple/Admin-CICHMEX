@@ -10,6 +10,7 @@ import {
   onEditVideoProduct,
   onAddNewProduct,
   onEditThumbnailProduct,
+  onEditImagesProduct,
 } from "../reducer/productsReducer";
 import {
   headerConfigApplication,
@@ -432,18 +433,14 @@ export const editOneProduct =
     }
   }
 
-  export const startUpdateImages = (id, values)=>{    
+  export const startAddOneImage = (id, file)=>{    
+    
     return async (dispatch) => {
-      dispatch(startLoading())
-      const formData = new FormData
-      values.map((item) => {
-        if (item.file) {
-          formData.append(`images[${item.id}]`, item.file);
-        }
-      });      
+      const formData = new FormData()
+      formData.append(`image`, file);  
       try {
         const { data } = await instanceApi.post(
-          `/product/updateImages/${id}`,
+          `/product/addImageDetail/${id}`,
           formData,
           {
             headers: {
@@ -452,7 +449,7 @@ export const editOneProduct =
             },
           }
         );
-        dispatch(onEditThumbnailProduct(data.data.images));
+        dispatch(onEditImagesProduct(data.data.images));
         enqueueSnackbar(`${data.message}`, {
           variant: "success",
           anchorOrigin: {
@@ -461,7 +458,6 @@ export const editOneProduct =
           },
         });
       } catch (error) {
-        
         enqueueSnackbar(`${error.response.data.message}`, {
           variant: "error",
           anchorOrigin: {
@@ -469,8 +465,39 @@ export const editOneProduct =
             horizontal: "right",
           },
         });
-      }finally{
-        dispatch(stopLoading())
+      }
+
+    }
+  }
+  export const startDeleteOneImage = (id, image_id)=>{      
+    return async (dispatch) => {
+      try {
+        const { data } = await instanceApi.post(
+          `/product/deleteImageDetail/${id}`,
+          {imageId:image_id},
+          {
+            headers: {
+             "Content-type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        dispatch(onEditImagesProduct(data.data.images));
+        enqueueSnackbar(`${data.message}`, {
+          variant: "success",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        });
+      } catch (error) {
+        enqueueSnackbar(`${error.response.data.message}`, {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        });
       }
 
     }
@@ -541,7 +568,6 @@ export const startAddMultipleEntries = (values, navigate) => {
   };
 };
 export const startAddMultipleOutputs = (values, navigate) => {
-  console.log(values);
 
   return async (dispatch) => {
     try {

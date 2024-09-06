@@ -45,7 +45,7 @@ import DetailImagesUpdateField from "../../components/Forms/DetailImagesUpdateFi
 
 const Edit = () => {
   const { id } = useParams();
-  const { loadProduct, product, editProduct, navigate, loading, updateVideo, updateThumbnail, updateImages } =
+  const { loadProduct, product, editProduct, navigate, loading, updateVideo, updateThumbnail, addOneImage, deleteImageDetail } =
     useProducts();
   const { categories, loadCategories } = useCategories();
 
@@ -54,16 +54,11 @@ const Edit = () => {
     loadSubCategories,
     loadSubCategoriesByCategory,
   } = useSubCategories();
-  const StyledBadge = styled(Badge)(({ theme }) => ({
-    "& .MuiBadge-badge": {
-      right: 0,
-      top: 1,
-    },
-  }));
+
   useEffect(() => {
     loadProduct(id);
   }, [id]);
-
+  
   useEffect(() => {
     formik.setValues({
       name: product.name ? product.name : "",
@@ -480,25 +475,23 @@ const Edit = () => {
             />
           </Grid>
           <Grid item xs={12} lg={3}>
-            <Typography marginTop={"10px"}>Imagen principal</Typography>
           <ImageUpdateField
           onSubmit={updateThumbnail}
           imageProduct={product.thumbnail ? product.thumbnail : null}
           idProduct={id}
+          textButton='Editar imagen principal'
           />
            
           </Grid>
-
-          </Grid>
-
+          <Grid item xs={12} lg={5}>
           <DetailImagesUpdateField
-          onSubmit={updateImages}
+          onSubmit={addOneImage}
           imagesProduct={product.images ? product.images : null}
           idProduct={id}
+          onDelete={deleteImageDetail}
           />
-
-
-
+          </Grid>
+          </Grid>
         </CardContent>
       </Card>
       </Grid>

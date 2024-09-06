@@ -6,6 +6,8 @@ import {
   editOneProduct,
   startAddMultipleEntries,
   startAddMultipleOutputs,
+  startAddOneImage,
+  startDeleteOneImage,
   startLoadAllInputs,
   startLoadAllOutputs,
   startLoadEntriesProduct,
@@ -13,7 +15,6 @@ import {
   startLoadOutputsProduct,
   startLoadProducts,
   startLoadStockProducts,
-  startUpdateImages,
   startUpdateThumbnail,
   updateProductVideos,
 } from "../store/actions/productsActions";
@@ -55,7 +56,8 @@ export const useProducts = () => {
     dispatch(editOneProduct(id, values,  navigate));
   const updateVideo = ( id , values ) =>  dispatch(updateProductVideos(id,values))
   const updateThumbnail = ( id , values ) =>  dispatch(startUpdateThumbnail(id,values))
-  const updateImages = ( id , values ) =>  dispatch(startUpdateImages(id,values))
+  const addOneImage = ( id , file ) =>  dispatch(startAddOneImage(id,file))
+  const deleteImageDetail = (id, image_id)=>dispatch(startDeleteOneImage(id,image_id))
   const deleteProduct = async (id) => dispatch(deleteOneProduct(id));
 
   const cleanProductD = () => dispatch(cleanProductDetail());
@@ -118,6 +120,7 @@ export const useProducts = () => {
     addMultipleOutputs,
     updateVideo,
     updateThumbnail,
-    updateImages,
+    addOneImage,
+    deleteImageDetail
   };
 };
