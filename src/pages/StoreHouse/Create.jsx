@@ -9,7 +9,7 @@ import { useSubCategories } from "../../hooks/useSubCategories";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useStoreHouse } from "../../hooks/useStoreHouse";
-import { useAuth, useAuthStore } from "../../hooks";
+import {  useAuthStore } from "../../hooks";
 
 const CreateStoreHouse = () => {
   const { createStoreHouse } = useStoreHouse();

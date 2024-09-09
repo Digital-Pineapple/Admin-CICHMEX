@@ -141,7 +141,7 @@ const Categories = () => {
       <Grid item xs={12}>
         <Fab
           sx={{ right: "-80%" }}
-          onClick={() => navigate("/auth/CrearCategoria")}
+          onClick={() => navigate("/mi-almacen/categorias/agregar")}
           color="secondary"
           aria-label="Agregar categoría"
           title="Agragar categoría"
@@ -186,7 +186,7 @@ const Categories = () => {
               <EditButton
                 title={`Desea editar ${params.row.name}?`}
                 callbackToEdit={() =>
-                  navigate(`/auth/Categoria/${params.row._id}`)
+                  navigate(`/mi-almacen/categorias/editar/${params.row._id}`)
                 }
               />,
             ],

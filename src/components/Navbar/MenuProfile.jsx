@@ -10,9 +10,8 @@ import Tooltip from '@mui/material/Tooltip';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
-import { useSelector } from 'react-redux';
 
-export const  MenuProfile = ({src}) => {
+export const  MenuProfile = ({user}) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -21,9 +20,6 @@ export const  MenuProfile = ({src}) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const { user } = useSelector(
-    (state) => state.auth
-  );
   return (
     <React.Fragment>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
@@ -36,7 +32,7 @@ export const  MenuProfile = ({src}) => {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-            <Avatar src={user.user.profile_image} sx={{ width: 32, height: 32 }}></Avatar>
+            <Avatar src={user.profile_image} sx={{ width: 32, height: 32 }}></Avatar>
           </IconButton>
         </Tooltip>
       </Box>

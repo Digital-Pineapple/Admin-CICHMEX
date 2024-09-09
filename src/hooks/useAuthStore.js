@@ -1,70 +1,34 @@
 import { useDispatch, useSelector } from "react-redux";
-import { clearErrorMessage, onLogin, onLogout } from "../store";
+import {
+  startLogin,
+  startLogout,
+  startRevalidateToken,
+} from "../store";
 import { useNavigate } from "react-router-dom";
-import { instanceApi } from "../apis/configAxios";
-import Cookies from "js-cookie";
-import userApi from "../apis/userApi";
-import { headerConfig } from "../store/actions/headers";
+import { AllRoutes } from "../routes/AllRoutes";
 
 export const useAuthStore = () => {
-  const { status, user, errorMessage, logged} = useSelector(
-    (state) => state.auth
-  );
+  const { user, logged, routes } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const token = localStorage.getItem('token')
 
-  const StartLogin = async({email, password}) =>{
-      try {
-          const { data } = await instanceApi.post('/auth/admin/login', {email: email, password:password})
-          dispatch(onLogin(data.data.user));
-          Cookies.set('session', data.data.token, { expires : 7 });
-          navigate("/Principal", { replace: true });
-      } catch (error) {
-        console.log(error);
-        dispatch(
-          onLogout(
-            error.response.data?.message || error.response.data.errors[0].message
-          )
-        );
-        setTimeout(() => {
-          dispatch(clearErrorMessage());
-        }, 10);
-      }
-  }
+  const StartLogin = async (email, password) => dispatch(startLogin(email, password, navigate));
+  const RevalidateToken = async () => dispatch(startRevalidateToken());
+  const LoadPublicRoutes = async ()=>  dispatch(startPublicLinks());
+  const loadLogout = async () => dispatch(startLogout(navigate));
+
+ 
   
-
-
-  const RevalidateToken = async () => {
-    try {
-      const { data } = await instanceApi.get("/auth/user", headerConfig);
-      
-      dispatch(onLogin(data.data.user))
-    } catch (error) {
-      console.log(error);
-      dispatch(onLogout());
-      setTimeout(() => {
-        onLogout(
-          error.response.data?.message || error.response.data.errors[0].message
-        )
-      }, 10);
-    }
-  };
-
-
-  const startLogout = () => {
-    localStorage.clear()
-    dispatch(onLogout());
-  };
-
   return {
-    //* Propiedades
-    errorMessage,
-    status,
     user,
-    RevalidateToken,
     logged,
-    startLogout,
+    routes,
+    navigate,
+    token,
     StartLogin,
-    navigate
+    RevalidateToken,
+    LoadPublicRoutes,
+    loadLogout,
   };
 };

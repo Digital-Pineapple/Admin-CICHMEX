@@ -297,6 +297,7 @@ const CreateProduct = () => {
               name="dimensions"
               label="Ancho,Largo,Alto"
               variant="outlined"
+              type="text"
               value={formik.values.dimensions}
               onChange={formik.handleChange}
             />
@@ -551,7 +552,7 @@ const CreateProduct = () => {
             Crear
           </Button>
           <Button
-            onClick={() => navigate("/auth/Productos", { replace: true })}
+            onClick={() => navigate("/mi-almacen/productos", { replace: true })}
             variant="contained"
             color="warning"
           >

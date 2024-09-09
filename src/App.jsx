@@ -1,46 +1,26 @@
 import { useEffect, useState } from "react";
-
-import RoutesContainer from "./routes/RoutesContainer";
-import LoadingScreen from "./components/ui/LoadingScreen";
 import { useAuthStore } from "./hooks";
-// import { socket } from "./services/socket";
+import LoadingScreenBlue from "./components/ui/LoadingScreenBlue";
+import RoutesContainer from "./routes/RoutesContainer";
 
 const App = () => {
-  const { RevalidateToken, user } = useAuthStore();
-  const [loading, setLoading] = useState(true);
+  const { RevalidateToken, token } = useAuthStore();
+  const [loader, setLoader] = useState(false)
+
   useEffect(() => {
-    setTimeout(async()=>{
-      await RevalidateToken();
-      setLoading(false)
-    }, 500)
-  }, []);
-  // useEffect(() => {
-  //   socket.on("connection", () => {
-  //     console.log("Connected to socket server");
-  //   });
+    setLoader(true)
+   async function check (){
+      if(token)
+       await RevalidateToken();
+      setLoader(false)
+      }
+      check();
+  }, [token])
 
-  //   socket.on("disconnect", () => {
-  //     console.log("Disconnected from socket server");
-  //   });
-
-  //   // Manejo de otros eventos
-  //   socket.on("some_event", (data) => {
-  //     console.log("Received data:", data);
-  //   });
-
-  //   return () => {
-  //     socket.off("connect");
-  //     socket.off("disconnect");
-  //     socket.off("some_event");
-  //   };
-  // }, []);
-  return (
-    <>
-    {
-      loading ? <LoadingScreen /> : <RoutesContainer/>
-    }
-    </>
-  );
+  if (loader) {
+    return <LoadingScreenBlue />;
+  }
+   return <RoutesContainer />;
 };
 
 export default App;

@@ -1,4 +1,3 @@
-export * from './auth/authSlice'
 export * from './reducer/uiReducer'
 export * from './store'
 export * from './actions/authActions'

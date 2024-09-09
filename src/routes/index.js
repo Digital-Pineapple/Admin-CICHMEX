@@ -1,3 +1,3 @@
 export * from './Links'
 export * from './PrivateRoutes'
-export * from './PublicPages'
+export * from './PublicRoutes'

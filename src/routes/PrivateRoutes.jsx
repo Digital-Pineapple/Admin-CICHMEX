@@ -1,12 +1,12 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuthStore } from "../hooks";
 
+export const PrivateRoutes = ({children, redirectTo="/login", isAllowed}) => {
 
-const PrivateRoutes = ({ children }) => {
-  const { logged } = useAuthStore();
-  
-  return logged ? children : <Navigate to={'/'}/>
-  
+  if( !isAllowed )
+{
+  return (
+    <Navigate to={redirectTo} />
+  );
+}
+return children ? children : <Outlet/>
 };
-
-export default PrivateRoutes;

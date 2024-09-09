@@ -39,29 +39,26 @@ import ProfileImageUploader from "../../components/ui/ProfileImageUploader";
 import TextAreaInput from "../../components/inputs/TextAreaInput";
 import { AttachMoney } from "@mui/icons-material";
 import WordsInput from "../../components/inputs/WordsInput";
+import VideoUpdateField from "../../components/Forms/VideoUpdateField";
+import ImageUpdateField from "../../components/Forms/ImageUpdateField";
+import DetailImagesUpdateField from "../../components/Forms/DetailImagesUpdateField";
 
 const Edit = () => {
   const { id } = useParams();
-  const { loadProduct, product, editProduct, navigate, loading } =
+  const { loadProduct, product, editProduct, navigate, loading, updateVideo, updateThumbnail, addOneImage, deleteImageDetail } =
     useProducts();
   const { categories, loadCategories } = useCategories();
+
   const {
     subCategoriesByCategory,
     loadSubCategories,
     loadSubCategoriesByCategory,
   } = useSubCategories();
-  const [video, setVideo] = useState(null);
-  const StyledBadge = styled(Badge)(({ theme }) => ({
-    "& .MuiBadge-badge": {
-      right: 0,
-      top: 1,
-    },
-  }));
+
   useEffect(() => {
     loadProduct(id);
   }, [id]);
-
-
+  
   useEffect(() => {
     formik.setValues({
       name: product.name ? product.name : "",
@@ -74,15 +71,12 @@ const Edit = () => {
       discountPrice: product.discountPrice || "",
       size: product.size || "",
       tag: product.tag || "",
-      images: product.images || "",
       category: product.category?._id || "",
       subCategory: product.subCategory?._id || "",
       weight: product.weight || "",
-      thumbnail: product.thumbnail || "",
       seoDescription: product.seoDescription || "",
       seoKeywords: product.seoKeywords || "",
       product_key: product.product_key || "",
-      videos: product.videos || "",
     });
     loadCategories();
     loadSubCategories();
@@ -90,16 +84,28 @@ const Edit = () => {
   }, [product]);
 
   const formik = useFormik({
+    initialValues:{
+      name:  "",
+      description:  "",
+      shortDescription:  "",
+      brand:  "",
+      dimensions: "",
+      price:  "",
+      porcentDiscount:  "",
+      discountPrice: "",
+      size: "",
+      tag:  "",
+      category:  "",
+      subCategory: "",
+      weight:  "",
+      thumbnail: "",
+      seoDescription:  "",
+      seoKeywords: "",
+      product_key:  "",
+    },
     onSubmit: (values) => {
       try {
-        const values2 = {
-          ...values,
-          videos: [video],
-          thumbnail: formik.values?.profile_image,
-          images: imagesFiles(),
-        };
-
-        editProduct(id, values2, imagesFiles());
+        editProduct(id, values);
       } catch (error) {
         return enqueueSnackbar(
           `Error al editar ${error.response.data.message}`,
@@ -121,10 +127,10 @@ const Edit = () => {
     }
   };
 
-  const { images, handleImageChange, deleteImage, imagesFiles } = useImages();
+
 
   const outEdit = () => {
-    navigate("/auth/productos", { replace: true });
+    navigate("/mi-almacen/productos", { replace: true });
   };
 
   if (loading) {
@@ -162,6 +168,7 @@ const Edit = () => {
       discountPrice: newTotalPrice,
     });
   };
+  
 
   return (
     <Grid
@@ -183,7 +190,7 @@ const Edit = () => {
           variant="h1"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-          Registar nuevo producto
+          Editar producto
         </Typography>
       </Grid>
       <Grid
@@ -462,131 +469,30 @@ const Edit = () => {
           <Grid container width={'100%'} display={'flex'} justifyContent={'space-between'} >
             
           <Grid item xs={12} lg={3}>
-            <VideoUploadField
-              setVideo={setVideo}
-              initialVideo={formik.values?.videos[0]}
-              label={"Subir video"}
+            <VideoUpdateField
+            videos={product.videos ? product.videos : null}
+            onSubmit={updateVideo}
+            idProduct={id}
             />
           </Grid>
           <Grid item xs={12} lg={3}>
-            <Typography marginTop={"10px"}>Imagen principal</Typography>
-            <ProfileImageUploader
-              formik={formik}
-              id={"thumbnail"}
-              name={"thumbnail"}
-              previewImage1={formik.values?.thumbnail}
-            />
+          <ImageUpdateField
+          onSubmit={updateThumbnail}
+          imageProduct={product.thumbnail ? product.thumbnail : null}
+          idProduct={id}
+          textButton='Editar imagen principal'
+          />
            
           </Grid>
-          <Grid item xs={12} lg={3}>
-          <Typography marginTop={"10px"}>
-            {" "}
-            Imagenes de detalle (peso max de imagen:500 kb)
-          </Typography>
-          {product.images?.length ? (
-              <SlideBranchesImages images={product?.images} altura={"300px"} />
-            ) : (
-              <Typography variant="body1" color="inherit">
-                No hay imagenes
-              </Typography>
-            )}
-          {images.length > 0 && (
-            <Grid item xs={12}>
-              <input
-                id="image"
-                name="image"
-                type="file"
-                accept="image/jpg"
-                onChange={handleImageChange}
-                hidden
-              />
-              <label htmlFor={"image"}>
-                <Button
-                  fullWidth
-                  component="span"
-                  color="primary"
-                  variant="contained"
-                >
-                  Agrega Fotos
-                </Button>
-              </label>
-            </Grid>
-          )}
-          {images.length ? (
-            <>
-              <Grid
-                container
-                display={"flex"}
-                justifyContent={"center"}
-                padding={"10px"}
-                marginTop={"20px"}
-                sx={{ backgroundColor: "#cfd8dc" }}
-                gap={2}
-              >
-                {images.map(({ id, filePreview }) => (
-                  <Grid item xs={12} sm={3} key={id}>
-                    <StyledBadge
-                      badgeContent={
-                        <IconButton
-                          sx={{ backgroundColor: "black", color: "black" }}
-                          onClick={() => deleteImage(id)}
-                        >
-                          {" "}
-                          <DeleteIcon
-                            sx={{ color: "white", fontSize: "20px" }}
-                          />{" "}
-                        </IconButton>
-                      }
-                    >
-                      <Avatar
-                        src={filePreview}
-                        variant="square"
-                        sx={{ width: "100%", height: "200px" }}
-                      />
-                    </StyledBadge>
-                  </Grid>
-                ))}
-              </Grid>
-            </>
-          ) : (
-            <Grid
-              container
-              sx={{ backgroundColor: "#cfd8dc" }}
-              display={"flex"}
-              flexDirection={"column"}
-              alignItems={"center"}
-              justifyContent={"center"}
-              marginTop={"20px"}
-              height={"300px"}
-              borderRadius={"5px"}
-            >
-              <FilterIcon
-                style={{
-                  fontSize: "40px",
-                  alignSelf: "center",
-                  marginBottom: "10px",
-                }}
-              />
-
-              <input
-                id="image"
-                name="image"
-                type="file"
-                accept="image/png, image/jpeg, image/jpg"
-                onChange={handleImageChange}
-                hidden
-              />
-              <label htmlFor={"image"}>
-                <Button component="span" color="primary" variant="contained">
-                  Agregar Fotos
-                </Button>
-              </label>
-            </Grid>
-          )}
-            
+          <Grid item xs={12} lg={5}>
+          <DetailImagesUpdateField
+          onSubmit={addOneImage}
+          imagesProduct={product.images ? product.images : null}
+          idProduct={id}
+          onDelete={deleteImageDetail}
+          />
           </Grid>
           </Grid>
-
         </CardContent>
       </Card>
       </Grid>
@@ -597,7 +503,7 @@ const Edit = () => {
             Guardar Cambios
           </Button>
           <Button
-            onClick={() => navigate("/auth/Productos", { replace: true })}
+            onClick={() => outEdit()}
             variant="contained"
             color="warning"
           >

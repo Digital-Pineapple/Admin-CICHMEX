@@ -290,8 +290,10 @@ export const StartLoadResumeSales = () => {
       });
       dispatch(startLoadResume(data.data), stopLoading());
     } catch (error) {
+      console.log(error);
+      
       enqueueSnackbar(
-        `${error.response.data.message}|| 'Error al consultar información'`,
+        `${error.response.data.message}`,
         {
           anchorOrigin: { horizontal: "center", vertical: "top" },
           variant: "error",

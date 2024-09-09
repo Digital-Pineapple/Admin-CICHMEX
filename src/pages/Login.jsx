@@ -19,7 +19,7 @@ import {
   VisibilityOff,
 } from "@mui/icons-material";
 import { Controller, useForm } from "react-hook-form";
-import { useAuth, useAuthStore } from "../hooks";
+import { useAuthStore } from "../hooks";
 import Image from "mui-image";
 import logo from "../assets/Images/logotipo.png";
 import LogoCHMX from "../assets/Images/CHMX/Imagotipo CHMX Blanco.png";
@@ -34,12 +34,15 @@ export const Login = () => {
     },
   });
 
-  const { login } = useAuth();
+  const { StartLogin } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+  const onSubmit = (data) => {
+    StartLogin(data.email, data.password);
+};
 
   return (
     <>
@@ -99,7 +102,7 @@ export const Login = () => {
         <Grid
           component="form"
           autoComplete="off"
-          onSubmit={handleSubmit(login)}
+          onSubmit={handleSubmit(onSubmit)}
           borderRadius={"20px"}
           border={"4px solid"}
           borderColor={blue[900]}

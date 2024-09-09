@@ -8,19 +8,14 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
-import IconoAvatar from '../../assets/Images/Icono App.png'
-import { Logout } from '@mui/icons-material';
-import { useSelector } from 'react-redux';
+import PersonAdd from '@mui/icons-material/PersonAdd';
+import Settings from '@mui/icons-material/Settings';
+import Logout from '@mui/icons-material/Logout';
 import { useAuthStore } from '../../hooks';
 
-const AvatarCustom = ({ProfileImage}) => {
-  const {startLogout, navigate}= useAuthStore()
-
+export default function AvatarCustom() {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const {user} = useSelector(
-    (state) => state.auth
-  );
-
+  const {user, loadLogout} = useAuthStore()
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -28,17 +23,13 @@ const AvatarCustom = ({ProfileImage}) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const NavigateToProfile = () =>{
-    navigate('/Home', {replace :true})
+  const handleLogout = () => {
+    loadLogout()
   }
-  const CloseSession = () => {
-    startLogout()
-  }
-
   return (
     <React.Fragment>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-        <Tooltip title="Opciones">
+        <Tooltip title="Account settings">
           <IconButton
             onClick={handleClick}
             size="small"
@@ -47,7 +38,7 @@ const AvatarCustom = ({ProfileImage}) => {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-            <Avatar src={ProfileImage? ProfileImage:IconoAvatar} sx={{ width: 40, height: 40 }}></Avatar>
+            <Avatar sx={{ width: 32, height: 32 }} src={user.profile_image}>M</Avatar>
           </IconButton>
         </Tooltip>
       </Box>
@@ -56,44 +47,50 @@ const AvatarCustom = ({ProfileImage}) => {
         id="account-menu"
         open={open}
         onClose={handleClose}
-        onClick={NavigateToProfile}
-        PaperProps={{
-          elevation: 0,
-          sx: {
-            overflow: 'visible',
-            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-            mt: 1.5,
-            '& .MuiAvatar-root': {
-              width: 25,
-              height: 25,
-              ml: -0.5,
-              mr: 1,
-            },
-            '&:before': {
-              content: '""',
-              display: 'block',
-              position: 'absolute',
-              top: 0,
-              right: 14,
-              width: 10,
-              height: 10,
-              bgcolor: 'background.paper',
-              transform: 'translateY(-50%) rotate(45deg)',
-              zIndex: 0,
+        onClick={handleClose}
+        slotProps={{
+          paper: {
+            elevation: 0,
+            sx: {
+              overflow: 'visible',
+              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+              mt: 1.5,
+              '& .MuiAvatar-root': {
+                width: 32,
+                height: 32,
+                ml: -0.5,
+                mr: 1,
+              },
+              '&::before': {
+                content: '""',
+                display: 'block',
+                position: 'absolute',
+                top: 0,
+                right: 14,
+                width: 10,
+                height: 10,
+                bgcolor: 'background.paper',
+                transform: 'translateY(-50%) rotate(45deg)',
+                zIndex: 0,
+              },
             },
           },
         }}
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <Typography textAlign={'center'} fontWeight={'Bold'} variant='body1'>{user.email}</Typography>
-        <Divider/>
-        <MenuItem   onClick={handleClose}>
-          <Avatar  src={ProfileImage? ProfileImage:''} /> Mi cuenta
+        <MenuItem onClick={handleClose}>
+          <Avatar /> {user?.email}
         </MenuItem>
         <Divider />
-        <MenuItem onClick={CloseSession}>
+        {/* <MenuItem onClick={handleClose}>
           <ListItemIcon>
+            <Settings fontSize="small" />
+          </ListItemIcon>
+          Settings
+        </MenuItem> */}
+        <MenuItem onClick={()=>handleLogout()}>
+          <ListItemIcon >
             <Logout fontSize="small" />
           </ListItemIcon>
           Cerrar sesión
@@ -102,5 +99,3 @@ const AvatarCustom = ({ProfileImage}) => {
     </React.Fragment>
   );
 }
-
-export default AvatarCustom

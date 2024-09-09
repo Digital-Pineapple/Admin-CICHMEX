@@ -1,6 +1,5 @@
 
-
-const redirectPages = (navigate, route) => {
+const redirectPages = (navigate,route) => {
     navigate(route,{replace:true})
 }
 

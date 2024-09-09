@@ -144,7 +144,7 @@ const AddEntries = () => {
       </Grid>
       <Grid item xs={12} lg={6}>
       <ButtonGroup fullWidth variant="text" color="primary" aria-label="">
-      <Button  variant="contained" onClick={()=>navigate('/auth/MiAlmacen/entradas')} color="error">
+      <Button  variant="contained" onClick={()=>navigate('/mi-almacen/productos/entradas')} color="error">
         Salir
       </Button>
          <Button  variant="contained" onClick={handleSubmit(onSubmit)} color="success">

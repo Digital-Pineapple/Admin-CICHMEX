@@ -4,6 +4,7 @@ import {
   loadCategories,
   loadCategory,
   deleteCategory,
+  editCategory,
 } from "../reducer/categoryReducer";
 import {
   headerConfig,
@@ -14,16 +15,16 @@ import { startLoading, stopLoading } from "../reducer/uiReducer";
 
 export const startLoadCategories = () => {
   return async (dispatch) => {
-    dispatch(startLoading())
+    dispatch(startLoading());
     try {
-      const { data } = await instanceApi.get("/category", 
-        {headers: {
+      const { data } = await instanceApi.get("/category", {
+        headers: {
           "Content-type": "application/json",
-           "Authorization": `Bearer ${localStorage.getItem("token")}`,
-      },}
-      );
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       dispatch(loadCategories(data.data));
-     
+      dispatch(stopLoading());
     } catch (error) {
       enqueueSnackbar(`Ocurrió un error al cargar las categorias + ${error}`, {
         variant: "error",
@@ -32,10 +33,7 @@ export const startLoadCategories = () => {
           horizontal: "right",
         },
       });
-   
-    }
-    finally{
-      dispatch(stopLoading())
+      dispatch(stopLoading());
     }
   };
 };
@@ -67,8 +65,8 @@ export const addOneCategory =
       await instanceApi.post(`/category/`, formData, {
         headers: {
           "Content-type": "/multipart/form-data",
-           "Authorization": `Bearer ${localStorage.getItem("token")}`,
-      },
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
       enqueueSnackbar("Categoria creada con éxito", {
         variant: "success",
@@ -77,7 +75,7 @@ export const addOneCategory =
           horizontal: "right",
         },
       });
-      navigate("/auth/categorias", { replace: true });
+      navigate("/mi-almacen/categorias", { replace: true });
     } catch (error) {
       enqueueSnackbar(`Error : ${error.response.data?.message}`, {
         variant: "error",
@@ -110,6 +108,7 @@ export const editOneCategory = (
   navigate
 ) => {
   return async (dispatch) => {
+    dispatch(startLoading());
     try {
       const formData = new FormData();
       formData.append("name", name);
@@ -117,11 +116,16 @@ export const editOneCategory = (
       const { data } = await instanceApi.patch(
         `/category/${category_id}`,
         formData,
-        headerConfigFormData
+        {
+          headers: {
+            "Content-type": "/multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
-     
-      navigate(`/auth/Categorias`, {replace:true})
-       enqueueSnackbar("Se editó con exito", {
+      dispatch(editCategory(data.data));
+      // navigate(`/mi-almacen/categorias`, { replace: true });
+      enqueueSnackbar(`${data.message}`, {
         variant: "success",
         anchorOrigin: {
           vertical: "top",
@@ -129,16 +133,15 @@ export const editOneCategory = (
         },
       });
     } catch (error) {
-      enqueueSnackbar(
-        `Ocurrió un error`,
-        {
-          variant: "error",
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "right",
-          },
-        }
-      );
+      enqueueSnackbar(`Ocurrió un error`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    } finally {
+      dispatch(stopLoading());
     }
   };
 };

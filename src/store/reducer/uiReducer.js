@@ -4,6 +4,7 @@ export const uiReducer = createSlice({
   name: 'ui',
   initialState: {
     loading: false,
+    links: []
   },
   reducers: {
     startLoading: (state) => {
@@ -11,10 +12,14 @@ export const uiReducer = createSlice({
     },
     stopLoading: (state) => {
       state.loading = false;
+    },
+    setLinks : (state,{payload})=>{
+      state.links = payload
     }
+   
   },
 })
 
-export const { startLoading, stopLoading } = uiReducer.actions;
+export const { startLoading, stopLoading, setLinks } = uiReducer.actions;
 
 export default uiReducer.reducer;

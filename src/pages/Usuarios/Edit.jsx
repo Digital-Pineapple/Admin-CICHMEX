@@ -26,7 +26,6 @@ import { useEffect } from "react";
 import { useFormik } from "formik";
 import { enqueueSnackbar } from "notistack";
 import AddImage from "../../assets/Images/add.png";
-import CustomBreadcrumb from "../../components/ui/CustomBreadcrumb";
 import { useTypeUser } from "../../hooks/useTypeUser";
 import { useUsers } from "../../hooks/useUsers";
 import useImages from "../../hooks/useImages";
@@ -59,8 +58,12 @@ const Edit = () => {
       profile_image: "",
     },
     onSubmit: (values) => {
+      const values2 = {
+        ...values,
+        profile_image: values?.profile_image ? values?.profile_image : null,
+      };
       try {
-        editUser(user._id, values);
+        editUser(user._id, values2);
       } catch (error) {
         return enqueueSnackbar(`Error: ${error.response.data?.message}`, {
           variant: "error",
@@ -73,7 +76,7 @@ const Edit = () => {
     },
   });
   const outEdit = () => {
-    navigate("/auth/usuarios", { replace: true });
+    navigate("/usuarios", { replace: true });
   };
 
   return (

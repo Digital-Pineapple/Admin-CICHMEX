@@ -1,79 +1,78 @@
-import { AllRoutes } from "../routes/AllRoutes";
-import { NavbarParthners } from "../components/Navbar/NavbarParthners";
-import { Route, Routes } from "react-router-dom";
-import PublicPages from "./PublicPages";
-import PrivateRoutes from "./PrivateRoutes";
-import { FooterParthners, Navbar } from "../components";
-import { Links, LinksAdminCichmex } from "./Links";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuthStore } from "../hooks";
-import { useState, useEffect } from "react";
-import { themeAdminCarWashLight, themeAdminCichmexLight, themeSuperAdmin } from "../theme";
+import { useEffect, useMemo, useState } from "react";
+import {
+  themeAdminCarWashLight,
+  themeAdminCichmexLight,
+  themeSuperAdmin,
+} from "../theme";
 import { ThemeProvider } from "@mui/material";
+import { NotFound } from "../pages/ui/NotFound";
+import { Navbar } from "../components";
+import { useDynamicRoutes } from "../hooks/useDynamicRoutes";
 import LoadingScreenBlue from "../components/ui/LoadingScreenBlue";
-
+import { Login } from "../pages/Login";
+import { PrivateRoutes } from "./PrivateRoutes";
+import Principal from "../pages/Principal";
+import { PublicRoutes } from "./PublicRoutes";
 const RoutesContainer = () => {
-  const { user, logged } = useAuthStore();
+  const { logged, user, routes } = useAuthStore();
+
+  const { componentLinks } = useDynamicRoutes();
   const [theme, setTheme] = useState(themeSuperAdmin);
-  const [links, setLinks] = useState(null);
-  
 
   useEffect(() => {
-    const valuateLinks = () => {
-      const system = user.type_user?.system;
-      if (system[0] === 'CICHMEX' && system[1] === "CARWASH") {
-        setTheme(themeSuperAdmin);
-        setLinks(Links);
-      } else if (system[0] === 'CICHMEX') {
-        setLinks(LinksAdminCichmex);
-        setTheme(themeAdminCichmexLight);
-      } else if (system[0] === "CARWASH") {
-        setTheme(themeAdminCarWashLight);
-        setLinks(); // Asegúrate de definir los links correctos para CARWASH si son diferentes
+    function valuateLayout() {
+      if (!!user && !!routes) {
+        valuateTheme();
       }
-    };
+    }
+    valuateLayout();
+  }, [user, routes]);
 
-    if (logged) {
-      valuateLinks()
-    } 
-  }, [user, logged]);
+  const match = useMemo(() => componentLinks(routes), [routes]);
+
+  const routesList = () => {
+    const list = match.map((item, index) => {
+      return <Route path={item.path} element={item.element} key={index} />;
+    });
+    return list;
+  };
+
+  const valuateTheme = () => {
+    const system = user?.type_user?.system || [];
+    let newTheme = themeSuperAdmin;
+
+    if (system.includes("CICHMEX") && system.includes("CARWASH")) {
+      newTheme = themeSuperAdmin;
+    } else if (system.includes("CICHMEX")) {
+      newTheme = themeAdminCichmexLight;
+    } else if (system.includes("CARWASH")) {
+      newTheme = themeAdminCarWashLight;
+    }
+
+    if (newTheme !== theme) {
+      setTheme(newTheme);
+    }
+  };
   
-  if (theme === null) {
-    return<LoadingScreenBlue/>
-  }
-
   return (
     <ThemeProvider theme={theme}>
       <Routes>
+        <Route element={<PublicRoutes isAllowed={!!logged} />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/*" element={<Login />} />
+        </Route>
         <Route
-          path="/*"
           element={
-            <PublicPages>
-              <Routes>
-                {AllRoutes.filter(({ type }) => type === 0).map(
-                  ({ path, element }, index) => (
-                    <Route path={path} element={element} key={index} />
-                  )
-                )}
-              </Routes>
-            </PublicPages>
+            <Navbar>
+              <PrivateRoutes isAllowed={!!logged} redirectTo="/principal" />
+            </Navbar>
           }
-        />
-        <Route
-          path="/auth/*"
-          element={
-            <PrivateRoutes>
-              <Navbar navLinks={links ? links :[]}>
-                <Routes>
-                  {AllRoutes.filter(({ type }) => type === 1).map(
-                    ({ path, element }, index) => (
-                      <Route path={path} element={element} key={index} />
-                    )
-                  )}
-                </Routes>
-              </Navbar>
-            </PrivateRoutes>
-          }
-        />
+        >
+          {routesList()}
+          <Route path="/principal" element={<Principal />} />
+        </Route>
       </Routes>
     </ThemeProvider>
   );

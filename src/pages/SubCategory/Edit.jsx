@@ -39,6 +39,7 @@ const Edit = () => {
     formik.setValues({
       name: subCategory.name,
       category_id: subCategory.category_id,
+      subCategory_image: subCategory.subCategory_image || "",
     });
   }, [subCategory]);
 
@@ -66,7 +67,7 @@ const Edit = () => {
     },
   });
   const outEdit = () => {
-    navigate("/auth/SubCategorias");
+    navigate("/mi-almacen/subcategorias");
   };
   if (loading) {
     return(<LoadingScreenBlue/>)

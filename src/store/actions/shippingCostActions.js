@@ -35,7 +35,12 @@ export const startLoadShippingCosts = () => {
 export const startLoadOneShippingCost = (id, navigate) => {
     return async (dispatch) => {
       try {
-        const { data } = await instanceApi.get(`/shipping-cost/${id}`, headerConfig);
+        const { data } = await instanceApi.get(`/shipping-cost/${id}`, {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        });
         dispatch(loadOneShippingCost(data.data));
       } catch (error) {
         enqueueSnackbar(`${(error.response.data.message)}`, "error");
@@ -62,7 +67,7 @@ export const startLoadOneShippingCost = (id, navigate) => {
           variant:'success',
           TransitionComponent:Zoom,
         })
-        navigate('/auth/Costos-de-envio')
+        navigate('/costos-envio')
         dispatch(stopLoading())
       } catch (error) {
         

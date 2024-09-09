@@ -6,6 +6,8 @@ import {
   editOneProduct,
   startAddMultipleEntries,
   startAddMultipleOutputs,
+  startAddOneImage,
+  startDeleteOneImage,
   startLoadAllInputs,
   startLoadAllOutputs,
   startLoadEntriesProduct,
@@ -13,6 +15,8 @@ import {
   startLoadOutputsProduct,
   startLoadProducts,
   startLoadStockProducts,
+  startUpdateThumbnail,
+  updateProductVideos,
 } from "../store/actions/productsActions";
 import { useNavigate } from "react-router-dom";
 import { cleanProductDetail } from "../store/reducer/productsReducer";
@@ -32,11 +36,8 @@ export const useProducts = () => {
   const loadOutputsProducts = async () => dispatch(startLoadOutputsProduct());
   const loadAllInputs  = async () =>dispatch(startLoadAllInputs())
   const loadAllOutputs  = async () =>dispatch(startLoadAllOutputs())
-
   const loadStockProducts = async () => dispatch(startLoadStockProducts());
-
   const loadNoStockProducts = async () => dispatch(startLoadNonExistProduct());
-
   const loadProduct = async (_id) => {
     dispatch(LoadOneProduct(_id));
   };
@@ -51,9 +52,12 @@ export const useProducts = () => {
     dispatch(startAddMultipleOutputs(values,navigate))
   }
 
-  const editProduct = async (id, values, images) =>
-    dispatch(editOneProduct(id, values, images, navigate));
-
+  const editProduct = async (id, values) =>
+    dispatch(editOneProduct(id, values,  navigate));
+  const updateVideo = ( id , values ) =>  dispatch(updateProductVideos(id,values))
+  const updateThumbnail = ( id , values ) =>  dispatch(startUpdateThumbnail(id,values))
+  const addOneImage = ( id , file ) =>  dispatch(startAddOneImage(id,file))
+  const deleteImageDetail = (id, image_id)=>dispatch(startDeleteOneImage(id,image_id))
   const deleteProduct = async (id) => dispatch(deleteOneProduct(id));
 
   const cleanProductD = () => dispatch(cleanProductDetail());
@@ -113,7 +117,10 @@ export const useProducts = () => {
     addMultipleEntries,
     loading,
     rowsAllOutputs,
-    addMultipleOutputs
-
+    addMultipleOutputs,
+    updateVideo,
+    updateThumbnail,
+    addOneImage,
+    deleteImageDetail
   };
 };

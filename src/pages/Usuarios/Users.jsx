@@ -252,7 +252,7 @@ export default function Users() {
             getActions: (params) => [
 
              <DeleteAlert title={`¿Estas seguro de eliminar a:${params.row.fullname}?`} callbackToDeleteItem={()=> deleteUser(params.row._id)}/>,
-             <EditButton title={`¿Esta seguro de editar a:${params.row.fullname}?`} callbackToEdit={()=>navigate(`/auth/usuarios/${params.row._id}`)}/>
+             <EditButton title={`¿Esta seguro de editar a:${params.row.fullname}?`} callbackToEdit={()=>navigate(`/usuarios/editar/${params.row._id}`)}/>
             ],
           },
         ]}

@@ -13,7 +13,12 @@ const headerConfig = {
 export const startLoadTypeUsers = () => {
   return async (dispatch) => {
     try {
-      const { data } = await instanceApi.get("/type-user", headerConfig);
+      const { data } = await instanceApi.get("/type-user", {
+        headers: {
+          "Content-type": "application/json",
+           "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      },
+      });
       dispatch(loadTypeUsers(data.data));
     } catch (error) {
       enqueueSnackbar(`Error + ${error.data.response?.message}`, {

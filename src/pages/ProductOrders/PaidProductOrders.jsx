@@ -215,7 +215,7 @@ const PaidProductOrders = () => {
   }
 
   return (
-    <Grid container>
+    <Grid container gap={1}>
       <Grid item xs={12}>
         <DataGrid
           sx={{ fontSize: "14px", fontFamily: "sans-serif" }}

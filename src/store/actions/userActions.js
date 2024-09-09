@@ -22,7 +22,12 @@ const headerConfig = {
 export const getUsers = () => {
   return async (dispatch) => {
     try {
-      const { data } = await instanceApi.get("/user", headerConfig);
+      const { data } = await instanceApi.get("/user", {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       dispatch(loadUsers(data.data));
     } catch (error) {
       enqueueSnackbar(`Error: ${error.response?.data.message}`);
@@ -60,7 +65,12 @@ export const getCarrierDrivers = () => {
 
 export const getOneUser = (_id) => async (dispatch) => {
   try {
-    const { data } = await instanceApi.get(`/user/${_id}`, headerConfig);
+    const { data } = await instanceApi.get(`/user/${_id}`, {
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
     dispatch(loadUser(data.data));
   } catch (error) {
     console.log(error);
@@ -121,7 +131,7 @@ export const verifyOneUser = (id) => {
   };
 };
 
-export const editOneUser = (user_id, {fullname,type_user,profile_image}) => {
+export const editOneUser = (user_id, {fullname,type_user,profile_image}, navigate) => {
   return async (dispatch) => {
     try {
       const formData = new FormData();
@@ -131,7 +141,12 @@ export const editOneUser = (user_id, {fullname,type_user,profile_image}) => {
       const { data } = await instanceApi.post(
         `/user/update/${user_id}`,
         formData,
-        headerConfigFormData
+        {
+          headers: {
+            "Content-Type": 'multipart/form-data',
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
       dispatch(editUser(user_id, data.data));
       enqueueSnackbar("Editado con exito", {
@@ -141,7 +156,7 @@ export const editOneUser = (user_id, {fullname,type_user,profile_image}) => {
           horizontal: "right",
         },
       });
-      return data.data;
+      navigate('/usuarios',{ replace:true });
     } catch (error) {
       console.log(error);
       enqueueSnackbar(

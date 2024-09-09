@@ -20,9 +20,11 @@ const Edit = () => {
   useEffect(() => {
     loadCategory(id);
   }, [id]);
+
   useEffect(() => {
     formik.setValues({
       name: category.name,
+      category_image:category.category_image,
     });
   }, [category]);
 
@@ -50,7 +52,7 @@ const Edit = () => {
     },
   });
   const outEdit = () => {
-    navigate("/auth/Categorias", { replace: true });
+    navigate("/mi-almacen/categorias", { replace: true });
   };
 
   return (

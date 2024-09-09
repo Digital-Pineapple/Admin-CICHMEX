@@ -1,6 +1,5 @@
 export * from './useFetchUsers'
 export * from './useAuthStore'
-export * from './useAuth'
 export * from './useServicesCustomer'
 export * from './UseTypeCars'
 export * from './useShippingCost'

@@ -1,55 +1,80 @@
-import axios from "axios";
-import Cookies from "js-cookie";
+import { replace } from "formik";
 import { instanceApi } from "../../apis/configAxios";
-import { enqueueSnackbar } from "notistack";
-import { onLogin } from '../reducer/authReducer'
-import { startLoading } from "../reducer/uiReducer";
+import { onLogin, onLogout } from "../reducer/authReducer";
+import { setLinks, startLoading, stopLoading } from "../reducer/uiReducer";
+import { createAsyncThunk } from "@reduxjs/toolkit/dist";
 
-
-export const startLogin = ({ email, password }) => async (dispatch) => {
-  try {
-    const { data } = await instanceApi.post("/auth/login", {
-      email,
-      password,
-    },{
-      headers: {
-        "Content-type": "application/json",
-         "Authorization": `Bearer ${localStorage.getItem("token")}`,
+export const fetchRoutes = createAsyncThunk('/auth/fetchRoutes', async (token) => {
+  const {data} = await instanceApi.get(`/dynamic-route/links/all`,{
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
-    });
-    dispatch(onLogin(data.data.user));
-    
-    localStorage.setItem("token", data.data.token, { expires: 7 });
-    return {
-      success: true,
-    };
-  } catch (error) {
-    
-    if (axios.isAxiosError(error)) {
-      enqueueSnackbar(
-        "Error en el inicio de sesión" && error.response.data.message,
-        { variant: "error" }
-      );
-      return {
-        success: false,
-      };
+    params:{
+      system:"Admin"
     }
-    return {
-      success: false,
-    };
-  }
+  });
+  
+  return data.data;
+});
+
+export const startLogin = ( email, password, navigate ) => {
+  return async (dispatch) => {
+    dispatch( startLoading() );
+    try {
+      const { data } = await instanceApi.post("/auth/login", {
+        email: email,
+        password: password,
+      });
+      localStorage.setItem("token", data.data.token);
+      dispatch(onLogin(data.data.user));
+      await dispatch(fetchRoutes(data.data.token))
+      navigate('/principal',  { replace: true });
+    } catch (error) {
+      dispatch(
+        onLogout(
+          error.response.data?.message || error.response.data.errors[0].message
+        )
+      );
+    }finally{
+      dispatch(stopLoading())
+    }
+  };
 };
 
-export const startRevalidateToken = () => async (dispatch) => {
-  try {
-    const token = localStorage.getItem("token");
-    const { data } = await userApi.get("/auth/user", {
-      headers: {
-        Token: token,
-      },
-    });
-    dispatch(onLogin(data.data.user))
-  } catch (error) {
-    console.log(error);
-  }
+export const startRevalidateToken = () => {
+  return async (dispatch) => {
+    dispatch(startLoading())
+    try {
+      const { data } = await instanceApi.get("/auth/user", {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+     await dispatch(fetchRoutes(data.data.token))
+     
+      dispatch(onLogin(data.data.user))
+    } catch (error) {
+      dispatch(onLogout( error.response.data?.message || error.response.data.errors[0].message));
+    }finally{
+      dispatch(stopLoading())
+    }
+
+  };
 };
+
+ export const startLogout = (navigate) => {
+  return async (dispatch)=>{
+    dispatch(startLoading());
+    try {
+      dispatch(onLogout());
+      localStorage.clear();
+      navigate('/login',{replace:true})
+    } catch (error) {
+      console.log(error); 
+    }finally{
+      dispatch(stopLoading());
+    }
+  }
+}

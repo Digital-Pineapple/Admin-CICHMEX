@@ -28,10 +28,6 @@ export const subCategoryReducer = createSlice({
         if (subCategory._id === payload._id) {
           return {
             ...subCategory,
-            name: payload.name,
-            description: payload.description,
-            status: payload.status,
-            category : payload.category
           };
         }
         return subCategory; // Mantener los elementos no modificados tal como están

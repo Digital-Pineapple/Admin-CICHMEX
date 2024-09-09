@@ -25,6 +25,7 @@ import AddButton2 from "../../components/Buttons/AddButton2";
 import { orange } from "@mui/material/colors";
 import { useAuthStore } from "../../hooks";
 import EntriesOutputsModal from "../../components/Modals/EntriesOutputsModal";
+import CustomNoRows from "../../components/Tables/CustomNoRows";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -162,22 +163,11 @@ const ProductOutputs = () => {
         </Typography>
       </Grid>
       <Grid item xs={12} >
-      <Fab sx={{right:'-80%'}} onClick={()=>navigate('/auth/MiAlmacen/AgregarSalidas')} color="secondary" aria-label="Agregar entrada" title="Agragar entradas" >
+      <Fab sx={{right:'-80%'}} onClick={()=>navigate('/mi-almacen/salida-productos')} color="secondary" aria-label="Agregar entrada" title="Agragar entradas" >
   <Add />
 </Fab>
       </Grid>
       <Grid item xs={12} >
-        {/* <Typography
-          bgcolor={orange[900]}
-          variant="h3"
-          color={"#fff"}
-          borderRadius={2}
-          marginY={1}
-          textAlign={"center"}
-          fontSize={"30px"}
-        >
-          Entradas
-        </Typography> */}
         <DataGrid
           sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
           columns={
@@ -211,12 +201,6 @@ const ProductOutputs = () => {
               flex: 1,
               align: "center",
             },
-            // {
-            //   field: "newQuantity",
-            //   headerName: "Nueva Cantidad",
-            //   flex: 1,
-            //   align: "center",
-            // },
             {
               field: "nowStock",
               headerName: "Stock actual",
@@ -244,6 +228,7 @@ const ProductOutputs = () => {
           ]}
           rows={rowsAllOutputs}
           pagination
+          autoHeight
           density="compact"
           slots={{
             pagination: CustomPagination,
@@ -251,6 +236,7 @@ const ProductOutputs = () => {
             columnSortedDescendingIcon: SortedDescendingIcon,
             columnSortedAscendingIcon: SortedAscendingIcon,
             columnUnsortedIcon: UnsortedIcon,
+            noRowsOverlay: CustomNoRows,
           }}
           disableColumnFilter
           disableColumnMenu
