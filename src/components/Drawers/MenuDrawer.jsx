@@ -58,7 +58,6 @@ const MenuDrawer = ({navLinks}) => {
   };
   const handleNavigateClick = (value) => {
     navigate(value, {replace:true});
-    setDrawerOpen(!drawerOpen);
   };
   return (
     <Box sx={{ width: drawerWidth }}>

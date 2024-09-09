@@ -377,8 +377,6 @@ export const editOneProduct =
           },
         });
       } catch (error) {
-        console.log(error);
-        
         enqueueSnackbar(`${error.response.data.message}`, {
           variant: "error",
           anchorOrigin: {
@@ -555,7 +553,7 @@ export const startAddMultipleEntries = (values, navigate) => {
         icon: "success",
         confirmButtonColor: green[800],
       });
-      navigate("/auth/MiAlmacen/entradas", { replace: true });
+      navigate("/mi-almacen/productos/entradas", { replace: true });
     } catch (error) {
       enqueueSnackbar(`${error.response.data.message}`, {
         variant: "error",
@@ -587,7 +585,7 @@ export const startAddMultipleOutputs = (values, navigate) => {
         icon: "success",
         confirmButtonColor: green[800],
       });
-      navigate("/auth/MiAlmacen/salidas", { replace: true });
+      navigate("/mi-almacen/productos/salidas", { replace: true });
     } catch (error) {
       console.log(error);
 

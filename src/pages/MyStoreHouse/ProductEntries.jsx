@@ -163,30 +163,20 @@ const ProductEntries = () => {
         </Typography>
       </Grid>
       <Grid item xs={12} >
-      <Fab sx={{right:'-80%'}} onClick={()=>navigate('/auth/MiAlmacen/AgregarEntradas')} color="secondary" aria-label="Agregar entrada" title="Agragar entradas" >
+      <Fab sx={{right:'-80%'}} onClick={()=>navigate('/mi-almacen/agregar-entrada')} color="secondary" aria-label="Agregar entrada" title="Agragar entradas" >
   <Add />
 </Fab>
       </Grid>
       <Grid item xs={12} >
-        {/* <Typography
-          bgcolor={orange[900]}
-          variant="h3"
-          color={"#fff"}
-          borderRadius={2}
-          marginY={1}
-          textAlign={"center"}
-          fontSize={"30px"}
-        >
-          Entradas
-        </Typography> */}
         <DataGrid
-          sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
+          sx={{ fontSize: "20px", fontFamily: "sans-serif" }}
           columns={
             [
               {
                 field: "folio",
                 headerName: "Folio",
                 align: "center",
+                flex: 1,
               },
             {
               field: "date",
@@ -224,27 +214,10 @@ const ProductEntries = () => {
               flex: 1,
               align: "center",
             },
-            
-            // {
-            //   field: "Opciones",
-            //   headerName: "Opciones",
-            //   align: "center",
-            //   flex: 1,
-            //   sortable: false,
-            //   type: "actions",
-            //   getActions: (params) => [
-            //     <AddButton2
-            //       title={`Agregar`}
-            //       product={params?.row}
-            //     />,
-            //     <Button variant="contained" onClick={()=>handleClickOpen(params?.row)}  color="info">
-            //       Detalle
-            //     </Button>
-            //   ],
-            // },
           ]}
           rows={rowsAllInputs}
           pagination
+          autoHeight
           density="compact"
           slots={{
             pagination: CustomPagination,

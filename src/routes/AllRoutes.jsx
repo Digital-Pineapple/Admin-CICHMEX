@@ -61,7 +61,6 @@ import AddEntries from "../pages/MyStoreHouse/AddEntries";
 import AddOutputs from "../pages/MyStoreHouse/AddOutputs";
 import VerifySales from "../pages/Sales/VerifySales";
 import DetailSale from "../pages/Sales/DetailSale";
-import { compose } from "@reduxjs/toolkit";
 import { NotFound } from "../pages/ui/NotFound";
 import Unauthorized from "../pages/ui/Unauthorized";
 import AddDynamicRoute from "../pages/DynamicRoutes/AddDynamicRoute";
@@ -153,4 +152,7 @@ export const AllRoutes = [
   { id: 60, element: <DynamicRoutes /> },
   { id: 61, element: <AddDynamicRoute /> },
   { id: 62, element: <EditDynamicRoute /> },
+
+  { id: 63, element: <MyProductOrders /> },
+
 ];

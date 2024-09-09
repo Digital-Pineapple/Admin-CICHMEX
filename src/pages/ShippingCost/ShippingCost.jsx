@@ -28,6 +28,7 @@ import DeleteAlert from "../../components/ui/DeleteAlert";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import { useAuthStore, useShippingCost } from "../../hooks";
 import EditButton from "../../components/Buttons/EditButton";
+import CustomNoRows from "../../components/Tables/CustomNoRows";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -133,7 +134,7 @@ const ShippingCost = () => {
       </Typography>
       </Grid>
       <DataGrid
-        sx={{ marginTop:5, fontSize: "20px", fontFamily: "BikoBold" }}
+        sx={{ marginTop:5, fontSize: "15px", fontFamily: "sans-serif" }}
         columns={[
           {
             field: `uuid`,
@@ -173,20 +174,21 @@ const ShippingCost = () => {
                 title={`¿Estas seguro de eliminar el costo de envío ${params.row?.uuid}`}
                 callbackToDeleteItem={() => deleteShippingCost(params.row._id)}
               />,
-              <EditButton title={`Desea editar el siguiente elemento${params.row.uuid}`} callbackToEdit={()=>navigate(`/auth/costo-de-envio/${params.row._id}`)} />
-                             
+              <EditButton title={`Desea editar el siguiente elemento${params.row.uuid}`} callbackToEdit={()=>navigate(`/costos-envio/editar/${params.row._id}`)} />
             ],
           },
         ]}
         
         rows={rowsShippingCosts}
         pagination
+        autoHeight
         slots={{
           pagination: CustomPagination,
           toolbar: CustomToolbar,
           columnSortedDescendingIcon: SortedDescendingIcon,
           columnSortedAscendingIcon: SortedAscendingIcon,
           columnUnsortedIcon: UnsortedIcon,
+          noRowsOverlay: CustomNoRows,
         }}
         disableColumnFilter
         disableColumnMenu

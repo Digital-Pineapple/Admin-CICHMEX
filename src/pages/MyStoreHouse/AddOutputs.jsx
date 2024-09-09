@@ -50,8 +50,6 @@ const AddOutputs = () => {
     }
     setValue("products", allProducts);
     const values = getValues();
-    console.log(values);
-
      addMultipleOutputs(values)
   };
 
@@ -195,7 +193,7 @@ const AddOutputs = () => {
           <ButtonGroup fullWidth variant="text" color="primary" aria-label="">
             <Button
               variant="contained"
-              onClick={() => navigate("/auth/MiAlmacen/entradas")}
+              onClick={() => navigate("/mi-almacen/productos/salidas")}
               color="error"
             >
               Salir
