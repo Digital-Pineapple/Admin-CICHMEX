@@ -1,4 +1,3 @@
-import * as React from "react";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SortIcon from "@mui/icons-material/Sort";
@@ -11,21 +10,26 @@ import {
   useGridApiContext,
   useGridSelector,
 } from "@mui/x-data-grid";
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import MuiPagination from "@mui/material/Pagination";
-import { Add, Download } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { useCategories } from "../../hooks/useCategories";
-import { Button, Avatar, Grid, Typography, Fab } from "@mui/material";
+import { Add, Download, Visibility } from "@mui/icons-material";
+import {
+  Button,
+  Avatar,
+  Grid,
+  Typography,
+  Fab,
+  Tooltip,
+  IconButton,
+} from "@mui/material";
 import { Workbook } from "exceljs";
-import { saveAs } from 'file-saver';
+import { saveAs } from "file-saver";
 import DeleteAlert from "../../components/ui/DeleteAlert";
 import EditButton from "../../components/Buttons/EditButton";
 import { useSubCategories } from "../../hooks/useSubCategories";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import { useAuthStore } from "../../hooks";
-
+import SubcategoryModal from "../../components/Modals/SubcategoryModal";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -60,34 +64,46 @@ function CustomPagination(props) {
 }
 
 const SubCategories = () => {
-  const { loadSubCategories, rowsSubCategories, navigate, deleteSubCategory, loading} = useSubCategories()
-const {user} = useAuthStore()
+  const {
+    loadSubCategories,
+    rowsSubCategories,
+    navigate,
+    deleteSubCategory,
+    loading,
+    loadSubCategoryDetail,
+    subCategory,
+  } = useSubCategories();
+  const { user } = useAuthStore();
   useEffect(() => {
     loadSubCategories();
   }, [user]);
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = async (id) => {
+    await loadSubCategoryDetail(id);
+    setOpen(true);
+  };
+  const handleClose = () => setOpen(false);
 
   const exportToExcel = () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Subcategorias");
 
     // Agregar encabezados de columna
-    const headerRow = worksheet.addRow([
-      "Nombre de la subcategoria",
-    ]);
+    const headerRow = worksheet.addRow(["Nombre de la subcategoria"]);
     headerRow.eachCell((cell) => {
       cell.font = { bold: true };
     });
 
     // Agregar datos de las filas
     rowsSubCategories.forEach((row) => {
-      worksheet.addRow([ row.name,]);
+      worksheet.addRow([row.name]);
     });
 
     // Crear un Blob con el archivo Excel y guardarlo
     workbook.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer], {
-        type:
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
       saveAs(blob, "subcategorias.xlsx");
     });
@@ -96,31 +112,31 @@ const {user} = useAuthStore()
   function CustomToolbar() {
     const apiRef = useGridApiContext();
     const handleGoToPage1 = () => apiRef.current.setPage(0);
-  
+
     return (
-      <GridToolbarContainer sx={{justifyContent:'space-between'}}>
+      <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
         <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-        <GridToolbarQuickFilter/>
+        <GridToolbarQuickFilter />
         <Button
-        variant="text"
-        startIcon={<Download/>}
-        disableElevation
-        sx={{ color: "secondary" }}
-        onClick={exportToExcel}
-      >
-        Descargar Excel
-      </Button>
+          variant="text"
+          startIcon={<Download />}
+          disableElevation
+          sx={{ color: "secondary" }}
+          onClick={exportToExcel}
+        >
+          Descargar Excel
+        </Button>
       </GridToolbarContainer>
     );
   }
 
   if (loading) {
-    return(<LoadingScreenBlue/> )
+    return <LoadingScreenBlue />;
   }
 
   return (
-    <Grid container gap={2} maxWidth={'85vw'} >
-       <Grid
+    <Grid container gap={2} maxWidth={"85vw"}>
+      <Grid
         item
         marginTop={{ xs: "-30px" }}
         xs={12}
@@ -146,7 +162,6 @@ const {user} = useAuthStore()
           <Add />
         </Fab>
       </Grid>
-
 
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
@@ -177,8 +192,25 @@ const {user} = useAuthStore()
             sortable: false,
             type: "actions",
             getActions: (params) => [
-             <DeleteAlert title={`¿Desea eliminar ${params.row.name}?`} callbackToDeleteItem={()=> deleteSubCategory(params.row._id)}/>,
-             <EditButton title={`Desea editar ${params.row.name}?`} callbackToEdit={()=>navigate(`/mi-almacen/subcategorias/editar/${params.row._id}`)} />
+              <DeleteAlert
+                title={`¿Desea eliminar ${params.row.name}?`}
+                callbackToDeleteItem={() => deleteSubCategory(params.row._id)}
+              />,
+              <EditButton
+                title={`Desea editar ${params.row.name}?`}
+                callbackToEdit={() =>
+                  navigate(`/mi-almacen/subcategorias/editar/${params.row._id}`)
+                }
+              />,
+              <Tooltip title="Ver detalle">
+                <IconButton
+                  color="primary"
+                  aria-label="Ver detalle"
+                  onClick={() => handleOpen(params.row._id)}
+                >
+                  <Visibility />
+                </IconButton>
+              </Tooltip>,
             ],
           },
         ]}
@@ -186,16 +218,16 @@ const {user} = useAuthStore()
           sorting: {
             sortModel: [{ field: "name", sort: "asc" }],
           },
-          pagination:{
-            paginationModel:{pageSize:20}
-          }
+          pagination: {
+            paginationModel: { pageSize: 20 },
+          },
         }}
         rows={rowsSubCategories}
         density="standard"
         pagination
         slots={{
           pagination: CustomPagination,
-          toolbar: CustomToolbar ,
+          toolbar: CustomToolbar,
           columnSortedDescendingIcon: SortedDescendingIcon,
           columnSortedAscendingIcon: SortedAscendingIcon,
           columnUnsortedIcon: UnsortedIcon,
@@ -208,14 +240,18 @@ const {user} = useAuthStore()
           toolbar: {
             showQuickFilter: true,
             quickFilterProps: { debounceMs: 500 },
-            
           },
         }}
         printOptions={{
           hideFooter: true,
           hideToolbar: true,
         }}
-        style={{fontFamily:'sans-serif', fontSize:'15px'}}
+        style={{ fontFamily: "sans-serif", fontSize: "15px" }}
+      />
+      <SubcategoryModal
+        subCategory={subCategory}
+        open={open}
+        handleClose={handleClose}
       />
     </Grid>
   );

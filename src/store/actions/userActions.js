@@ -182,7 +182,7 @@ export const addOneCarrier = (values, navigate) => {
         { values: values },
         headerConfig
       );
-      navigate("/auth/Transportistas");
+      navigate("/usuarios/transportistas");
       enqueueSnackbar(`${data.message}`, {
         variant: "success",
         anchorOrigin: {

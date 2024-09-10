@@ -73,6 +73,8 @@ const CreateCarrier = () => {
         container
         padding={2}
         gap={2}
+        display={"flex"}
+        textAlign={"center"}
       >
         <Grid item xs={12} sm={6}>
           <Controller
@@ -90,6 +92,7 @@ const CreateCarrier = () => {
               <TextField
                 variant="outlined"
                 fullWidth
+                size="small"
                 label="Nombre completo"
                 helperText={
                   fieldState.error ? <b>{fieldState.error.message}</b> : ""
@@ -101,7 +104,7 @@ const CreateCarrier = () => {
           />
         </Grid>
 
-        <Grid item xs={12} sm={5.7} >
+        <Grid item xs={12} sm={5.5}>
           <Controller
             name="email"
             control={control}
@@ -117,6 +120,7 @@ const CreateCarrier = () => {
               <TextField
                 variant="outlined"
                 fullWidth
+                size="small"
                 label="Correo"
                 helperText={
                   fieldState.error ? <b>{fieldState.error.message}</b> : ""
@@ -147,6 +151,7 @@ const CreateCarrier = () => {
                 variant="outlined"
                 label="Contraseña"
                 fullWidth
+                size="small"
                 helperText={
                   fieldState.error ? <b>{fieldState.error.message}</b> : ""
                 }
@@ -157,7 +162,7 @@ const CreateCarrier = () => {
           />
         </Grid>
 
-        <Grid item xs={12} sm={5.7} >
+        <Grid item xs={12} sm={5.5}>
           <Controller
             name="phone"
             control={control}
@@ -168,6 +173,7 @@ const CreateCarrier = () => {
                 {...field}
                 onlyCountries={["MX"]}
                 fullWidth
+                size="small"
                 forceCallingCode
                 disableDropdown
                 defaultCountry="MX"
@@ -178,7 +184,7 @@ const CreateCarrier = () => {
           />
         </Grid>
 
-        <Grid item xs={12} sm={6} >
+        <Grid item xs={12} sm={6}>
           <Controller
             name="employee_detail.salary"
             control={control}
@@ -193,6 +199,7 @@ const CreateCarrier = () => {
                 fullWidth
                 label="Salario"
                 type="number"
+                size="small"
                 helperText={
                   fieldState.error ? <b>{fieldState.error.message}</b> : ""
                 }
@@ -200,9 +207,7 @@ const CreateCarrier = () => {
                 inputProps={{ ...field }}
                 InputProps={{
                   startAdornment: (
-                    <InputAdornment>
                       <AttachMoney />
-                    </InputAdornment>
                   ),
                 }}
               />
@@ -210,7 +215,7 @@ const CreateCarrier = () => {
           />
         </Grid>
 
-        <Grid item xs={12} sm={5.7} >
+        <Grid item xs={12} sm={5.5}>
           <Controller
             name="employee_detail.sales_commission_porcent"
             control={control}
@@ -225,9 +230,10 @@ const CreateCarrier = () => {
             render={({ field, fieldState }) => (
               <TextField
                 variant="outlined"
-                label="Prcentaje de comisiones"
+                label="Comisiones"
                 fullWidth
                 type="number"
+                size="small"
                 helperText={
                   fieldState.error ? <b>{fieldState.error.message}</b> : ""
                 }
@@ -235,9 +241,7 @@ const CreateCarrier = () => {
                 inputProps={{ ...field }}
                 InputProps={{
                   endAdornment: (
-                    <InputAdornment position="start">
                       <PercentIcon />
-                    </InputAdornment>
                   ),
                 }}
               />
@@ -245,7 +249,7 @@ const CreateCarrier = () => {
           />
         </Grid>
 
-        <Grid item xs={12} sm={7}>
+        <Grid item xs={12} sm={12}>
           <Controller
             name="employee_detail.store_house"
             control={control}
@@ -258,6 +262,7 @@ const CreateCarrier = () => {
                 variant="outlined"
                 label="Almacen"
                 fullWidth
+                size="small"
                 helperText={
                   fieldState.error ? <b>{fieldState.error.message}</b> : ""
                 }
@@ -279,12 +284,12 @@ const CreateCarrier = () => {
             )}
           />
           {watchField.name ? (
-            <Card sx={{bgcolor:lightGreen[200], marginTop:2}} variant="elevation">
+            <Card
+              sx={{ bgcolor: lightGreen[200], marginTop: 2 }}
+              variant="elevation"
+            >
               <CardContent>
-                <Typography
-                  variant="h1"
-                  fontSize={{ xs: "20px" }}
-                >
+                <Typography variant="h1" fontSize={{ xs: "20px" }}>
                   Almacen Seleccionado: {watchField.name}
                 </Typography>
               </CardContent>
@@ -293,12 +298,11 @@ const CreateCarrier = () => {
             ""
           )}
         </Grid>
-<Grid item xs={4}>
-  <Button variant="contained" fullWidth type="submit" color="primary">
-          Crear
-        </Button>
-</Grid>
-        
+        <Grid item xs={6}>
+          <Button variant="contained" fullWidth type="submit" color="primary">
+            Crear
+          </Button>
+        </Grid>
       </Grid>
     </Grid>
   );

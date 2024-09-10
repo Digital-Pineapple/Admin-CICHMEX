@@ -154,7 +154,7 @@ const PaidProductOrders = () => {
     if (row.payment_status !== 'approved') {
       Swal.fire('Pendiente de pago', '', 'error');
     } else {
-      navigate(`/auth/surtir-orden/${row._id}`);
+      navigate(`/almacenista/surtir-venta/${row._id}`);
     }
   };
 

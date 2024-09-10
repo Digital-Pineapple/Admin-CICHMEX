@@ -157,7 +157,7 @@ const SalesTransfer = () => {
           aria-label="Ver detalle"
           color="primary"
           title="Ver detalle"
-          onClick={() => navigate(`/auth/venta/${values.row._id}`)}
+          onClick={() => navigate(`/contaduria/venta-detalle/${values.row._id}`)}
         >
           <Visibility />
         </IconButton> 

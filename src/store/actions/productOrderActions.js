@@ -411,7 +411,7 @@ export const StartCompleteProductOrder = (id, navigate) => {
         anchorOrigin: { horizontal: "center", vertical: "top" },
         variant: "success",
       });
-      navigate(`/auth/Ordenes-de-producto`, { replace: true });
+      navigate(`/almacenista/mis-ventas`, { replace: true });
     } catch (error) {
       enqueueSnackbar(`${error.response.data.message}`, {
         anchorOrigin: { horizontal: "center", vertical: "top" },
