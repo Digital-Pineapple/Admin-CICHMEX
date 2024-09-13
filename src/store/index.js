@@ -10,5 +10,7 @@ export * from './actions/commissionActions'
 export * from './actions/documentationActions'
 export * from './actions/productsActions'
 export * from './actions/storehouseActions'
+export * from './actions/regionsActions'
+
 
 

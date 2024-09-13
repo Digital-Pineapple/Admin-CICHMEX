@@ -239,13 +239,18 @@ export const startLoadVerifyStartRoute = ({ order_id, user }, navigate) => {
       const { data } = await instanceApi.post(
         `/product-order/verifyStartRoute`,
         { id: order_id, user_id: user },
-        headerConfigApplication
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
       enqueueSnackbar(`${data.message}`, {
         anchorOrigin: { horizontal: "center", vertical: "top" },
         variant: "success",
       });
-      navigate("/auth/cargar-paquetes", { replace: true });
+      navigate("/transportista/cargar", { replace: true });
     } catch (error) {
       enqueueSnackbar(`${error.response.data.message}`, {
         anchorOrigin: { horizontal: "center", vertical: "top" },
@@ -261,7 +266,12 @@ export const LoadOneProductOrder = (id) => {
     try {
       const { data } = await instanceApi.get(
         `/product-order/${id}`,
-        headerConfigApplication
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
       dispatch(loadProductOrder(data.data));
       dispatch(stopLoading());

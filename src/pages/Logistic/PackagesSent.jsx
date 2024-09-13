@@ -195,7 +195,7 @@ const PackagesSent = () => {
           <IconButton
             aria-label="secondary"
             color="secondary"
-            onClick={()=>navigate(`/auth/entrega/${values.row._id}`, {replace:true})}
+            onClick={()=>navigate(`/transportista/entregar/${values.row._id}`, {replace:true})}
           >
             <VolunteerActivism />
           </IconButton>

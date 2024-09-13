@@ -9,7 +9,7 @@ import {
   useGridSelector,
 } from "@mui/x-data-grid";
 import MuiPagination from "@mui/material/Pagination";
-import { Button, Chip, Grid, IconButton, Tooltip } from "@mui/material";
+import { Button, Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import { Workbook } from "exceljs";
 import {
   ExpandLess as ExpandLessIcon,
@@ -18,20 +18,17 @@ import {
   Download as DownloadIcon,
   ScheduleSend as ScheduleSendIcon,
   ThumbUpAlt as ThumbUpAltIcon,
-  Paid,
-  Pending,
-  Looks,
   Visibility,
-  Verified,
 } from "@mui/icons-material";
 import Swal from "sweetalert2";
 import { useProductOrder } from "../../hooks/useProductOrder";
 import { useAuthStore } from "../../hooks";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import CustomNoRows from "../../components/Tables/CustomNoRows";
-import dayjs from "dayjs";
-import SuccessButton from "../../components/Buttons/SuccessButton";
-import { usePayments } from "../../hooks/usePayments";
+import { useRegions } from "../../hooks/useRegions";
+import MultiRegionMap from "./MultiRegionMap";
+import DeleteAlert from "../../components/ui/DeleteAlert";
+import EditButton from "../../components/Buttons/EditButton";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -121,147 +118,67 @@ function CustomToolbar() {
   );
 }
 
-const SalesTransfer = () => {
-  const { loadPendingTransferPO, navigate, productOrders, loading } =
-    useProductOrder();
+const Regions = () => {
+  const {
+    navigate,
+    loading,
+  } = useProductOrder();
+  const {loadAllRegions, regions, onDeleteRegion} = useRegions()
   const { user } = useAuthStore();
-  const {loadValidateExpiredPayments} = usePayments()
 
   useEffect(() => {
-    loadPendingTransferPO();
+    loadAllRegions()
   }, [user]);
+  
 
-  const rowsWithIds = productOrders.map((item, index) => {
-    const quantities = item.products.map((i) => i.quantity);
-    const suma = quantities.reduce((valorAnterior, valorActual) => {
-      return valorAnterior + valorActual;
-    }, 0);
-
-    const TD = item.branch ? "En Punto de entrega" : "A domicilio";
-    return {
-      quantityProduct: suma,
-      typeDelivery: TD,
-      date: dayjs(item.createdAt).format("DD/MM/YYYY HH:mm:s a"),
-      id: index.toString(),
-      ...item,
-    };
-  });
+  const rowsWithIds = regions?.map((item, index) => ({
+    id: index,
+    ...item,
+  }));
 
   
 
-  const renderIcon = (values) => {
-    
-    if (values.row.payment?.verification) {
-      return (
-        <>
-        <IconButton
-          sx={{ display: {} }}
-          aria-label="Ver detalle"
-          color="primary"
-          title="Ver detalle"
-          onClick={() => navigate(`/contaduria/venta-detalle/${values.row._id}`)}
-        >
-          <Visibility />
-        </IconButton> 
-        
-        </>
-      );
-    } else  {
-      return (
-        <IconButton
-        sx={{ display: {} }}
-        aria-label="Ver detalle"
-        color="primary"
-        title="Ver detalle"
-        disabled
-      >
-        <Visibility />
-      </IconButton> 
-      );
-    }
-  };
 
-  const renderChip = (values) => {
-    if (values.row.payment_status === "pending_to_verify") {
-      return (
-        <>
-          <Chip
-            icon={<Paid />}
-            label="Pendiente validar"
-            variant="filled"
-            color="info"
-          />
-        </>
-      );
-    } else {
-      return (
-        <>
-          <Chip
-            icon={<Paid />}
-            label="No liquidada"
-            variant="filled"
-            color="warning"
-          />
-        </>
-      );
-    }
-  };
+ 
 
   if (loading) {
     return <LoadingScreenBlue />;
   }
 
   return (
-    <Grid container>
-      <Grid mb={2} item xs={12}>
-        <Button variant="contained" onClick={()=>loadValidateExpiredPayments()} color="primary">
-          Limpiar pagos expirados
-        </Button>
+    <Grid container gap={1}>
+         <Grid
+        item
+        marginTop={{ xs: "-30px" }}
+        xs={12}
+        minHeight={"100px"}
+        className="Titles"
+      >
+        <Typography
+          textAlign={"center"}
+          variant="h1"
+          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
+        >
+          Regiones
+        </Typography>
       </Grid>
+      <Grid item xs={12}>
+        <MultiRegionMap regions={regions}/>
+      </Grid>
+
       <Grid item xs={12}>
         <DataGrid
           sx={{ fontSize: "14px", fontFamily: "sans-serif" }}
           columns={[
             {
-              field: "date",
-              headerName: "Fecha de compra",
+              field: "regionCode",
+              headerName: "Código",
               flex: 1,
               align: "center",
             },
             {
-              field: "order_id",
-              headerName: "Id de pedido",
-              flex: 1,
-              align: "center",
-            },
-            {
-              field: "payment",
-              headerName: "Estatus",
-              flex: 1,
-              sortable: false,
-              renderCell: (params) => [renderChip(params)],
-            },
-            {
-              field: "subTotal",
-              headerName: "Subtotal",
-              flex: 1,
-              sortable: false,
-            },
-            {
-              field: "shipping_cost",
-              headerName: "Gastos de envío",
-              flex: 1,
-              sortable: false,
-            },
-            {
-              field: "discount",
-              headerName: "Descuento",
-              flex: 1,
-              sortable: false,
-            },
-            {
-              field: "total",
-              headerName: "Total a pagar",
+              field: "name",
+              headerName: "Nombre de la region",
               flex: 1,
               sortable: false,
             },
@@ -272,7 +189,25 @@ const SalesTransfer = () => {
               flex: 1,
               sortable: false,
               type: "actions",
-              getActions: (params) => [renderIcon(params)],
+              getActions: (params) => [
+                <DeleteAlert
+                  title={`¿Desea eliminar ${params.row.name}?`}
+                  callbackToDeleteItem={() => onDeleteRegion(params.row._id)}
+                />,
+                <EditButton
+                disabled={true}
+                  title={`Desea editar ${params.row.name}?`}
+                  callbackToEdit={() =>
+                    navigate(`/mi-almacen/categorias/editar/${params.row._id}`)
+                  }
+                />,
+                <Tooltip title='Ver Detalles'>
+                  <IconButton disabled aria-label="ver detalle" color="primary" onClick={()=>handleOpen(params.row._id)}>
+                    <Visibility/>
+                  </IconButton>
+  
+                </Tooltip>
+              ],
             },
           ]}
           rows={rowsWithIds}
@@ -306,4 +241,4 @@ const SalesTransfer = () => {
   );
 };
 
-export default SalesTransfer;
+export default Regions;

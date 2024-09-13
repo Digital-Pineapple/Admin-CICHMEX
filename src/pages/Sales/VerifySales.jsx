@@ -9,6 +9,7 @@ import { Grid } from '@mui/material';
 import React from 'react'
 import SalesTransfer from './SalesTransfer';
 import SalesMPPending from './SalesMPPending';
+import { usePayments } from '../../hooks/usePayments';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -34,6 +35,7 @@ function TabPanel(props) {
 export default function VerifySales() {
   const theme = useTheme();
   const [value, setValue] = useState(0);
+
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -66,15 +68,15 @@ export default function VerifySales() {
           variant="fullWidth"
         >
           <Tab label="Ventas pagadas por transferencia"/>
-          <Tab label="Ventas pagadas con mercado pago"/>
+          {/* <Tab label="Ventas pagadas con mercado pago"/> */}
         </Tabs>
       </AppBar>
         <TabPanel value={value} index={0} dir={theme.direction}>
           <SalesTransfer/>
         </TabPanel>
-        <TabPanel value={value} index={1} dir={theme.direction}>
+        {/* <TabPanel value={value} index={1} dir={theme.direction}>
           <SalesMPPending/>
-        </TabPanel>
+        </TabPanel> */}
     </Grid>
   );
 }
