@@ -31,6 +31,7 @@ import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import CustomNoRows from "../../components/Tables/CustomNoRows";
 import dayjs from "dayjs";
 import SuccessButton from "../../components/Buttons/SuccessButton";
+import { usePayments } from "../../hooks/usePayments";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -124,6 +125,7 @@ const SalesTransfer = () => {
   const { loadPendingTransferPO, navigate, productOrders, loading } =
     useProductOrder();
   const { user } = useAuthStore();
+  const {loadValidateExpiredPayments} = usePayments()
 
   useEffect(() => {
     loadPendingTransferPO();
@@ -157,7 +159,7 @@ const SalesTransfer = () => {
           aria-label="Ver detalle"
           color="primary"
           title="Ver detalle"
-          onClick={() => navigate(`/auth/venta/${values.row._id}`)}
+          onClick={() => navigate(`/contaduria/venta-detalle/${values.row._id}`)}
         >
           <Visibility />
         </IconButton> 
@@ -211,6 +213,11 @@ const SalesTransfer = () => {
 
   return (
     <Grid container>
+      <Grid mb={2} item xs={12}>
+        <Button variant="contained" onClick={()=>loadValidateExpiredPayments()} color="primary">
+          Limpiar pagos expirados
+        </Button>
+      </Grid>
       <Grid item xs={12}>
         <DataGrid
           sx={{ fontSize: "14px", fontFamily: "sans-serif" }}

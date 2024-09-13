@@ -1,33 +1,33 @@
-import * as React from "react";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SortIcon from "@mui/icons-material/Sort";
 import {
   DataGrid,
-  GridActionsCellItem,
   GridPagination,
-  GridToolbar,
   GridToolbarContainer,
   GridToolbarQuickFilter,
   gridPageCountSelector,
   useGridApiContext,
   useGridSelector,
 } from "@mui/x-data-grid";
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
-import { useServices } from "../../hooks/useServices";
+import { useEffect, useState } from "react";
 import MuiPagination from "@mui/material/Pagination";
-import { Add, Download, Edit } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { redirectPages } from '../../helpers';
-import { Button, IconButton, Tooltip, Grid, Typography, Fab } from "@mui/material";
+import { Add, Download, Edit, Visibility } from "@mui/icons-material";
+import {
+  Button,
+  IconButton,
+  Tooltip,
+  Grid,
+  Typography,
+  Fab,
+  Skeleton,
+} from "@mui/material";
 import { Workbook } from "exceljs";
 import { useProducts } from "../../hooks/useProducts";
-import { editOneProduct } from "../../store/actions/productsActions";
 import DeleteAlert from "../../components/ui/DeleteAlert";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
-import {  useAuthStore } from "../../hooks";
-import { replace } from "formik";
+import { useAuthStore } from "../../hooks";
+import ProductDetailModal from "../../components/Modals/ProductDetailModal";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -62,14 +62,22 @@ function CustomPagination(props) {
 }
 
 const Products = () => {
-  const {user} = useAuthStore()
-  const { loadProducts, navigate, deleteProduct, rowsProducts, loading } = useProducts();
+  const { user } = useAuthStore();
+  const {
+    loadProducts,
+    navigate,
+    deleteProduct,
+    rowsProducts,
+    loading,
+    loadProduct,
+    product,
+  } = useProducts();
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
-    loadProducts()
+    loadProducts();
   }, [user]);
 
-  
   const exportToExcel = () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Productos");
@@ -80,7 +88,7 @@ const Products = () => {
       "Descripción",
       "Precio",
       "Tamaño",
-      "Código"
+      "Código",
     ]);
     headerRow.eachCell((cell) => {
       cell.font = { bold: true };
@@ -88,14 +96,19 @@ const Products = () => {
 
     // Agregar datos de las filas
     rowsProducts.forEach((row) => {
-      worksheet.addRow([row.name, row.description, row.price, row.size, row.tag]);
+      worksheet.addRow([
+        row.name,
+        row.description,
+        row.price,
+        row.size,
+        row.tag,
+      ]);
     });
 
     // Crear un Blob con el archivo Excel y guardarlo
     workbook.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer], {
-        type:
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
       saveAs(blob, "productos.xlsx");
     });
@@ -103,36 +116,51 @@ const Products = () => {
 
   function CustomToolbar() {
     const apiRef = useGridApiContext();
-  
+
     const handleGoToPage1 = () => apiRef.current.setPage(1);
 
-   
-  
     return (
-      <GridToolbarContainer sx={{justifyContent:'space-between'}}>
+      <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
         <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-        <GridToolbarQuickFilter/>
+        <GridToolbarQuickFilter />
         <Button
-        variant="text"
-        startIcon={<Download/>}
-        disableElevation
-        sx={{ color: "secondary" }}
-        onClick={exportToExcel}
-      >
-        Descargar Excel
-      </Button>
+          variant="text"
+          startIcon={<Download />}
+          disableElevation
+          sx={{ color: "secondary" }}
+          onClick={exportToExcel}
+        >
+          Descargar Excel
+        </Button>
       </GridToolbarContainer>
     );
   }
 
-  if (loading) return (<LoadingScreenBlue/>)
+  if (loading) return <LoadingScreenBlue />;
+
+  const handleOpen = async (id) => {
+    await loadProduct(id);
+    setOpenModal(true);
+  };
+
+  const handleClose = () => setOpenModal(false);
 
   return (
-    <Grid container gap={2} maxWidth={'85vw'}>
-      <Grid item marginTop={{xs:'-30px'}} xs={12} minHeight={'100px'} className="Titles">   
-      <Typography textAlign={'center'} variant="h1" fontSize={{xs:'20px', sm:'30px', lg:'40px'}} >
-        Productos
-      </Typography>
+    <Grid container gap={2} maxWidth={"85vw"}>
+      <Grid
+        item
+        marginTop={{ xs: "-30px" }}
+        xs={12}
+        minHeight={"100px"}
+        className="Titles"
+      >
+        <Typography
+          textAlign={"center"}
+          variant="h1"
+          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
+        >
+          Productos
+        </Typography>
       </Grid>
       <Grid item xs={12}>
         <Fab
@@ -179,7 +207,7 @@ const Products = () => {
             flex: 1,
             align: "center",
           },
-         
+
           {
             field: "Opciones",
             headerName: "Opciones",
@@ -192,13 +220,26 @@ const Products = () => {
                 title={`¿Estas seguro de eliminar el producto ${params.row?.name}`}
                 callbackToDeleteItem={() => deleteProduct(params.row._id)}
               />,
-              <Tooltip title='Editar Producto' >
-
-              <IconButton aria-label="Editar" color="success" onClick={()=>navigate(`/mi-almacen/productos/editar/${params.row._id}`)} >
-                <Edit />
-              </IconButton> 
-              </Tooltip>
-                             
+              <Tooltip title="Editar Producto">
+                <IconButton
+                  aria-label="Editar"
+                  color="success"
+                  onClick={() =>
+                    navigate(`/mi-almacen/productos/editar/${params.row._id}`)
+                  }
+                >
+                  <Edit />
+                </IconButton>
+              </Tooltip>,
+              <Tooltip title="Ver detalle">
+                <IconButton
+                  aria-label="Ver detalle"
+                  color="primary"
+                  onClick={() => handleOpen(params.row._id)}
+                >
+                  <Visibility />
+                </IconButton>
+              </Tooltip>,
             ],
           },
         ]}
@@ -206,9 +247,9 @@ const Products = () => {
           sorting: {
             sortModel: [{ field: "name", sort: "desc" }],
           },
-          pagination:{
-            paginationModel:{pageSize:20}
-          }
+          pagination: {
+            paginationModel: { pageSize: 20 },
+          },
         }}
         density="compact"
         rows={rowsProducts}
@@ -234,10 +275,17 @@ const Products = () => {
           hideFooter: true,
           hideToolbar: true,
         }}
-        style={{fontFamily:'sans-serif', fontSize:'15px'}}
+        style={{ fontFamily: "sans-serif", fontSize: "15px" }}
+      />
+      <ProductDetailModal
+        handleClose={handleClose}
+        handleOpen={handleOpen}
+        openModal={openModal}
+        product={product ? product : ""}
+        setOpenModal={setOpenModal}
       />
     </Grid>
   );
-}
+};
 
-export default Products
+export default Products;

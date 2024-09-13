@@ -49,7 +49,34 @@ export const getOneSubCategory = (subCategory_id) => async (dispatch) => {
   try {
     const { data } = await instanceApi.get(
       `/sub-category/${subCategory_id}`,
-      headerConfig
+      {
+        headers: {
+          "Content-type": "application/json",
+           "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      },
+      }
+    );
+    dispatch(loadSubCategory(data.data));
+  } catch (error) {
+    enqueueSnackbar(`Ocurrió un error al cargar la sub-categoria + ${error}`, {
+      variant: "error",
+      anchorOrigin: {
+        vertical: "top",
+        horizontal: "right",
+      },
+    });
+  }
+};
+export const getOneDetailSubCategory = (id) => async (dispatch) => {
+  try {
+    const { data } = await instanceApi.get(
+      `/sub-category/detail/${id}`,
+      {
+        headers: {
+          "Content-type": "application/json",
+           "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      },
+      }
     );
     dispatch(loadSubCategory(data.data));
   } catch (error) {

@@ -58,6 +58,7 @@ const CreateProduct = () => {
     loadSubCategories();
     loadCategories();
   }, [user]);
+  
 
 
   const formik = useFormik({

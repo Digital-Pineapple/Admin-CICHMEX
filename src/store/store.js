@@ -20,6 +20,9 @@ import productOrdersReducer from "./reducer/productOrdersReducer";
 import carrierDriverReducer from "./reducer/carrierDriverReducer";
 import shippingCostReducer from "./reducer/shippingCostReducer";
 import dynamicRoutes from "./reducer/dynamicRoutes";
+import paymentsReducer from "./reducer/paymentsReducer";
+import regionsReducer from "./reducer/regionsReducer";
+
 
 
 const rootReducer = combineReducers({
@@ -42,7 +45,9 @@ const rootReducer = combineReducers({
   products : productsReducer,
   storeHouse : storeHouseReducer,
   carrierDriver : carrierDriverReducer,
-  shippingCost: shippingCostReducer
+  shippingCost: shippingCostReducer,
+  payments: paymentsReducer,
+  regions: regionsReducer,
 });
 
 export const store = configureStore({

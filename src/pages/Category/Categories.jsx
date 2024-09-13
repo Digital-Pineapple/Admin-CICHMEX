@@ -1,4 +1,3 @@
-import * as React from "react";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SortIcon from "@mui/icons-material/Sort";
@@ -11,18 +10,19 @@ import {
   useGridApiContext,
   useGridSelector,
 } from "@mui/x-data-grid";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import MuiPagination from "@mui/material/Pagination";
-import { Add, Download } from "@mui/icons-material";
+import { Add, Download, Visibility } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useCategories } from "../../hooks/useCategories";
-import { Button, Avatar, Grid, Typography, Fab } from "@mui/material";
+import { Button, Avatar, Grid, Typography, Fab, Tooltip, IconButton } from "@mui/material";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver";
 import DeleteAlert from "../../components/ui/DeleteAlert";
 import EditButton from "../../components/Buttons/EditButton";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
+import CategoryModal from "../../components/Modals/CategoryModal";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -57,11 +57,17 @@ function CustomPagination(props) {
 }
 
 const Categories = () => {
-  const { loadCategories, deleteCategory, categories, navigate, loading } =
+  const { loadCategories, deleteCategory, categories, loadCategory,category, navigate, loading } =
     useCategories();
   useEffect(() => {
     loadCategories();
   }, []);
+  const [open, setOpen] = useState(false)
+  const handleOpen = async(id) =>{
+   await loadCategory(id)
+    setOpen(true)}
+  const handleClose = () => setOpen(false);
+
 
   const rowsWithIds = categories.map((category, _id) => ({
     id: _id.toString(),
@@ -189,6 +195,12 @@ const Categories = () => {
                   navigate(`/mi-almacen/categorias/editar/${params.row._id}`)
                 }
               />,
+              <Tooltip title='Ver Detalles'>
+                <IconButton aria-label="ver detalle" color="primary" onClick={()=>handleOpen(params.row._id)}>
+                  <Visibility/>
+                </IconButton>
+
+              </Tooltip>
             ],
           },
         ]}
@@ -226,6 +238,7 @@ const Categories = () => {
         }}
         style={{ fontFamily: "sans-serif", fontSize: "15px" }}
       />
+      <CategoryModal category={category? category :''} handleClose={handleClose} handleOpen={handleOpen} open={open} setOpen={setOpen}/>
     </Grid>
   );
 };

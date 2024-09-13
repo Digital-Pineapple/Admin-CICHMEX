@@ -160,7 +160,7 @@ const ShippingDelivery = () => {
       Swal.fire('Pendiente de pago','','error')
     }
     else{
-      navigate(`/auth/surtir-orden/${row._id}`)
+      navigate(`/almacenista/surtir-venta/${row._id}`)
     }
   }
 
@@ -187,7 +187,7 @@ const ShippingDelivery = () => {
             aria-label="Asignar ruta"
             color="info"
             variant="outlined"
-            onClick={() =>navigate(`/auth/asignar-ruta/${values.row._id}`)}
+            onClick={() =>navigate(`/almacenista/medio-de-envio/${values.row._id}`, {replace:true})}
           >
             Enviar
           </Button>

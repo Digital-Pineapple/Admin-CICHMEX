@@ -66,6 +66,8 @@ import Unauthorized from "../pages/ui/Unauthorized";
 import AddDynamicRoute from "../pages/DynamicRoutes/AddDynamicRoute";
 import DynamicRoutes from "../pages/DynamicRoutes/DynamicRoutes";
 import EditDynamicRoute from "../pages/DynamicRoutes/EditDynamicRoute";
+import CreateRegion from '../pages/Regions/Create'
+import Regions from "../pages/Regions/Regions";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -154,5 +156,7 @@ export const AllRoutes = [
   { id: 62, element: <EditDynamicRoute /> },
 
   { id: 63, element: <MyProductOrders /> },
+  {id:64, element:<CreateRegion/>},
+  {id:65, element:<Regions/>}
 
 ];

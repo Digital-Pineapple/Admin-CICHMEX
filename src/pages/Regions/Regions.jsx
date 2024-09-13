@@ -9,12 +9,7 @@ import {
   useGridSelector,
 } from "@mui/x-data-grid";
 import MuiPagination from "@mui/material/Pagination";
-import {
-  Button,
-  Grid,
-  IconButton,
-  Tooltip,
-} from "@mui/material";
+import { Button, Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import { Workbook } from "exceljs";
 import {
   ExpandLess as ExpandLessIcon,
@@ -23,12 +18,17 @@ import {
   Download as DownloadIcon,
   ScheduleSend as ScheduleSendIcon,
   ThumbUpAlt as ThumbUpAltIcon,
+  Visibility,
 } from "@mui/icons-material";
 import Swal from "sweetalert2";
 import { useProductOrder } from "../../hooks/useProductOrder";
 import { useAuthStore } from "../../hooks";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import CustomNoRows from "../../components/Tables/CustomNoRows";
+import { useRegions } from "../../hooks/useRegions";
+import MultiRegionMap from "./MultiRegionMap";
+import DeleteAlert from "../../components/ui/DeleteAlert";
+import EditButton from "../../components/Buttons/EditButton";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -76,7 +76,7 @@ function CustomToolbar() {
       "Cantidad de productos",
       "Tipo de envio",
       "Id de Pedido",
-      "Fecha de solicitud"
+      "Fecha de solicitud",
     ]);
     headerRow.eachCell((cell) => {
       cell.font = { bold: true };
@@ -88,7 +88,7 @@ function CustomToolbar() {
         row.quantityProduct,
         row.typeDelivery,
         row.order_id,
-        row.createdAt
+        row.createdAt,
       ]);
     });
 
@@ -118,97 +118,28 @@ function CustomToolbar() {
   );
 }
 
-const PaidProductOrders = () => {
+const Regions = () => {
   const {
-    loadProductOrdersPaid,
     navigate,
-    productOrders,
-    loading
+    loading,
   } = useProductOrder();
+  const {loadAllRegions, regions, onDeleteRegion} = useRegions()
   const { user } = useAuthStore();
 
   useEffect(() => {
-    loadProductOrdersPaid();
+    loadAllRegions()
   }, [user]);
+  
+
+  const rowsWithIds = regions?.map((item, index) => ({
+    id: index,
+    ...item,
+  }));
 
   
 
-  const rowsWithIds = productOrders.map((item, index) => {
-    const quantities = item.products.map((i) => i.quantity);
-    const suma = quantities.reduce((valorAnterior, valorActual) => {
-      return valorAnterior + valorActual;
-    }, 0);
-
-    const TD = item.branch ? "En Punto de entrega" : "A domicilio";
-    return {
-      quantityProduct: suma,
-      typeDelivery: TD,
-      id: index.toString(),
-      ...item,
-    };
-  });
 
  
-
-  const paymentValuate = (row) => {
-    if (row.payment_status !== 'approved') {
-      Swal.fire('Pendiente de pago', '', 'error');
-    } else {
-      navigate(`/almacenista/surtir-venta/${row._id}`);
-    }
-  };
-
-  const renderIcon = (values) => {
-    if (!values.row.storeHouseStatus) {
-      return (
-        <Tooltip title="Surtir orden">
-          <Button
-            aria-label="Surtir"
-            color="success"
-            onClick={() => paymentValuate(values.row)}
-            variant="outlined"
-          >
-            Surtir
-          </Button>
-        </Tooltip>
-      );
-    } else if (!values.row.route_status) {
-      return (
-        <Tooltip title="Asignar Ruta">
-          <Button
-            aria-label="Asignar Ruta"
-            color="info"
-            variant="outlined"
-            onClick={() => navigate(`/auth/asignar-ruta/${values.row._id}`)}
-          >
-            Ruta
-          </Button>
-        </Tooltip>
-      );
-    } else if (!values.row.deliveryStatus) {
-      return (
-        <Tooltip title="En envío">
-          <IconButton
-            aria-label="En envío"
-            color="secondary"
-          >
-            <ScheduleSendIcon />
-          </IconButton>
-        </Tooltip>
-      );
-    } else {
-      return (
-        <Tooltip title="Pedido entregado">
-          <IconButton
-            aria-label="Pedido entregado"
-            color="primary"
-          >
-            <ThumbUpAltIcon />
-          </IconButton>
-        </Tooltip>
-      );
-    }
-  };
 
   if (loading) {
     return <LoadingScreenBlue />;
@@ -216,25 +147,38 @@ const PaidProductOrders = () => {
 
   return (
     <Grid container gap={1}>
+         <Grid
+        item
+        marginTop={{ xs: "-30px" }}
+        xs={12}
+        minHeight={"100px"}
+        className="Titles"
+      >
+        <Typography
+          textAlign={"center"}
+          variant="h1"
+          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
+        >
+          Regiones
+        </Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <MultiRegionMap regions={regions}/>
+      </Grid>
+
       <Grid item xs={12}>
         <DataGrid
           sx={{ fontSize: "14px", fontFamily: "sans-serif" }}
           columns={[
             {
-              field: "createdAt",
-              headerName: "Fecha de solicitud",
+              field: "regionCode",
+              headerName: "Código",
               flex: 1,
               align: "center",
             },
             {
-              field: "order_id",
-              headerName: "Id de pedido",
-              flex: 1,
-              align: "center",
-            },
-            {
-              field: "typeDelivery",
-              headerName: "Tipo de envio",
+              field: "name",
+              headerName: "Nombre de la region",
               flex: 1,
               sortable: false,
             },
@@ -245,7 +189,25 @@ const PaidProductOrders = () => {
               flex: 1,
               sortable: false,
               type: "actions",
-              getActions: (params) => [renderIcon(params)],
+              getActions: (params) => [
+                <DeleteAlert
+                  title={`¿Desea eliminar ${params.row.name}?`}
+                  callbackToDeleteItem={() => onDeleteRegion(params.row._id)}
+                />,
+                <EditButton
+                disabled={true}
+                  title={`Desea editar ${params.row.name}?`}
+                  callbackToEdit={() =>
+                    navigate(`/mi-almacen/categorias/editar/${params.row._id}`)
+                  }
+                />,
+                <Tooltip title='Ver Detalles'>
+                  <IconButton disabled aria-label="ver detalle" color="primary" onClick={()=>handleOpen(params.row._id)}>
+                    <Visibility/>
+                  </IconButton>
+  
+                </Tooltip>
+              ],
             },
           ]}
           rows={rowsWithIds}
@@ -279,4 +241,4 @@ const PaidProductOrders = () => {
   );
 };
 
-export default PaidProductOrders;
+export default Regions;

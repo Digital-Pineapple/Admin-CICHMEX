@@ -49,7 +49,7 @@ if (loading) {
       <Grid item xs={12}>
         <Fab
           sx={{ right: "-80%" }}
-          onClick={() => navigate("/auth/AltaTransportista")}
+          onClick={() => navigate("/usuarios/agregar-transportista",{replace:true})}
           color="secondary"
           aria-label="Alta de transportista"
           title="Alta de transportista"

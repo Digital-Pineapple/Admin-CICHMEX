@@ -148,7 +148,7 @@ const LoadPackage = () => {
           <Button
             aria-label="Cargar paquete"
             color="success"
-            onClick={() => navigate(`/auth/cargar-paquetes/verificar/${values.row._id}`, { replace: true })}
+            onClick={() => navigate(`/transportista/cargar/${values.row._id}`, { replace: true })}
             variant="outlined"
           >
             Cargar paquete
