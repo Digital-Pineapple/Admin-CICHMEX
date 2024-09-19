@@ -1,6 +1,6 @@
 
 import { useSelector, useDispatch } from 'react-redux';
-import { addOneCarrier, deleteOneUser, editOneUser, getCarrierDrivers, getOneUser, getUsers, verifyOneUser } from '../store/actions/userActions'; 
+import { addOneCarrier, deleteOneUser, editOneUser, getCarrierDrivers, getOneUser, getUsers, startOneCarrierDriver, verifyOneUser } from '../store/actions/userActions'; 
 import { useNavigate } from 'react-router-dom';
 
 export const useUsers = () => {
@@ -13,6 +13,7 @@ export const useUsers = () => {
     const loadUsers = async () => await dispatch(getUsers());
 
     const loadCarrierDrivers = () => dispatch(getCarrierDrivers())
+    const loadOneCarrieDriver = (id) => dispatch(startOneCarrierDriver(id))
 
     const loadUser = async user_id => await dispatch(getOneUser(user_id));
 
@@ -32,7 +33,7 @@ export const useUsers = () => {
         ...i,
       }));
 
-    return { user, users, loadUser,addCarrier, loadUsers, deleteUser, verifyUser, editUser, navigate, loadCarrierDrivers, rowsCarrierDrivers, CarrierDriver, loading, CarrierDrivers }
+    return { user, users, loadUser,addCarrier, loadUsers,loadOneCarrieDriver, deleteUser, verifyUser, editUser, navigate, loadCarrierDrivers, rowsCarrierDrivers, CarrierDriver, loading, CarrierDrivers }
 
 
 }

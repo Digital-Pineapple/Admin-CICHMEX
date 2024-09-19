@@ -8,7 +8,7 @@ import {
   verifyUser,
 } from "../reducer/userReducer";
 import { enqueueSnackbar } from "notistack";
-import { loadCarrierDrivers } from "../reducer";
+import { loadCarrierDriver, loadCarrierDrivers } from "../reducer";
 import { headerConfigFormData } from "../../apis/headersConfig";
 import { startLoading, stopLoading } from "../reducer/uiReducer";
 
@@ -63,9 +63,9 @@ export const getCarrierDrivers = () => {
   };
 };
 
-export const getOneUser = (_id) => async (dispatch) => {
+export const getOneUser = (id) => async (dispatch) => {
   try {
-    const { data } = await instanceApi.get(`/user/${_id}`, {
+    const { data } = await instanceApi.get(`/user/${id}`, {
       headers: {
         "Content-type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -74,6 +74,29 @@ export const getOneUser = (_id) => async (dispatch) => {
     dispatch(loadUser(data.data));
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const startOneCarrierDriver = (id) => async (dispatch) => {
+  dispatch(startLoading())
+  try {
+    const { data } = await instanceApi.get(`/user/carrier-driver/${id}`, {
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    dispatch(loadCarrierDriver(data.data));
+  } catch (error) {
+    enqueueSnackbar(
+      `${error.response.data.message}`,
+      {
+        variant: "error",
+        anchorOrigin: { horizontal: "right", vertical: "top" },
+      }
+    );
+  }finally{
+    dispatch(stopLoading())
   }
 };
 

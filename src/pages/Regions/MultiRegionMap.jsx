@@ -28,7 +28,7 @@ const MultiRegionMap = ({ regions }) => {
 
   return (
     <GoogleMap
-      zoom={10}
+      zoom={11}
       center={{ lat: 19.432604958299997, lng: -99.13322417271692 }} 
       mapContainerStyle={__mapMandatoryStyles}
     >
