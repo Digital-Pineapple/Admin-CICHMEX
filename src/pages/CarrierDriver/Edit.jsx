@@ -7,23 +7,36 @@ import {
   Card,
   CardContent,
   Typography,
+  FormControl,
+  Select,
+  FormHelperText,
+  CardHeader, ButtonGroup,
 } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useStoreHouse } from "../../hooks/useStoreHouse";
 import PercentIcon from "@mui/icons-material/Percent";
 import { AttachMoney } from "@mui/icons-material";
 import { useUsers } from "../../hooks/useUsers";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
-import { MuiTelInput, matchIsValidTel } from "mui-tel-input";
-import { green, lightGreen } from "@mui/material/colors";
+import { lightGreen } from "@mui/material/colors";
 import { useParams } from "react-router-dom";
-import{ useRegions } from '../../hooks/'
+import { useRegions } from "../../hooks/";
+import {
+  GoogleMap,
+  OverlayView,
+  Polygon,
+  useLoadScript,
+} from "@react-google-maps/api";
 
 const EditCarrierDriver = () => {
   const { StoreHouses, loadStoreHouse } = useStoreHouse();
-  const { CarrierDriver, loadOneCarrieDriver, loading } = useUsers();
-  const {regions} = useRegions()
+  const { CarrierDriver, loadOneCarrieDriver, loading, updateCarrier, navigate } =
+    useUsers();
+  const { loadAllRegions, regions } = useRegions();
+  const [watchRegions, setWatchRegions] = useState([]);
+  const [selectedRegions, setSelectedRegions] = useState([]);
+
   const { id } = useParams();
 
   const { control, handleSubmit, setValue, watch, reset } = useForm({
@@ -40,9 +53,11 @@ const EditCarrierDriver = () => {
   });
 
   useEffect(() => {
-    loadStoreHouse();
+    if (!StoreHouses.length) {
+      loadStoreHouse();
+    }
     loadOneCarrieDriver(id);
-    
+    loadAllRegions();
   }, [id]);
 
   useEffect(() => {
@@ -58,8 +73,50 @@ const EditCarrierDriver = () => {
           store_house: CarrierDriver.employee_detail?.store_house || [],
         },
       });
+      setWatchRegions(CarrierDriver.employee_detail?.operationRegions);
     }
   }, [CarrierDriver, reset]);
+
+  const handleRegionChange = (e) => {
+    const regionIds = e.target.value; // Obtén un array de IDs seleccionados
+    setSelectedRegions(regionIds);
+    setWatchRegions(regionIds.map((id) => regions.find((r) => r._id === id)));
+    setValue("employee_detail.operationRegions", regionIds, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+  };
+
+  const __mapMandatoryStyles = { width: "100%", height: "700px" };
+  const googleMapsApiKey = import.meta.env.VITE_REACT_APP_MAP_KEY;
+
+  const calculateCenter = (path) => {
+    const latLngs = path.map(
+      (point) => new window.google.maps.LatLng(point.lat, point.lng)
+    );
+    const bounds = new window.google.maps.LatLngBounds();
+    latLngs.forEach((latLng) => bounds.extend(latLng));
+    return bounds.getCenter().toJSON();
+  };
+
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey,
+  });
+
+  if (!isLoaded) {
+    return <div>Cargando mapa...</div>;
+  }
+
+  const regionWithCenter = (region) => {
+    return {
+      ...region,
+      center: calculateCenter(region.path), // Calcula el centro dinámicamente
+    };
+  };
+
+  const onSubmit = (data) => {
+    updateCarrier(id, data);
+  };
 
   if (loading) {
     return <LoadingScreenBlue />;
@@ -91,11 +148,8 @@ const EditCarrierDriver = () => {
         gap={2}
         display={"flex"}
         textAlign={"center"}
+        onSubmit={handleSubmit(onSubmit)}
       >
-        <Grid item xs={12}>
-          
-          
-        </Grid>
         <Grid item xs={12} sm={6}>
           <Controller
             name="fullname"
@@ -172,7 +226,11 @@ const EditCarrierDriver = () => {
                 error={fieldState.invalid}
                 {...field}
                 InputProps={{
-                  startAdornment: <AttachMoney />,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <AttachMoney />
+                    </InputAdornment>
+                  ),
                 }}
               />
             )}
@@ -203,7 +261,11 @@ const EditCarrierDriver = () => {
                 error={fieldState.invalid}
                 {...field}
                 InputProps={{
-                  endAdornment: <PercentIcon />,
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <PercentIcon />
+                    </InputAdornment>
+                  ),
                 }}
               />
             )}
@@ -259,10 +321,89 @@ const EditCarrierDriver = () => {
             ""
           )}
         </Grid>
-        <Grid item xs={6}>
-          <Button variant="contained" fullWidth type="submit" color="primary">
+        <Grid container display={"flex"} justifyContent={"center"}>
+          {watchRegions?.map((item, index) => (
+            <Grid key={index} item xs={12} md={6}>
+              <Card key={index} variant="outlined">
+                <CardHeader
+                  title={`Nombre: ${item.name}`}
+                  subheader={`Código: ${item.regionCode}`}
+                />
+                <CardContent>
+                  <GoogleMap
+                    zoom={13}
+                    center={regionWithCenter(item).center} // Usa el centro calculado dinámicamente
+                    mapContainerStyle={__mapMandatoryStyles}
+                  >
+                    <Fragment key={item._id}>
+                      <Polygon
+                        path={item.path.map((point) => ({
+                          lat: point.lat,
+                          lng: point.lng,
+                        }))}
+                        options={{
+                          fillColor: "orange",
+                          fillOpacity: 0.3,
+                          strokeColor: "orange",
+                          strokeOpacity: 0.8,
+                          strokeWeight: 2,
+                        }}
+                      />
+                      <OverlayView
+                        position={regionWithCenter(item).center} // Usa el centro pre-calculado
+                        mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                      >
+                        <Typography variant="body1" color="red">
+                          {item.name}
+                        </Typography>
+                      </OverlayView>
+                    </Fragment>
+                  </GoogleMap>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+
+          <Controller
+            name="employee_detail.operationRegions"
+            control={control}
+            rules={{
+              required: { value: true, message: "Valor requerido" },
+            }}
+            render={({ field, fieldState }) => (
+              <FormControl error={fieldState.invalid} fullWidth size="small">
+                <Select
+                  variant="outlined"
+                  {...field}
+                  displayEmpty
+                  multiple
+                  value={selectedRegions} // Trabaja con IDs
+                  onChange={handleRegionChange}
+                >
+                  {regions.map((item, index) => (
+                    <MenuItem key={index} value={item._id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>
+                  {fieldState.error ? <b>{fieldState.error.message}</b> : ""}
+                </FormHelperText>
+              </FormControl>
+            )}
+          />
+        </Grid>
+
+        <Grid item xs={12}>
+          <ButtonGroup fullWidth variant="contained" color="inherit" aria-label="Actions">
+          <Button variant="contained" onClick={()=>navigate('/usuarios/transportistas', {replace:true})} color="error">
+            Cancelar
+          </Button><Button variant="contained"  type="submit" color="primary">
             Editar
-          </Button>
+          </Button> 
+            
+          </ButtonGroup>
+          
         </Grid>
       </Grid>
     </Grid>

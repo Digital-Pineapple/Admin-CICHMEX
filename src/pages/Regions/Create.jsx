@@ -58,13 +58,14 @@ const Create = () => {
         </Typography>
       </Grid>
 
-      <Grid item>
+      <Grid item xs={12}>
         <Card variant="outlined">
           <CardContent sx={{ display: 'flex', gap: 2 }}>
             <TextField
               id="name"
               label="Nombre de la región"
               variant="outlined"
+              fullWidth
               color="primary"
               margin="none"
               sizes="small"
@@ -78,6 +79,7 @@ const Create = () => {
               id="regionCode"
               label="Código de la región"
               variant="outlined"
+              fullWidth
               color="primary"
               margin="none"
               sizes="small"

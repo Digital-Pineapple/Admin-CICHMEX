@@ -15,7 +15,7 @@ import EditButton from "../../components/Buttons/EditButton";
 
 
   const CarrierDrivers = () => {
-   const {rowsCarrierDrivers, loadCarrierDrivers, navigate, loading} =  useUsers()
+   const {rowsCarrierDrivers,deleteOneCD, loadCarrierDrivers, navigate, loading, } =  useUsers()
    const {user} =useAuthStore()
 
 useEffect(() => {
@@ -23,7 +23,7 @@ useEffect(() => {
 }, [user])
 
 const Delete = (value)=>{
-console.log(value);
+  deleteOneCD(value)
 }
 if (loading) {
   return(<LoadingScreenBlue/>)

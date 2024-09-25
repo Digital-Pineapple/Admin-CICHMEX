@@ -11,7 +11,7 @@ import {
   FormHelperText,
   FormControl,
   CardActions,
-  CardHeader,
+  CardHeader, ButtonGroup,
 } from "@mui/material";
 import React, { Fragment, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -43,14 +43,12 @@ const CreateCarrier = () => {
   });
   
   const { StoreHouses, loadStoreHouse } = useStoreHouse();
-  const { user } = useAuthStore();
+  const { user, navigate } = useAuthStore();
   const { addCarrier, loading } = useUsers();
   const { loadAllRegions, regions } = useRegions(); 
   const [watchRegions, setWatchRegions] = useState([]);
   const createCarrier = (values) => {
-    // addCarrier(values);
-    console.log(values);
-    
+    addCarrier(values);
   };
 
 
@@ -160,73 +158,7 @@ const CreateCarrier = () => {
           />
         </Grid>
 
-        <Grid item xs={12}>
-          {watchRegions.map((item, index) => (
-            <Card key={index} variant="outlined">
-              <CardHeader title={`Nombre: ${item.name}`} subheader={`Código: ${item.regionCode}`} />
-              <CardContent>
-                <GoogleMap
-                  zoom={13}
-                  center={regionWithCenter(item).center} // Usa el centro calculado dinámicamente
-                  mapContainerStyle={__mapMandatoryStyles}
-                >
-                  <Fragment key={item._id}>
-                    <Polygon
-                      path={item.path.map((point) => ({
-                        lat: point.lat,
-                        lng: point.lng,
-                      }))}
-                      options={{
-                        fillColor: "orange",
-                        fillOpacity: 0.3,
-                        strokeColor: "orange",
-                        strokeOpacity: 0.8,
-                        strokeWeight: 2,
-                      }}
-                    />
-                    <OverlayView
-                      position={regionWithCenter(item).center} // Usa el centro pre-calculado
-                      mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                    >
-                      <Typography variant="body1" color="red">
-                        {item.name}
-                      </Typography>
-                    </OverlayView>
-                  </Fragment>
-                </GoogleMap>
-              </CardContent>
-            </Card>
-          ))}
-
-          <Controller
-            name="employee_detail.operationRegions"
-            control={control}
-            rules={{
-              required: { value: true, message: "Valor requerido" },
-            }}
-            render={({ field, fieldState }) => (
-              <FormControl error={fieldState.invalid} fullWidth size="small">
-                <Select
-                  variant="outlined"
-                  {...field}
-                  displayEmpty
-                  multiple
-                  value={selectedRegions} // Trabaja con IDs
-                  onChange={handleRegionChange}
-                >
-                  {regions.map((item, index) => (
-                    <MenuItem key={index} value={item._id}>
-                      {item.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <FormHelperText>
-                  {fieldState.error ? <b>{fieldState.error.message}</b> : ""}
-                </FormHelperText>
-              </FormControl>
-            )}
-          />
-        </Grid>
+       
 
         <Grid item xs={12} sm={5.5}>
           <Controller
@@ -411,14 +343,86 @@ const CreateCarrier = () => {
             </Card>
           )}
         </Grid>
-        <Grid item xs={12}>
-        
-          
+        <Grid container display={'flex'} justifyContent={'center'}>
+          {watchRegions.map((item, index) => (
+            <Grid key={index} item xs={12} md={6}>
+               <Card key={index} variant="outlined">
+              <CardHeader title={`Nombre: ${item.name}`} subheader={`Código: ${item.regionCode}`} />
+              <CardContent>
+                <GoogleMap
+                  zoom={13}
+                  center={regionWithCenter(item).center} // Usa el centro calculado dinámicamente
+                  mapContainerStyle={__mapMandatoryStyles}
+                >
+                  <Fragment key={item._id}>
+                    <Polygon
+                      path={item.path.map((point) => ({
+                        lat: point.lat,
+                        lng: point.lng,
+                      }))}
+                      options={{
+                        fillColor: "orange",
+                        fillOpacity: 0.3,
+                        strokeColor: "orange",
+                        strokeOpacity: 0.8,
+                        strokeWeight: 2,
+                      }}
+                    />
+                    <OverlayView
+                      position={regionWithCenter(item).center} // Usa el centro pre-calculado
+                      mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                    >
+                      <Typography variant="body1" color="red">
+                        {item.name}
+                      </Typography>
+                    </OverlayView>
+                  </Fragment>
+                </GoogleMap>
+              </CardContent>
+            </Card>
+            </Grid>
+           
+          ))}
+
+          <Controller
+            name="employee_detail.operationRegions"
+            control={control}
+            rules={{
+              required: { value: true, message: "Valor requerido" },
+            }}
+            render={({ field, fieldState }) => (
+              <FormControl error={fieldState.invalid} fullWidth size="small">
+                <Select
+                  variant="outlined"
+                  {...field}
+                  displayEmpty
+                  multiple
+                  value={selectedRegions} // Trabaja con IDs
+                  onChange={handleRegionChange}
+                >
+                  {regions.map((item, index) => (
+                    <MenuItem key={index} value={item._id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>
+                  {fieldState.error ? <b>{fieldState.error.message}</b> : ""}
+                </FormHelperText>
+              </FormControl>
+            )}
+          />
         </Grid>
-        <Grid item xs={6}>
-          <Button variant="contained" fullWidth type="submit" color="primary">
+        <Grid item xs={12}>
+          <ButtonGroup variant="contained" fullWidth color="inherit" aria-label="Actions">
+             <Button variant="contained"  onClick={()=>{navigate('/usuarios/transportistas', {replace:true})}} color="error">
+            Cancelar
+          </Button>
+          <Button variant="contained"  type="submit" color="success">
             Crear
           </Button>
+          </ButtonGroup>
+       
         </Grid>
       </Grid>
     </Grid>

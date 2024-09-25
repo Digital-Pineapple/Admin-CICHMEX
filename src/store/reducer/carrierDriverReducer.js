@@ -17,7 +17,7 @@ export const CarrierDriverReducer = createSlice({
     },
     deleteCarrierDriver: (state, { payload }) => {
       state.CarrierDrivers = state.CarrierDrivers.filter(
-        (i) => i._id !== payload
+        (i) => i._id !== payload._id
       );
     },
     editcarrierDriver: (state, { payload }) => {

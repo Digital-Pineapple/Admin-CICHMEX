@@ -8,7 +8,7 @@ import {
   verifyUser,
 } from "../reducer/userReducer";
 import { enqueueSnackbar } from "notistack";
-import { loadCarrierDriver, loadCarrierDrivers } from "../reducer";
+import { loadCarrierDriver, loadCarrierDrivers, deleteCarrierDriver as DeleteCarrierDriver } from "../reducer";
 import { headerConfigFormData } from "../../apis/headersConfig";
 import { startLoading, stopLoading } from "../reducer/uiReducer";
 
@@ -58,6 +58,43 @@ export const getCarrierDrivers = () => {
           horizontal: "center",
         },
       });
+      dispatch(stopLoading())
+    }
+  };
+};
+
+export const deleteCarrierDriver = (id) => {
+  return async (dispatch) => {
+    dispatch(startLoading())
+    try {
+      const { data } = await instanceApi.delete(
+        `/user/carrier-driver/${id}`,
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      console.log(data.data);
+      
+      enqueueSnackbar(`${data.message}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center",
+        },
+      });
+      dispatch(DeleteCarrierDriver(data.data))
+    } catch (error) {
+      enqueueSnackbar(`${error.response.data.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center",
+        },
+      });
+    }finally{
       dispatch(stopLoading())
     }
   };
@@ -198,7 +235,8 @@ export const editOneUser = (user_id, {fullname,type_user,profile_image}, navigat
 
 export const addOneCarrier = (values, navigate) => {
   return async (dispatch) => {
-  
+    console.log(values);
+    dispatch(startLoading())
     try {
       const { data } = await instanceApi.post(
         `/user/carrier-driver`,
@@ -222,9 +260,41 @@ export const addOneCarrier = (values, navigate) => {
           horizontal: "right",
         },
       });
-      if (error) {
-        
-      }
+    }finally{
+      dispatch(stopLoading())
     }
+
+  };
+};
+export const updateOneCarrier = (id,values, navigate) => {
+  return async (dispatch) => {
+    dispatch(startLoading())
+    try {
+      const { data } = await instanceApi.post(
+        `/user/carrier-driver/update/${id}`,
+        { values: values },
+        headerConfig
+      );
+      navigate("/usuarios/transportistas");
+      enqueueSnackbar(`${data.message}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+      
+    } catch (error) {
+      enqueueSnackbar(`${error.response.data.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    }finally{
+      dispatch(stopLoading())
+    }
+
   };
 };
