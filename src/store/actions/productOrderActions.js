@@ -5,6 +5,7 @@ import {
   editProductOrder,
   loadProductOrder,
   loadProductOrders,
+  loadReadyToPoint,
   startLoadResume,
 } from "../reducer/productOrdersReducer";
 import { headerConfigApplication } from "../../apis/headersConfig";
@@ -302,6 +303,34 @@ export const LoadOneProductOrder = (id) => {
         }
       );
       dispatch(loadProductOrder(data.data));
+      dispatch(stopLoading());
+    } catch (error) {
+      enqueueSnackbar(
+        `${error.response.data.message}|| 'Error al consultar información'`,
+        {
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+          variant: "error",
+        }
+      );
+      dispatch(stopLoading());
+    }
+  };
+};
+
+export const startLoadReadyToPoint = () => {
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      const { data } = await instanceApi.get(
+        `/product-order/readyToPoint/ok`,
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
+      );
+      dispatch(loadReadyToPoint(data.data));
       dispatch(stopLoading());
     } catch (error) {
       enqueueSnackbar(
