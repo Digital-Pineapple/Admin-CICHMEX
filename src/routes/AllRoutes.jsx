@@ -70,12 +70,13 @@ import CreateRegion from '../pages/Regions/Create'
 import Regions from "../pages/Regions/Regions";
 import EditRegion from '../pages/Regions/Edit'
 import EditCarrierDriver from "../pages/CarrierDriver/Edit";
+import Home from "../pages/Home";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
   { id: 0, element: <Unauthorized /> },
   { id: 1, element: <NotFound /> },
-  { id: 2, element: <Principal /> },
+  { id: 2, element: <Home /> },
   { id: 3, element: <Users /> },
   { id: 4, element: <EditUser /> },
   { id: 5, element: <Documentation /> },

@@ -1,4 +1,3 @@
-import * as React from "react";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SortIcon from "@mui/icons-material/Sort";
@@ -11,7 +10,7 @@ import {
   useGridApiContext,
   useGridSelector,
 } from "@mui/x-data-grid";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import MuiPagination from "@mui/material/Pagination";
 import {
   Button,
@@ -21,10 +20,11 @@ import {
 } from "@mui/material";
 import { Workbook } from "exceljs";
 import { useProductOrder } from "../../hooks/useProductOrder";
-import { saveAs } from "file-saver"; // Asegúrate de importar esto
+import { saveAs } from "file-saver"; 
 import Download from "@mui/icons-material/Download";
 import Swal from "sweetalert2";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
+import LoadPackageModal from "../../components/Modals/LoadPackageModal";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -66,13 +66,25 @@ const LoadPackage = () => {
     loadAssignedPO();
   }, []);
 
+  const [openModal, setOpenModal] = useState(false)
+  const [valuePO, setValuePO] = useState(null) 
+  
+  const handleOpen = (values)=>{
+    setValuePO(values)
+    setOpenModal(true)
+  }
+  const handleClose = ()=>{
+    setValuePO(null)
+    setOpenModal(false)
+  }
+
   const rowsWithIds = productOrders?.map((item, index) => {
     const quantities = item.products.map((i) => i.quantity);
     const suma = quantities.reduce((valorAnterior, valorActual) => valorAnterior + valorActual, 0);
-  
+
     const TD = item.branch ? "En Punto de entrega" : "A domicilio";
-    const statusRoute = item?.route_detail?.route_status ? item?.route_detail?.route_status : 'No asignado';
-  
+    const statusRoute = item?.route_detail?.route_status || 'No asignado';
+
     return {
       quantityProduct: suma,
       typeDelivery: TD,
@@ -81,13 +93,11 @@ const LoadPackage = () => {
       ...item,
     };
   });
-  
 
   const exportToExcel = () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Stock de productos");
 
-    // Agregar encabezados de columna
     const headerRow = worksheet.addRow([
       "Cantidad de productos",
       "Tipo de envío",
@@ -99,18 +109,16 @@ const LoadPackage = () => {
       cell.font = { bold: true };
     });
 
-    // Agregar datos de las filas
     rowsWithIds.forEach((row) => {
       worksheet.addRow([
         row.quantityProduct,
         row.typeDelivery,
-        row.existences, // Asegúrate de que estas propiedades existan
+        row.existences, // Ensure this field exists
         row.price,
         row.size,
       ]);
     });
 
-    // Crear un Blob con el archivo Excel y guardarlo
     workbook.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -132,7 +140,7 @@ const LoadPackage = () => {
           variant="text"
           startIcon={<Download />}
           disableElevation
-          sx={{ color: "secondary" }}
+          sx={{ color: "secondary.main" }} // Correct usage of the secondary color
           onClick={exportToExcel}
         >
           Descargar Excel
@@ -141,26 +149,11 @@ const LoadPackage = () => {
     );
   }
 
-  const renderIcon = (values) => {
-    if (values?.row?.status_route === 'assigned') {
-      return (
-        <Tooltip title="Cargar paquete">
-          <Button
-            aria-label="Cargar paquete"
-            color="success"
-            onClick={() => navigate(`/transportista/cargar/${values.row._id}`, { replace: true })}
-            variant="outlined"
-          >
-            Cargar paquete
-          </Button>
-        </Tooltip>
-      );
-    }
-    return null; // Asegúrate de manejar el caso donde no haya icono a renderizar
-  };
-if (loading) {
-  return(<LoadingScreenBlue/>)
-}
+ 
+
+  if (loading) {
+    return <LoadingScreenBlue />;
+  }
 
   return (
     <Grid container style={{ marginLeft: "10%", height: "70%", width: "85%" }}>
@@ -170,69 +163,76 @@ if (loading) {
           variant="h1"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-          Pedidos listos para cargar
+          Paquetes listos para cargar
         </Typography>
       </Grid>
       <Grid item xs={12} marginY={2}>
-        
-          <DataGrid
-            sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
-            columns={[
-              {
-                field: "createdAt",
-                headerName: "Fecha de solicitud",
-                flex: 1,
-                align: "center",
-              },
-              {
-                field: "order_id",
-                headerName: "Id de pedido",
-                flex: 1,
-                align: "center",
-              },
-              {
-                field: "status_route",
-                hideable: false,
-                headerName: "Estado de ruta",
-                flex: 1,
-                sortable: false,
-              },
-              {
-                field: "Opciones",
-                headerName: "Opciones",
-                align: "center",
-                flex: 1,
-                sortable: false,
-                type: "actions",
-                getActions: (params) => [renderIcon(params)],
-              },
-            ]}
-            rows={rowsWithIds}
-            pagination
-            slots={{
-              pagination: CustomPagination,
-              toolbar: CustomToolbar,
-              columnSortedDescendingIcon: SortedDescendingIcon,
-              columnSortedAscendingIcon: SortedAscendingIcon,
-              columnUnsortedIcon: UnsortedIcon,
-            }}
-            disableColumnFilter
-            disableColumnMenu
-            disableColumnSelector
-            disableDensitySelector
-            slotProps={{
-              toolbar: {
-                showQuickFilter: true,
-                quickFilterProps: { debounceMs: 500 },
-              },
-            }}
-            printOptions={{
-              hideFooter: true,
-              hideToolbar: true,
-            }}
-          />
-      
+        <DataGrid
+          sx={{ fontSize: "20px", fontFamily: "sans-serif" }}
+          columns={[
+            {
+              field: "createdAt",
+              headerName: "Fecha de solicitud",
+              flex: 1,
+              align: "center",
+            },
+            {
+              field: "order_id",
+              headerName: "Id de pedido",
+              flex: 1,
+              align: "center",
+            },
+            {
+              field: "status_route",
+              hideable: false,
+              headerName: "Estado de ruta",
+              flex: 1,
+              sortable: false,
+            },
+            {
+              field: "Opciones",
+              headerName: "Opciones",
+              align: "center",
+              flex: 1,
+              sortable: false,
+              type: "actions",
+              getActions: (params) => [
+                <Button onClick={()=>handleOpen(params.row)} variant="text" color="primary">
+                  Cargar Paquete
+                </Button>
+              ],
+            },
+          ]}
+          rows={rowsWithIds}
+          pagination
+          slots={{
+            pagination: CustomPagination,
+            toolbar: CustomToolbar,
+            columnSortedDescendingIcon: SortedDescendingIcon,
+            columnSortedAscendingIcon: SortedAscendingIcon,
+            columnUnsortedIcon: UnsortedIcon,
+          }}
+          disableColumnFilter
+          disableColumnMenu
+          disableColumnSelector
+          disableDensitySelector
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true,
+              quickFilterProps: { debounceMs: 500 },
+            },
+          }}
+          printOptions={{
+            hideFooter: true,
+            hideToolbar: true,
+          }}
+        />
       </Grid>
+      <LoadPackageModal
+      openModal={openModal}
+      handleClose={handleClose}
+      productOrder={valuePO}
+      />
     </Grid>
   );
 };

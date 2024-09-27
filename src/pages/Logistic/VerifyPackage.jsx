@@ -18,6 +18,7 @@ import { useFormik } from "formik";
 import { localDate } from "../../Utils/ConvertIsoDate";
 import { useUsers } from "../../hooks/useUsers";
 import { AssistantDirection, Close } from "@mui/icons-material";
+import LoadPackageModal from "../../components/Modals/LoadPackageModal";
 
 const VerifyPackage = () => {
   const { id } = useParams();
@@ -37,6 +38,9 @@ const VerifyPackage = () => {
   const startRoute =()=>{
     loadVerifyStartRoute({order_id:id, user:productOrder?.route_detail?.user})
   }
+  
+
+  
   return (
     <Grid
       container
@@ -85,7 +89,13 @@ const VerifyPackage = () => {
               Municipio: {productOrder?.branch?.location?.municipality}
             </Typography>
             <Typography>
+              Localidad: {productOrder?.branch?.location?.neighborhood}
+            </Typography>
+            <Typography>
               Dirección: {productOrder?.branch?.location?.direction}
+            </Typography>
+            <Typography>
+              CP: {productOrder?.branch?.location?.cp}
             </Typography>
           </>
         ) : (
@@ -110,24 +120,13 @@ const VerifyPackage = () => {
         )}
       </Grid>
 
-      <Grid item xs={12} md={5}>
-        <h2>Transportista:</h2>
-
-        <Typography>Nombre: {user.fullname}</Typography>
-        <Typography>Correo: {user.email}</Typography>
-        <Typography>
-          Telefono:{" "}
-          {user?.phone_id?.phone_number
-            ? user?.phone_id?.phone_number
-            : "Sin numero"}
-        </Typography>
-      </Grid>
       <Grid mt={2} item xs={12} md={6}>
         <ButtonGroup fullWidth variant="contained" color="inherit">
           <Button color="success" onClick={()=>startRoute()}>Verificar y comenzar ruta</Button>
           <Button color="error" onClick={()=>navigate(`/auth/cargar-paquetes`, {replace:true})} >Cancelar</Button>
         </ButtonGroup>
       </Grid>
+  
     </Grid>
   );
 };
