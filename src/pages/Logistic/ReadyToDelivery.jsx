@@ -25,6 +25,7 @@ import Download from "@mui/icons-material/Download";
 import Swal from "sweetalert2";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import LoadPackageModal from "../../components/Modals/LoadPackageModal";
+import MapReadyToPoint from "../../components/Google/MapReadyToPoint";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -65,6 +66,8 @@ const ReadyToDelivery = () => {
   useEffect(() => {
     loadReadyToPoint();
   }, []);
+  
+
 
   const [openModal, setOpenModal] = useState(false)
   const [valuePO, setValuePO] = useState(null) 
@@ -155,6 +158,7 @@ const ReadyToDelivery = () => {
     return <LoadingScreenBlue />;
   }
 
+
   return (
     <Grid container style={{ marginLeft: "10%", height: "70%", width: "85%" }}>
       <Grid item marginTop={{ xs: "-30px" }} xs={12} minHeight={"100px"} className="Titles">
@@ -171,6 +175,7 @@ const ReadyToDelivery = () => {
             Calcular rutas
           
         </Button>
+        <MapReadyToPoint readyToPoint={readyToPoint}/>
         <DataGrid
           sx={{ fontSize: "12px", fontFamily: "sans-serif" }}
           columns={[

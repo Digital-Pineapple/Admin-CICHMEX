@@ -472,7 +472,12 @@ export const StartCompleteProductOrder = (id, navigate) => {
       const { data } = await instanceApi.post(
         `/product-order/fill-order/${id}`,
         { storeHouse: true },
-        headerConfigApplication
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
       enqueueSnackbar(`${data.message}`, {
         anchorOrigin: { horizontal: "center", vertical: "top" },
