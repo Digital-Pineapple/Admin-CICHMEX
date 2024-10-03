@@ -13,8 +13,10 @@ import {
 import { useEffect, useState } from "react";
 import MuiPagination from "@mui/material/Pagination";
 import {
+  Box,
   Button,
   Grid,
+  Modal,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -26,6 +28,8 @@ import Swal from "sweetalert2";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import LoadPackageModal from "../../components/Modals/LoadPackageModal";
 import MapReadyToPoint from "../../components/Google/MapReadyToPoint";
+import { useUsers } from "../../hooks/useUsers";
+import MapRouteOptimized from "../../components/Google/MapRouteOptimized";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -60,24 +64,53 @@ function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 800,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
 const ReadyToDelivery = () => {
-  const { loadAssignedPO, navigate, productOrders, loading, readyToPoint, loadReadyToPoint } = useProductOrder();
+  const { loading, readyToPoint, loadReadyToPoint } = useProductOrder();
+  const {loadOptimizedRoutes,optimizedRoutes} = useUsers()
+
+  const [currentLocation, setCurrentLocation] = useState({ lat: null, lng: null });
 
   useEffect(() => {
     loadReadyToPoint();
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        
+        setCurrentLocation({ lat: latitude, lgt: longitude });
+      }, (error) => {
+        console.error('Error obteniendo la ubicación:', error);
+      });
+    } else {
+      console.log("La geolocalización no es soportada por este navegador.");
+    }
   }, []);
   
 
 
   const [openModal, setOpenModal] = useState(false)
-  const [valuePO, setValuePO] = useState(null) 
+  const [values, setValues] = useState(null) 
+
   
-  const handleOpen = (values)=>{
-    setValuePO(values)
+  
+  const handleOpen = async (myCoords) =>{
+   await loadOptimizedRoutes(myCoords)
+    setValues(optimizedRoutes)
     setOpenModal(true)
   }
   const handleClose = ()=>{
-    setValuePO(null)
+    setValues(null)
     setOpenModal(false)
   }
 
@@ -171,9 +204,8 @@ const ReadyToDelivery = () => {
         </Typography>
       </Grid>
       <Grid item xs={12} marginY={2}>
-        <Button variant="contained" color="primary">
+        <Button variant="contained" color="primary" onClick={()=> handleOpen(currentLocation)} >
             Calcular rutas
-          
         </Button>
         <MapReadyToPoint readyToPoint={readyToPoint}/>
         <DataGrid
@@ -225,11 +257,14 @@ const ReadyToDelivery = () => {
           }}
         />
       </Grid>
-      <LoadPackageModal
-      openModal={openModal}
-      handleClose={handleClose}
-      productOrder={valuePO}
-      />
+      <Modal
+        open={openModal}
+        onClose={handleClose}
+      >
+        <Box sx={style}>
+         <MapRouteOptimized optimizedRoutes={values}  />
+        </Box>
+      </Modal>
     </Grid>
   );
 };

@@ -50,6 +50,7 @@ const MapReadyToPoint = ({ readyToPoint }) => {
   return (
     <GoogleMap mapContainerStyle={mapContainerStyle} zoom={10} center={center}>
       {Object.values(pointsGrouped).map((point, index) => (
+        
         <Marker
           key={index}
           position={{
@@ -67,7 +68,9 @@ const MapReadyToPoint = ({ readyToPoint }) => {
             fontSize: "16px", // Cambia el tamaño de la fuente
             fontWeight: "Bold", // Aplica peso de texto semi-negrita
           }}
-        ></Marker>
+        >
+          
+        </Marker>
       ))}
     </GoogleMap>
   );

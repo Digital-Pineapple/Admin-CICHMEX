@@ -6,11 +6,17 @@ export const CarrierDriverReducer = createSlice({
     CarrierDrivers: [],
     CarrierDriver: {},
     loading: false,
+    optimizedRoutes: {}
+
   },
   reducers: {
   
     loadCarrierDrivers: (state, action) => {
       state.CarrierDrivers = action.payload;
+    },
+    loadAllOptimizedRoutes:(state,{payload})=>{
+      state.optimizedRoutes = payload
+
     },
     loadCarrierDriver: (state, { payload }) => {
       state.CarrierDriver = payload;
@@ -42,6 +48,7 @@ export const {
   editcarrierDriver,
   loadCarrierDriver,
   loadCarrierDrivers,
+  loadAllOptimizedRoutes,
 } = CarrierDriverReducer.actions;
 
 export default CarrierDriverReducer.reducer;

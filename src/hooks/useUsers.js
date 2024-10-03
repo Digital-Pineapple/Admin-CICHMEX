@@ -7,6 +7,7 @@ import {
   getCarrierDrivers,
   getOneUser,
   getUsers,
+  startLoadOptimizedRoutes,
   startOneCarrierDriver,
   updateOneCarrier,
   verifyOneUser,
@@ -18,7 +19,7 @@ export const useUsers = () => {
   const dispatch = useDispatch();
 
   const { user, users } = useSelector((state) => state.users);
-  const { CarrierDrivers, CarrierDriver, loading } = useSelector(
+  const { CarrierDrivers, CarrierDriver, loading, optimizedRoutes } = useSelector(
     (state) => state.carrierDriver
   );
 
@@ -47,6 +48,8 @@ export const useUsers = () => {
     ...i,
   }));
 
+  const loadOptimizedRoutes = async (myCoords)=>{ dispatch(startLoadOptimizedRoutes(myCoords))}
+  
   return {
     user,
     users,
@@ -65,5 +68,7 @@ export const useUsers = () => {
     loading,
     CarrierDrivers,
     updateCarrier,
+    loadOptimizedRoutes,
+    optimizedRoutes
   };
 };

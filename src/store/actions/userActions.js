@@ -7,7 +7,7 @@ import {
   verifyUser,
 } from "../reducer/userReducer";
 import { enqueueSnackbar } from "notistack";
-import { loadCarrierDriver, loadCarrierDrivers, deleteCarrierDriver as DeleteCarrierDriver } from "../reducer";
+import { loadCarrierDriver, loadCarrierDrivers, deleteCarrierDriver as DeleteCarrierDriver, loadAllOptimizedRoutes } from "../reducer";
 import { startLoading, stopLoading } from "../reducer/uiReducer";
 
 
@@ -312,3 +312,61 @@ export const updateOneCarrier = (id,values, navigate) => {
 
   };
 };
+
+export const startLoadOptimizedRoutes = (myCoords) => {
+  return async (dispatch) => {
+    dispatch(startLoading())
+    try {
+      const { data } = await instanceApi.get(
+        `/product-order/optimation/RouteDelivery`,
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+           params:{
+            coords: myCoords
+          }
+        }
+      );
+      const {info, waypoints, totalDistance, totalDuration} = data.data
+      
+      
+      const routeData = {
+        origin: info.routes[0].legs[0].start_location,
+        destination: info.routes[0].legs[0].end_location,
+        steps: info.routes[0].legs[0].steps.map((step) => ({
+          polyline: step.polyline.points,
+          instructions: step.html_instructions,
+        })),
+        overviewPolyline: info.routes[0].overview_polyline.points,
+        waypoints: waypoints,
+        totalDistance,
+        totalDuration,
+        points: info.routes[0].legs
+
+      };
+      dispatch(loadAllOptimizedRoutes(routeData))
+      enqueueSnackbar(`${data.message}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+      
+    } catch (error) {
+      enqueueSnackbar(`${error.response.data.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    }finally{
+      dispatch(stopLoading())
+    }
+
+  };
+};
+
