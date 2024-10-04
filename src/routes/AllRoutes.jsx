@@ -68,12 +68,16 @@ import DynamicRoutes from "../pages/DynamicRoutes/DynamicRoutes";
 import EditDynamicRoute from "../pages/DynamicRoutes/EditDynamicRoute";
 import CreateRegion from '../pages/Regions/Create'
 import Regions from "../pages/Regions/Regions";
+import EditRegion from '../pages/Regions/Edit'
+import EditCarrierDriver from "../pages/CarrierDriver/Edit";
+import Home from "../pages/Home";
+import ReadyToDelivery from "../pages/Logistic/ReadyToDelivery";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
   { id: 0, element: <Unauthorized /> },
   { id: 1, element: <NotFound /> },
-  { id: 2, element: <Principal /> },
+  { id: 2, element: <Home /> },
   { id: 3, element: <Users /> },
   { id: 4, element: <EditUser /> },
   { id: 5, element: <Documentation /> },
@@ -157,6 +161,12 @@ export const AllRoutes = [
 
   { id: 63, element: <MyProductOrders /> },
   {id:64, element:<CreateRegion/>},
-  {id:65, element:<Regions/>}
+  {id:65, element:<Regions/>},
+  { id: 66, element: <EditRegion/>},
+  { id: 67, element: <EditCarrierDriver/>},
+  { id:68, element:<ReadyToDelivery/>},
+  { id: 69, element:<Principal/>}
+
+
 
 ];

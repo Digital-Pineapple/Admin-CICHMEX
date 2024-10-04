@@ -7,10 +7,9 @@ import {
   Card,
   CardContent,
   Typography,
+  FormControl,
   Select,
   FormHelperText,
-  FormControl,
-  CardActions,
   CardHeader, ButtonGroup,
 } from "@mui/material";
 import React, { Fragment, useEffect, useState } from "react";
@@ -18,48 +17,65 @@ import { Controller, useForm } from "react-hook-form";
 import { useStoreHouse } from "../../hooks/useStoreHouse";
 import PercentIcon from "@mui/icons-material/Percent";
 import { AttachMoney } from "@mui/icons-material";
-import { useAuthStore, useRegions } from "../../hooks";
 import { useUsers } from "../../hooks/useUsers";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
-import { MuiTelInput, matchIsValidTel } from "mui-tel-input";
 import { lightGreen } from "@mui/material/colors";
-import { GoogleMap, OverlayView, Polygon, useLoadScript } from "@react-google-maps/api";
+import { useParams } from "react-router-dom";
+import { useRegions } from "../../hooks/";
+import {
+  GoogleMap,
+  OverlayView,
+  Polygon,
+  useLoadScript,
+} from "@react-google-maps/api";
 
+const EditCarrierDriver = () => {
+  const { StoreHouses, loadStoreHouse } = useStoreHouse();
+  const { CarrierDriver, loadOneCarrieDriver, loading, updateCarrier, navigate } =
+    useUsers();
+  const { loadAllRegions, regions } = useRegions();
+  const [watchRegions, setWatchRegions] = useState([]);
+  const [selectedRegions, setSelectedRegions] = useState([]);
 
-const CreateCarrier = () => {
-  const { control, handleSubmit, setValue, watch } = useForm({
+  const { id } = useParams();
+
+  const { control, handleSubmit, setValue, watch, reset } = useForm({
     defaultValues: {
       fullname: "",
       email: "",
-      password: "",
       phone: "",
       employee_detail: {
         salary: "",
         sales_commission_porcent: "",
         store_house: [],
-        operationRegions: [],
       },
     },
   });
-  
-  const { StoreHouses, loadStoreHouse } = useStoreHouse();
-  const { user, navigate } = useAuthStore();
-  const { addCarrier, loading } = useUsers();
-  const { loadAllRegions, regions } = useRegions(); 
-  const [watchRegions, setWatchRegions] = useState([]);
-  const createCarrier = (values) => {
-    addCarrier(values);
-  };
-
-
-
-  const watchField = watch("employee_detail.store_house", false);
-  const [selectedRegions, setSelectedRegions] = useState([]);
 
   useEffect(() => {
-    loadStoreHouse();
+    if (!StoreHouses.length) {
+      loadStoreHouse();
+    }
+    loadOneCarrieDriver(id);
     loadAllRegions();
-  }, [user]);
+  }, [id]);
+
+  useEffect(() => {
+    if (CarrierDriver) {
+      reset({
+        fullname: CarrierDriver.fullname || "",
+        email: CarrierDriver.email || "",
+        phone: CarrierDriver.phone || "",
+        employee_detail: {
+          salary: CarrierDriver.employee_detail?.salary || "",
+          sales_commission_porcent:
+            CarrierDriver.employee_detail?.sales_commission_porcent || "",
+          store_house: CarrierDriver.employee_detail?.store_house || [],
+        },
+      });
+      setWatchRegions(CarrierDriver.employee_detail?.operationRegions);
+    }
+  }, [CarrierDriver, reset]);
 
   const handleRegionChange = (e) => {
     const regionIds = e.target.value; // Obtén un array de IDs seleccionados
@@ -70,11 +86,6 @@ const CreateCarrier = () => {
       shouldDirty: true,
     });
   };
-
-
-  if (loading) {
-    return <LoadingScreenBlue />;
-  }
 
   const __mapMandatoryStyles = { width: "100%", height: "700px" };
   const googleMapsApiKey = import.meta.env.VITE_REACT_APP_MAP_KEY;
@@ -103,7 +114,15 @@ const CreateCarrier = () => {
     };
   };
 
+  const onSubmit = (data) => {
+    updateCarrier(id, data);
+  };
 
+  if (loading) {
+    return <LoadingScreenBlue />;
+  }
+
+  const watchField = watch("employee_detail.store_house", false);
 
   return (
     <Grid container style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
@@ -119,17 +138,17 @@ const CreateCarrier = () => {
           variant="h1"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-          Alta transportista
+          Editar transportista
         </Typography>
       </Grid>
       <Grid
-        onSubmit={handleSubmit(createCarrier)}
         component={"form"}
         container
         padding={2}
         gap={2}
         display={"flex"}
         textAlign={"center"}
+        onSubmit={handleSubmit(onSubmit)}
       >
         <Grid item xs={12} sm={6}>
           <Controller
@@ -158,8 +177,6 @@ const CreateCarrier = () => {
           />
         </Grid>
 
-       
-
         <Grid item xs={12} sm={5.5}>
           <Controller
             name="email"
@@ -175,6 +192,7 @@ const CreateCarrier = () => {
               <TextField
                 variant="outlined"
                 fullWidth
+                disabled
                 size="small"
                 label="Correo"
                 helperText={
@@ -182,56 +200,6 @@ const CreateCarrier = () => {
                 }
                 error={fieldState.invalid}
                 {...field}
-              />
-            )}
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={6}>
-          <Controller
-            name="password"
-            control={control}
-            rules={{
-              required: { value: true, message: "Valor requerido" },
-              pattern: {
-                value:
-                  /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                message:
-                  "Debe contener: Letra mayuscula, minúscula, un numero, carácter especial, min 8 caracteres",
-              },
-            }}
-            render={({ field, fieldState }) => (
-              <TextField
-                variant="outlined"
-                label="Contraseña"
-                fullWidth
-                size="small"
-                helperText={
-                  fieldState.error ? <b>{fieldState.error.message}</b> : ""
-                }
-                error={fieldState.invalid}
-                {...field}
-              />
-            )}
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={5.5}>
-          <Controller
-            name="phone"
-            control={control}
-            rules={{ validate: matchIsValidTel, required: true }}
-            render={({ field, fieldState }) => (
-              <MuiTelInput
-                {...field}
-                onlyCountries={["MX"]}
-                fullWidth
-                size="small"
-                forceCallingCode
-                disableDropdown
-                defaultCountry="MX"
-                helperText={fieldState.invalid ? "Telefono es invalido" : ""}
-                error={fieldState.invalid}
               />
             )}
           />
@@ -258,7 +226,11 @@ const CreateCarrier = () => {
                 error={fieldState.invalid}
                 {...field}
                 InputProps={{
-                  startAdornment: <AttachMoney />,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <AttachMoney />
+                    </InputAdornment>
+                  ),
                 }}
               />
             )}
@@ -289,7 +261,11 @@ const CreateCarrier = () => {
                 error={fieldState.invalid}
                 {...field}
                 InputProps={{
-                  endAdornment: <PercentIcon />,
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <PercentIcon />
+                    </InputAdornment>
+                  ),
                 }}
               />
             )}
@@ -330,7 +306,7 @@ const CreateCarrier = () => {
               </TextField>
             )}
           />
-          {watchField?.name && (
+          {watchField.name ? (
             <Card
               sx={{ bgcolor: lightGreen[200], marginTop: 2 }}
               variant="elevation"
@@ -341,47 +317,51 @@ const CreateCarrier = () => {
                 </Typography>
               </CardContent>
             </Card>
+          ) : (
+            ""
           )}
         </Grid>
-        <Grid container display={'flex'} justifyContent={'center'}>
-          {watchRegions.map((item, index) => (
+        <Grid container display={"flex"} justifyContent={"center"}>
+          {watchRegions?.map((item, index) => (
             <Grid key={index} item xs={12} md={6}>
-               <Card key={index} variant="outlined">
-              <CardHeader title={`Nombre: ${item.name}`} subheader={`Código: ${item.regionCode}`} />
-              <CardContent>
-                <GoogleMap
-                  zoom={13}
-                  center={regionWithCenter(item).center} // Usa el centro calculado dinámicamente
-                  mapContainerStyle={__mapMandatoryStyles}
-                >
-                  <Fragment key={item._id}>
-                    <Polygon
-                      path={item.path.map((point) => ({
-                        lat: point.lat,
-                        lng: point.lng,
-                      }))}
-                      options={{
-                        fillColor: "orange",
-                        fillOpacity: 0.3,
-                        strokeColor: "orange",
-                        strokeOpacity: 0.8,
-                        strokeWeight: 2,
-                      }}
-                    />
-                    <OverlayView
-                      position={regionWithCenter(item).center} // Usa el centro pre-calculado
-                      mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                    >
-                      <Typography variant="body1" color="red">
-                        {item.name}
-                      </Typography>
-                    </OverlayView>
-                  </Fragment>
-                </GoogleMap>
-              </CardContent>
-            </Card>
+              <Card key={index} variant="outlined">
+                <CardHeader
+                  title={`Nombre: ${item.name}`}
+                  subheader={`Código: ${item.regionCode}`}
+                />
+                <CardContent>
+                  <GoogleMap
+                    zoom={13}
+                    center={regionWithCenter(item).center} // Usa el centro calculado dinámicamente
+                    mapContainerStyle={__mapMandatoryStyles}
+                  >
+                    <Fragment key={item._id}>
+                      <Polygon
+                        path={item.path.map((point) => ({
+                          lat: point.lat,
+                          lng: point.lng,
+                        }))}
+                        options={{
+                          fillColor: "orange",
+                          fillOpacity: 0.3,
+                          strokeColor: "orange",
+                          strokeOpacity: 0.8,
+                          strokeWeight: 2,
+                        }}
+                      />
+                      <OverlayView
+                        position={regionWithCenter(item).center} // Usa el centro pre-calculado
+                        mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                      >
+                        <Typography variant="body1" color="red">
+                          {item.name}
+                        </Typography>
+                      </OverlayView>
+                    </Fragment>
+                  </GoogleMap>
+                </CardContent>
+              </Card>
             </Grid>
-           
           ))}
 
           <Controller
@@ -413,20 +393,21 @@ const CreateCarrier = () => {
             )}
           />
         </Grid>
+
         <Grid item xs={12}>
-          <ButtonGroup variant="contained" fullWidth color="inherit" aria-label="Actions">
-             <Button variant="contained"  onClick={()=>{navigate('/usuarios/transportistas', {replace:true})}} color="error">
+          <ButtonGroup fullWidth variant="contained" color="inherit" aria-label="Actions">
+          <Button variant="contained" onClick={()=>navigate('/usuarios/transportistas', {replace:true})} color="error">
             Cancelar
-          </Button>
-          <Button variant="contained"  type="submit" color="success">
-            Crear
-          </Button>
+          </Button><Button variant="contained"  type="submit" color="primary">
+            Editar
+          </Button> 
+            
           </ButtonGroup>
-       
+          
         </Grid>
       </Grid>
     </Grid>
   );
 };
 
-export default CreateCarrier;
+export default EditCarrierDriver;

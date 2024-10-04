@@ -11,10 +11,11 @@ import { useUsers } from "../../hooks/useUsers";
 import { Add, Delete, Edit } from "@mui/icons-material";
 import DeleteAlert from "../../components/ui/DeleteAlert";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
+import EditButton from "../../components/Buttons/EditButton";
 
 
   const CarrierDrivers = () => {
-   const {rowsCarrierDrivers, loadCarrierDrivers, navigate, loading} =  useUsers()
+   const {rowsCarrierDrivers,deleteOneCD, loadCarrierDrivers, navigate, loading, } =  useUsers()
    const {user} =useAuthStore()
 
 useEffect(() => {
@@ -22,7 +23,7 @@ useEffect(() => {
 }, [user])
 
 const Delete = (value)=>{
-console.log(value);
+  deleteOneCD(value)
 }
 if (loading) {
   return(<LoadingScreenBlue/>)
@@ -84,9 +85,14 @@ if (loading) {
               flex: 1,
               sortable: false,
               type: "actions",
-              getActions: (params)=>[
-              
-                <DeleteAlert title='¿Desea eliminar el siguiente elemento?' callbackToDeleteItem={()=>Delete(params.row._id)} />
+              getActions: (params)=>[   
+                <DeleteAlert title='¿Desea eliminar el siguiente elemento?' callbackToDeleteItem={()=>Delete(params.row._id)} />,
+                <EditButton
+                title={`Desea editar ${params.row.fullname}?`}
+                callbackToEdit={() =>
+                  navigate(`/usuarios/transportistas/editar/${params.row._id}`)
+                }
+              />,
                 
               ]
             },

@@ -3,7 +3,7 @@ import { Polygon, GoogleMap, useLoadScript, DrawingManagerF } from '@react-googl
 import { Button } from '@mui/material';
 
 const mapStyles =  [{ featureType: "all", elementType:"labels.icon", stylers:[{visibility:"off"}]}] 
-const mainStyles={height:'500px', width:'500px'} 
+const mainStyles={height:'600px', width:'100%'} 
 const googleMapsApiKey = import.meta.env.VITE_REACT_APP_MAP_KEY;
 const libraries = ['drawing'];
 
@@ -52,6 +52,7 @@ const RegionSelector = ({ lat = 19.432604958299997, lng = -99.13322417271692, is
       ),
     [coordinates]
   );
+  
 
   const getMapOptions = useMemo(
     () => ({
@@ -80,6 +81,9 @@ const RegionSelector = ({ lat = 19.432604958299997, lng = -99.13322417271692, is
   if (isDrawable) {
     return isLoaded ? (
       <>
+       <Button onClick={handleClearMap} variant='contained' size='small' style={{ margin: '10px' }}>
+          Borrar Polígonos
+        </Button>
         <GoogleMap
           key={mapKey} // Esta clave forzará la recarga del mapa cuando cambie
           zoom={zoom}
@@ -104,9 +108,7 @@ const RegionSelector = ({ lat = 19.432604958299997, lng = -99.13322417271692, is
 
           {renderShapes()}
         </GoogleMap>
-        <Button onClick={handleClearMap} variant='contained' size='small' style={{ marginTop: '10px' }}>
-          Borrar Polígonos
-        </Button>
+       
       </>
     ) : null;
   }

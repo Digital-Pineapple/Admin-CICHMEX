@@ -13,10 +13,12 @@ import {
 import { useEffect, useState } from "react";
 import MuiPagination from "@mui/material/Pagination";
 import {
+  Box,
   Button,
   Grid,
+  Modal,
   Tooltip,
-  Typography,
+  Typography, IconButton,
 } from "@mui/material";
 import { Workbook } from "exceljs";
 import { useProductOrder } from "../../hooks/useProductOrder";
@@ -25,6 +27,13 @@ import Download from "@mui/icons-material/Download";
 import Swal from "sweetalert2";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import LoadPackageModal from "../../components/Modals/LoadPackageModal";
+import MapReadyToPoint from "../../components/Google/MapReadyToPoint";
+import { useUsers } from "../../hooks/useUsers";
+import MapRouteOptimized from "../../components/Google/MapRouteOptimized";
+import { localDate } from "../../Utils/ConvertIsoDate";
+import { Close, Handshake, Visibility } from "@mui/icons-material";
+import MapGoogleMarker from "../../components/Google/MapGoogleMarker";
+import CustomNoRows from "../../components/Tables/CustomNoRows";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -59,26 +68,46 @@ function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
-const LoadPackage = () => {
-  const { loadAssignedPO, navigate, productOrders, loading } = useProductOrder();
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 800,
+  bgcolor: 'background.paper',
+  borderRadius:'20px',
+  boxShadow: 24,
+  p: 4,
+};
+
+const ReadyToDelivery = () => {
+  const { loading, readyToPoint, loadReadyToPoint, navigate } = useProductOrder();
+  const {loadOptimizedRoutes,optimizedRoutes} = useUsers()
+  const [detail, setDetail] = useState(null)
+  const [open, setOpen] = useState(false);
+  const handleOpen = (values) => {
+    const location = values.deliveryLocation || values.branch?.location
+    const coords = {lat: location.lat, lng: location.lgt}
+    setOpen(true) , setDetail({...values, coords, location})};
+  const handleClose = () => {setOpen(false), setDetail(null)};
 
   useEffect(() => {
-    loadAssignedPO();
+    loadReadyToPoint();
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        loadOptimizedRoutes({lat: latitude, lgt: longitude})
+      }, (error) => {
+        console.error('Error obteniendo la ubicación:', error);
+      });
+    } else {
+      console.log("La geolocalización no es soportada por este navegador.");
+    }
   }, []);
-
-  const [openModal, setOpenModal] = useState(false)
-  const [valuePO, setValuePO] = useState(null) 
   
-  const handleOpen = (values)=>{
-    setValuePO(values)
-    setOpenModal(true)
-  }
-  const handleClose = ()=>{
-    setValuePO(null)
-    setOpenModal(false)
-  }
+   
 
-  const rowsWithIds = productOrders?.map((item, index) => {
+  const rowsWithIds = readyToPoint?.map((item, index) => {
     const quantities = item.products.map((i) => i.quantity);
     const suma = quantities.reduce((valorAnterior, valorActual) => valorAnterior + valorActual, 0);
 
@@ -89,7 +118,8 @@ const LoadPackage = () => {
       quantityProduct: suma,
       typeDelivery: TD,
       id: index.toString(),
-      status_route: statusRoute,
+      status_route: statusRoute === 'assigned' ? 'Cargado':'No cargado',
+      date : localDate(item.createdAt),
       ...item,
     };
   });
@@ -134,7 +164,9 @@ const LoadPackage = () => {
 
     return (
       <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
-        <Button onClick={handleGoToPage1}>Regresa a la página 1</Button>
+          <Button size="small" variant="contained" color="primary" onClick={()=>rechargeRoutes()}>
+            Recargar rutas
+          </Button>
         <GridToolbarQuickFilter />
         <Button
           variant="text"
@@ -155,24 +187,52 @@ const LoadPackage = () => {
     return <LoadingScreenBlue />;
   }
 
+  const rechargeRoutes = () =>{
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        loadOptimizedRoutes({lat: latitude, lgt: longitude})
+      }, (error) => {
+        console.error('Error obteniendo la ubicación:', error);
+      });
+    } else {
+      console.log("La geolocalización no es soportada por este navegador.");
+    }
+  }
+
+
   return (
-    <Grid container style={{ marginLeft: "10%", height: "70%", width: "85%" }}>
+    <Grid container>
       <Grid item marginTop={{ xs: "-30px" }} xs={12} minHeight={"100px"} className="Titles">
         <Typography
           textAlign={"center"}
           variant="h1"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-          Paquetes listos para cargar
+          Paquetes listos para entregar
         </Typography>
+       
       </Grid>
+      {
+        optimizedRoutes ? (
+      <Grid item xs={12} padding={2} >
+      <MapRouteOptimized optimizedRoutes={optimizedRoutes}  />
+      <Typography variant="h5" color="initial">
+        Distancia aprox: <strong>{optimizedRoutes.totalDistance}</strong> ,{" "}
+        Tiempo aprox: <strong>{optimizedRoutes.totalDuration}</strong>
+      </Typography>
+      </Grid>
+        ): ''
+      }
+     
       <Grid item xs={12} marginY={2}>
+      
         <DataGrid
-          sx={{ fontSize: "20px", fontFamily: "sans-serif" }}
+          sx={{ fontSize: "12px", fontFamily: "sans-serif" }}
           columns={[
             {
-              field: "createdAt",
-              headerName: "Fecha de solicitud",
+              field: "date",
+              headerName: "Fecha de compra",
               flex: 1,
               align: "center",
             },
@@ -197,22 +257,36 @@ const LoadPackage = () => {
               sortable: false,
               type: "actions",
               getActions: (params) => [
-                <Button onClick={()=>handleOpen(params.row)} variant="text" color="primary">
-                  Cargar Paquete
-                </Button>
+                <Button
+                startIcon={<Visibility/>}
+                sx={{textTransform:'capitalize'}}
+                size="small"
+                onClick={()=>handleOpen(params.row)} variant="text" color="primary">
+                  Ver Detalles
+                </Button>,
+                 <Button
+                 startIcon={<Handshake/>}
+                 sx={{textTransform:'capitalize'}}
+                 size="small"
+                 onClick={()=>navigate(`/transportista/entregar/${params.row._id}`)} variant="text" color="success">
+                   Entregar
+                 </Button>
               ],
             },
           ]}
           rows={rowsWithIds}
           pagination
+          autoHeight
           slots={{
             pagination: CustomPagination,
             toolbar: CustomToolbar,
             columnSortedDescendingIcon: SortedDescendingIcon,
             columnSortedAscendingIcon: SortedAscendingIcon,
             columnUnsortedIcon: UnsortedIcon,
+            noRowsOverlay: CustomNoRows
           }}
           disableColumnFilter
+          density="compact"
           disableColumnMenu
           disableColumnSelector
           disableDensitySelector
@@ -228,13 +302,33 @@ const LoadPackage = () => {
           }}
         />
       </Grid>
-      <LoadPackageModal
-      openModal={openModal}
-      handleClose={handleClose}
-      productOrder={valuePO}
-      />
+      <Modal
+        open={open}
+        onClose={handleClose}
+      >
+        <Box sx={style}>
+          <IconButton sx={{left:`calc(95%)`}} aria-label="Cerrar" onClick={()=>handleClose()}>
+            <Close/>
+          </IconButton>
+           <MapGoogleMarker center={detail?.coords} zoom={16}/> 
+           <Typography textAlign={'center'} variant="body2" color="initial">
+            Id de orden: <strong>{detail?.order_id}</strong><br />
+           <strong>Direccion:</strong>  <br />
+            Municipio: {detail?.location.municipality} <br />
+            Localidad: {detail?.location.neighborhood} <br />
+            Calle:{detail?.location.street} <br />
+            Numero: { detail?.location.numext } <br />
+            CP: { detail?.location.zipcode}
+
+           </Typography>
+        </Box>
+      </Modal>
+      
+     
+      
+      
     </Grid>
   );
 };
 
-export default LoadPackage;
+export default ReadyToDelivery

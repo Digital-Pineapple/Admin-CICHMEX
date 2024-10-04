@@ -14,6 +14,8 @@ import {
   startLoadPrintOrderPDF,
   startLoadProductOrders,
   startLoadProductOrdersPaid,
+  startLoadReadyToPoint,
+  startLoadVerifyPackage,
   startLoadVerifyStartRoute,
   startRejectTicket,
   startValidateSale,
@@ -25,7 +27,7 @@ export const useProductOrder = () => {
   const navigate = useNavigate();
 
 
-  const { productOrders, productOrder, isLoading, resumeOrders } = useSelector(
+  const { productOrders, productOrder, isLoading, resumeOrders, readyToPoint } = useSelector(
     (state) => state.allProductOrders
   );
   const { loading } = useSelector(
@@ -64,7 +66,11 @@ export const useProductOrder = () => {
 
   const loadPackagesSent = async () => dispatch(startLoadPackageSent())
 
+  const loadReadyToPoint = async () => dispatch(startLoadReadyToPoint())
+
   const loadPrintPDFOrder = async (id) => dispatch(startLoadPrintOrderPDF(id))
+
+  const loadVerifyPackage = async (id) =>dispatch(startLoadVerifyPackage(id))
 
   const validateSale = async (values) => dispatch(startValidateSale(values, navigate))
   const rejectTicket = async (values) => dispatch(startRejectTicket(values, navigate))
@@ -125,7 +131,10 @@ export const useProductOrder = () => {
     rowsProducts,
     rowsWithIds,
     validateSale, 
-    rejectTicket
+    rejectTicket,
+    loadVerifyPackage,
+    loadReadyToPoint,
+    readyToPoint
     
   };
 };

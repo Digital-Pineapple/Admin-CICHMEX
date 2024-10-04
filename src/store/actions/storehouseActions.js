@@ -22,7 +22,12 @@ export const startLoadAllStock = (id) => {
     try {
       const { data } = await instanceApi.get(
         `/stock-StoreHouse/${id}`,
-        headerConfigApplication
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
       dispatch(loadAllStock(data.data));
     } catch (error) {
@@ -39,7 +44,12 @@ export const startLoadStoreHouses = () => {
     try {
       const { data } = await instanceApi.get(
         `/storehouse`,
-        headerConfigApplication
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
       dispatch(loadAllStoreHouses(data.data));
     } catch (error) {
@@ -56,7 +66,12 @@ export const startLoadOneStoreHouse = (id) => {
     try {
       const { data } = await instanceApi.get(
         `/storehouse/${id}`,
-        headerConfigApplication
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
       dispatch(loadOneStoreHouse(data.data));
     } catch (error) {
@@ -75,7 +90,12 @@ export const startCreateOneStoreHouse =
       const { data, message } = await instanceApi.post(
         `/storehouse`,
         { values: values },
-        headerConfigApplication
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
       enqueueSnackbar("Agregado con éxito", {
         variant: "success",
@@ -103,7 +123,10 @@ export const startCreateStockProduct =
       const { data } = await instanceApi.post(
         `/stock-StoreHouse/${id}`,
         values,
-        headerConfigApplication
+        {   headers: {
+          "Content-type": "application/json",
+           "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      }}
       );
       Swal.fire({
         icon: "success",
@@ -136,7 +159,12 @@ export const startAddStockProduct =
       const { data } = await instanceApi.patch(
         `/stock-StoreHouse/add/${id}`,
         values,
-        headerConfigApplication
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
       Swal.fire({
         icon: "success",
@@ -166,7 +194,12 @@ export const startRemoveStockProduct = (id, values) => async (dispatch) => {
     const { data } = await instanceApi.patch(
       `/stock-StoreHouse/remove/${id}`,
       values,
-      headerConfigApplication
+      {
+        headers: {
+          "Content-type": "application/json",
+           "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      }
+      }
     );
     dispatch(editStockProduct(data.data));
     enqueueSnackbar("Editado con éxito", {
@@ -193,7 +226,12 @@ export const startReturnStockProduct = (id, values, navigate) => {
       const { data } = await instanceApi.patch(
         `/stock-StoreHouse/return/${id}`,
         values,
-        headerConfigApplication
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
       dispatch(editStockProduct(data.data?._id));
       enqueueSnackbar("Producto regresado", {
@@ -221,7 +259,12 @@ export const startDeleteStoreHouse = (id, navigate) => {
     try {
       const { data } = await instanceApi.delete(
         `/storehouse/${id}`,
-        headerConfigApplication
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
 
       enqueueSnackbar("Almacen eliminado", {
@@ -250,7 +293,12 @@ export const startDeleteStockStoreHouse = (id) => {
     try {
       const { data } = await instanceApi.delete(
         `/stock-StoreHouse/${id}`,
-        headerConfigApplication
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
 
       enqueueSnackbar("Producto eliminado del almacen", {

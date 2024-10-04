@@ -15,6 +15,7 @@ import { Login } from "../pages/Login";
 import { PrivateRoutes } from "./PrivateRoutes";
 import Principal from "../pages/Principal";
 import { PublicRoutes } from "./PublicRoutes";
+import Home from "../pages/Home";
 const RoutesContainer = () => {
   const { logged, user, routes } = useAuthStore();
 
@@ -71,7 +72,7 @@ const RoutesContainer = () => {
           }
         >
           {routesList()}
-          <Route path="/principal" element={<Principal />} />
+          <Route path="/principal" element={<Home />} />
         </Route>
       </Routes>
     </ThemeProvider>

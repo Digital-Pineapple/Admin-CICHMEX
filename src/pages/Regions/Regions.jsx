@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   DataGrid,
   GridPagination,
@@ -29,6 +29,8 @@ import { useRegions } from "../../hooks/useRegions";
 import MultiRegionMap from "./MultiRegionMap";
 import DeleteAlert from "../../components/ui/DeleteAlert";
 import EditButton from "../../components/Buttons/EditButton";
+import { loadOneRoute } from "../../store/actions/dynamicRouteActions";
+import RegionDetailModal from "../../components/Modals/RegionDetailModal";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -123,8 +125,10 @@ const Regions = () => {
     navigate,
     loading,
   } = useProductOrder();
-  const {loadAllRegions, regions, onDeleteRegion} = useRegions()
+  const {loadAllRegions, regions, onDeleteRegion, loadOneRegion, region} = useRegions()
   const { user } = useAuthStore();
+  const [open, setOpen] = useState(false)
+
 
   useEffect(() => {
     loadAllRegions()
@@ -136,10 +140,15 @@ const Regions = () => {
     ...item,
   }));
 
-  
+  const handleOpen = (id)=>{
+    loadOneRegion(id)
+    setOpen(true)
+  }
+  const handleClose = () =>{
+    setOpen(false)
+  }
 
 
- 
 
   if (loading) {
     return <LoadingScreenBlue />;
@@ -194,19 +203,19 @@ const Regions = () => {
                   title={`¿Desea eliminar ${params.row.name}?`}
                   callbackToDeleteItem={() => onDeleteRegion(params.row._id)}
                 />,
-                <EditButton
-                disabled={true}
-                  title={`Desea editar ${params.row.name}?`}
-                  callbackToEdit={() =>
-                    navigate(`/mi-almacen/categorias/editar/${params.row._id}`)
-                  }
-                />,
+               
                 <Tooltip title='Ver Detalles'>
-                  <IconButton disabled aria-label="ver detalle" color="primary" onClick={()=>handleOpen(params.row._id)}>
+                  <IconButton aria-label="ver detalle" color="primary" onClick={()=>handleOpen(params.row._id)}>
                     <Visibility/>
                   </IconButton>
   
-                </Tooltip>
+                </Tooltip>,
+                 <EditButton
+                 title={`Desea editar ${params.row.name}?`}
+                 callbackToEdit={() =>
+                   navigate(`/region/editar/${params.row._id}`)
+                 }
+               />,
               ],
             },
           ]}
@@ -220,11 +229,22 @@ const Regions = () => {
             columnSortedAscendingIcon: SortedAscendingIcon,
             columnUnsortedIcon: UnsortedIcon,
             noRowsOverlay: CustomNoRows,
+
+          }}
+          initialState={{
+            pagination:{
+              paginationModel:{
+                pageSize:10
+              }
+            }
           }}
           disableColumnFilter
           disableColumnMenu
           disableColumnSelector
           disableDensitySelector
+          disableRowSelectionOnClick
+          density="compact"
+          
           slotProps={{
             toolbar: {
               showQuickFilter: true,
@@ -237,6 +257,15 @@ const Regions = () => {
           }}
         />
       </Grid>
+      {
+        open ? (
+          <RegionDetailModal
+          region={region.name ? region :[]}
+          open={open}
+          handleClose={handleClose}
+          />
+        ): ''
+      }
     </Grid>
   );
 };

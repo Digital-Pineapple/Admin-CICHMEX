@@ -5,6 +5,7 @@ import {
   editProductOrder,
   loadProductOrder,
   loadProductOrders,
+  loadReadyToPoint,
   startLoadResume,
 } from "../reducer/productOrdersReducer";
 import { headerConfigApplication } from "../../apis/headersConfig";
@@ -90,16 +91,14 @@ export const startLoadAssignedPO = () => {
   return async (dispatch) => {
     dispatch(startLoading());
     try {
-      const { data } = await instanceApi.get(`/product-order/AssignedPO`, {
+      const { data } = await instanceApi.get(`/product-order/autoAssignOrders/region`, {
         headers: {
           "Content-type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-
       dispatch(loadProductOrders(data.data));
     } catch (error) {
-      console.log(error);
       enqueueSnackbar(`${error.response.data.message}`, {
         anchorOrigin: { horizontal: "center", vertical: "top" },
         variant: "error",
@@ -199,7 +198,6 @@ export const startLoadAssignRoute = (
 ) => {
   return async (dispatch) => {
     dispatch(startLoading());
-
     try {
       const { data } = await instanceApi.post(
         `/product-order/assignRoute`,
@@ -211,19 +209,50 @@ export const startLoadAssignRoute = (
           },
         }
       );
-
       enqueueSnackbar(`${data.message}`, {
         anchorOrigin: { horizontal: "center", vertical: "top" },
         variant: "success",
       });
-
       navigate("/auth/Ordenes-de-producto", { replace: true });
     } catch (error) {
       const errorMessage =
         error.response?.data?.message ||
         "Hubo un error en la asignación de la ruta";
-
       enqueueSnackbar(errorMessage, {
+        anchorOrigin: { horizontal: "center", vertical: "top" },
+        variant: "error",
+      });
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
+};
+
+export const startLoadVerifyPackage = (
+  id,
+  navigate
+) => {
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      const { data } = await instanceApi.get(
+        `/product-order/verifyPackage/${id}`,
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      enqueueSnackbar(`${data.message}`, {
+        anchorOrigin: { horizontal: "center", vertical: "top" },
+        variant: "success",
+      });
+      navigate("/transportista/cargar", { replace: true });
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message 
+      enqueueSnackbar(`${errorMessage}`, {
         anchorOrigin: { horizontal: "center", vertical: "top" },
         variant: "error",
       });
@@ -274,6 +303,34 @@ export const LoadOneProductOrder = (id) => {
         }
       );
       dispatch(loadProductOrder(data.data));
+      dispatch(stopLoading());
+    } catch (error) {
+      enqueueSnackbar(
+        `${error.response.data.message}|| 'Error al consultar información'`,
+        {
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+          variant: "error",
+        }
+      );
+      dispatch(stopLoading());
+    }
+  };
+};
+
+export const startLoadReadyToPoint = () => {
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      const { data } = await instanceApi.get(
+        `/product-order/readyToPoint/ok`,
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
+      );
+      dispatch(loadReadyToPoint(data.data));
       dispatch(stopLoading());
     } catch (error) {
       enqueueSnackbar(
@@ -415,7 +472,12 @@ export const StartCompleteProductOrder = (id, navigate) => {
       const { data } = await instanceApi.post(
         `/product-order/fill-order/${id}`,
         { storeHouse: true },
-        headerConfigApplication
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
       );
       enqueueSnackbar(`${data.message}`, {
         anchorOrigin: { horizontal: "center", vertical: "top" },
@@ -561,3 +623,4 @@ export const startLoadPendingTransfer = () => {
     }
   };
 };
+
