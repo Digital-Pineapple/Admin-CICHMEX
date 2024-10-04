@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import {
   Grid,
-  Typography,
+  Typography, Card, CardContent, CardActions, Button,
 } from "@mui/material";
 import { useProductOrder } from "../../hooks/useProductOrder";
 import { useParams } from "react-router-dom";
@@ -43,7 +43,9 @@ useEffect(() => {
       </Grid>
 
       <Grid item xs={12} md={6}>
-        <Typography variant="h5" color="initial">Detalle de entrega:</Typography>
+        <Card variant="elevation">
+          <CardContent>
+          <Typography variant="h5" color="initial">Detalle de entrega:</Typography>
         {
             productOrder.branch ? (
                 <Typography variant="body1" color="initial">
@@ -54,21 +56,31 @@ useEffect(() => {
                     Codigo Postal:{productOrder.branch.location?.cp}<br />
                 </Typography>
             ):(
-                
-          
                 <Typography variant="body1" color="initial">
-                Estado:{productOrder.deliveryLocation?.state},
-                Municipio:{productOrder.deliveryLocation?.municipality},
-                Dirección;{productOrder.deliveryLocation?.direction},
-                Codigo Postal:{productOrder.deliveryLocation?.cp}
+                Estado: <strong> {productOrder.deliveryLocation?.state}</strong><br />
+                Municipio: <strong>{productOrder.deliveryLocation?.municipality}</strong> <br />
+                Calle: <strong>{productOrder.deliveryLocation?.street}</strong><br />
+                Numero ext: <strong>{productOrder.deliveryLocation?.numext}</strong> <br />
+
+                Codigo Postal: <strong>{productOrder.deliveryLocation?.zipcode}</strong> 
             </Typography>
             )
         }
-
+          </CardContent>
+        </Card>
       </Grid>
       <Grid item xs={12} md={5}>
-        <Typography variant="h5" color="initial">Destinatario</Typography>
-        <Typography variant="body1" color="initial">Cliente:{productOrder?.user_id?.fullname}</Typography>
+        <Card variant="elevation">
+          <CardContent>
+          <Typography variant="h5" color="initial">Destinatario</Typography>
+          <Typography variant="body1" color="initial">
+            Cliente: <strong>{productOrder?.user_id?.fullname}</strong> <br />
+            Correo: <strong>{productOrder?.user_id?.email}</strong>
+          </Typography>
+          </CardContent>
+  
+        </Card>
+       
         
       </Grid>
       <Grid item xs={12}>

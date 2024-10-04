@@ -117,7 +117,6 @@ const AddDynamicRoute = () => {
       <Grid
         item
         xs={12}
-        lg={3}
         sx={{
           gridColumn: "span 2",
           gridRow: "span 4",
@@ -126,7 +125,8 @@ const AddDynamicRoute = () => {
         <Card variant="outlined">
           <CardHeader title="Detalles" />
           <CardContent
-            sx={{ display: "flex", gap: 2, flexDirection: "column" }}
+            sx={{ display: "flex", gap: 2, flexDirection: "column"
+             }}
           >
             <TextField
               size="small"

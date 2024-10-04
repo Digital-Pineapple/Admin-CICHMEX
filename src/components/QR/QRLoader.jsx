@@ -38,6 +38,7 @@ const QRLoader = ({ setValueQR, orderID }) => {
         variant="contained"
         onClick={() => setLoadQR(!loadQR)}
         color="primary"
+     
       >
         Scanear QR
       </Button>
@@ -63,6 +64,7 @@ const QRLoader = ({ setValueQR, orderID }) => {
         styles={{
           container: {
             maxWidth: "400px",
+            margin:'10px'
           },
         }}
         onScan={(result) => {valuate(result)

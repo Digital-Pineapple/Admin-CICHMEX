@@ -6,6 +6,7 @@ import {
   InfoWindow,
   useJsApiLoader,
 } from "@react-google-maps/api";
+import { Button, Grid, ButtonGroup } from "@mui/material";
 
 const containerStyle = {
   width: "100%",
@@ -76,28 +77,43 @@ const MapRouteOptimized = ({ optimizedRoutes }) => {
   const getColor = (index) => colors[index % colors.length];
 
   // Función para simular la distancia y tiempo
-  const getDistanceAndTime = (item) => (
-  {
+  const getDistanceAndTime = (item) => ({
     distance: item?.distance?.text,
     time: item?.duration?.text,
     direction_start: item?.start_address,
-    direction_end : item?.end_address
+    direction_end: item?.end_address,
   });
 
   const points = optimizedRoutes?.points || [];
 
   const openInWaze = (item) => {
     const wazeUrl = `https://waze.com/ul?ll=${item.end_location.lat},${item.end_location.lng}&from=${item.start_location.lat},${item.start_location.lng}&navigate=yes`;
-    window.open(wazeUrl, '_blank');
+    window.open(wazeUrl, "_blank");
   };
 
   const openInGoogleMaps = (item) => {
     const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${item.end_location.lat},${item.end_location.lng}&destination=${item.start_location.lat},${item.start_location.lng}&travelmode=driving`;
-    window.open(googleMapsUrl, '_blank');
+    window.open(googleMapsUrl, "_blank");
   };
 
+  const mapOptions = {
+    zoomControl: true, // Control de zoom habilitado
+    mapTypeId: "roadmap", // Tipo de mapa (puede ser 'roadmap', 'satellite', 'hybrid', o 'terrain')
+    disableDefaultUI: true, // Mostrar controles predeterminados
+    fullscreenControl: true, // Botón de pantalla completa habilitado
+    streetViewControl: true, // Street View habilitado
+    gestureHandling: "cooperative", // Gestos permitidos (auto, cooperative, none, greedy)
+    zoom: 12, // Nivel de zoom inicial
+  };
+  
+
   return (
-    <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={12}>
+    <GoogleMap
+      mapContainerStyle={containerStyle}
+      options={mapOptions}
+      center={center}
+      zoom={12}
+    >
       {/* Polyline de la ruta */}
       <Polyline
         path={routePolyline}
@@ -121,7 +137,7 @@ const MapRouteOptimized = ({ optimizedRoutes }) => {
           }}
           icon={{
             path: google.maps.SymbolPath.CIRCLE,
-            scale: 10,
+            scale: 12,
             fillColor: getColor(index),
             fillOpacity: 1,
             strokeWeight: 1,
@@ -136,18 +152,52 @@ const MapRouteOptimized = ({ optimizedRoutes }) => {
         <InfoWindow
           position={selectedMarker.start_location} // Asegurarse de que pasamos un objeto { lat, lng }
           onCloseClick={() => setSelectedMarker(null)}
+          options={{
+            pixelOffset: new window.google.maps.Size(0, -30), // Ajustar la posición del InfoWindow
+            disableAutoPan: false, // Permitir que la cámara se ajuste automáticamente
+          }}
         >
-          <div style={{fontSize:'10px'}}>
-            <h4>Detalles de la parada</h4>
-            <p>Direccionde salida:{getDistanceAndTime(selectedMarker).direction_start}</p>
-            <p>Direccionde llegada:{getDistanceAndTime(selectedMarker).direction_end}</p>
-            <p>Distancia: {getDistanceAndTime(selectedMarker).distance}</p>
+          <Grid sx={{ fontSize: "10px" }}>
+            <strong>Detalles</strong>
             <p>
-              Tiempo estimado:{getDistanceAndTime(selectedMarker).time}
+              Direccionde salida:{" "}
+              <strong>
+                {getDistanceAndTime(selectedMarker).direction_start}
+              </strong>{" "}
             </p>
-            <button onClick={()=>openInWaze(selectedMarker)}>Abrir en Waze</button>
-      <button onClick={()=>openInGoogleMaps(selectedMarker)}>Abrir en Google Maps</button>
-          </div>
+            <p>
+              Direccionde llegada:{" "}
+              <strong>
+                {getDistanceAndTime(selectedMarker).direction_end}
+              </strong>
+            </p>
+            <p>
+              Distancia:{" "}
+              <strong>{getDistanceAndTime(selectedMarker).distance}</strong>
+            </p>
+            <p>
+              Tiempo estimado:
+              <strong>{getDistanceAndTime(selectedMarker).time}</strong>
+            </p>
+            <ButtonGroup fullWidth variant="contained" color="inherit" aria-label="">
+              <Button
+                size="small"
+                color="primary"
+                onClick={() => openInWaze(selectedMarker)}
+                sx={{fontWeight:'light', textTransform:'capitalize', fontSize:'10px'}}
+              >
+                Abrir en Waze
+              </Button>
+              <Button
+                size="small"
+                color="secondary"
+                onClick={() => openInGoogleMaps(selectedMarker)}
+                sx={{fontWeight:'light', textTransform:'capitalize', fontSize:'10px'}}
+              >
+                Abrir en Google Maps
+              </Button>
+            </ButtonGroup>
+          </Grid>
         </InfoWindow>
       )}
     </GoogleMap>
