@@ -293,8 +293,7 @@ export const addOneProduct =
       });
       navigate("/mi-almacen/productos", { replace: true });
     } catch (error) {
-      
-      enqueueSnackbar(`${error.response.data.message}`, {
+      enqueueSnackbar(`${error.response.data.message || error.response.data.error}`, {
         variant: "error",
         anchorOrigin: {
           vertical: "top",
@@ -377,7 +376,7 @@ export const editOneProduct =
           },
         });
       } catch (error) {
-        enqueueSnackbar(`${error.response.data.message}`, {
+        enqueueSnackbar(`${error.response.data.message || error.response.data.error}`, {
           variant: "error",
           anchorOrigin: {
             vertical: "top",

@@ -154,9 +154,6 @@ const Edit = () => {
         aria-label="group"
         fullWidth
       >
-        <Button type="submit" variant="contained" color="success">
-          Guardar
-        </Button>
         <Button
           onClick={outEdit}
           variant="contained"
@@ -165,6 +162,10 @@ const Edit = () => {
         >
           Salir
         </Button>
+        <Button type="submit" variant="contained" color="success">
+          Guardar
+        </Button>
+        
       </ButtonGroup>
       </Grid>
 </Grid>

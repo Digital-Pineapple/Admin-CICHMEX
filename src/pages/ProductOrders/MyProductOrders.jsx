@@ -3,12 +3,10 @@ import AppBar from '@mui/material/AppBar';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
 import { useState } from 'react';
 import { Grid } from '@mui/material';
 import PaidProductOrders from './PaidProductOrders';
-import ShippingDeliveryPoint from '../Logistic/ShippingDeliveryPoint';
-import ShippingDelivery from '../Logistic/ShippingDelivery';
+import ShippingOutOfRegions from '../Logistic/ShippingOutOfRegions';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -66,18 +64,14 @@ export default function FullWidthTabs() {
           variant="fullWidth"
         >
           <Tab label="Pedidos pendientes por surtir"  />
-          <Tab label="Envios a domicilio"  />
-          <Tab label="Envios a punto de entrega" />
+          <Tab label="Envios fuera de región"  />
         </Tabs>
       </AppBar>
         <TabPanel value={value} index={0} dir={theme.direction}>
           <PaidProductOrders/>
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
-          <ShippingDelivery/>
-        </TabPanel>
-        <TabPanel value={value} index={2} dir={theme.direction}>
-          <ShippingDeliveryPoint/>
+          <ShippingOutOfRegions/>
         </TabPanel>
     </Grid>
   );

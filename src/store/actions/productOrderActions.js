@@ -213,7 +213,7 @@ export const startLoadAssignRoute = (
         anchorOrigin: { horizontal: "center", vertical: "top" },
         variant: "success",
       });
-      navigate("/auth/Ordenes-de-producto", { replace: true });
+      navigate("/almacenista/mis-ventas", { replace: true });
     } catch (error) {
       const errorMessage =
         error.response?.data?.message ||
@@ -262,6 +262,36 @@ export const startLoadVerifyPackage = (
   };
 };
 
+export const startLoadPOOutOfRegion = () => {
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      const { data } = await instanceApi.get(
+        `/product-order/outOfRegions/get`,
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      dispatch(loadReadyToPoint(data.data))
+      enqueueSnackbar(`${data.message}`, {
+        anchorOrigin: { horizontal: "center", vertical: "top" },
+        variant: "success",
+      });
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message 
+      enqueueSnackbar(`${errorMessage}`, {
+        anchorOrigin: { horizontal: "center", vertical: "top" },
+        variant: "error",
+      });
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
+};
 export const startLoadVerifyStartRoute = ({ order_id, user }, navigate) => {
   return async (dispatch) => {
     try {

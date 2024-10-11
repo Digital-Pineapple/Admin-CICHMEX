@@ -1,4 +1,4 @@
-import { Grid, Skeleton, Button, Typography } from "@mui/material";
+import { Grid, Skeleton, Button, Typography, Card, CardContent } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useProductOrder } from "../../hooks/useProductOrder";
@@ -7,6 +7,7 @@ import { replace } from "formik";
 import { QRCodeSVG } from "qrcode.react";
 import { localDate } from "../../Utils/ConvertIsoDate";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
+import CustomNoRows from "../../components/Tables/CustomNoRows";
 
 const FillOrder = () => {
   const { id } = useParams();
@@ -23,6 +24,8 @@ const FillOrder = () => {
   useEffect(() => {
     loadProductOrder(id);
   }, [id]);
+  console.log(productOrder,'ds');
+  
   const rows = rowsProducts();
   function activeButton(i) {
     const a1 = rows.length;
@@ -54,25 +57,7 @@ const FillOrder = () => {
   const typeDelivery = (value) => {
     return value.deliveryLocation ? "Entrega a domicilio" : "Punto de entrega";
   };
-  const deliveryLocation = (data) => {
-    if (data.deliveryLocation) {
-        return [
-            `Código Postal: ${data.deliveryLocation?.cp}`,
-            `Estado: ${data.deliveryLocation?.state}`,
-            `Municipio: ${data.deliveryLocation?.municipality}`,
-            `Dirección: ${data.deliveryLocation?.direction}`,
-            `Referencia: ${data.deliveryLocation?.reference ? data.deliveryLocation.reference : 'Sin información'}`,
-            `Destinatario: ${data.deliveryLocation?.receiver ? data.deliveryLocation.receiver : 'Sin información' }`
-        ];
-    } else {
-        return [
-            `Código Postal: ${data.branch?.location?.cp}`,
-            `Estado: ${data.branch?.location?.state}`,
-            `Municipio: ${data.branch?.location?.municipality}`,
-            `Dirección: ${data.branch?.location?.direction}`
-        ];
-    }
-};
+
 if (loading) {
   return(<LoadingScreenBlue/>)
 }
@@ -93,69 +78,118 @@ if (loading) {
           Surtir orden: {productOrder?.order_id}
         </Typography>
       </Grid>
-      <Grid container padding={2} alignContent={"center"}>
-        <Grid item xs={6}>
-          <Button
+      <Grid container padding={2} gap={4} justifyContent={'center'} alignContent={"center"}>
+        <Grid item xs={5} sx={{textAlign:'center', marginTop:2}} >
+         <QRCodeSVG style={{maxWidth:'200px', maxHeight:'200px', width:'100%', height:'100%'}} value={productOrder?.order_id} />
+       <br />
+        <Button
             variant="contained"
-            size="medium"
+            fullWidth
+            size="small"
             onClick={() => printPDF(id)}
-            color="secondary"
+            color="success"
           >
             imprimir PDF
           </Button>
         </Grid>
-        <Grid item xs={6}>
-          <QRCodeSVG value={productOrder?.order_id} />
-        </Grid>
-        <Grid item xs={12}>
-        <Typography variant="h6" color="inherit">
-            Cliente:{productOrder.user_id?.fullname}
-          </Typography>
-          <Typography variant="h6" color="inherit">
-            Fecha de compra:{localDate(productOrder.createdAt)}
-          </Typography>
-        <Typography variant="h6" color="inherit">
-            Estado de pago:{status(productOrder.payment_status)}
-          </Typography>
-          <Typography variant="h6" color="inherit">
-            tipo de envio: {typeDelivery(productOrder)}
-          </Typography>
-          <Typography variant="body1" color="inherit">
-            Dirección:
-            <br />
-            {deliveryLocation(productOrder).map((line, index) => (
-              <span key={index}>
-                {line}
-                <br />
-              </span>
-            ))}
-          </Typography>
-         
-        </Grid>
+
+        <Grid item xs={12} sm={5}>
+        <Card variant="outlined">
+          <CardContent>
+            {productOrder.branch ? (
+              <>
+                <Typography variant="h5">Sucursal de Entrega:</Typography>
+
+                <Typography>
+                  Nombre de la sucursal: {productOrder?.branch?.name}
+                </Typography>
+                <Typography>
+                  Estado: {productOrder?.branch?.location?.state}
+                </Typography>
+                <Typography>
+                  Municipio: {productOrder?.branch?.location?.municipality}
+                </Typography>
+                <Typography>
+                  Dirección: {productOrder?.branch?.location?.direction}
+                </Typography>
+              </>
+            ) : (
+              <>
+                <Typography variant="h5">Dirección de entrega:</Typography>
+                <Typography fontSize={"14px"}>
+                  Código Postal:{" "}
+                  <strong>{productOrder?.deliveryLocation?.zipcode}</strong>
+                  <br />
+                  Estado:{" "}
+                  <strong>{productOrder?.deliveryLocation?.state}</strong>
+                  <br />
+                  Municipio:{" "}
+                  <strong>
+                    {productOrder?.deliveryLocation?.municipality}
+                  </strong>
+                  <br />
+                  Localidad:{" "}
+                  <strong>
+                    {productOrder?.deliveryLocation?.neighborhood}
+                  </strong>
+                  <br />
+                  Calle:{" "}
+                  <strong>{productOrder?.deliveryLocation?.street}</strong>
+                  <br />
+                  No Ext: <strong>{productOrder?.deliveryLocation?.numext}</strong>
+                  <br />
+                  {productOrder?.deliveryLocation?.numint
+                    ? `No Int: ${productOrder?.deliveryLocation?.numint}`
+                    : ""}
+                  <br />
+                  {productOrder?.deliveryLocation?.reference
+                    ? `Entre Calles: ${productOrder?.deliveryLocation?.reference}`
+                    : ""}
+                    <br />
+                    {productOrder?.deliveryLocation?.btwstreet
+                    ? `Referencia: ${productOrder?.deliveryLocation?.btwstreet}`
+                    : ""}
+                </Typography>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      </Grid>
 
         <Grid item xs={12}>
           {rows ? (
             <Grid container display={"flex"} flexDirection={"column"}>
-              <Typography variant="body1" textAlign={"center"} color="inherit">
+              <Typography variant="h4" textAlign={"center"} color="inherit">
                 Lista de productos
               </Typography>
               <DataGrid
+              sx={{'& .theme--hedaer': {
+          backgroundColor: 'black',
+          color:"white",
+          textAlign:'center'
+        },}}
                 onRowSelectionModelChange={(value) => {
                   setRowSelection(value);
                   activeButton(value.length);
                 }}
                 rowSelectionModel={rowSelection}
                 hideFooterSelectedRowCount={true}
+                slots={{
+                  noRowsOverlay: CustomNoRows
+                }}
+                autoHeight
                 columns={[
                   {
                     field: "name",
                     headerName: "Nombre del producto",
+                    headerClassName:'theme--hedaer',
                     flex: 1,
                     align: "center",
                   },
                   {
                     field: "quantity",
                     headerName: "Cantidad de producto",
+                    headerClassName:'theme--hedaer',
                     flex: 1,
                     align: "center",
                   },
@@ -169,10 +203,10 @@ if (loading) {
 
           <Button
             style={{ marginTop: 10 }}
-            variant="contained"
+            variant="outlined"
             fullWidth
             onClick={() => completeOrder()}
-            color="primary"
+            color="success"
           >
             Completar surtido
           </Button>

@@ -19,13 +19,13 @@ import {
   updateProductVideos,
 } from "../store/actions/productsActions";
 import { useNavigate } from "react-router-dom";
-import { cleanProductDetail } from "../store/reducer/productsReducer";
+import { cleanProductDetail, onStepNewProduct } from "../store/reducer/productsReducer";
 
 export const useProducts = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { products, product, stockProducts, entries, outputs } = useSelector(
+  const { products, product, stockProducts, entries, outputs, dataProduct } = useSelector(
     (state) => state.products
   );
   const { loading } = useSelector((state) => state.ui);
@@ -89,6 +89,29 @@ export const useProducts = () => {
     ...item,
   }));
 
+  const dataStep1 = (data) => {
+    const body = {
+      brand: "",
+      category: "",
+      subCategory: "",
+      model: null, 
+      gender: null  
+    };
+  
+    body.category = data.category;
+    body.subCategory = data.subCategory;
+
+    data.fields.forEach((i) => {
+      if (i.id === "brand") body.brand = i.textInput;
+      if (i.id === "model") body.model = i.textInput || null;
+      if (i.id === "gender") body.gender = i.textInput || null;
+    });
+    
+  
+    dispatch (onStepNewProduct({step: 0, values : body})) 
+  };
+  
+
   
 
   return {
@@ -121,6 +144,8 @@ export const useProducts = () => {
     updateVideo,
     updateThumbnail,
     addOneImage,
-    deleteImageDetail
+    deleteImageDetail,
+    dataStep1,
+    dataProduct
   };
 };
