@@ -22,6 +22,7 @@ import shippingCostReducer from "./reducer/shippingCostReducer";
 import dynamicRoutes from "./reducer/dynamicRoutes";
 import paymentsReducer from "./reducer/paymentsReducer";
 import regionsReducer from "./reducer/regionsReducer";
+import sizeGuideReducer  from "./reducer/sizeGuideReducer";
 
 
 
@@ -48,6 +49,7 @@ const rootReducer = combineReducers({
   shippingCost: shippingCostReducer,
   payments: paymentsReducer,
   regions: regionsReducer,
+  sizeGuide : sizeGuideReducer,
 });
 
 export const store = configureStore({

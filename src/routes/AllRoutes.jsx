@@ -72,6 +72,7 @@ import EditRegion from '../pages/Regions/Edit'
 import EditCarrierDriver from "../pages/CarrierDriver/Edit";
 import Home from "../pages/Home";
 import ReadyToDelivery from "../pages/Logistic/ReadyToDelivery";
+import DimensionsGuide from "../pages/Products/StepNewProduct/DimensionsGuide";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -115,7 +116,8 @@ export const AllRoutes = [
   { id: 30, element: <EditMembership /> },
 
   { id: 31, element: <Products /> },
-  { id: 32, element: <CreateProduct /> },
+  // { id: 32, element: <CreateProduct /> },
+  { id: 32, element: <DimensionsGuide /> },
   { id: 33, element: <EditProduct /> },
 
   { id: 34, element: <ShippingCost /> },

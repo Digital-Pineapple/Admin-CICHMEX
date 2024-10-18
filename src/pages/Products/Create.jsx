@@ -10,6 +10,8 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { useState } from "react";
 import Condition from "./StepNewProduct/Condition";
+import DimensionsGuide from "./StepNewProduct/DimensionsGuide";
+
 
 const CreateProduct = () => {
 
@@ -35,7 +37,11 @@ const CreateProduct = () => {
     },
     {
       label: 'Condición',
-      component:  <Condition handleNext={handleNext} handleBack={handleBack} index={1} isLastStep={true} />
+      component:  <Condition handleNext={handleNext} handleBack={handleBack} index={1} isLastStep={false} />
+    },
+    {
+      label: 'Guia de Dimensiones',
+      component:  <DimensionsGuide handleNext={handleNext} handleBack={handleBack} index={2} isLastStep={true} />
     },
   ];
 

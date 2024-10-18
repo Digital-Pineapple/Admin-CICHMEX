@@ -35,17 +35,7 @@ export const productsReducer = createSlice({
       state.isLoading = false;
     },
     onStepNewProduct: (state, { payload }) => {
-      if (payload) {
-        const existingStepIndex = state.dataProduct.findIndex(i => i.step === payload.step);
-    
-        if (existingStepIndex !== -1) {
-          // Si el paso ya existe, actualiza sus valores
-          state.dataProduct[existingStepIndex].values = payload.values;
-        } else {
-          // Si el paso no existe, añade el nuevo payload
-          state.dataProduct.push(payload);
-        }
-      }
+      state.dataProduct = payload
     },    
     deleteProduct: (state, { type, payload }) => {
       state.products = state.products.filter(

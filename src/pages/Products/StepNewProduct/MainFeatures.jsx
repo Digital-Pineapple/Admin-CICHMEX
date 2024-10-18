@@ -60,7 +60,7 @@ const MainFeatures = ({handleNext, handleBack, index, isLastStep}) => {
     setValue,
     watch,
     formState: { errors },
-  } = useForm({ defaultValues: DefaultValues(dataProduct[0]?.values) });
+  } = useForm({ defaultValues: DefaultValues(dataProduct) });
   
 
   const fieldValues = watch("fields");

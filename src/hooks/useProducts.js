@@ -108,8 +108,15 @@ export const useProducts = () => {
     });
     
   
-    dispatch (onStepNewProduct({step: 0, values : body})) 
+    dispatch (onStepNewProduct({...body})) 
   };
+
+  const dataStep2 = (data)=>{
+    const condition = data.condition
+    
+  const values ={...dataProduct, condition}
+ dispatch (onStepNewProduct(values))
+  }
   
 
   
@@ -146,6 +153,7 @@ export const useProducts = () => {
     addOneImage,
     deleteImageDetail,
     dataStep1,
-    dataProduct
+    dataProduct,
+    dataStep2
   };
 };
