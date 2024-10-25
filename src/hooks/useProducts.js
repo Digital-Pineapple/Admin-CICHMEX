@@ -117,6 +117,12 @@ export const useProducts = () => {
   const values ={...dataProduct, condition}
  dispatch (onStepNewProduct(values))
   }
+
+  const dataStep3 = (data)=>{
+    const size_guide = data?.size_guide || ""
+  const values ={...dataProduct, size_guide}
+ dispatch (onStepNewProduct(values))
+  }
   
 
   
@@ -154,6 +160,7 @@ export const useProducts = () => {
     deleteImageDetail,
     dataStep1,
     dataProduct,
-    dataStep2
+    dataStep2,
+    dataStep3
   };
 };

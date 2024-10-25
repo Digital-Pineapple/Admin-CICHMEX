@@ -3,99 +3,58 @@ import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
 import {
   FormControl,
-  FormControlLabel,
   FormLabel,
-  Radio,
-  RadioGroup,
   Card,
   CardContent,
   CardActions,
   Button,
   CardHeader,
-  Avatar,
-  IconButton,
-  Typography, TextField,
+  Typography,
+  Select,
+  FormHelperText,
 } from "@mui/material";
-import TableClothes from "./TablesTypeProduct/TableClothes";
 import { useSizeGuide } from "../../../hooks/useSizeGuide";
-import { Add } from "@mui/icons-material";
+import { Controller, useForm } from "react-hook-form";
+import { useProducts } from "../../../hooks";
+import { startSelectSizeGuide } from "../../../store/actions/sizeGuideActions";
 
-const DimensionsGuide = () => {
-  const { loadSizeGuides, sizeGuides } = useSizeGuide();
-  const [value, setValue] = React.useState("clothes");
+const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
+  const { loadSizeGuides, sizeGuides, navigate, dispatch } = useSizeGuide();
   const [stateAddNewGuide, setStateAddNewGuide] = useState(false);
+  const { dataStep3, dataProduct } = useProducts();
+
   useEffect(() => {
     loadSizeGuides();
   }, [stateAddNewGuide]);
 
-  const handleChange = (event) => {
-    setValue(event.target.value);
-  };
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+    setValue,
+  } = useForm({
+    defaultValues: {
+      size_guide: dataProduct?.size_guide || "",
+    },
+  });
 
-  const startAddNewGuide = () => {
-    setStateAddNewGuide(true);
-  };
 
-  const TableGuides = () => {
-    return (
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <FormControl fullWidth>
-            <FormLabel sx={{ fontSize: "20px" }} id="type Product">
-              Seleccione el tipo de producto
-            </FormLabel>
-            <RadioGroup
-              row
-              aria-labelledby="typeProduct"
-              name="type_product"
-              defaultValue="clothes"
-              onChange={(e) => handleChange(e)}
-              sx={{ display: "flex", justifyContent: "center" }}
-            >
-              <FormControlLabel
-                value="clothes"
-                control={<Radio />}
-                label="Ropa"
-                labelPlacement="top"
-              />
-              <FormControlLabel
-                value="Shoes"
-                control={<Radio />}
-                label="Zapatos"
-                labelPlacement="top"
-              />
-              <FormControlLabel
-                value="Accesories"
-                control={<Radio />}
-                label="Accesorios"
-                labelPlacement="top"
-              />
-              <FormControlLabel
-                value="Food"
-                control={<Radio />}
-                label="Alimentos"
-                labelPlacement="top"
-              />
-              <FormControlLabel
-                value="Other"
-                control={<Radio />}
-                label="Otros"
-                labelPlacement="top"
-              />
-            </RadioGroup>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12}>
-          {value === "clothes" ? <TableClothes /> : ""}
-        </Grid>
-      </Grid>
-    );
+  const onAddSizeGuide = (values) => {    
+     dataStep3(values);
+     const info = sizeGuides?.filter((i)=> i._id === values.size_guide)
+    dispatch(startSelectSizeGuide(info))
+    handleNext()
   };
 
   return (
     <>
       <Grid container spacing={0}>
-        <Grid item xs={8}>
+        <Grid
+          item
+          xs={12}
+          component={"form"}
+          onSubmit={handleSubmit(onAddSizeGuide)}
+        >
           <Card variant="elevation">
             <CardHeader
               title="Guia de dimensiones"
@@ -104,48 +63,82 @@ const DimensionsGuide = () => {
             <CardContent>
               <Card
                 variant="elevation"
-                sx={{ backgroundColor: stateAddNewGuide ? 'inherit' : "primary.light" }}
+                sx={{ backgroundColor: "primary.light" }}
               >
                 <CardContent>
-                  {stateAddNewGuide ? (
-                    TableGuides()
-                  ) : (
-                    <Typography variant="body2" color="primary.contrastText">
-                      <strong>
-                        Asocia una guía de tallas que aplique a tu producto para
-                        evitar devoluciones
-                      </strong>
-                      <br />
-                      Asegúrate de incluir todas las tallas de tus variantes en
-                      la guía que crees y ayuda a tu comprador a elegir el
-                      producto de acuerdo a sus medidas.
-                    </Typography>
-                  )}
+                  <Typography variant="body2" color="primary.contrastText">
+                    <strong>
+                      Asocia una guía de tallas que aplique a tu producto para
+                      evitar devoluciones
+                    </strong>
+                    <br />
+                    Asegúrate de incluir todas las tallas de tus variantes en la
+                    guía que crees y ayuda a tu comprador a elegir el producto
+                    de acuerdo a sus medidas.
+                  </Typography>
+                  <FormControl fullWidth color="info" error={!!errors.size_guide}>
+                    <FormLabel>Guia de medidas</FormLabel>
+
+                    {/* Controller de react-hook-form para el Select */}
+                    <Controller
+                      name="size_guide" // Nombre del campo que va a controlar el select
+                      control={control}
+                      rules={{
+                        required: {
+                          value:true,
+                          message:'Campo requerido'
+                        }
+                      }}
+                      render={({ field }) => (
+                        <Select
+                          {...field}
+                          size="small"
+                          onChange={(e) => {
+                            field.onChange(e.target.value); // Actualiza el valor en react-hook-form
+                          }}
+                        >
+                          {sizeGuides.map((i) => (
+                            <MenuItem key={i._id} value={i._id}>
+                              {i.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      )}
+                    />
+
+                    <FormHelperText>
+                      {errors.size_guide
+                        ? errors.size_guide.message
+                        : "Seleccione una guia"}{" "}
+                    </FormHelperText>
+                  </FormControl>
                 </CardContent>
                 <CardActions>
-                  {stateAddNewGuide ? (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      size="small"
-                      onClick={() => setStateAddNewGuide(!stateAddNewGuide)}
-                    >
-                      Cancelar
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      size="small"
-                      onClick={() => setStateAddNewGuide(!stateAddNewGuide)}
-                    >
-                      Agregar nueva guia
-                    </Button>
-                  )}
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    onClick={() =>
+                      navigate("/guia-dimensiones/agregar", { replace: true })
+                    }
+                  >
+                    Agregar nueva guia
+                  </Button>
                 </CardActions>
               </Card>
             </CardContent>
-            <CardActions></CardActions>
+            <CardActions>
+              <Button
+                disabled={index === 0}
+                onClick={handleBack}
+                sx={{ mt: 1, mr: 1 }}
+              >
+                Cancelar
+              </Button>
+              <Button variant="contained" type="submit" sx={{ mt: 1, mr: 1 }}>
+                {isLastStep ? "Guardar" : "Continuar"}
+              </Button>
+            </CardActions>
           </Card>
         </Grid>
       </Grid>

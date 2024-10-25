@@ -1,6 +1,6 @@
 import { enqueueSnackbar } from "notistack";
 import { instanceApi } from "../../apis/configAxios";
-import { loadSizeGuides } from "../reducer/sizeGuideReducer";
+import { loadOneSizeGuide, loadSizeGuides, onAddSizeGuide } from "../reducer/sizeGuideReducer";
 import { Zoom } from "@mui/material";
 import { startLoading, stopLoading } from "../reducer/uiReducer";
 
@@ -22,6 +22,74 @@ export const startLoadSizeGuides = () => {
           vertical:'top'
         },
         autoHideDuration:500,
+        variant:'error',
+        TransitionComponent:Zoom,
+      })
+    } finally{
+        dispatch(stopLoading())
+    }
+  }
+}
+
+export const startAddOneSizeGuide = (values) => {
+  
+  return async (dispatch) => {
+    dispatch(startLoading())
+    try {
+      const { data } = await instanceApi.post(`/size-guide/addOne`,{values:values}, {
+        headers: {
+          "Content-type": "application/json",
+           "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      },
+      });
+      dispatch(onAddSizeGuide(data.data));
+      enqueueSnackbar(`${data.message}`,{
+        anchorOrigin:{
+          horizontal:'center',
+          vertical:'top'
+        },
+        autoHideDuration:1000,
+        variant:'success',
+        TransitionComponent:Zoom,
+      })
+    } catch (error) {
+      enqueueSnackbar(`${error.response.data.message}`,{
+        anchorOrigin:{
+          horizontal:'center',
+          vertical:'top'
+        },
+        autoHideDuration:1000,
+        variant:'error',
+        TransitionComponent:Zoom,
+      })
+    } finally{
+        dispatch(stopLoading())
+    }
+  }
+}
+
+export const startSelectSizeGuide = (values) => {
+  
+  return async (dispatch) => {
+    dispatch(startLoading())
+    try {
+      dispatch(loadOneSizeGuide(values));
+      enqueueSnackbar(`Selección correcta`,{
+        anchorOrigin:{
+          horizontal:'center',
+          vertical:'top'
+        },
+        autoHideDuration:1000,
+        variant:'success',
+        TransitionComponent:Zoom,
+      })
+    } catch (error) {
+      enqueueSnackbar(`No se selecciono correctamente`,{
+        anchorOrigin:{
+          horizontal:'center',
+          vertical:'top'
+        },
+        autoHideDuration:1000,
         variant:'error',
         TransitionComponent:Zoom,
       })

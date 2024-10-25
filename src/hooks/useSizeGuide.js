@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 
-import { startLoadSizeGuides } from '../store/actions/sizeGuideActions'; 
+import { startAddOneSizeGuide, startLoadSizeGuides, startSelectSizeGuide } from '../store/actions/sizeGuideActions'; 
 import { useNavigate } from 'react-router-dom';
 
 export const useSizeGuide = () => {
@@ -12,8 +12,11 @@ export const useSizeGuide = () => {
 
     const loadSizeGuides = async () => await dispatch(startLoadSizeGuides());
 
+    const loadAddOneSizeGuide = (values) => dispatch(startSelectSizeGuide(values))
 
-    return { loadSizeGuides, navigate, sizeGuides, sizeGuide  }
+    
+
+    return { loadSizeGuides, navigate, sizeGuides, sizeGuide, loadAddOneSizeGuide, dispatch  }
 
 
 }

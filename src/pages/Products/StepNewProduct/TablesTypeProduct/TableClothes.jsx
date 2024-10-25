@@ -1,4 +1,6 @@
-import * as React from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
@@ -6,14 +8,69 @@ import CancelIcon from "@mui/icons-material/Close";
 import {
   GridRowModes,
   DataGrid,
+  GridToolbarContainer,
   GridActionsCellItem,
   GridRowEditStopReasons,
 } from "@mui/x-data-grid";
-import Typography from "@mui/material/Typography";
-import { Grid } from "@mui/material";
+import { randomId } from "@mui/x-data-grid-generator";
+import { red } from "@mui/material/colors";
+import { Controller, useForm } from "react-hook-form";
+import TextField from "@mui/material/TextField";
+import { useEffect, useState } from "react";
+import { useSizeGuide } from "../../../../hooks/useSizeGuide";
 
-const TableClothes = ({ values, setValues }) => {
-  const [rowModesModel, setRowModesModel] = React.useState({});
+const initialRows = [];
+
+function EditToolbar(props) {
+  const { setRows, setRowModesModel } = props;
+
+  const handleClick = () => {
+    const id = randomId();
+    setRows((oldRows) => [
+      ...oldRows,
+      { id, label: "", equivalence: "", isNew: true },
+    ]);
+    setRowModesModel((oldModel) => ({
+      ...oldModel,
+      [id]: { mode: GridRowModes.Edit, fieldToFocus: "label" },
+    }));
+  };
+
+  return (
+    <GridToolbarContainer sx={{ display: "flex", justifyContent: "center" }}>
+      <Button
+        fullWidth
+        color="primary"
+        variant="contained"
+        startIcon={<AddIcon />}
+        onClick={handleClick}
+      >
+        Agregar talla
+      </Button>
+    </GridToolbarContainer>
+  );
+}
+
+const TableClothes = ({}) => {
+  const [rows, setRows] = useState(initialRows);
+  const [rowModesModel, setRowModesModel] =useState({});
+  const {loadAddOneSizeGuide} =  useSizeGuide()
+    const {
+    control,
+    formState: { errors },
+    setValue,
+    handleSubmit,
+  } = useForm({
+    defaultValues: {
+      name: "",
+      dimensions: [],
+    },
+  });
+
+  useEffect(() => {
+  setValue('dimensions', rows)
+  }, [rows, setRows])
+
 
   const handleRowEditStop = (params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -21,39 +78,44 @@ const TableClothes = ({ values, setValues }) => {
     }
   };
 
-  const handleEditClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+  const handleEditClick = (id) => {
+    setRowModesModel((prevRowModes) => ({
+      ...prevRowModes,
+      [id]: { mode: GridRowModes.Edit, fieldToFocus: "label" },
+    }));
   };
 
-  const handleSaveClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+  const handleProcessEditCellProps = async (params) => {
+    const value = params.props?.value;
+
+    if (!value || value.trim() === "") {
+      return { ...params.props, error: true };
+    }
+
+    return { ...params.props, error: false };
   };
 
-  const handleDeleteClick = (id) => () => {
-    setValues(values.filter((row) => row.id !== id));
+  
+
+  const handleDeleteClick = (id) => {
+    setRows(rows.filter((row) => row.id !== id));
   };
 
-  const handleCancelClick = (id) => () => {
+  const handleCancelClick = (id) => {
     setRowModesModel({
       ...rowModesModel,
       [id]: { mode: GridRowModes.View, ignoreModifications: true },
     });
 
-    const editedRow = values.find((row) => row.id === id);
+    const editedRow = rows.find((row) => row.id === id);
     if (editedRow.isNew) {
-      setValues(values.filter((row) => row.id !== id));
+      setRows(rows.filter((row) => row.id !== id));
     }
   };
 
   const processRowUpdate = (newRow) => {
-    // Validate the quantity against the stock
-    if (newRow.quantity > newRow.stock) {
-      alert("La cantidad no puede ser mayor que el stock disponible.");
-      return { ...newRow, quantity: newRow.stock }; // Reset quantity to max stock
-    }
-    
     const updatedRow = { ...newRow, isNew: false };
-    setValues(values.map((row) => (row.id === newRow.id ? updatedRow : row)));
+    setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
     return updatedRow;
   };
 
@@ -61,32 +123,82 @@ const TableClothes = ({ values, setValues }) => {
     setRowModesModel(newRowModesModel);
   };
 
-  // Dynamically add the stock column only if the stock value is present
+  const CustomFooter = () => (
+    <Button
+      sx={{ margin: 4 }}
+      onClick={submitForm}
+      variant="contained"
+      color="success"
+    >
+      Guardar
+    </Button>
+  );
   const columns = [
     {
-      field: "tag",
-      headerName: "Codigo",
-      type: "number",
-      align: "left",
-      headerAlign: "left",
-      width: 150,
-      editable: false,
+      field: "label",
+      headerName: "Talla (Etiqueta)",
+      width: 180,
+      editable: true,
+      preProcessEditCellProps: handleProcessEditCellProps,
     },
-    { field: "name", headerName: "Nombre ", width: 250, editable: false },
-    { field: "price", headerName: "Precio", width: 100, editable: false },
-    ...(values.some(row => row.stock !== undefined)
-      ? [{
-          field: 'stock',
-          headerName: "Stock",
-          type: "number",
-          width: 100,
-          editable: false,
-        }]
-      : []),
     {
-      field: "quantity",
-      headerName: "Cantidad",
-      type: "number",
+      field: "equivalence",
+      headerName: "Equivalencia",
+      width: 100,
+      editable: true,
+      preProcessEditCellProps: handleProcessEditCellProps,
+    },
+    {
+      field: "waist",
+      headerName: "Busto(cm)",
+      width: 100,
+      editable: true,
+    },
+    {
+      field: "height",
+      headerName: "Alto(cm)",
+      width: 100,
+      editable: true,
+    },
+    {
+      field: "hips",
+      headerName: "Caderas(cm)",
+      width: 100,
+      editable: true,
+    },
+    {
+      field: "inseam",
+      headerName: "Entrepierna(cm)",
+      width: 100,
+      editable: true,
+    },
+    {
+      field: "shoulder",
+      headerName: "Ancho de hombros(cm)",
+      width: 100,
+      editable: true,
+    },
+    {
+      field: "sleeveLength",
+      headerName: "Largo de mangas(cm)",
+      width: 100,
+      editable: true,
+    },
+    {
+      field: "neckCircumference",
+      headerName: "Cuello(cm)",
+      width: 100,
+      editable: true,
+    },
+    {
+      field: "thigh",
+      headerName: "Muslo(cm)",
+      width: 100,
+      editable: true,
+    },
+    {
+      field: "calf",
+      headerName: "Pantorrilla(cm)",
       width: 100,
       editable: true,
     },
@@ -102,18 +214,9 @@ const TableClothes = ({ values, setValues }) => {
         if (isInEditMode) {
           return [
             <GridActionsCellItem
-              icon={<SaveIcon />}
-              label="Save"
-              sx={{
-                color: "primary.main",
-              }}
-              onClick={handleSaveClick(id)}
-            />,
-            <GridActionsCellItem
               icon={<CancelIcon />}
-              label="Cancel"
-              className="textPrimary"
-              onClick={handleCancelClick(id)}
+              label="Cancelar"
+              onClick={() => handleCancelClick(id)}
               color="inherit"
             />,
           ];
@@ -122,15 +225,14 @@ const TableClothes = ({ values, setValues }) => {
         return [
           <GridActionsCellItem
             icon={<EditIcon />}
-            label="Edit"
-            className="textPrimary"
-            onClick={handleEditClick(id)}
+            label="Editar"
+            onClick={() => handleEditClick(id)}
             color="inherit"
           />,
           <GridActionsCellItem
             icon={<DeleteIcon />}
-            label="Delete"
-            onClick={handleDeleteClick(id)}
+            label="Eliminar"
+            onClick={() => handleDeleteClick(id)}
             color="inherit"
           />,
         ];
@@ -138,27 +240,66 @@ const TableClothes = ({ values, setValues }) => {
     },
   ];
 
+  const submitForm = handleSubmit((data) => {
+    loadAddOneSizeGuide(data)
+  });
   return (
-    <Grid>
-      <Typography variant="h5" color="inherit">
-        Productos seleccionados:
-      </Typography>
+    <Box
+      sx={{
+        width: "100%",
+        minHeight: "400px",
+      }}
+      component="form"
+      onSubmit={(e)=>submitForm(e)}
+    >
+      <Controller
+        control={control}
+        name="name"
+        rules={{
+          required: { message: "Campo requerido", value: true },
+        }}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            id="name"
+            fullWidth
+            label="Nombre de la guía"
+            error={!!errors.name}
+            helperText={errors.name && errors.name.message}
+            autoComplete="off"
+            placeholder="Ej. Blusas sanhoo mujer"
+          />
+        )}
+      />
+
       <DataGrid
-        rows={values}
+      sx={{
+        "& .actions": { color: "text.secondary" },
+        "& .Mui-error": {
+          bgcolor: red[100], // Color de fondo cuando hay error
+          color: red[700], // Color de texto cuando hay error
+          border: "solid 2px red",
+          width: "100%",
+          height: "100%",
+        },
+      }}
+        rows={rows}
         columns={columns}
         editMode="row"
         rowModesModel={rowModesModel}
         onRowModesModelChange={handleRowModesModelChange}
         onRowEditStop={handleRowEditStop}
         processRowUpdate={processRowUpdate}
-        pageSizeOptions={[10, 15, 20]}
-        disableRowSelectionOnClick
-        density="compact"
-        sx={{ minHeight: "200px", width: "100%" }}
+        slots={{
+          toolbar: EditToolbar,
+          footer: CustomFooter,
+        }}
+        slotProps={{
+          toolbar: { setRows, setRowModesModel },
+        }}
       />
-    </Grid>
+    </Box>
   );
 };
 
 export default TableClothes;
-

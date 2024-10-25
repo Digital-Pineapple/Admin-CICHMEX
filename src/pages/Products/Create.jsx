@@ -11,6 +11,7 @@ import Paper from '@mui/material/Paper';
 import { useState } from "react";
 import Condition from "./StepNewProduct/Condition";
 import DimensionsGuide from "./StepNewProduct/DimensionsGuide";
+import Variants from "./StepNewProduct/Variants";
 
 
 const CreateProduct = () => {
@@ -41,7 +42,11 @@ const CreateProduct = () => {
     },
     {
       label: 'Guia de Dimensiones',
-      component:  <DimensionsGuide handleNext={handleNext} handleBack={handleBack} index={2} isLastStep={true} />
+      component:  <DimensionsGuide handleNext={handleNext} handleBack={handleBack} index={2} isLastStep={false} />
+    },
+    {
+      label: 'Variantes y fotos',
+      component:  <Variants handleNext={handleNext} handleBack={handleBack} index={3} isLastStep={true} />
     },
   ];
 
