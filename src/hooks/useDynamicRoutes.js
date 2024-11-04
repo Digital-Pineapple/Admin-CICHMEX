@@ -32,8 +32,8 @@ export const useDynamicRoutes = () => {
         path: rdb.path,
         name: rdb.name,
         element: matchedComponent
-          ? matchedComponent.element
-          : routeNotFound.element,
+          ? matchedComponent?.element
+          : routeNotFound?.element,
       };
     });
     return elLink;

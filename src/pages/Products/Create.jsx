@@ -17,7 +17,8 @@ import {
   CardContent,
   CardActions,
   CardHeader,
-  ButtonGroup, Box,
+  ButtonGroup,
+  Box,
 } from "@mui/material";
 import { useProducts } from "../../hooks/useProducts";
 import useImages from "../../hooks/useImages";
@@ -34,6 +35,7 @@ import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import TextAreaInput from "../../components/inputs/TextAreaInput";
 import ProfileImageUploader from "../../components/ui/ProfileImageUploader";
 import WordsInput from "../../components/inputs/WordsInput";
+import * as Yup from "yup";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -58,8 +60,31 @@ const CreateProduct = () => {
     loadSubCategories();
     loadCategories();
   }, [user]);
-  
 
+  const validationSchema = Yup.object({
+    name: Yup.string()
+      .required("El nombre del producto es obligatorio")
+      .min(3, "El nombre debe tener al menos 3 caracteres"),
+    price: Yup.number()
+      .required("El precio es obligatorio")
+      .min(1, "El precio debe ser mayor o igual a 0"),
+    porcentDiscount: Yup.number()
+      .min(0, "El descuento no puede ser negativo")
+      .max(100, "El descuento no puede ser mayor al 100"),
+    description: Yup.string().required("La descripción es obligatoria"),
+    brand: Yup.string().required("La marca es obligatoria"),
+    tag: Yup.string().required("El código es obligatorio"),
+    category: Yup.string().required("La categoría es obligatoria"),
+    subCategory: Yup.string().required("La subcategoría es obligatoria"),
+    // dimensions: Yup.string().required("Las dimensiones son obligatorias"),
+    weight: Yup.number()
+      .required("El peso es obligatorio")
+      .min(1, "El peso debe ser mayor a 0"),
+    // seoDescription: Yup.string()
+    //   .required("La descripción SEO es obligatoria")
+    //   .max(160, "La descripción SEO no puede tener más de 160 caracteres"),
+    // seoKeywords: Yup.string().required("Las palabras clave son obligatorias"),
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -78,19 +103,20 @@ const CreateProduct = () => {
       thumbnail: "",
       seoDescription: "",
       seoKeywords: "",
-      images:''
+      images: "",
     },
+    validationSchema,
     onSubmit: (values) => {
       try {
         const values2 = {
           ...values,
           videos: [video],
-          thumbnail:formik.values?.profile_image,
-          images: imagesFiles()
+          thumbnail: formik.values?.profile_image,
+          images: imagesFiles(),
         };
-         createProduct(values2, imagesFiles());
+        createProduct(values2, imagesFiles());
       } catch (error) {
-        return enqueueSnackbar(`Error: ${error.data.response?.message}`, {
+        return enqueueSnackbar(error, {
           variant: "error",
           anchorOrigin: {
             vertical: "top",
@@ -105,8 +131,6 @@ const CreateProduct = () => {
       e.preventDefault(); // Previene que el Enter envíe el formulario
     }
   };
-
- 
 
   if (loading) {
     return <LoadingScreenBlue />;
@@ -145,13 +169,10 @@ const CreateProduct = () => {
   };
 
   return (
-   
-      
-    
     <Grid
       component="form"
       onSubmit={formik.handleSubmit}
-      display={'flex'}
+      display={"flex"}
       container
       gap={2}
     >
@@ -170,12 +191,14 @@ const CreateProduct = () => {
           Registar nuevo producto
         </Typography>
       </Grid>
-      <Grid item 
-       xs={12} lg={3}
-       sx={{
-         gridColumn: 'span 2',
-         gridRow: 'span 4',
-       }}
+      <Grid
+        item
+        xs={12}
+        lg={3}
+        sx={{
+          gridColumn: "span 2",
+          gridRow: "span 4",
+        }}
       >
         <Card variant="outlined">
           <CardHeader title="Detalles" />
@@ -191,6 +214,8 @@ const CreateProduct = () => {
               variant="outlined"
               value={formik.values.name}
               onChange={formik.handleChange}
+              error={Boolean(formik.errors.name)} // Añade el atributo error
+              helperText={formik.errors.name} // Muestra el mensaje de error
             />
             <TextField
               fullWidth
@@ -201,6 +226,8 @@ const CreateProduct = () => {
               variant="outlined"
               value={formik.values.brand}
               onChange={formik.handleChange}
+              error={Boolean(formik.errors.brand)} // Añade el atributo error
+              helperText={formik.errors.brand} // Muestra el mensaje de error
             />
             <TextField
               fullWidth
@@ -212,6 +239,8 @@ const CreateProduct = () => {
               value={formik.values.tag}
               onChange={formik.handleChange}
               onKeyDown={handleKeyDown}
+              error={Boolean(formik.errors.tag)} // Añade el atributo error
+              helperText={formik.errors.tag} // Muestra el mensaje de error
             />
             <FormControl fullWidth>
               <FormLabel>Categoría</FormLabel>
@@ -226,6 +255,7 @@ const CreateProduct = () => {
                   formik.handleChange(e);
                   loadSubCategoriesByCategory(e.target.value);
                 }}
+                error={Boolean(formik.errors.category)} // Añade el atributo error
               >
                 {categories.map((category) => (
                   <MenuItem key={category._id} value={category._id}>
@@ -244,6 +274,7 @@ const CreateProduct = () => {
                 value={formik.values.subCategory}
                 label="Subcategoria"
                 onChange={formik.handleChange}
+                error={Boolean(formik.errors.subCategory)} // Añade el atributo error
               >
                 {formik.values.category &&
                   subCategoriesByCategory.map((subCategory) => (
@@ -254,6 +285,7 @@ const CreateProduct = () => {
               </Select>
               <FormHelperText>Selecciona una sub-categoria</FormHelperText>
             </FormControl>
+
             <TextAreaInput
               aria-label="Descripcion"
               placeholder="Descripción"
@@ -264,7 +296,14 @@ const CreateProduct = () => {
               value={formik.values.description}
               style={{ width: "100%", marginBottom: 20 }}
               onChange={formik.handleChange}
+              error={
+                formik.touched.description && Boolean(formik.errors.description)
+              }
+              helperText={
+                formik.touched.description && formik.errors.description
+              }
             />
+
             <TextAreaInput
               aria-label="Descripcion corta"
               id="shortDescription"
@@ -275,16 +314,19 @@ const CreateProduct = () => {
               style={{ width: "100%", marginBottom: 20 }}
               onChange={formik.handleChange}
               placeholder="Descripción corta"
+              // error={Boolean(formik.errors.shortDescription)} // Añade el atributo error
             />
           </CardContent>
         </Card>
       </Grid>
-      <Grid item 
-       xs={12}  lg={2}
-       sx={{
-         gridColumn: 'span 2',
-         gridRow: 'span 1',
-       }}
+      <Grid
+        item
+        xs={12}
+        lg={2}
+        sx={{
+          gridColumn: "span 2",
+          gridRow: "span 1",
+        }}
       >
         <Card variant="outlined">
           <CardHeader title="Dimensiones" />
@@ -301,6 +343,8 @@ const CreateProduct = () => {
               type="text"
               value={formik.values.dimensions}
               onChange={formik.handleChange}
+              error={Boolean(formik.errors.dimensions)} // Añade el atributo error
+              helperText={formik.errors.dimensions} // Muestra el mensaje de error
             />
             <TextField
               fullWidth
@@ -312,6 +356,8 @@ const CreateProduct = () => {
               variant="outlined"
               value={formik.values.weight}
               onChange={formik.handleChange}
+              error={Boolean(formik.errors.weight)} // Añade el atributo error
+              helperText={formik.errors.weight} // Muestra el mensaje de error
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="start">gr</InputAdornment>
@@ -321,12 +367,14 @@ const CreateProduct = () => {
           </CardContent>
         </Card>
       </Grid>
-      <Grid item
-       xs={12}  lg={3}
-       sx={{
-         gridColumn: 'span 2',
-         gridRow: 'span 4',
-       }}
+      <Grid
+        item
+        xs={12}
+        lg={3}
+        sx={{
+          gridColumn: "span 2",
+          gridRow: "span 4",
+        }}
       >
         <Card variant="outlined">
           <CardHeader title="Precio y facturación" />
@@ -342,6 +390,8 @@ const CreateProduct = () => {
               variant="outlined"
               value={formik.values.price}
               onChange={handleInputChange}
+              error={Boolean(formik.errors.price)} // Añade el atributo error
+              helperText={formik.errors.price} // Muestra el mensaje de error
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -395,12 +445,14 @@ const CreateProduct = () => {
           </CardContent>
         </Card>
       </Grid>
-      <Grid item 
-      xs={12}  lg={3}
-      sx={{
-        gridColumn: 'span 2',
-        gridRow: 'span 3',
-      }}
+      <Grid
+        item
+        xs={12}
+        lg={3}
+        sx={{
+          gridColumn: "span 2",
+          gridRow: "span 3",
+        }}
       >
         <Card variant="outlined">
           <CardHeader title="Optimización para motores de búsqueda" />
@@ -428,12 +480,13 @@ const CreateProduct = () => {
         </Card>
       </Grid>
 
-      <Grid item 
-       xs={12} 
-       sx={{
-         gridColumn: 'span 6',
-         gridRow: 'span 3',
-       }}
+      <Grid
+        item
+        xs={12}
+        sx={{
+          gridColumn: "span 6",
+          gridRow: "span 3",
+        }}
       >
         <Card variant="outlined">
           <CardContent>

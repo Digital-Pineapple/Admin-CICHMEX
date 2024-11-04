@@ -245,6 +245,7 @@ export const addOneProduct =
   ) =>
   async (dispatch) => {
     dispatch(startLoading());
+    
     try {
       const formData = new FormData();
       formData.append("name", name);
@@ -273,6 +274,7 @@ export const addOneProduct =
         formData.append("videos", videos[i]);
       }
 
+
       const { data } = await instanceApi.post(
         `/product/addProduct`,
         formData,
@@ -293,7 +295,7 @@ export const addOneProduct =
       navigate("/mi-almacen/productos", { replace: true });
     } catch (error) {
       
-      enqueueSnackbar(`${error.response.data.message}`, {
+      enqueueSnackbar(`${error.response.data.message || error.response.data.error}`, {
         variant: "error",
         anchorOrigin: {
           vertical: "top",
