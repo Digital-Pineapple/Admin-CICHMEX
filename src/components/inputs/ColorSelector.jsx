@@ -152,39 +152,42 @@ const colors = [
 
 const filter = createFilterOptions();
 
-const ColorSelector = () => {
-  const [value, setValue] = React.useState(null);
+const ColorSelector = ({
+  value,
+  onChange,
+  fullWidth,
+  disabled,
+  label,
+  error,
+  helperText,
+}) => {
+  const [selectedValue, setSelectedValue] = React.useState(value || null);
 
   return (
     <Autocomplete
-      value={value}
+      value={selectedValue}
       onChange={(event, newValue) => {
-        if (typeof newValue === 'string') {
-          setValue({
-            name: newValue,
-          });
+        if (typeof newValue === "string") {
+          setSelectedValue({ name: newValue });
+          onChange(newValue); // Llama a onChange del Controller
         } else if (newValue && newValue.inputValue) {
-          // Create a new value from the user input
-          setValue({
-            name: newValue.inputValue,
-          });
+          setSelectedValue({ name: newValue.inputValue });
+          onChange(newValue.inputValue);
         } else {
-          setValue(newValue);
+          setSelectedValue(newValue);
+          onChange(newValue);
         }
       }}
       filterOptions={(options, params) => {
         const filtered = filter(options, params);
-
         const { inputValue } = params;
-        // Suggest the creation of a new value
         const isExisting = options.some((option) => inputValue === option.name);
-        if (inputValue !== '' && !isExisting) {
+        if (inputValue !== "" && !isExisting) {
           filtered.push({
             inputValue,
             name: ` "${inputValue}"`,
           });
         }
-
         return filtered;
       }}
       selectOnFocus
@@ -193,43 +196,48 @@ const ColorSelector = () => {
       id="free-solo-with-text-demo"
       options={colors}
       getOptionLabel={(option) => {
-        // Value selected with enter, right from the input
-        if (typeof option === 'string') {
+        if (typeof option === "string") {
           return option;
         }
-        // Add "xxx" option created dynamically
         if (option.inputValue) {
           return option.inputValue;
         }
-        // Regular option
         return option.name;
       }}
       renderOption={(props, option) => {
         const { key, ...optionProps } = props;
         return (
-          <Box component="li" {...props} sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box component="li" {...props} sx={{ display: "flex", alignItems: "center" }}>
             <Box
               sx={{
-                width: '50px',
-                height: '50px',
-                borderRadius: '100px',
+                width: "20px",
+                height: "20px",
+                borderRadius: "100px",
                 backgroundColor: option.hex,
                 marginRight: 2,
-                border: '1px solid white',
+                border: "1px solid white",
               }}
             />
-            <Typography>{option.name}</Typography>
+            <Typography fontSize={'15px'}>{option.name}</Typography>
           </Box>
         );
       }}
-      sx={{ width: 300 }}
+      sx={{ width: fullWidth ? "100%" : 300 }}
       freeSolo
       renderInput={(params) => (
-        <TextField {...params} label="Color" />
+        <TextField
+          {...params}
+          label={label}
+          disabled={disabled}
+          error={error}
+          helperText={helperText}
+          size='small'
+        />
       )}
     />
   );
 };
+
 
 export default ColorSelector;
 

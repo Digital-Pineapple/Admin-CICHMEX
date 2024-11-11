@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   LoadOneProduct,
   addOneProduct,
+  addProductAndVariants,
   deleteOneProduct,
   editOneProduct,
   startAddMultipleEntries,
@@ -95,7 +96,8 @@ export const useProducts = () => {
       category: "",
       subCategory: "",
       model: null, 
-      gender: null  
+      gender: null,  
+      name:""
     };
   
     body.category = data.category;
@@ -105,6 +107,7 @@ export const useProducts = () => {
       if (i.id === "brand") body.brand = i.textInput;
       if (i.id === "model") body.model = i.textInput || null;
       if (i.id === "gender") body.gender = i.textInput || null;
+      if (i.id === "name") body.name = i.textInput || null;
     });
     
   
@@ -123,8 +126,64 @@ export const useProducts = () => {
   const values ={...dataProduct, size_guide}
  dispatch (onStepNewProduct(values))
   }
-  
 
+  const dataStep4 = (data)=>{
+    const body = {
+      description: null,
+      shortDescription: null,
+      seoKeywords: null,
+      videos : null 
+    };
+  
+    body.videos = data.videos[0]?.filePreview || null;
+
+    data.fields.forEach((i) => {
+      if (i.id === "description") body.description = i.textInput;
+      if (i.id === "shortDescription") body.shortDescription = i.textInput || null;
+      if (i.id === "seoKeywords") body.seoKeywords = i.values || null;
+    });
+    dispatch (onStepNewProduct({...dataProduct,...body}))
+  }
+  
+  const addProductWithVariants = (data, videoFile) => {
+    console.log(videoFile);
+    
+    const body = {
+        variants: []
+    };
+
+    data.variants.forEach((variant) => {
+        let values = {
+            tag: null,
+            weight: null,
+            price: null,
+            porcentDiscount: null,
+            discountPrice: null,
+            design: null,
+            stock: null,
+            images: [],
+            attributes: { color: null, size: null, material: null }
+        };
+
+        values.attributes.color = variant.color.name;
+        values.attributes.size = variant.size;
+        values.tag = variant.tag;
+        values.weight = variant.weight;
+        values.price = variant.price;
+        values.porcentDiscount = variant.porcentDiscount;
+        values.discountPrice = variant.discountPrice;
+        values.design = variant.design.textInput;
+        values.stock = variant.stock;
+        values.images = variant.images;
+        
+        body.variants.push(values);
+    });
+    dispatch(onStepNewProduct({...dataProduct, ...body})); 
+    dispatch(addProductAndVariants({...dataProduct, ...body, videoFile}))
+
+};
+
+  
   
 
   return {
@@ -161,6 +220,8 @@ export const useProducts = () => {
     dataStep1,
     dataProduct,
     dataStep2,
-    dataStep3
+    dataStep3,
+    dataStep4,
+    addProductWithVariants
   };
 };

@@ -21,6 +21,7 @@ const Condition = ({ handleNext, handleBack, index, isLastStep }) => {
   const { dataProduct, dataStep2 } = useProducts();
 
   const DefaultValues = (data) => {
+    
     return {
       condition: data?.condition || "",
     };

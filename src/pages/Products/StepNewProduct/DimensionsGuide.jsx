@@ -38,12 +38,11 @@ const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
     },
   });
 
-
-  const onAddSizeGuide = (values) => {    
-     dataStep3(values);
-     const info = sizeGuides?.filter((i)=> i._id === values.size_guide)
-    dispatch(startSelectSizeGuide(info))
-    handleNext()
+  const onAddSizeGuide = (values) => {
+    dataStep3(values);
+    const info = sizeGuides?.filter((i) => i._id === values.size_guide);
+    dispatch(startSelectSizeGuide(info));
+    handleNext();
   };
 
   return (
@@ -57,6 +56,18 @@ const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
         >
           <Card variant="elevation">
             <CardHeader
+              action={
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  size="small"
+                  onClick={() =>
+                    navigate("/guia-dimensiones/agregar", { replace: true })
+                  }
+                >
+                  Agregar nueva guia
+                </Button>
+              }
               title="Guia de dimensiones"
               subheader="Asocia una guía que contenga las medidas necesarias y evita preguntas o devoluciones"
             />
@@ -76,7 +87,11 @@ const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
                     guía que crees y ayuda a tu comprador a elegir el producto
                     de acuerdo a sus medidas.
                   </Typography>
-                  <FormControl fullWidth color="info" error={!!errors.size_guide}>
+                  <FormControl
+                    fullWidth
+                    color="info"
+                    error={!!errors.size_guide}
+                  >
                     <FormLabel>Guia de medidas</FormLabel>
 
                     {/* Controller de react-hook-form para el Select */}
@@ -85,9 +100,9 @@ const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
                       control={control}
                       rules={{
                         required: {
-                          value:true,
-                          message:'Campo requerido'
-                        }
+                          value: true,
+                          message: "Campo requerido",
+                        },
                       }}
                       render={({ field }) => (
                         <Select
@@ -113,18 +128,6 @@ const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
                     </FormHelperText>
                   </FormControl>
                 </CardContent>
-                <CardActions>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    size="small"
-                    onClick={() =>
-                      navigate("/guia-dimensiones/agregar", { replace: true })
-                    }
-                  >
-                    Agregar nueva guia
-                  </Button>
-                </CardActions>
               </Card>
             </CardContent>
             <CardActions>

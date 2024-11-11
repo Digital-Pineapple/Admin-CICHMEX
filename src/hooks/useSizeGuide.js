@@ -12,7 +12,7 @@ export const useSizeGuide = () => {
 
     const loadSizeGuides = async () => await dispatch(startLoadSizeGuides());
 
-    const loadAddOneSizeGuide = (values) => dispatch(startSelectSizeGuide(values))
+    const loadAddOneSizeGuide = (values) => dispatch(startAddOneSizeGuide(values))
 
     
 

@@ -12,6 +12,7 @@ import { useState } from "react";
 import Condition from "./StepNewProduct/Condition";
 import DimensionsGuide from "./StepNewProduct/DimensionsGuide";
 import Variants from "./StepNewProduct/Variants";
+import DescriptionsAndVideo from "./StepNewProduct/DescriptionsAndVideo";
 
 
 const CreateProduct = () => {
@@ -30,6 +31,9 @@ const CreateProduct = () => {
     setActiveStep(0);
   };
 
+  const [videoFile, setVideoFile] = useState(null);
+  
+
   // Mover la definición de steps dentro del componente, para poder usar handleNext y handleBack
   const steps = [
     {
@@ -45,8 +49,12 @@ const CreateProduct = () => {
       component:  <DimensionsGuide handleNext={handleNext} handleBack={handleBack} index={2} isLastStep={false} />
     },
     {
+      label: 'Descripción y video',
+      component:  <DescriptionsAndVideo handleNext={handleNext} handleBack={handleBack} index={3} setVideoFile={setVideoFile} isLastStep={false} />
+    },
+    {
       label: 'Variantes y fotos',
-      component:  <Variants handleNext={handleNext} handleBack={handleBack} index={3} isLastStep={true} />
+      component:  <Variants handleNext={handleNext} handleBack={handleBack} index={4} isLastStep={true} videoFile={videoFile} />
     },
   ];
 

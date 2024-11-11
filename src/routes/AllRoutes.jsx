@@ -75,6 +75,7 @@ import ReadyToDelivery from "../pages/Logistic/ReadyToDelivery";
 import TableGuides from '../pages/SizeDimensions/TableGuides'
 import DimensionsGuide from "../pages/Products/StepNewProduct/DimensionsGuide";
 import Variants from "../pages/Products/StepNewProduct/Variants";
+import DescriptionsAndVideo from "../pages/Products/StepNewProduct/DescriptionsAndVideo";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -118,8 +119,8 @@ export const AllRoutes = [
   { id: 30, element: <EditMembership /> },
 
   { id: 31, element: <Products /> },
-  // { id: 32, element: <CreateProduct /> },
-  { id: 32, element: <Variants /> },
+   { id: 32, element: <CreateProduct /> },
+  
  
   { id: 33, element: <EditProduct /> },
 

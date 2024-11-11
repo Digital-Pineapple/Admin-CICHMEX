@@ -307,6 +307,85 @@ export const addOneProduct =
     }
   };
 
+  export const addProductAndVariants = ( values ) =>
+   
+    
+  async (dispatch) => {
+
+    console.log(values.variants,'variantes');
+    
+    dispatch(startLoading());
+    const formData = new FormData();
+
+    formData.append('name', values?.name)
+    formData.append('description', values?.description);
+    formData.append('shortDescription', values?.shortDescription);
+    formData.append('size_guide', values?.size_guide);
+    formData.append('brand', values?.brand);
+    formData.append('category', values?.category)
+    formData.append('subCategory', values?.subCategory);
+    formData.append('model', values?.model);
+    formData.append('gender', values?.gender);
+    formData.append('video', values?.videoFile)
+    for (let i = 0; i < values.seoKeywords?.length; i++) {
+      formData.append("seoKeywords", values?.seoKeywords[i]);
+    }
+    values.variants?.forEach((variant, index) => {
+      formData.append(`variants[${index}][tag]`, variant.tag);
+      formData.append(`variants[${index}][weight]`, variant.weight);
+      formData.append(`variants[${index}][price]`, variant.price);
+      formData.append(`variants[${index}][porcentDiscount]`, variant.porcentDiscount);
+      formData.append(`variants[${index}][discountPrice]`, variant.discountPrice);
+      formData.append(`variants[${index}][design]`, variant.design);
+      formData.append(`variants[${index}][stock]`, variant.stock);
+
+      // Imágenes dentro de la variante
+      variant.images?.forEach((image, imgIndex) => {
+        formData.append(`variants[${index}][images][${imgIndex}]`, image.file);
+      });
+
+      // Atributos dentro de la variante
+      for (const [key, value] of Object.entries(variant.attributes || {})) {
+        formData.append(`variants[${index}][attributes][${key}]`, value);
+      }
+    });
+
+
+    try {
+      const { data } = await instanceApi.post(
+        `/product/createProductAndVariants/ok`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      dispatch(onAddNewProduct(data.data));
+      enqueueSnackbar("Agregado con éxito", {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+      navigate("/mi-almacen/productos", { replace: true });
+    } catch (error) {
+      enqueueSnackbar(`${error.response.data.message || error.response.data.error}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+      
+    }
+    finally{
+      dispatch(stopLoading());
+    }
+  };
+
 export const editOneProduct =
   (
     id,

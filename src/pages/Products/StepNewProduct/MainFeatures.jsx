@@ -15,10 +15,12 @@ import {
   Select,
   MenuItem,
   FormHelperText,
+  InputLabel,
 } from "@mui/material";
 import { useSubCategories } from "../../../hooks/useSubCategories";
 import { useCategories } from "../../../hooks/useCategories";
 import { useProducts } from "../../../hooks/useProducts";
+import { name } from "dayjs/locale/es";
 
 const MainFeatures = ({handleNext, handleBack, index, isLastStep}) => {
   const {
@@ -39,6 +41,7 @@ const MainFeatures = ({handleNext, handleBack, index, isLastStep}) => {
     
     return {
       fields: [
+        { id: "name", name: "Nombre del producto *", textInput: data?.name || "" },
         { id: "brand", name: "Marca*", textInput: data?.brand || "" },
         { id: "model", name: "Modelo", textInput: data?.model || "", checkbox: false },
         {
@@ -51,6 +54,7 @@ const MainFeatures = ({handleNext, handleBack, index, isLastStep}) => {
       ],
       category: data?.category || "",
       subCategory: data?.subCategory || "",
+      name : data?.name || "",
     };
   };
   
@@ -82,7 +86,7 @@ const MainFeatures = ({handleNext, handleBack, index, isLastStep}) => {
       variant="elevation"
       component={"form"}
       onSubmit={handleSubmit(onSubmit)}
-      sx={{ maxWidth: { xs: "90%", md: "60%" } }}
+      
     >
       <CardHeader
         title="Características principales"
@@ -106,11 +110,13 @@ const MainFeatures = ({handleNext, handleBack, index, isLastStep}) => {
                       },
                     }}
                     render={({ field: valuesField }) => (
-                        <>
-                        <FormLabel>Genero</FormLabel>
+                        <FormControl fullWidth>
+                        <InputLabel id='SelectedLabel'>Género</InputLabel>
                       <Select
                         {...valuesField}
                         fullWidth
+                        labelId="SelectedLabel"
+                        label='Género'
                         size="small"
                         disabled={fieldValues[index]?.checkbox} // Deshabilita el Select si el checkbox está activo
                         onChange={(e) => {
@@ -124,7 +130,7 @@ const MainFeatures = ({handleNext, handleBack, index, isLastStep}) => {
                           </MenuItem>
                         ))}
                       </Select>
-                        </>
+                        </FormControl>
                     )}
                   />
                 ) : (
