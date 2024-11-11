@@ -321,6 +321,7 @@ const Edit = () => {
             <TextField
               fullWidth
               size="small"
+              type="text"
               id="dimensions"
               name="dimensions"
               label="Ancho,Largo,Alto"

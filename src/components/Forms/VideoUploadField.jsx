@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Box, Typography, Button, Grid, styled } from "@mui/material";
 import { VideoCallSharp } from "@mui/icons-material";
 
-
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
@@ -15,28 +14,45 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-
-
 const VideoUploadField = ({ name, label, setVideo, initialVideo }) => {
   const [videoPreview, setVideoPreview] = useState(null);
- useEffect(() => {
-   setVideoPreview(initialVideo)
- }, [initialVideo])
- 
+  const [error, setError] = useState(null); // Estado para el mensaje de error
   
-  
+  useEffect(() => {
+    setVideoPreview(initialVideo);
+  }, [initialVideo]);
+
   const handleVideoChange = (e) => {
-    const file = e.target.files[0]; // Get the file object from the event
-    setVideo(file); // Set the file object using the provided setter function
+    
+    const file = e.target.files[0];
+    setError(null); // Reinicia el mensaje de error
+
     if (file) {
       const videoURL = URL.createObjectURL(file);
-      setVideoPreview(videoURL);
+      const videoElement = document.createElement("video");
+      videoElement.src = videoURL;
+
+      // Validamos las dimensiones del video
+      videoElement.onloadedmetadata = () => {
+        if (videoElement.videoHeight > videoElement.videoWidth) {
+          // Si el video es vertical
+          setVideo(file);
+          setVideoPreview(videoURL);
+        } else {
+          // Si el video es horizontal
+          setError("El video debe ser en formato vertical.");
+          setVideo(null);
+          setVideoPreview(null);
+        }
+        URL.revokeObjectURL(videoURL); // Liberamos el URL temporal
+      };
     }
   };
 
   const handleVideoCancel = () => {
     setVideo(null);
     setVideoPreview(null);
+    setError(null); // Limpia el mensaje de error
   };
 
   return (
@@ -64,16 +80,16 @@ const VideoUploadField = ({ name, label, setVideo, initialVideo }) => {
           display={"flex"}
           justifyContent={"center"}
           flexDirection={"column"}
-          alignItems={'center'}
+          alignItems={"center"}
         >
           <Typography textAlign={"center"} variant="h6" m={2}>
             Vista previa del video:
           </Typography>
           <Grid item xs={12}>
-          <video width="250" controls  >
-            <source src={videoPreview} type="video/mp4"  />
-            Tu navegador no soporta la reproducción de videos.
-          </video>
+            <video width="250" controls>
+              <source src={videoPreview} type="video/mp4" />
+              Tu navegador no soporta la reproducción de videos.
+            </video>
           </Grid>
           <Button
             fullWidth
@@ -84,6 +100,11 @@ const VideoUploadField = ({ name, label, setVideo, initialVideo }) => {
             Cancelar
           </Button>
         </Grid>
+      )}
+      {error && ( // Muestra el mensaje de error si existe
+        <Typography color="error" textAlign="center" mt={2}>
+          {error}
+        </Typography>
       )}
     </Box>
   );
