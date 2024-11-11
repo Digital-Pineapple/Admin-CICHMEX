@@ -475,7 +475,7 @@ const Edit = () => {
             idProduct={id}
             />
           </Grid>
-          <Grid item xs={12} lg={3}>
+          {/* <Grid item xs={12} lg={3}>
           <ImageUpdateField
           onSubmit={updateThumbnail}
           imageProduct={product.thumbnail ? product.thumbnail : null}
@@ -483,7 +483,7 @@ const Edit = () => {
           textButton='Editar imagen principal'
           />
            
-          </Grid>
+          </Grid> */}
           <Grid item xs={12} lg={5}>
           <DetailImagesUpdateField
           onSubmit={addOneImage}

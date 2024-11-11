@@ -19,6 +19,7 @@ import {
   CardHeader,
   ButtonGroup,
   Box,
+  Chip,
 } from "@mui/material";
 import { useProducts } from "../../hooks/useProducts";
 import useImages from "../../hooks/useImages";
@@ -92,6 +93,7 @@ const CreateProduct = () => {
       price: "",
       porcentDiscount: "",
       discountPrice: "",
+      product_key: "",
       description: "",
       shortDescription: "",
       brand: "",
@@ -102,7 +104,7 @@ const CreateProduct = () => {
       weight: "",
       thumbnail: "",
       seoDescription: "",
-      seoKeywords: "",
+      seoKeywords: [],
       images: "",
     },
     validationSchema,
@@ -112,7 +114,7 @@ const CreateProduct = () => {
           ...values,
           videos: [video],
           thumbnail: formik.values?.profile_image,
-          images: imagesFiles(),
+          images: imagesFiles(),   
         };
         createProduct(values2, imagesFiles());
       } catch (error) {
@@ -135,6 +137,25 @@ const CreateProduct = () => {
   if (loading) {
     return <LoadingScreenBlue />;
   }
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter" && event.target.value.trim()) {
+      event.preventDefault();
+      const newChips = [
+        ...formik.values.seoKeywords,
+        event.target.value.trim(),
+      ];
+      formik.setFieldValue("seoKeywords", newChips);
+      event.target.value = ""; // Limpiar input
+    }
+  };
+
+  const handleDelete = (chipToDelete) => () => {
+    const newChips = formik.values.seoKeywords.filter(
+      (chip) => chip !== chipToDelete
+    );
+    formik.setFieldValue("seoKeywords", newChips);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -470,12 +491,30 @@ const CreateProduct = () => {
               onChange={formik.handleChange}
               placeholder="Descripción optimizada"
             />
-            <WordsInput
-              formik={formik}
-              id={"seoKeywords"}
-              name={"seoKeywords"}
-              label={"Palabras clave para CEO"}
-            />
+            <FormControl fullWidth>
+              <TextField
+                id="seoKeywords"
+                name="seoKeywordsInput"
+                label="Palabras Clave"
+                onKeyPress={handleKeyPress}
+                placeholder="Añade una palabra clave y presiona Enter"
+              />
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 2 }}>
+                {formik.values.seoKeywords.map((chip, index) => (
+                  <Chip
+                    key={index}
+                    label={chip}
+                    onDelete={handleDelete(chip)}
+                  />
+                ))}
+              </Box>
+              {formik.touched.seoKeywords &&
+                Boolean(formik.errors.seoKeywords) && (
+                  <FormHelperText error>
+                    {formik.errors.seoKeywords}
+                  </FormHelperText>
+                )}
+            </FormControl>
           </CardContent>
         </Card>
       </Grid>
@@ -492,12 +531,12 @@ const CreateProduct = () => {
           <CardContent>
             <CardHeader title="Multimedia" />
             <VideoUploadField setVideo={setVideo} label={"Subir video"} />
-            <Typography marginTop={"10px"}>Imagen principal</Typography>
-            <ProfileImageUploader
+            {/* <Typography marginTop={"10px"}>Imagen principal</Typography> */}
+            {/* <ProfileImageUploader
               formik={formik}
               id={"thumbnail"}
               name={"thumbnail"}
-            />
+            /> */}
 
             <Typography marginTop={"10px"}>
               {" "}
@@ -509,7 +548,7 @@ const CreateProduct = () => {
                   id="image"
                   name="image"
                   type="file"
-                  accept="image/jpg"
+                  accept="image/jpeg, image/png, image/webp"
                   onChange={handleImageChange}
                   hidden
                 />
@@ -544,18 +583,25 @@ const CreateProduct = () => {
                             sx={{ backgroundColor: "black", color: "black" }}
                             onClick={() => deleteImage(id)}
                           >
-                            {" "}
                             <DeleteIcon
                               sx={{ color: "white", fontSize: "20px" }}
-                            />{" "}
+                            />
                           </IconButton>
                         }
                       >
-                        <Avatar
-                          src={filePreview}
-                          variant="square"
-                          sx={{ width: "100%", height: "200px" }}
-                        />
+                        <Box
+                          sx={{
+                            position: "relative",
+                            width: "100%",
+                            height: "200px",
+                          }}
+                        >
+                          <Avatar
+                            src={filePreview}
+                            variant="square"
+                            sx={{ width: "100%", height: "100%" }}
+                          />
+                        </Box>
                       </StyledBadge>
                     </Grid>
                   ))}
@@ -585,7 +631,7 @@ const CreateProduct = () => {
                   id="image"
                   name="image"
                   type="file"
-                  accept="image/png, image/jpeg, image/jpg"
+                  accept="image/jpeg, image/png, image/webp"
                   onChange={handleImageChange}
                   hidden
                 />

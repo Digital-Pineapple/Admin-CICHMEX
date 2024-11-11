@@ -239,8 +239,9 @@ export const addOneProduct =
       shortDescription,
       thumbnail,
       seoKeywords,
+      images,
     },
-    images,
+   images2,
     navigate
   ) =>
   async (dispatch) => {
@@ -294,6 +295,7 @@ export const addOneProduct =
       });
       navigate("/mi-almacen/productos", { replace: true });
     } catch (error) {
+      console.log(error);
       
       enqueueSnackbar(`${error.response.data.message || error.response.data.error}`, {
         variant: "error",
