@@ -19,6 +19,7 @@ import {
   CardHeader,
   ButtonGroup,
   Box,
+  Chip,
 } from "@mui/material";
 import { useProducts } from "../../hooks/useProducts";
 import useImages from "../../hooks/useImages";
@@ -36,6 +37,8 @@ import TextAreaInput from "../../components/inputs/TextAreaInput";
 import ProfileImageUploader from "../../components/ui/ProfileImageUploader";
 import WordsInput from "../../components/inputs/WordsInput";
 import * as Yup from "yup";
+import { enqueueSnackbar } from "notistack";
+import useVideos from "../../hooks/useVideos";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -46,15 +49,17 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 const CreateProduct = () => {
   const { user } = useAuthStore();
-  const { createProduct, navigate, loading } = useProducts();
+  const { createProduct, navigate, loading, newProduct } = useProducts();
   const {
     loadSubCategories,
     subCategoriesByCategory,
     loadSubCategoriesByCategory,
   } = useSubCategories();
   const { categories, loadCategories } = useCategories();
-  const { images, handleImageChange, deleteImage, imagesFiles } = useImages();
-  const [video, setVideo] = useState(null);
+  const { images, handleImageChange2, deleteImage, imagesFiles } = useImages();
+  const [verticalVideo, setVerticalVideo] = useState(null);
+  const [horizontalVideo, setHorizontalVideo] = useState(null);
+  
 
   useEffect(() => {
     loadSubCategories();
@@ -88,44 +93,39 @@ const CreateProduct = () => {
 
   const formik = useFormik({
     initialValues: {
-      name: "",
-      price: "",
-      porcentDiscount: "",
-      discountPrice: "",
-      description: "",
-      shortDescription: "",
-      brand: "",
-      dimensions: "",
-      tag: "",
-      subCategory: "",
-      category: "",
-      weight: "",
-      thumbnail: "",
-      seoDescription: "",
-      seoKeywords: "",
-      images: "",
+      name: newProduct.name || "",
+      price: newProduct.price || "",
+      porcentDiscount: newProduct.porcentDiscount || "",
+      discountPrice: newProduct.discountPrice || "",
+      product_key: newProduct.product_key || "",
+      description: newProduct.description || "",
+      shortDescription : newProduct.shortDescription || "",
+      dimensions : newProduct.dimensions || "",
+      brand: newProduct.brand || "",
+      tag: newProduct.tag || "",
+      category: newProduct.category || "",
+      subCategory: newProduct.subCategory || "",
+      weight: newProduct.weight || "",
+      seoDescription: newProduct.seoDescription || '',
+      seoKeywords: newProduct.seoKeywords || [],
     },
     validationSchema,
     onSubmit: (values) => {
       try {
-        const values2 = {
+        const valuesWithImages = {
           ...values,
-          videos: [video],
-          thumbnail: formik.values?.profile_image,
-          images: imagesFiles(),
+          images: imagesFiles(images),
         };
-        createProduct(values2, imagesFiles());
+        createProduct(valuesWithImages);
       } catch (error) {
-        return enqueueSnackbar(error, {
+        enqueueSnackbar(error.message, {
           variant: "error",
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "right",
-          },
+          anchorOrigin: { vertical: "top", horizontal: "right" },
         });
       }
     },
   });
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault(); // Previene que el Enter envíe el formulario
@@ -135,6 +135,20 @@ const CreateProduct = () => {
   if (loading) {
     return <LoadingScreenBlue />;
   }
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter" && event.target.value.trim()) {
+      event.preventDefault();
+      const newChips = [...formik.values.seoKeywords, event.target.value.trim()];
+      formik.setFieldValue("seoKeywords", newChips);
+      event.target.value = ""; // Limpiar input
+    }
+  };
+
+  const handleDelete = (chipToDelete) => () => {
+    const newChips = formik.values.seoKeywords.filter((chip) => chip !== chipToDelete);
+    formik.setFieldValue("seoKeywords", newChips);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -314,7 +328,7 @@ const CreateProduct = () => {
               style={{ width: "100%", marginBottom: 20 }}
               onChange={formik.handleChange}
               placeholder="Descripción corta"
-              // error={Boolean(formik.errors.shortDescription)} // Añade el atributo error
+               error={Boolean(formik.errors.shortDescription)} 
             />
           </CardContent>
         </Card>
@@ -470,12 +484,23 @@ const CreateProduct = () => {
               onChange={formik.handleChange}
               placeholder="Descripción optimizada"
             />
-            <WordsInput
-              formik={formik}
-              id={"seoKeywords"}
-              name={"seoKeywords"}
-              label={"Palabras clave para CEO"}
-            />
+            <FormControl fullWidth>
+              <TextField
+                id="seoKeywords"
+                name="seoKeywordsInput"
+                label="Palabras Clave"
+                onKeyPress={handleKeyPress}
+                placeholder="Añade una palabra clave y presiona Enter"
+              />
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 2 }}>
+                {formik.values.seoKeywords.map((chip, index) => (
+                  <Chip key={index} label={chip} onDelete={handleDelete(chip)} />
+                ))}
+              </Box>
+              {formik.touched.seoKeywords && Boolean(formik.errors.seoKeywords) && (
+                <FormHelperText error>{formik.errors.seoKeywords}</FormHelperText>
+              )}
+            </FormControl>
           </CardContent>
         </Card>
       </Grid>
@@ -491,12 +516,11 @@ const CreateProduct = () => {
         <Card variant="outlined">
           <CardContent>
             <CardHeader title="Multimedia" />
-            <VideoUploadField setVideo={setVideo} label={"Subir video"} />
-            <Typography marginTop={"10px"}>Imagen principal</Typography>
-            <ProfileImageUploader
-              formik={formik}
-              id={"thumbnail"}
-              name={"thumbnail"}
+            <VideoUploadField
+              setVerticalVideo={setVerticalVideo}
+              setHorizontalVideo={setHorizontalVideo}
+              initialVerticalVideo={verticalVideo}
+              initialHorizontalVideo={horizontalVideo}
             />
 
             <Typography marginTop={"10px"}>
@@ -509,8 +533,8 @@ const CreateProduct = () => {
                   id="image"
                   name="image"
                   type="file"
-                  accept="image/jpg"
-                  onChange={handleImageChange}
+                  accept="image/jpeg, image/wpeg, image/png"
+                  onChange={handleImageChange2}
                   hidden
                 />
                 <label htmlFor={"image"}>
@@ -585,8 +609,8 @@ const CreateProduct = () => {
                   id="image"
                   name="image"
                   type="file"
-                  accept="image/png, image/jpeg, image/jpg"
-                  onChange={handleImageChange}
+                  accept="image/jpeg, image/wpeg, image/png"
+                  onChange={handleImageChange2}
                   hidden
                 />
                 <label htmlFor={"image"}>
