@@ -37,8 +37,6 @@ import TextAreaInput from "../../components/inputs/TextAreaInput";
 import ProfileImageUploader from "../../components/ui/ProfileImageUploader";
 import WordsInput from "../../components/inputs/WordsInput";
 import * as Yup from "yup";
-import { enqueueSnackbar } from "notistack";
-import useVideos from "../../hooks/useVideos";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -49,17 +47,15 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 const CreateProduct = () => {
   const { user } = useAuthStore();
-  const { createProduct, navigate, loading, newProduct } = useProducts();
+  const { createProduct, navigate, loading } = useProducts();
   const {
     loadSubCategories,
     subCategoriesByCategory,
     loadSubCategoriesByCategory,
   } = useSubCategories();
   const { categories, loadCategories } = useCategories();
-  const { images, handleImageChange2, deleteImage, imagesFiles } = useImages();
-  const [verticalVideo, setVerticalVideo] = useState(null);
-  const [horizontalVideo, setHorizontalVideo] = useState(null);
-  
+  const { images, handleImageChange, deleteImage, imagesFiles } = useImages();
+  const [video, setVideo] = useState(null);
 
   useEffect(() => {
     loadSubCategories();
@@ -114,22 +110,24 @@ const CreateProduct = () => {
     validationSchema,
     onSubmit: (values) => {
       try {
-        const valuesWithImages = {
+        const values2 = {
           ...values,
           videos: [video],
           thumbnail: formik.values?.profile_image,
           images: imagesFiles(),   
         };
-        createProduct(valuesWithImages);
+        createProduct(values2, imagesFiles());
       } catch (error) {
-        enqueueSnackbar(error.message, {
+        return enqueueSnackbar(error, {
           variant: "error",
-          anchorOrigin: { vertical: "top", horizontal: "right" },
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
         });
       }
     },
   });
-
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault(); // Previene que el Enter envíe el formulario
@@ -337,7 +335,7 @@ const CreateProduct = () => {
               style={{ width: "100%", marginBottom: 20 }}
               onChange={formik.handleChange}
               placeholder="Descripción corta"
-               error={Boolean(formik.errors.shortDescription)} 
+              // error={Boolean(formik.errors.shortDescription)} // Añade el atributo error
             />
           </CardContent>
         </Card>
