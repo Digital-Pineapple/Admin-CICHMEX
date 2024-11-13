@@ -22,12 +22,7 @@ const style = {
   p: 4,
 };
 
-const ProductDetailModal = ({
-  openModal,
-  handleClose,
-  product,
-}) => {
-
+const ProductDetailModal = ({ openModal, handleClose, product }) => {
   return (
     <div>
       <Modal
@@ -49,43 +44,39 @@ const ProductDetailModal = ({
               <>
                 <CardHeader
                   title={`Nombre : ${product?.name}`}
-                 
                   subheader={`SKU: ${product?.sku}, STOCK: ${product.stock}`}
                   action={
-                    <IconButton title="Cerrar" onClick={()=>handleClose()}>
-                        <Close />
+                    <IconButton title="Cerrar" onClick={() => handleClose()}>
+                      <Close />
                     </IconButton>
                   }
                 />
-                <Grid container justifyContent={'center'} spacing={2}>
-                    <Grid item xs={5.5}>
-                      
-                <CardMedia
-                  sx={{ height: "200px" , borderRadius:'10px'}}
-                  component={"img"}
-                  title="imagen principal"
-                  image={product.thumbnail}
-
-                />
-                    </Grid>
-                    <Grid item xs={5.5}>
-                       <CardMedia
-                  sx={{ height: "200px" , borderRadius:'10px' }}
-                  component={"video"}
-                  controls
-                  title="Video"
-                  src={product?.videos}
-                />
-                    </Grid>
-                    <Grid item xs={12}>
-                         <SlideSwiperImages images={product.images }/>
-                    </Grid>
-                  
+                <Grid container justifyContent={"center"} spacing={2}>
+                  <Grid item xs={5.5}>
+                    <CardMedia
+                      component="img"
+                      sx={{
+                        height: "200px",
+                        borderRadius: "10px",
+                        objectFit: "contain",
+                      }}
+                      image={product.images ? product.images[0]?.url : ""}
+                      title="Imagen principal"
+                    />
+                  </Grid>
+                  <Grid item xs={5.5}>
+                    <CardMedia
+                      sx={{ height: "200px", borderRadius: "10px" }}
+                      component={"video"}
+                      controls
+                      title="Video"
+                      src={product?.videos}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <SlideSwiperImages images={product.images} />
+                  </Grid>
                 </Grid>
-               
-               
-                 
-              
               </>
             ) : (
               <Skeleton

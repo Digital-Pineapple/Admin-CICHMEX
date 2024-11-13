@@ -93,28 +93,32 @@ const CreateProduct = () => {
 
   const formik = useFormik({
     initialValues: {
-      name: newProduct.name || "",
-      price: newProduct.price || "",
-      porcentDiscount: newProduct.porcentDiscount || "",
-      discountPrice: newProduct.discountPrice || "",
-      product_key: newProduct.product_key || "",
-      description: newProduct.description || "",
-      shortDescription : newProduct.shortDescription || "",
-      dimensions : newProduct.dimensions || "",
-      brand: newProduct.brand || "",
-      tag: newProduct.tag || "",
-      category: newProduct.category || "",
-      subCategory: newProduct.subCategory || "",
-      weight: newProduct.weight || "",
-      seoDescription: newProduct.seoDescription || '',
-      seoKeywords: newProduct.seoKeywords || [],
+      name: "",
+      price: "",
+      porcentDiscount: "",
+      discountPrice: "",
+      product_key: "",
+      description: "",
+      shortDescription: "",
+      brand: "",
+      dimensions: "",
+      tag: "",
+      subCategory: "",
+      category: "",
+      weight: "",
+      thumbnail: "",
+      seoDescription: "",
+      seoKeywords: [],
+      images: "",
     },
     validationSchema,
     onSubmit: (values) => {
       try {
         const valuesWithImages = {
           ...values,
-          images: imagesFiles(images),
+          videos: [video],
+          thumbnail: formik.values?.profile_image,
+          images: imagesFiles(),   
         };
         createProduct(valuesWithImages);
       } catch (error) {
@@ -139,14 +143,19 @@ const CreateProduct = () => {
   const handleKeyPress = (event) => {
     if (event.key === "Enter" && event.target.value.trim()) {
       event.preventDefault();
-      const newChips = [...formik.values.seoKeywords, event.target.value.trim()];
+      const newChips = [
+        ...formik.values.seoKeywords,
+        event.target.value.trim(),
+      ];
       formik.setFieldValue("seoKeywords", newChips);
       event.target.value = ""; // Limpiar input
     }
   };
 
   const handleDelete = (chipToDelete) => () => {
-    const newChips = formik.values.seoKeywords.filter((chip) => chip !== chipToDelete);
+    const newChips = formik.values.seoKeywords.filter(
+      (chip) => chip !== chipToDelete
+    );
     formik.setFieldValue("seoKeywords", newChips);
   };
 
@@ -494,12 +503,19 @@ const CreateProduct = () => {
               />
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 2 }}>
                 {formik.values.seoKeywords.map((chip, index) => (
-                  <Chip key={index} label={chip} onDelete={handleDelete(chip)} />
+                  <Chip
+                    key={index}
+                    label={chip}
+                    onDelete={handleDelete(chip)}
+                  />
                 ))}
               </Box>
-              {formik.touched.seoKeywords && Boolean(formik.errors.seoKeywords) && (
-                <FormHelperText error>{formik.errors.seoKeywords}</FormHelperText>
-              )}
+              {formik.touched.seoKeywords &&
+                Boolean(formik.errors.seoKeywords) && (
+                  <FormHelperText error>
+                    {formik.errors.seoKeywords}
+                  </FormHelperText>
+                )}
             </FormControl>
           </CardContent>
         </Card>
@@ -516,12 +532,13 @@ const CreateProduct = () => {
         <Card variant="outlined">
           <CardContent>
             <CardHeader title="Multimedia" />
-            <VideoUploadField
-              setVerticalVideo={setVerticalVideo}
-              setHorizontalVideo={setHorizontalVideo}
-              initialVerticalVideo={verticalVideo}
-              initialHorizontalVideo={horizontalVideo}
-            />
+            <VideoUploadField setVideo={setVideo} label={"Subir video"} />
+            {/* <Typography marginTop={"10px"}>Imagen principal</Typography> */}
+            {/* <ProfileImageUploader
+              formik={formik}
+              id={"thumbnail"}
+              name={"thumbnail"}
+            /> */}
 
             <Typography marginTop={"10px"}>
               {" "}
@@ -533,8 +550,8 @@ const CreateProduct = () => {
                   id="image"
                   name="image"
                   type="file"
-                  accept="image/jpeg, image/wpeg, image/png"
-                  onChange={handleImageChange2}
+                  accept="image/jpeg, image/png, image/webp"
+                  onChange={handleImageChange}
                   hidden
                 />
                 <label htmlFor={"image"}>
@@ -568,18 +585,25 @@ const CreateProduct = () => {
                             sx={{ backgroundColor: "black", color: "black" }}
                             onClick={() => deleteImage(id)}
                           >
-                            {" "}
                             <DeleteIcon
                               sx={{ color: "white", fontSize: "20px" }}
-                            />{" "}
+                            />
                           </IconButton>
                         }
                       >
-                        <Avatar
-                          src={filePreview}
-                          variant="square"
-                          sx={{ width: "100%", height: "200px" }}
-                        />
+                        <Box
+                          sx={{
+                            position: "relative",
+                            width: "100%",
+                            height: "200px",
+                          }}
+                        >
+                          <Avatar
+                            src={filePreview}
+                            variant="square"
+                            sx={{ width: "100%", height: "100%" }}
+                          />
+                        </Box>
                       </StyledBadge>
                     </Grid>
                   ))}
@@ -609,8 +633,8 @@ const CreateProduct = () => {
                   id="image"
                   name="image"
                   type="file"
-                  accept="image/jpeg, image/wpeg, image/png"
-                  onChange={handleImageChange2}
+                  accept="image/jpeg, image/png, image/webp"
+                  onChange={handleImageChange}
                   hidden
                 />
                 <label htmlFor={"image"}>
