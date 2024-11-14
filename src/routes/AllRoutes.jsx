@@ -73,6 +73,7 @@ import EditCarrierDriver from "../pages/CarrierDriver/Edit";
 import Home from "../pages/Home";
 import ReadyToDelivery from "../pages/Logistic/ReadyToDelivery";
 import AllSales from "../pages/Sales/AllSales";
+import CompletedOrdersDetail from "../pages/MyStoreHouse/CompletedOrdersDetail";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -167,7 +168,8 @@ export const AllRoutes = [
   { id: 67, element: <EditCarrierDriver/>},
   { id:68, element:<ReadyToDelivery/>},
   { id: 69, element:<Principal/>},
-  { id: 70, element:<AllSales/>}
+  { id: 70, element:<AllSales/>},
+  { id: 71, element:<CompletedOrdersDetail/>}
 
 
 

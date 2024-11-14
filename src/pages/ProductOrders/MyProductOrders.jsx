@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import { Grid } from '@mui/material';
 import PaidProductOrders from './PaidProductOrders';
+import CompletedOrders from '../MyStoreHouse/CompletedOrders';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -63,10 +64,14 @@ export default function FullWidthTabs() {
           variant="fullWidth"
         >
           <Tab label="Pedidos pendientes por surtir"  />
+          <Tab label="Pedidos ya surtidos"  />
         </Tabs>
       </AppBar>
         <TabPanel value={value} index={0} dir={theme.direction}>
           <PaidProductOrders/>
+        </TabPanel> 
+        <TabPanel value={value} index={1} dir={theme.direction}>
+          <CompletedOrders/>
         </TabPanel> 
     </Grid>
   );

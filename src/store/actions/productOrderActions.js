@@ -61,6 +61,31 @@ export const startLoadProductOrdersPaid = () => {
     dispatch(stopLoading());
   };
 };
+export const startLoadProductOrdersPaidAndFill = () => {
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      const { data } = await instanceApi.get(`/product-order/paidAndFill/find`, {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      dispatch(loadProductOrders(data.data));
+      dispatch(stopLoading());
+    } catch (error) {
+      enqueueSnackbar(
+        `${error.response.data.message}|| 'Error al consultar información'`,
+        {
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+          variant: "error",
+        }
+      );
+    }
+    dispatch(stopLoading());
+  };
+};
 
 export const startLoadPOPaidAndSupplyToPonit = () => {
   return async (dispatch) => {
