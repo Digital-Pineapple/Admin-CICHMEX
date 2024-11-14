@@ -25,14 +25,14 @@ export const startLoadProductOrders = () => {
       });
 
       dispatch(loadProductOrders(data.data));
-      dispatch(stopLoading());
     } catch (error) {
       enqueueSnackbar(`${error.response.data.message}`, {
         anchorOrigin: { horizontal: "center", vertical: "top" },
         variant: "error",
       });
+    }finally{
+      dispatch(stopLoading())
     }
-    dispatch(stopLoading());
   };
 };
 

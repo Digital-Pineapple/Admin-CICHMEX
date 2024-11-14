@@ -182,12 +182,14 @@ const SalesTransfer = () => {
   };
 
   const renderChip = (values) => {
-    if (values.row.payment_status === "pending_to_verify") {
+    console.log();
+    
+    if (!!values.row.payment.verification?.payment_vouchers) {
       return (
         <>
           <Chip
             icon={<Paid />}
-            label="Pendiente validar"
+            label="Con ticket"
             variant="filled"
             color="info"
           />
@@ -198,7 +200,7 @@ const SalesTransfer = () => {
         <>
           <Chip
             icon={<Paid />}
-            label="No liquidada"
+            label="Sin ticket"
             variant="filled"
             color="warning"
           />

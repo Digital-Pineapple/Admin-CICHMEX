@@ -85,6 +85,7 @@ export const useProductOrder = () => {
         ...product.item,
         id: index.toString(),
         quantity: product.quantity,
+        subTotal: product.quantity * product.item.price
       };
     });
   };
