@@ -50,6 +50,9 @@ export const productsReducer = createSlice({
     onEditImagesProduct(state, { payload }) {
       state.product.images = payload;
     },
+    onEditVideosProduct(state, { payload }) {
+      state.product.videos = payload;
+    },
     editProduct: (state, { payload }) => {
       state.products = state.products.map((product) => {
         if (product._id === payload._id) {
@@ -63,6 +66,12 @@ export const productsReducer = createSlice({
         return product; // Mantener los elementos no modificados tal como están
       });
     },
+    startLoadingUpdate : ( state )=>{
+      state.isLoading = true
+    },
+    stopLoadingUpdate : ( state) =>{
+      state.isLoading = false
+    }
   },
 });
 
@@ -79,6 +88,9 @@ export const {
   cleanProductDetail,
   loadProductEntries,
   onEditImagesProduct,
+  onEditVideosProduct,
+  startLoadingUpdate,
+  stopLoadingUpdate,
 } = productsReducer.actions;
 
 export default productsReducer.reducer;

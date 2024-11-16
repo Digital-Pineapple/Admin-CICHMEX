@@ -11,6 +11,9 @@ import {
   onAddNewProduct,
   onEditThumbnailProduct,
   onEditImagesProduct,
+  onEditVideosProduct,
+  startLoadingUpdate,
+  stopLoadingUpdate,
 } from "../reducer/productsReducer";
 import {
   headerConfigApplication,
@@ -77,15 +80,12 @@ export const startLoadStockProducts = () => {
 export const startLoadNonExistProduct = () => {
   return async (dispatch) => {
     try {
-      const { data } = await instanceApi.get(
-        `/product/non-existent/get`,
-        {
-          headers: {
-            "Content-type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },  
-        }
-      );
+      const { data } = await instanceApi.get(`/product/non-existent/get`, {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       dispatch(loadProducts(data.data));
     } catch (error) {
       enqueueSnackbar(
@@ -107,8 +107,8 @@ export const startLoadEntriesProduct = () => {
         {
           headers: {
             "Content-type": "application/json",
-             "Authorization": `Bearer ${localStorage.getItem("token")}`,
-        },
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
       );
       dispatch(loadProductEntries(data.data));
@@ -212,9 +212,8 @@ export const LoadOneProduct = (_id) => {
           variant: "error",
         }
       );
-    }
-    finally{
-      dispatch(stopLoading())
+    } finally {
+      dispatch(stopLoading());
     }
   };
 };
@@ -241,12 +240,11 @@ export const addOneProduct =
       seoKeywords,
       images,
     },
-   images2,
+    images2,
     navigate
   ) =>
   async (dispatch) => {
     dispatch(startLoading());
-    
     try {
       const formData = new FormData();
       formData.append("name", name);
@@ -271,21 +269,18 @@ export const addOneProduct =
       for (let i = 0; i < seoKeywords.length; i++) {
         formData.append("seoKeywords", seoKeywords[i]);
       }
-      for (let i = 0; i < videos.length; i++) {
-        formData.append("videos", videos[i]);
-      }
 
+      videos.forEach((video, index) => {
+        formData.append(`videos[${index}][file]`, video.file);
+        formData.append(`videos[${index}][type]`, video.type);
+      });
 
-      const { data } = await instanceApi.post(
-        `/product/addProduct`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const { data } = await instanceApi.post(`/product/addProduct`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       enqueueSnackbar("Agregado con éxito", {
         variant: "success",
         anchorOrigin: {
@@ -295,39 +290,33 @@ export const addOneProduct =
       });
       navigate("/mi-almacen/productos", { replace: true });
     } catch (error) {
-      console.log(error);
-      
-      enqueueSnackbar(`${error.response.data.message || error.response.data.error}`, {
-        variant: "error",
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "right",
-        },
-      });
-      
-    }
-    finally{
+
+      enqueueSnackbar(
+        `${error.response.data.message || error.response.data.error}`,
+        {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        }
+      );
+    } finally {
       dispatch(stopLoading());
     }
   };
 
 export const editOneProduct =
-  (
-    id,
-    values,
-    images,
-    navigate
-  ) =>
-  async (dispatch) => {
+  (id, values, images, navigate) => async (dispatch) => {
     try {
       const { data } = await instanceApi.post(
         `/product/updateInfo/${id}`,
-        {values},
+        { values },
         {
           headers: {
-            "Content-Type": 'multipart/form-data',
-             "Authorization": `Bearer ${localStorage.getItem("token")}`,
-        },
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
       );
       dispatch(editProduct(data.data));
@@ -340,7 +329,6 @@ export const editOneProduct =
       });
       // navigate("/m/productos", { replace: true });
     } catch (error) {
-
       enqueueSnackbar(`Ocurrió un error + ${error.response.data.message}`, {
         variant: "error",
         anchorOrigin: {
@@ -351,171 +339,238 @@ export const editOneProduct =
     }
   };
 
-  export const updateProductVideos = (id, values)=>{  
-    const video2 = []
-    video2.push(values)
-    return async (dispatch) => {
-      dispatch(startLoading())
-      try {
-        const formData = new FormData();
-        for (let i = 0; i <video2.length; i++) {
-          formData.append("videos", video2[i]);
-        }
-        const { data } = await instanceApi.put(
-          `/product/updateVideo/${id}`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        dispatch(onEditVideoProduct(data.data.videos));
-        enqueueSnackbar(`${data.message}`, {
-          variant: "success",
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "right",
-          },
-        });
-      } catch (error) {
-        enqueueSnackbar(`${error.response.data.message}`, {
-          variant: "error",
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "right",
-          },
-        });
-      }finally{
-        dispatch(stopLoading())
-      }
-
-    }
-  }
-
-  export const startUpdateThumbnail = (id, values)=>{    
-    return async (dispatch) => {
-      dispatch(startLoading())
-      try {
-        const formData = new FormData();
-        formData.append("thumbnail", values);
-        const { data } = await instanceApi.put(
-          `/product/updateThumbnail/${id}`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        dispatch(onEditThumbnailProduct(data.data.thumbnail));
-        enqueueSnackbar(`${data.message}`, {
-          variant: "success",
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "right",
-          },
-        });
-      } catch (error) {
-        
-        enqueueSnackbar(`${error.response.data.message}`, {
-          variant: "error",
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "right",
-          },
-        });
-      }finally{
-        dispatch(stopLoading())
-      }
-
-    }
-  }
-
-  export const startAddOneImage = (id, file)=>{    
-    
-    return async (dispatch) => {
-      const formData = new FormData()
-      formData.append(`image`, file);  
-      try {
-        const { data } = await instanceApi.post(
-          `/product/addImageDetail/${id}`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        dispatch(onEditImagesProduct(data.data.images));
-        enqueueSnackbar(`${data.message}`, {
-          variant: "success",
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "right",
-          },
-        });
-      } catch (error) {
-        enqueueSnackbar(`${error.response.data.message}`, {
-          variant: "error",
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "right",
-          },
-        });
-      }
-
-    }
-  }
-  export const startDeleteOneImage = (id, image_id)=>{      
-    return async (dispatch) => {
-      try {
-        const { data } = await instanceApi.post(
-          `/product/deleteImageDetail/${id}`,
-          {imageId:image_id},
-          {
-            headers: {
-             "Content-type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        dispatch(onEditImagesProduct(data.data.images));
-        enqueueSnackbar(`${data.message}`, {
-          variant: "success",
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "right",
-          },
-        });
-      } catch (error) {
-        enqueueSnackbar(`${error.response.data.message}`, {
-          variant: "error",
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "right",
-          },
-        });
-      }
-
-    }
-  }
-
-export const deleteOneProduct = (id) => {
+export const updateProductVideos = (id, values) => {
+  const video2 = [];
+  video2.push(values);
   return async (dispatch) => {
+    dispatch(startLoading());
     try {
-      const { data } = await instanceApi.delete(
-        `/product/${id}`,
+      const formData = new FormData();
+      for (let i = 0; i < video2.length; i++) {
+        formData.append("videos", video2[i]);
+      }
+      const { data } = await instanceApi.put(
+        `/product/updateVideo/${id}`,
+        formData,
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
       );
+      dispatch(onEditVideoProduct(data.data.videos));
+      enqueueSnackbar(`${data.message}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    } catch (error) {
+      enqueueSnackbar(`${error.response.data.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
+};
+
+export const startUpdateThumbnail = (id, values) => {
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      const formData = new FormData();
+      formData.append("thumbnail", values);
+      const { data } = await instanceApi.put(
+        `/product/updateThumbnail/${id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      dispatch(onEditThumbnailProduct(data.data.thumbnail));
+      enqueueSnackbar(`${data.message}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    } catch (error) {
+      enqueueSnackbar(`${error.response.data.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
+};
+
+export const startAddOneImage = (id, file) => {
+  return async (dispatch) => {
+    const formData = new FormData();
+    formData.append(`image`, file);
+    try {
+      const { data } = await instanceApi.post(
+        `/product/addImageDetail/${id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      dispatch(onEditImagesProduct(data.data.images));
+      enqueueSnackbar(`${data.message}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    } catch (error) {
+      enqueueSnackbar(`${error.response.data.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    }
+  };
+};
+
+export const startAddOneVideo = (id,type,file) => {
+  return async (dispatch) => {
+    dispatch(startLoadingUpdate())
+    const formData = new FormData();
+      formData.append(`videos`, file);
+      formData.append(`type`, type);
+    try {
+      const { data } = await instanceApi.post(
+        `/product/video/addVideo/${id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      dispatch(loadProduct(data.data));
+      enqueueSnackbar(`${data.message}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    } catch (error) {
+      enqueueSnackbar(`${error.response.data.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    }finally{
+      dispatch(stopLoadingUpdate())
+    }
+  };
+};
+
+export const startDeleteOneImage = (id, image_id) => {
+  return async (dispatch) => {
+    try {
+      const { data } = await instanceApi.post(
+        `/product/deleteImageDetail/${id}`,
+        { imageId: image_id },
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      dispatch(onEditImagesProduct(data.data.images));
+      enqueueSnackbar(`${data.message}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    } catch (error) {
+      enqueueSnackbar(`${error.response.data.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    }
+  };
+};
+export const startDeleteOneVideo = (id, video_id) => {
+  return async (dispatch) => {
+    dispatch(startLoadingUpdate())
+    try {
+      const { data } = await instanceApi.post(
+        `/product/deleteVideoDetail/${id}`,
+        { video_id: video_id },
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      
+     dispatch(loadProduct(data.data))
+      enqueueSnackbar(`${data.message}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    } catch (error) {
+      enqueueSnackbar(`${error.response.data.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    }finally{
+      dispatch(stopLoadingUpdate())
+    }
+  };
+};
+
+export const deleteOneProduct = (id) => {
+  return async (dispatch) => {
+    try {
+      const { data } = await instanceApi.delete(`/product/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       dispatch(deleteProduct(data.data?._id));
       Swal.fire({
         title: "Producto eliminado con éxito",
@@ -569,7 +624,6 @@ export const startAddMultipleEntries = (values, navigate) => {
   };
 };
 export const startAddMultipleOutputs = (values, navigate) => {
-
   return async (dispatch) => {
     try {
       const { data } = await instanceApi.post(

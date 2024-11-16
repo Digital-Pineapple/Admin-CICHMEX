@@ -25,150 +25,90 @@ import { useEffect } from "react";
 import { useFormik } from "formik";
 import { enqueueSnackbar } from "notistack";
 import { useProducts } from "../../hooks/useProducts";
-import { SlideBranchesImages } from "../../components/Images/SlideBranchesImages";
-import useImages from "../../hooks/useImages";
-import FilterIcon from "@mui/icons-material/Filter";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { styled } from "@mui/material/styles";
 import { useCategories } from "../../hooks/useCategories";
 import { useSubCategories } from "../../hooks/useSubCategories";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import VideoUploadField from "../../components/Forms/VideoUploadField";
-import ProfileImageUploader from "../../components/ui/ProfileImageUploader";
 import TextAreaInput from "../../components/inputs/TextAreaInput";
 import { AttachMoney } from "@mui/icons-material";
 import WordsInput from "../../components/inputs/WordsInput";
 import VideoUpdateField from "../../components/Forms/VideoUpdateField";
-import ImageUpdateField from "../../components/Forms/ImageUpdateField";
 import DetailImagesUpdateField from "../../components/Forms/DetailImagesUpdateField";
 
 const Edit = () => {
   const { id } = useParams();
-  const { loadProduct, product, editProduct, navigate, loading, updateVideo, updateThumbnail, addOneImage, deleteImageDetail } =
-    useProducts();
+  const { loadProduct, product, editProduct, navigate, loading, updateVideo, updateThumbnail, addOneImage, deleteImageDetail } = useProducts();
   const { categories, loadCategories } = useCategories();
-
-  const {
-    subCategoriesByCategory,
-    loadSubCategories,
-    loadSubCategoriesByCategory,
-  } = useSubCategories();
-
-  useEffect(() => {
-    loadProduct(id);
-  }, [id]);
-  
-  useEffect(() => {
-    formik.setValues({
-      name: product.name ? product.name : "",
-      description: product.description || "",
-      shortDescription: product.shortDescription || "",
-      brand: product.brand || "",
-      dimensions: product.dimensions || "",
-      price: product.price || "",
-      porcentDiscount: product.porcentDiscount || "",
-      discountPrice: product.discountPrice || "",
-      size: product.size || "",
-      tag: product.tag || "",
-      category: product.category?._id || "",
-      subCategory: product.subCategory?._id || "",
-      weight: product.weight || "",
-      seoDescription: product.seoDescription || "",
-      seoKeywords: product.seoKeywords || "",
-      product_key: product.product_key || "",
-    });
-    loadCategories();
-    loadSubCategories();
-    loadSubCategoriesByCategory(product.category?._id);
-  }, [product]);
+  const { subCategoriesByCategory, loadSubCategories, loadSubCategoriesByCategory } = useSubCategories();
 
   const formik = useFormik({
-    initialValues:{
-      name:  "",
-      description:  "",
-      shortDescription:  "",
-      brand:  "",
+    initialValues: {
+      name: "",
+      description: "",
+      shortDescription: "",
+      brand: "",
       dimensions: "",
-      price:  "",
-      porcentDiscount:  "",
+      price: "",
+      porcentDiscount: "",
       discountPrice: "",
       size: "",
-      tag:  "",
-      category:  "",
+      tag: "",
+      category: "",
       subCategory: "",
-      weight:  "",
+      weight: "",
       thumbnail: "",
-      seoDescription:  "",
+      seoDescription: "",
       seoKeywords: "",
-      product_key:  "",
+      product_key: "",
     },
     onSubmit: (values) => {
       try {
         editProduct(id, values);
       } catch (error) {
-        return enqueueSnackbar(
-          `Error al editar ${error.response.data.message}`,
-          {
-            variant: "error",
-            anchorOrigin: {
-              vertical: "top",
-              horizontal: "right",
-            },
-          }
-        );
+        enqueueSnackbar(`Error al editar ${error.response?.data?.message || error.message}`, {
+          variant: "error",
+          anchorOrigin: { vertical: "top", horizontal: "right" },
+        });
       }
     },
   });
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault(); // Previene que el Enter envíe el formulario
+  useEffect(() => {
+    loadProduct(id);
+  }, [id]);
+
+  useEffect(() => {
+    if (product) {
+      formik.setValues({
+        ...formik.initialValues,
+        ...product,
+        category: product.category?._id || "",
+        subCategory: product.subCategory?._id || "",
+      });
+      loadCategories();
+      loadSubCategories();
+      if (product.category?._id) loadSubCategoriesByCategory(product.category._id);
     }
-  };
-
-
-
-  const outEdit = () => {
-    navigate("/mi-almacen/productos", { replace: true });
-  };
-
-  if (loading) {
-    return <LoadingScreenBlue />;
-  }
+  }, [product]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     const newValue = parseFloat(value) || "";
+    const { price, porcentDiscount } = formik.values;
 
-    let newPrice = formik.values.price;
-    let newPorcentDiscount = formik.values.porcentDiscount;
-    let newTotalPrice = formik.values.totalPrice;
-
-    if (name === "price") {
-      newPrice = newValue;
-      if (newPorcentDiscount > 0) {
-        newTotalPrice = newPrice - (newPrice * newPorcentDiscount) / 100;
-      } else {
-        newTotalPrice = newPrice;
-      }
-    } else if (name === "porcentDiscount") {
-      newPorcentDiscount = newValue;
-      if (newPorcentDiscount > 0) {
-        newTotalPrice = newPrice - (newPrice * newPorcentDiscount) / 100;
-      } else {
-        newTotalPrice = newPrice;
-      }
-    }
+    let newTotalPrice = name === "price"
+      ? newValue - (newValue * porcentDiscount) / 100
+      : price - (price * newValue) / 100;
 
     formik.setValues({
       ...formik.values,
-      price: newPrice,
-      porcentDiscount: newPorcentDiscount,
+      [name]: newValue,
       discountPrice: newTotalPrice,
     });
   };
-  
+
+  const outEdit = () => navigate("/mi-almacen/productos", { replace: true });
+
+  if (loading) return <LoadingScreenBlue />;
 
   return (
     <Grid
@@ -236,7 +176,7 @@ const Edit = () => {
               variant="outlined"
               value={formik.values?.tag}
               onChange={formik.handleChange}
-              onKeyDown={handleKeyDown}
+              // onKeyDown={handleKeyDown}
             />
             <FormControl fullWidth>
               <FormLabel>Categoría</FormLabel>
@@ -466,25 +406,15 @@ const Edit = () => {
       <Card variant="outlined">
         <CardContent>
           <CardHeader title="Multimedia" />
-          <Grid container width={'100%'} display={'flex'} justifyContent={'space-between'} >
-            
-          <Grid item xs={12} lg={3}>
+          <Grid container width={'100%'} display={'flex'} spacing={2} justifyContent={'space-between'} alignItems={'center'} >  
+          <Grid item xs={12} lg={6}>
             <VideoUpdateField
-            videos={product.videos ? product.videos : null}
+            videosIniciales={product.videos ? product.videos : null}
             onSubmit={updateVideo}
             idProduct={id}
             />
           </Grid>
-          {/* <Grid item xs={12} lg={3}>
-          <ImageUpdateField
-          onSubmit={updateThumbnail}
-          imageProduct={product.thumbnail ? product.thumbnail : null}
-          idProduct={id}
-          textButton='Editar imagen principal'
-          />
-           
-          </Grid> */}
-          <Grid item xs={12} lg={5}>
+          <Grid item xs={12} lg={6}>
           <DetailImagesUpdateField
           onSubmit={addOneImage}
           imagesProduct={product.images ? product.images : null}

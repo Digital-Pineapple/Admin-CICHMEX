@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Button, Grid, styled } from "@mui/material";
 import { VideoCallSharp } from "@mui/icons-material";
+import useVideos from "../../hooks/useVideos";
+import { useFormik } from "formik";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -14,99 +16,108 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-const VideoUploadField = ({ name, label, setVideo, initialVideo }) => {
-  const [videoPreview, setVideoPreview] = useState(null);
-  const [error, setError] = useState(null); // Estado para el mensaje de error
-  
-  useEffect(() => {
-    setVideoPreview(initialVideo);
-  }, [initialVideo]);
+const VideoUploadField = () => {
 
-  const handleVideoChange = (e) => {
-    
-    const file = e.target.files[0];
-    setError(null); // Reinicia el mensaje de error
+  const { deleteVideo, handleVideoChange, videoFiles, videos, videosPreview, error } =
+    useVideos();
 
-    if (file) {
-      const videoURL = URL.createObjectURL(file);
-      const videoElement = document.createElement("video");
-      videoElement.src = videoURL;
-
-      // Validamos las dimensiones del video
-      videoElement.onloadedmetadata = () => {
-        if (videoElement.videoHeight > videoElement.videoWidth) {
-          // Si el video es vertical
-          setVideo(file);
-          setVideoPreview(videoURL);
-        } else {
-          // Si el video es horizontal
-          setError("El video debe ser en formato vertical.");
-          setVideo(null);
-          setVideoPreview(null);
-        }
-        URL.revokeObjectURL(videoURL); // Liberamos el URL temporal
-      };
+  const valuateVideo = (videos) => {
+    if (videos?.length > 0) {
+      const videoVertical = videos.find((i) => i.type === "vertical");
+      const videoHorizontal = videos.find((i) => i.type === "horizontal");
+      return { videoVertical, videoHorizontal };
     }
-  };
 
-  const handleVideoCancel = () => {
-    setVideo(null);
-    setVideoPreview(null);
-    setError(null); // Limpia el mensaje de error
+    // Retornar valores nulos si no hay videos
+    return { videoVertical: null, videoHorizontal: null };
   };
-
+  const { videoVertical, videoHorizontal } = valuateVideo(videos);
+ 
   return (
-    <Box>
-      {!videoPreview ? (
-        <Button
-          component="label"
-          variant="contained"
-          fullWidth
-          tabIndex={-1}
-          startIcon={<VideoCallSharp />}
-        >
-          {label}
-          <VisuallyHiddenInput
-            type="file"
-            accept="video/mp4"
-            onChange={handleVideoChange}
-          />
-        </Button>
-      ) : (
-        <Grid
-          container
-          mt={2}
-          gap={2}
-          display={"flex"}
-          justifyContent={"center"}
-          flexDirection={"column"}
-          alignItems={"center"}
-        >
-          <Typography textAlign={"center"} variant="h6" m={2}>
-            Vista previa del video:
-          </Typography>
-          <Grid item xs={12}>
-            <video width="250" controls>
-              <source src={videoPreview} type="video/mp4" />
+    <Grid container display={"flex"} spacing={2}  alignContent={'center'} justifyContent={"center"}>
+      <Grid
+        item
+        xs={12}
+        md={6}
+        display={"flex"}
+        flexDirection={"column"}
+        justifyContent={"space-between"}
+        height={"100%"}
+      >
+        <Typography variant="h6" textAlign="center" >
+          Subir video vertical
+        </Typography>
+        {!videoVertical ? (
+          <Button
+            component="label"
+            variant="contained"
+            fullWidth
+            startIcon={<VideoCallSharp />}
+          >
+            Subir video vertical
+            <VisuallyHiddenInput
+              type="file"
+              accept="video/mp4,video/webm,video/ogg"
+              onChange={(e) => handleVideoChange(e, "vertical")}
+            />
+          </Button>
+        ) : (
+          <Grid container  width={'100%'}  >
+            <video style={{maxWidth:'200px', marginLeft:'auto', marginRight:'auto'}} controls>
+              <source src={videoVertical?.filePreview} type="video/mp4" />
               Tu navegador no soporta la reproducción de videos.
             </video>
+            <Button onClick={()=>deleteVideo('vertical') } fullWidth sx={{marginTop:1}} variant="contained" color="error">
+              Eliminar video vertical
+            </Button>
           </Grid>
+        )}
+      </Grid>
+      <Grid
+        item
+        xs={12}
+        md={6}
+        display={"flex"}
+        flexDirection={"column"}
+        justifyContent={"space-between"}
+        height={"100%"}
+      >
+        <Typography variant="h6" textAlign="center">
+          Subir video horizontal
+        </Typography>
+        {!videoHorizontal ? (
           <Button
+            component="label"
+            variant="contained"
             fullWidth
-            variant="outlined"
-            onClick={handleVideoCancel}
-            color="warning"
+            startIcon={<VideoCallSharp />}
           >
-            Cancelar
+            Subir video horizontal
+            <VisuallyHiddenInput
+              type="file"
+              accept="video/mp4,video/webm,video/ogg"
+              onChange={(e) => handleVideoChange(e, "horizontal")}
+            />
           </Button>
-        </Grid>
-      )}
-      {error && ( // Muestra el mensaje de error si existe
+        ) : (
+          <Grid container width={'100%'}  >
+            <video style={{maxWidth:'300px', marginLeft:'auto', marginRight:'auto'}} controls>
+              <source src={videoHorizontal?.filePreview} type="video/mp4" />
+              Tu navegador no soporta la reproducción de videos.
+            </video>
+            <Button fullWidth onClick={()=>deleteVideo('horizontal') }  variant="contained" sx={{marginTop:1}} color="warning">
+              Eliminar video horizontal
+            </Button>
+          </Grid>
+        )}
+      </Grid>
+
+      {error && (
         <Typography color="error" textAlign="center" mt={2}>
           {error}
         </Typography>
       )}
-    </Box>
+    </Grid>
   );
 };
 
