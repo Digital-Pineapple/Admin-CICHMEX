@@ -150,7 +150,7 @@ const CreateProduct = () => {
           ...values,
           videos: videoFiles(),
           thumbnail: formik.values?.profile_image,
-          images: imagesFiles(),
+          // images: imagesFiles(),
         };
         createProduct(values2, imagesFiles());
       } catch (error) {

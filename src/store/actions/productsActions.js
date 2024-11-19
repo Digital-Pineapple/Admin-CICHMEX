@@ -238,9 +238,9 @@ export const addOneProduct =
       shortDescription,
       thumbnail,
       seoKeywords,
-      images,
+      // images,
     },
-    images2,
+    images,
     navigate
   ) =>
   async (dispatch) => {
