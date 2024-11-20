@@ -12,7 +12,23 @@ const useImages = () => {
     const handleImageChange=(e)=>{
         let file=e.target.files[0];
         let filePreview=URL.createObjectURL(file);
-        if(images.length === 3){
+        if(images.length === 6){
+            return; 
+        }else{
+            setImages(prev=>([
+                ...prev,
+                {
+                    id:uuidv4(),
+                    file,
+                    filePreview
+                }
+            ]));
+        }
+    }
+    const handleImageChange2=(e)=>{
+        let file=e.target.files[0];
+        let filePreview=URL.createObjectURL(file);
+        if(images.length === 6){
             return; 
         }else{
             setImages(prev=>([
@@ -26,11 +42,11 @@ const useImages = () => {
         }
     }
 
-    function imagesFiles(){
+    function imagesFiles(v){
         let files =images.map((item)=>item.file);
         return files;
     }
-    function imagesPreview(){
+    function imagesPreview(v){
         let files =images.map((item)=>item.filePreview);
         return files;
     }
@@ -42,7 +58,8 @@ const useImages = () => {
         deleteImage,
         imagesFiles,
         imagesPreview,
-        setImages
+        setImages,
+        handleImageChange2
     }
 
 

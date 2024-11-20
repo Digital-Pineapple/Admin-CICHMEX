@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export const productsReducer = createSlice({
   name: "products",
   initialState: {
+    newProduct: {},
     products: [],
     stockProducts: [],
     product: {},
@@ -31,8 +32,7 @@ export const productsReducer = createSlice({
       state.isLoading = false;
     },
     onAddNewProduct: (state, { payload }) => {
-      state.product = payload;
-      state.isLoading = false;
+      state.newProduct = payload;
     },
     onStepNewProduct: (state, { payload }) => {
       state.dataProduct = payload
@@ -54,6 +54,9 @@ export const productsReducer = createSlice({
     onEditImagesProduct(state, { payload }) {
       state.product.images = payload;
     },
+    onEditVideosProduct(state, { payload }) {
+      state.product.videos = payload;
+    },
     editProduct: (state, { payload }) => {
       state.products = state.products.map((product) => {
         if (product._id === payload._id) {
@@ -67,6 +70,12 @@ export const productsReducer = createSlice({
         return product; // Mantener los elementos no modificados tal como están
       });
     },
+    startLoadingUpdate : ( state )=>{
+      state.isLoading = true
+    },
+    stopLoadingUpdate : ( state) =>{
+      state.isLoading = false
+    }
   },
 });
 
@@ -83,7 +92,9 @@ export const {
   cleanProductDetail,
   loadProductEntries,
   onEditImagesProduct,
-  onStepNewProduct
+  onEditVideosProduct,
+  startLoadingUpdate,
+  stopLoadingUpdate,
 } = productsReducer.actions;
 
 export default productsReducer.reducer;

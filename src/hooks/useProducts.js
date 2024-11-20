@@ -44,6 +44,7 @@ export const useProducts = () => {
   };
 
   const createProduct = async (values, images) => {
+    
     dispatch(addOneProduct(values, images, navigate));
   };
   const addMultipleEntries = async(values)=>{

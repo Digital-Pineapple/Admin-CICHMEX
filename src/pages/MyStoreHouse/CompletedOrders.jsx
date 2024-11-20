@@ -23,6 +23,7 @@ import {
   Download as DownloadIcon,
   ScheduleSend as ScheduleSendIcon,
   ThumbUpAlt as ThumbUpAltIcon,
+  Visibility,
 } from "@mui/icons-material";
 import Swal from "sweetalert2";
 import { useProductOrder } from "../../hooks/useProductOrder";
@@ -119,9 +120,9 @@ function CustomToolbar() {
   );
 }
 
-const PaidProductOrders = () => {
+const CompletedOrders = () => {
   const {
-    loadProductOrdersPaid,
+    loadProductOrdersPaidAndFill,
     navigate,
     productOrders,
     loading
@@ -129,7 +130,7 @@ const PaidProductOrders = () => {
   const { user } = useAuthStore();
 
   useEffect(() => {
-    loadProductOrdersPaid();
+    loadProductOrdersPaidAndFill();
   }, [user]);
  
   
@@ -158,58 +159,6 @@ const PaidProductOrders = () => {
       Swal.fire('Pendiente de pago', '', 'error');
     } else {
       navigate(`/almacenista/surtir-venta/${row._id}`);
-    }
-  };
-
-  const renderIcon = (values) => {
-    if (!values.row.storeHouseStatus) {
-      return (
-        <Tooltip title="Surtir orden">
-          <Button
-            aria-label="Surtir"
-            color="success"
-            onClick={() => paymentValuate(values.row)}
-            variant="outlined"
-          >
-            Surtir
-          </Button>
-        </Tooltip>
-      );
-    } else if (!values.row.route_status) {
-      return (
-        <Tooltip title="Asignar Ruta">
-          <Button
-            aria-label="Asignar Ruta"
-            color="info"
-            variant="outlined"
-            onClick={() => navigate(`/auth/asignar-ruta/${values.row._id}`)}
-          >
-            Ruta
-          </Button>
-        </Tooltip>
-      );
-    } else if (!values.row.deliveryStatus) {
-      return (
-        <Tooltip title="En envío">
-          <IconButton
-            aria-label="En envío"
-            color="secondary"
-          >
-            <ScheduleSendIcon />
-          </IconButton>
-        </Tooltip>
-      );
-    } else {
-      return (
-        <Tooltip title="Pedido entregado">
-          <IconButton
-            aria-label="Pedido entregado"
-            color="primary"
-          >
-            <ThumbUpAltIcon />
-          </IconButton>
-        </Tooltip>
-      );
     }
   };
 
@@ -250,9 +199,9 @@ const PaidProductOrders = () => {
               type: "actions",
               renderCell: (params) => (
                 
-                <Button  size="small" variant="contained"  onClick={()=>navigate(`/almacenista/surtir-venta/${params.row._id}`)} >
-                  Surtir
-                </Button>
+                <IconButton color="primary"  onClick={()=>navigate(`/almacenista/detalle-de-pedido/${params.row._id}`)} >
+                  <Visibility/>
+                </IconButton>
               ) 
             },
           ]}
@@ -287,4 +236,4 @@ const PaidProductOrders = () => {
   );
 };
 
-export default PaidProductOrders;
+export default CompletedOrders
