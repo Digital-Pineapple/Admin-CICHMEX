@@ -74,6 +74,7 @@ import Home from "../pages/Home";
 import ReadyToDelivery from "../pages/Logistic/ReadyToDelivery";
 import AllSales from "../pages/Sales/AllSales";
 import CompletedOrdersDetail from "../pages/MyStoreHouse/CompletedOrdersDetail";
+import AddVideo from "../pages/Products/AddVideo";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -169,7 +170,8 @@ export const AllRoutes = [
   { id:68, element:<ReadyToDelivery/>},
   { id: 69, element:<Principal/>},
   { id: 70, element:<AllSales/>},
-  { id: 71, element:<CompletedOrdersDetail/>}
+  { id: 71, element:<CompletedOrdersDetail/>},
+  { id: 72, element: <AddVideo/>}
 
 
 

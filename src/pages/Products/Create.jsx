@@ -566,7 +566,7 @@ const CreateProduct = () => {
         <Card variant="outlined">
           <CardContent>
             <CardHeader title="Multimedia" />
-            <Grid
+            {/* <Grid
               container
               display={"flex"}
               spacing={2}
@@ -687,7 +687,7 @@ const CreateProduct = () => {
                   {error}
                 </Typography>
               )}
-            </Grid>
+            </Grid> */}
             {/* <Typography marginTop={"10px"}>Imagen principal</Typography> */}
             {/* <ProfileImageUploader
               formik={formik}

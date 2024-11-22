@@ -288,7 +288,23 @@ export const addOneProduct =
           horizontal: "right",
         },
       });
-      navigate("/mi-almacen/productos", { replace: true });
+      Swal.fire({
+        title: "¿Quiere agregar videos a su producto?",
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: "Si",
+        denyButtonText: `Por el momento no`
+      }).then((result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+          dispatch(onAddNewProduct(data.data))
+          navigate(`/mi-almacen/producto/agregar-video/${data.data._id}`, { replace: true });
+         
+        } else if (result.isDenied) {
+          navigate("/mi-almacen/productos", { replace: true });
+        }
+      });
+      // navigate("/mi-almacen/productos", { replace: true });
     } catch (error) {
 
       enqueueSnackbar(

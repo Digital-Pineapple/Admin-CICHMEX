@@ -8,8 +8,6 @@ const useVideos = () => {
   const dispatch = useDispatch();
   const { isLoading } = useSelector((state) => state.products);
   
-  console.log(isLoading);
-  
 
   const deleteVideo = (type) => {
     let filteredVideos = videos.filter((i) => i.type !== type);

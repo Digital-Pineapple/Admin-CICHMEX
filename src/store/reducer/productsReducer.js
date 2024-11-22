@@ -31,7 +31,7 @@ export const productsReducer = createSlice({
       state.isLoading = false;
     },
     onAddNewProduct: (state, { payload }) => {
-      state.newProduct = payload;
+      state.product = payload;
     },
     deleteProduct: (state, { type, payload }) => {
       state.products = state.products.filter(
