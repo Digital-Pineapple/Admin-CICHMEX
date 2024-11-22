@@ -19,13 +19,14 @@ import {
 import { Controller, useForm } from "react-hook-form";
 import { VideoCall, Delete } from "@mui/icons-material";
 import { useProducts } from "../../../hooks";
+import useVideos from "../../../hooks/useVideos";
 
 const DescriptionsAndVideo = ({
   handleNext,
   handleBack,
   index,
   isLastStep,
-  setVideoFile
+  setVideoFile,
 }) => {
   const DefaultValues = (data) => ({
     fields: [
@@ -58,11 +59,12 @@ const DescriptionsAndVideo = ({
     watch,
     formState: { errors },
   } = useForm({ defaultValues: DefaultValues({}) });
+  const { videos, handleVideoChange, error, deleteVideo } = useVideos();
 
   const fieldValues = watch("fields");
   const chips = watch("fields[2].values") || [];
   const [inputValue, setInputValue] = useState("");
-  const {dataStep4} =useProducts()
+  const { dataStep4 } = useProducts();
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter" && inputValue.trim()) {
@@ -78,52 +80,38 @@ const DescriptionsAndVideo = ({
     setValue("fields[2].values", newChips);
   };
 
-  const onChangeVideo = (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const validateVideoOrientation = (file, onSuccess, onError) => {
-      const video = document.createElement("video");
-
-      video.preload = "metadata";
-      video.onloadedmetadata = () => {
-        window.URL.revokeObjectURL(video.src); // Liberar la URL después de cargar metadata
-        const isVertical = video.videoHeight > video.videoWidth;
-        if (isVertical) {
-          onSuccess();
-        } else {
-          onError("El video debe ser vertical (altura mayor que ancho).");
+  const onSubmit = (data) => {
+    console.log(data.fields);
+  
+    const info = () => {
+      let newValues = {};
+      data.fields.forEach((i) => {
+        if (i.id === 'description') {
+          newValues.description = i.textInput; // Asignación correcta
         }
-      };
-      video.src = URL.createObjectURL(file);
+        if (i.id === 'shortDescription') {
+          newValues.shortDescription = i.textInput; // Asignación correcta
+        }
+        if (i.id === 'seoKeywords') {
+          newValues.keywords = i.values; // Asignación correcta
+        }
+      });
+      return newValues;
     };
-
-    validateVideoOrientation(
-      file,
-      () => {
-        // Procesa el video si es vertical
-        const filePreview = URL.createObjectURL(file);
-        setValue(`videos`, [{ file, filePreview }]);
-        setVideoFile(file)
-        // Liberar la URL previa si ya existe
-        return () => URL.revokeObjectURL(filePreview);
-      },
-      (errorMessage) => {
-        setError(`videos`, { message: errorMessage });
-      }
-    );
+    const allInfo = {
+      ...info(),
+      videos : {...videos}
+    }
+    console.log(allInfo); // Llamar a la función correctamente
+  
+    // dataStep4(data); // Asegúrate de implementar o importar esta función
+    // handleNext(); // Asegúrate de que esta función esté definida y accesible
   };
+  
 
-  const videosArray = watch(`videos`) || [];
-  const removeVideo = () => {
-    setValue(`videos`, []);
-  };
 
-  const onSubmit = (data) =>{    
-    dataStep4(data)
-    handleNext()
-    
-  }
+  const videoVertical = videos.filter((i) => i.type === "vertical");
+  const videoHorizontal = videos.filter((i) => i.type === "horizontal");
 
   return (
     <Card component="form" onSubmit={handleSubmit(onSubmit)}>
@@ -214,182 +202,273 @@ const DescriptionsAndVideo = ({
           container
           padding={1}
           spacing={2}
-          display="flex"
+          display={'flex'}
           direction="row"
           justifyContent="center"
           width={"100%"}
-        >
          
-            <Grid item xs={videosArray.length > 0 ? 2 :12} alignContent={'center'} >
-              <Controller
-                control={control}
-                name={`videos`}
-                render={({ field: { name, ref, onBlur } }) => {
-                  const [isDragging, setIsDragging] = useState(false);
+        >
+          <Grid item  display={!!videoVertical[0] ? 'none':'block'} xs={6} alignContent={"center"}>
+            <Controller
+              control={control}
+              name={`videos`}
+              render={({ field: { name, ref, onBlur } }) => {
+                const [isDragging, setIsDragging] = useState(false);
 
-                  const handleDragOver = (event) => {
-                    event.preventDefault();
-                    setIsDragging(true);
-                  };
+                const handleDragOver = (event) => {
+                  event.preventDefault();
+                  setIsDragging(true);
+                };
 
-                  const handleDragLeave = () => {
-                    setIsDragging(false);
-                  };
+                const handleDragLeave = () => {
+                  setIsDragging(false);
+                };
 
-                  const handleDrop = (event) => {
-                    event.preventDefault();
-                    setIsDragging(false);
-                    const droppedFiles = event.dataTransfer.files;
-                    if (droppedFiles.length) {
-                      onChangeVideo({ target: { files: droppedFiles } }, index);
-                    }
-                  };
+                const handleDrop = (event) => {
+                  event.preventDefault();
+                  setIsDragging(false);
+                  const droppedFiles = event.dataTransfer.files;
+                  if (droppedFiles.length) {
+                    handleVideoChange(
+                      { target: { files: droppedFiles } },
+                      "vertical"
+                    );
+                  }
+                };
 
-                  return (
-                    <Box
-                      display="flex"
-                      flexDirection="column"
-                      alignItems="center"
-                      component="label"
-                      htmlFor={`videosInput`}
-                      sx={{ cursor: "pointer" }}
-                      onDragOver={handleDragOver}
-                      onDragLeave={handleDragLeave}
-                      onDrop={handleDrop}
-                    >
-                      {videosArray.length > 0 ? (
-                        <Box
-                          sx={{
-                            position: "relative",
-                            width: "80px",
-                            height: "80px",
-                            backgroundColor: isDragging ? "#bbdefb" : "#e1f5fe",
-                            alignContent: "center",
-                            borderRadius: "20px",
-                            border: "2px dashed #bbdefb",
-                            boxShadow: "0px 0px 200px -50px #90caf9",
-                            textAlign: "center",
-                            transition: "background-color 0.3s ease-in-out",
-                            "&:hover": {
-                              backgroundColor: "#bbdefb",
-                              border: "2px dashed #42a5f5",
-                            },
-                          }}
-                        >
-                          <VideoCall style={{ color: "#42a5f5" }} />
-                          <Typography
-                            variant="body2"
-                            color="inherit"
-                          ></Typography>
-                          <input
-                            id={`videosInput`}
-                            type="file"
-                            ref={ref}
-                            onBlur={onBlur}
-                            name={name}
-                            onChange={(e) => onChangeVideo(e, index)}
-                            style={{ display: "none" }}
-                            accept="video/mp4"
-                          />
-                        </Box>
-                      ) : (
-                        <Box
-                          sx={{
-                            position: "relative",
-                            backgroundColor: isDragging ? "#bbdefb" : "#e1f5fe",
-                            width: "100%",
-                            minHeight: "150px",
-                            padding: "30px 70px",
-                            borderRadius: "20px",
-                            border: "2px dashed #bbdefb",
-                            boxShadow: "0px 0px 200px -50px #90caf9",
-                            textAlign: "center",
-                            transition: "background-color 0.3s ease-in-out",
-                            "&:hover": {
-                              backgroundColor: "#bbdefb",
-                              border: "2px dashed #42a5f5",
-                            },
-                          }}
-                        >
-                          <Typography variant="body2" color="inherit">
-                            <VideoCall style={{ color: "#42a5f5" }} />
-                            <strong style={{ color: "#42a5f5" }}>
-                              Seleccionar o arrastrar video aquí
-                            </strong>
-                            <br />
-                            Sube tu video max 10 MB de peso.
-                          </Typography>
-                          <input
-                            id={`videosInput`}
-                            type="file"
-                            ref={ref}
-                            onBlur={onBlur}
-                            name={name}
-                            onChange={(e) => onChangeVideo(e, index)}
-                            style={{ display: "none" }}
-                            accept="video/mp4"
-                          />
-                        </Box>
-                      )}
-                    </Box>
-                  );
-                }}
-              />
-            </Grid>
-
-            {/* Video Previews */}
-            <Grid
-              item
-              xs={10}
-              display="flex"
-              flexDirection="row"
-            >
-              {videosArray.map((preview, i) => (
-                <Grid
-                  key={i}
-                  position="relative"
-                  width="200px"
-                  height="200px"
-                  border="1px solid #ccc"
-                  borderRadius="4px"
-                  overflow="hidden"
-                  marginX={1}
-                >
-                  <video
-                    src={preview.filePreview}
-                    controls
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "contain",
-                    }}
-                  />
-                  <IconButton
-                    size="small"
-                    sx={{
-                      position: "absolute",
-                      top: 0,
-                      right: 0,
-                      color: "red",
-                      backgroundColor: "white",
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeVideo(preview, index, i);
-                    }}
+                return (
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    component="label"
+                    htmlFor={`videoVerticalInput`}
+                    sx={{ cursor: "pointer" }}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
                   >
-                    <Delete fontSize="small" />
-                  </IconButton>
-                </Grid>
-              ))}
-            </Grid>
-            <FormControl>
-              <FormHelperText error={!!errors?.videos}>
-                {errors?.videos?.message}
-              </FormHelperText>
+                      <Box
+                        sx={{
+                          position: "relative",
+                          backgroundColor: isDragging ? "#bbdefb" : "#e1f5fe",
+                          width: "100%",
+                          minHeight: "150px",
+                          padding: "30px 70px",
+                          borderRadius: "20px",
+                          border: "2px dashed #bbdefb",
+                          boxShadow: "0px 0px 200px -50px #90caf9",
+                          textAlign: "center",
+                          transition: "background-color 0.3s ease-in-out",
+                          "&:hover": {
+                            backgroundColor: "#bbdefb",
+                            border: "2px dashed #42a5f5",
+                          },
+                        }}
+                      >
+                        <Typography variant="body2" color="inherit">
+                          <VideoCall style={{ color: "#42a5f5" }} />
+                          <strong style={{ color: "#42a5f5" }}>
+                            Seleccionar o arrastrar vertical video aquí
+                          </strong>
+                          <br />
+                          Sube tu video max 10 MB de peso.
+                        </Typography>
+                        <input
+                          id={`videoVerticalInput`}
+                          type="file"
+                          ref={ref}
+                          onBlur={onBlur}
+                          name={name}
+                          onChange={(e) => handleVideoChange(e, "vertical")}
+                          style={{ display: "none" }}
+                          accept="video/mp4"
+                        />
+                      </Box>
+                    
+                  </Box>
+                );
+              }}
+            />
+          </Grid>
 
+          <Grid item  display={!!videoHorizontal[0] ? 'none':'block'} xs={6} alignContent={"center"}>
+            <Controller
+              control={control}
+              name={`videos`}
+              render={({ field: { name, ref, onBlur } }) => {
+                const [isDragging, setIsDragging] = useState(false);
+
+                const handleDragOver = (event) => {
+                  event.preventDefault();
+                  setIsDragging(true);
+                };
+
+                const handleDragLeave = () => {
+                  setIsDragging(false);
+                };
+
+                const handleDrop = (event) => {
+                  event.preventDefault();
+                  setIsDragging(false);
+                  const droppedFiles = event.dataTransfer.files;
+                  if (droppedFiles.length) {
+                    handleVideoChange(
+                      { target: { files: droppedFiles } },
+                      "horizontal"
+                    );
+                  }
+                };
+
+                return (
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    component="label"
+                    htmlFor={`videoHorizontalInput`}
+                    sx={{ cursor: "pointer" }}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                  >
+                    {!!videoHorizontal[0] ? (
+                      ""
+                    ) : (
+                      <Box
+                        sx={{
+                          position: "relative",
+                          backgroundColor: isDragging ? "#bbdefb" : "#e1f5fe",
+                          width: "100%",
+                          minHeight: "150px",
+                          padding: "30px 70px",
+                          borderRadius: "20px",
+                          border: "2px dashed #bbdefb",
+                          boxShadow: "0px 0px 200px -50px #90caf9",
+                          textAlign: "center",
+                          transition: "background-color 0.3s ease-in-out",
+                          "&:hover": {
+                            backgroundColor: "#bbdefb",
+                            border: "2px dashed #42a5f5",
+                          },
+                        }}
+                      >
+                        <Typography variant="body2" color="inherit">
+                          <VideoCall style={{ color: "#42a5f5" }} />
+                          <strong style={{ color: "#42a5f5" }}>
+                            Seleccionar o arrastrar Horizontal video aquí
+                          </strong>
+                          <br />
+                          Sube tu video max 10 MB de peso.
+                        </Typography>
+                        <input
+                          id={`videoHorizontalInput`}
+                          type="file"
+                          ref={ref}
+                          onBlur={onBlur}
+                          name={name}
+                          onChange={(e) => handleVideoChange(e, "horizontal")}
+                          style={{ display: "none" }}
+                          accept="video/mp4"
+                        />
+                      </Box>
+                    )}
+                  </Box>
+                );
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={6} display={!!videoHorizontal[0] ? 'flex':'none'} alignItems={'center'} alignContent={'center'} flexDirection="column">
+            
+              
+              <Typography variant="body1" textAlign={'center'}  color="inherit">Video Horizontal</Typography>
+              <Grid
+                position="relative"
+                width="300px"
+                height="300px"
+                border="1px solid #ccc"
+                borderRadius="4px"
+                overflow="hidden"
+                marginX={1}
+              >
+                <video
+                  src={videoHorizontal[0]?.filePreview}
+                  controls
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                  }}
+                />
+                <IconButton
+                  size="small"
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    color: "red",
+                    backgroundColor: "white",
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteVideo("horizontal");
+                  }}
+                >
+                  <Delete fontSize="small" />
+                </IconButton>
+              </Grid>
+              
+           
+          </Grid>
+
+          <Grid item xs={6}  display={!!videoVertical[0] ? 'flex':'none'} alignItems={'center'} alignContent={'center'} flexDirection="column">
+  
+            <Typography variant="body1" textAlign={'center'}  color="inherit">Video vertical</Typography>
+          
+              <Grid
+                position="relative"
+                width="250px"
+                height="250px"
+                border="1px solid #ccc"
+                borderRadius="4px"
+                overflow="hidden"
+                marginX={1}
+              >
+                <video
+                  src={videoVertical[0]?.filePreview}
+                  controls
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                  }}
+                />
+                <IconButton
+                  size="small"
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    color: "red",
+                    backgroundColor: "white",
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteVideo("vertical");
+                  }}
+                >
+                  <Delete fontSize="small" />
+                </IconButton>
+              </Grid>
+         
+          </Grid>
+
+          <FormControl>
+            <FormHelperText error={!!error}>{error}</FormHelperText>
           </FormControl>
         </Grid>
+
       </CardContent>
       <CardActions>
         <Button onClick={handleBack}>Cancelar</Button>

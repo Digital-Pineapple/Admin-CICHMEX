@@ -58,6 +58,7 @@ const MainFeatures = ({handleNext, handleBack, index, isLastStep}) => {
     };
   };
   
+  
   const {
     control,
     handleSubmit,

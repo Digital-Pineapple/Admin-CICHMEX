@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
@@ -60,36 +60,45 @@ const style = {
 };
 
 const Variants = ({ handleNext, handleBack, index, isLastStep, videoFile }) => {
+  const {dataStep4, dataProduct} = useProducts()
   const [valueVariants, setValueVariants] = useState([]); // Array to hold variants
   const [collapseOpen, setCollapseOpen] = useState([]); // Array to track the open/close state of each variant
   const [open, setOpen] = useState({ image: null, value: false });
   const { sizeGuide } = useSizeGuide();
-  const {addProductWithVariants} = useProducts()
   const handleOpen = (image) => {
     setOpen({ image: image, value: true });
   };
   const handleClose = () => setOpen({ image: null, value: false });
+  const DefaultValues = (data) => ({
+    variants: data?.variants || [], // Maneja el caso en que `data.variants` sea `undefined`
+  });
+  
   const {
     control,
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
-    getValues,
-    setError,
     unregister,
-  } = useForm({
-    defaultValues: {
-      variants: [],
-    },
-  });
+  } = useForm({ defaultValues: DefaultValues(dataProduct)});
+  useEffect(() => {
+    const info = DefaultValues(dataProduct);
+    setValueVariants(info.variants);
+    reset(info); // Resetea el formulario con los valores iniciales
+  }, [dataProduct, reset]);
+  
+  
   
 
   const handleCheckboxChange = (checked, index) => {
+    setValue(`variants[${index}].design.checkbox`, checked);
+  
     if (checked) {
-      setValue(checked, ""); // Reset textInput when checkbox is checked
+      setValue(`variants[${index}].design.textInput`, ""); // Limpia el campo relacionado
     }
   };
+  
 
   // Add a new variant
   const handleAddVariant = () => {
@@ -190,40 +199,33 @@ const Variants = ({ handleNext, handleBack, index, isLastStep, videoFile }) => {
     watch(`variants[${indexVariant}].images`) || [];
 
 
-  const onSubmit = (values) => {
-    addProductWithVariants(values, videoFile)
+  const onSubmit = ({variants}) => {
+    dataStep4(variants)
+    handleNext()
   };
 
-  const handlePriceChange = (e, j) => {
-    const { name, value } = e.target;
-    const newValue = parseFloat(value) || "";
-  
-    let newPrice = watch(`variants[${j}].price`);
-    let newPorcentDiscount = watch(`variants[${j}].porcentDiscount`);
-    let newTotalPrice = watch(`variants[${j}].discountPrice`);
-  
-    if (name === `variants[${j}].price`) {
-      newPrice = newValue;
-  
-      if (newPorcentDiscount > 0) {
-        newTotalPrice = newPrice - (newPrice * newPorcentDiscount) / 100;
-      } else {
-        newTotalPrice = ""; // Borra el precio con descuento si el porcentaje es 0 o null
-      }
-    } else if (name === `variants[${j}].porcentDiscount`) {
-      newPorcentDiscount = newValue;
-  
-      if (newPorcentDiscount > 0) {
-        newTotalPrice = newPrice - (newPrice * newPorcentDiscount) / 100;
-      } else {
-        newTotalPrice = ""; // Borra el precio con descuento si el descuento es 0 o null
-      }
-    }
-  
-    setValue(`variants[${j}].price`, newPrice);
-    setValue(`variants[${j}].porcentDiscount`, newPorcentDiscount);
-    setValue(`variants[${j}].discountPrice`, newTotalPrice);
+  const calculateDiscountPrice = (price, porcentDiscount) => {
+    if (!price || !porcentDiscount) return "";
+    return price - (price * porcentDiscount) / 100;
   };
+  
+  const handlePriceChange = (e, indexVariant) => {
+    const { name, value } = e.target;
+    const fieldValue = parseFloat(value) || "";
+  
+    let price = watch(`variants[${indexVariant}].price`);
+    let discount = watch(`variants[${indexVariant}].porcentDiscount`);
+  
+    if (name.includes("price")) price = fieldValue;
+    if (name.includes("porcentDiscount")) discount = fieldValue;
+  
+    const discountPrice = calculateDiscountPrice(price, discount);
+  
+    setValue(`variants[${indexVariant}].price`, price);
+    setValue(`variants[${indexVariant}].porcentDiscount`, discount);
+    setValue(`variants[${indexVariant}].discountPrice`, discountPrice);
+  };
+  
   
 
   return (
@@ -255,7 +257,7 @@ const Variants = ({ handleNext, handleBack, index, isLastStep, videoFile }) => {
               </ListSubheader>
             }
           >
-            {valueVariants.map((item, index) => {
+            {valueVariants?.map((item, index) => {
               const isOpen = collapseOpen.find(
                 (el) => el.id === item.id
               )?.value;

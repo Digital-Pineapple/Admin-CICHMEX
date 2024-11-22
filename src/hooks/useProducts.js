@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   LoadOneProduct,
   addOneProduct,
-  addProductAndVariants,
+  // addProductAndVariants,
   deleteOneProduct,
   editOneProduct,
   startAddMultipleEntries,
@@ -128,32 +128,32 @@ export const useProducts = () => {
  dispatch (onStepNewProduct(values))
   }
 
-  const dataStep4 = (data)=>{
-    const body = {
-      description: null,
-      shortDescription: null,
-      seoKeywords: null,
-      videos : null 
-    };
+  // const dataStep4 = (data)=>{
+  //   const body = {
+  //     description: null,
+  //     shortDescription: null,
+  //     seoKeywords: null,
+  //     videos : null 
+  //   };
   
-    body.videos = data.videos[0]?.filePreview || null;
+  //   body.videos = data.videos[0]?.filePreview || null;
 
-    data.fields.forEach((i) => {
-      if (i.id === "description") body.description = i.textInput;
-      if (i.id === "shortDescription") body.shortDescription = i.textInput || null;
-      if (i.id === "seoKeywords") body.seoKeywords = i.values || null;
-    });
-    dispatch (onStepNewProduct({...dataProduct,...body}))
-  }
+  //   data.fields.forEach((i) => {
+  //     if (i.id === "description") body.description = i.textInput;
+  //     if (i.id === "shortDescription") body.shortDescription = i.textInput || null;
+  //     if (i.id === "seoKeywords") body.seoKeywords = i.values || null;
+  //   });
+  //   dispatch (onStepNewProduct({...dataProduct,...body}))
+  // }
   
-  const addProductWithVariants = (data, videoFile) => {
-    console.log(videoFile);
+  const dataStep4 = (data, videoFile) => {
+    console.log(data);
     
     const body = {
         variants: []
     };
 
-    data.variants.forEach((variant) => {
+    data.forEach((variant) => {
         let values = {
             tag: null,
             weight: null,
@@ -180,7 +180,8 @@ export const useProducts = () => {
         body.variants.push(values);
     });
     dispatch(onStepNewProduct({...dataProduct, ...body})); 
-    dispatch(addProductAndVariants({...dataProduct, ...body, videoFile}))
+  
+    // dispatch(addProductAndVariants({...dataProduct, ...body, videoFile}))
 
 };
 
@@ -223,6 +224,5 @@ export const useProducts = () => {
     dataStep2,
     dataStep3,
     dataStep4,
-    addProductWithVariants
   };
 };

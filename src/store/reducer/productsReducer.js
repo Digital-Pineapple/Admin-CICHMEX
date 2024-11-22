@@ -35,7 +35,7 @@ export const productsReducer = createSlice({
       state.newProduct = payload;
     },
     onStepNewProduct: (state, { payload }) => {
-      state.dataProduct = payload
+      state.dataProduct = {...payload}
     },    
     deleteProduct: (state, { type, payload }) => {
       state.products = state.products.filter(
@@ -95,6 +95,7 @@ export const {
   onEditVideosProduct,
   startLoadingUpdate,
   stopLoadingUpdate,
+  onStepNewProduct,
 } = productsReducer.actions;
 
 export default productsReducer.reducer;

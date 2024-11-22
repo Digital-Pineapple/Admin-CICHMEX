@@ -49,12 +49,12 @@ const CreateProduct = () => {
       component:  <DimensionsGuide handleNext={handleNext} handleBack={handleBack} index={2} isLastStep={false} />
     },
     {
-      label: 'Descripción y video',
-      component:  <DescriptionsAndVideo handleNext={handleNext} handleBack={handleBack} index={3} setVideoFile={setVideoFile} isLastStep={false} />
+      label: 'Variantes y fotos',
+      component:  <Variants handleNext={handleNext} handleBack={handleBack} index={3} isLastStep={false}/>
     },
     {
-      label: 'Variantes y fotos',
-      component:  <Variants handleNext={handleNext} handleBack={handleBack} index={4} isLastStep={true} videoFile={videoFile} />
+      label: 'Descripción y video',
+      component:  <DescriptionsAndVideo handleNext={handleNext} handleBack={handleBack} index={4} setVideoFile={setVideoFile} isLastStep={true} />
     },
   ];
 
