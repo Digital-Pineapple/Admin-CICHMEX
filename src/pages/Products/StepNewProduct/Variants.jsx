@@ -42,6 +42,7 @@ import { Controller, useForm } from "react-hook-form";
 import ColorSelector from "../../../components/inputs/ColorSelector";
 import { useSizeGuide } from "../../../hooks/useSizeGuide";
 import { useProducts } from "../../../hooks";
+import { v4 as uuidv4 } from 'uuid';
 
 const style = {
   position: "absolute",
@@ -68,10 +69,32 @@ const Variants = ({ handleNext, handleBack, index, isLastStep, videoFile }) => {
   const handleOpen = (image) => {
     setOpen({ image: image, value: true });
   };
+  useEffect(() => {
+    // Inicializa collapseOpen en función de las variantes actuales
+    setCollapseOpen(
+      valueVariants.map((variant) => ({
+        id: variant.id,
+        value: false, // Por defecto, todas las variantes colapsadas
+      }))
+    );
+  }, [valueVariants]);
   const handleClose = () => setOpen({ image: null, value: false });
   const DefaultValues = (data) => ({
-    variants: data?.variants || [], // Maneja el caso en que `data.variants` sea `undefined`
+    variants: data?.variants?.map((variant) => ({
+      id: variant.id || uuidv4(), // Asegúrate de que cada variante tenga un ID único
+      weight: variant.weight || "",
+      design:  { textInput: variant.design, checkbox: false } || { textInput: "", checkbox: true },
+      color: variant.attributes.color || "",
+      images: variant.images || [],
+      size: variant.attributes.size || "",
+      price: variant.price || 0,
+      porcentDiscount: variant.porcentDiscount || 0,
+      discountPrice: variant.discountPrice || 0,
+      stock: variant.stock || null,
+      tag : variant.tag || null,
+    })) || [],
   });
+  
   
   const {
     control,
@@ -82,16 +105,18 @@ const Variants = ({ handleNext, handleBack, index, isLastStep, videoFile }) => {
     formState: { errors },
     unregister,
   } = useForm({ defaultValues: DefaultValues(dataProduct)});
+
   useEffect(() => {
-    const info = DefaultValues(dataProduct);
+    const info = DefaultValues(dataProduct); // dataProduct debe contener los IDs
     setValueVariants(info.variants);
-    reset(info); // Resetea el formulario con los valores iniciales
+    reset(info); // Asegúrate de que reset incluya el ID de cada variante
   }, [dataProduct, reset]);
   
   
   
 
-  const handleCheckboxChange = (checked, index) => {
+  const handleCheckboxChange = (variant,checked, index) => {
+    
     setValue(`variants[${index}].design.checkbox`, checked);
   
     if (checked) {
@@ -100,25 +125,30 @@ const Variants = ({ handleNext, handleBack, index, isLastStep, videoFile }) => {
   };
   
 
-  // Add a new variant
-  const handleAddVariant = () => {
-    const newId = valueVariants.length;
-    setValueVariants([...valueVariants, { id: newId }]); // Add new variant with id
-    setCollapseOpen([...collapseOpen, { id: newId, value: true }]); // Set collapse as closed for new variant
 
-    // Initialize form values for the new variant
-    setValue(`variants[${newId}]`, {
-      weight: "",
-      design: { textInput: "", checkbox: false },
-      color: "",
-      images: [],
-      size: "",
-      price: "",
-      porcentDiscount: "",
-      discountPrice: "",
-      stock :null
-    });
-  };
+
+// Al agregar una nueva variante
+const handleAddVariant = () => {
+  const newId = uuidv4(); // Genera un ID único
+  setValueVariants([...valueVariants, { id: newId }]); // Agrega la variante con el nuevo ID
+
+  setCollapseOpen([...collapseOpen, { id: newId, value: false }]); // Control del colapso
+
+  // Inicializa los valores del formulario para la nueva variante
+  setValue(`variants[${newId}]`, {
+    id: newId, // Guarda el ID único en el formulario
+    weight: "",
+    design: { textInput: "", checkbox: false },
+    color: "",
+    images: [],
+    size: "",
+    price: "",
+    porcentDiscount: "",
+    discountPrice: "",
+    stock: null,
+  });
+};
+
 
   // Remove variant and its form values
   const MessageDelete = (id) => {
@@ -148,7 +178,7 @@ const Variants = ({ handleNext, handleBack, index, isLastStep, videoFile }) => {
       )
     );
   };
-
+  
   const isMain = (value) => {
     if (value === 0) {
       return (
@@ -165,29 +195,20 @@ const Variants = ({ handleNext, handleBack, index, isLastStep, videoFile }) => {
   };
 
   const onChangeImages = (event, indexVariant) => {
-    // Obtener el primer archivo seleccionado
     const file = event.target.files[0];
-
-    if (!file) return; // Sale si no hay un archivo seleccionado
-
-    // Obtener el array de imágenes actual del formulario
+    if (!file) return;
+  
     const currentImages = watch(`variants[${indexVariant}].images`) || [];
-
-    // Verificar si ya alcanzó el límite de 6 imágenes
-    if (currentImages.length >= 6) {
-      return; // No hace nada si ya tiene 6 imágenes
-    }
-
-    // Crear la URL de vista previa para la nueva imagen
+    if (currentImages.length >= 6) return;
+  
     const filePreview = URL.createObjectURL(file);
-
-    // Actualizar el estado de imágenes del formulario en el índice especificado
+  
     setValue(`variants[${indexVariant}].images`, [
       ...currentImages,
-      { file, filePreview },
+      { filePreview }, // Incluye el archivo si planeas enviarlo al servidor
     ]);
   };
-
+  
   
   const removeImage = (preview, index, i) => {
     const variantImages = watch(`variants.[${index}].images`);
@@ -205,8 +226,9 @@ const Variants = ({ handleNext, handleBack, index, isLastStep, videoFile }) => {
   };
 
   const calculateDiscountPrice = (price, porcentDiscount) => {
-    if (!price || !porcentDiscount) return "";
-    return price - (price * porcentDiscount) / 100;
+    const parsedPrice = parseFloat(price) || 0; // Asegúrate de que no sea NaN
+    const parsedDiscount = parseFloat(porcentDiscount) || 0;
+    return parsedPrice - (parsedPrice * parsedDiscount) / 100;
   };
   
   const handlePriceChange = (e, indexVariant) => {
@@ -225,8 +247,7 @@ const Variants = ({ handleNext, handleBack, index, isLastStep, videoFile }) => {
     setValue(`variants[${indexVariant}].porcentDiscount`, discount);
     setValue(`variants[${indexVariant}].discountPrice`, discountPrice);
   };
-  
-  
+
 
   return (
     <>
@@ -258,6 +279,7 @@ const Variants = ({ handleNext, handleBack, index, isLastStep, videoFile }) => {
             }
           >
             {valueVariants?.map((item, index) => {
+       
               const isOpen = collapseOpen.find(
                 (el) => el.id === item.id
               )?.value;
@@ -353,6 +375,7 @@ const Variants = ({ handleNext, handleBack, index, isLastStep, videoFile }) => {
                             <ColorSelector
                               {...field}
                               fullWidth
+                              value={watch(`variants.[${index}].color`)}
                               label="Color"
                               error={!!errors.variants?.[index]?.color}
                               helperText={
@@ -396,7 +419,7 @@ const Variants = ({ handleNext, handleBack, index, isLastStep, videoFile }) => {
                           rules={{
                             required: {
                               value: !watch(
-                                `variants[${item.id}].design.checkbox`
+                                `variants[${index}].design.checkbox`
                               ),
                               message: "Campo requerido",
                             },

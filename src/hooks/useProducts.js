@@ -127,33 +127,14 @@ export const useProducts = () => {
   const values ={...dataProduct, size_guide}
  dispatch (onStepNewProduct(values))
   }
-
-  // const dataStep4 = (data)=>{
-  //   const body = {
-  //     description: null,
-  //     shortDescription: null,
-  //     seoKeywords: null,
-  //     videos : null 
-  //   };
   
-  //   body.videos = data.videos[0]?.filePreview || null;
-
-  //   data.fields.forEach((i) => {
-  //     if (i.id === "description") body.description = i.textInput;
-  //     if (i.id === "shortDescription") body.shortDescription = i.textInput || null;
-  //     if (i.id === "seoKeywords") body.seoKeywords = i.values || null;
-  //   });
-  //   dispatch (onStepNewProduct({...dataProduct,...body}))
-  // }
-  
-  const dataStep4 = (data, videoFile) => {
-    console.log(data);
-    
+  const dataStep4 = (data, videoFile) => { 
     const body = {
         variants: []
     };
 
-    data.forEach((variant) => {
+    data.forEach(async(variant) => {
+ 
         let values = {
             tag: null,
             weight: null,
@@ -165,8 +146,8 @@ export const useProducts = () => {
             images: [],
             attributes: { color: null, size: null, material: null }
         };
-
-        values.attributes.color = variant.color.name;
+        
+        values.attributes.color = variant.color;
         values.attributes.size = variant.size;
         values.tag = variant.tag;
         values.weight = variant.weight;

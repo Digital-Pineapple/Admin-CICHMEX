@@ -161,18 +161,30 @@ const ColorSelector = ({
   error,
   helperText,
 }) => {
-  const [selectedValue, setSelectedValue] = React.useState(value || null);
+  
+  const [selectedValue, setSelectedValue] = React.useState(null);
 
+  React.useEffect(() => {
+    if (value) {
+      setSelectedValue(value);
+    }
+  }, [value]);
+  
   return (
     <Autocomplete
       value={selectedValue}
       onChange={(event, newValue) => {
         if (typeof newValue === "string") {
-          setSelectedValue({ name: newValue });
-          onChange(newValue); // Llama a onChange del Controller
+          const existingColor = colors.find(
+            (color) => color.name.toLowerCase() === newValue.toLowerCase()
+          );
+          const finalValue = existingColor || { name: newValue };
+          setSelectedValue(finalValue);
+          onChange(finalValue);
         } else if (newValue && newValue.inputValue) {
-          setSelectedValue({ name: newValue.inputValue });
-          onChange(newValue.inputValue);
+          const finalValue = { name: newValue.inputValue };
+          setSelectedValue(finalValue);
+          onChange(finalValue);
         } else {
           setSelectedValue(newValue);
           onChange(newValue);
@@ -181,11 +193,13 @@ const ColorSelector = ({
       filterOptions={(options, params) => {
         const filtered = filter(options, params);
         const { inputValue } = params;
-        const isExisting = options.some((option) => inputValue === option.name);
+        const isExisting = options.some(
+          (option) => inputValue.toLowerCase() === option.name.toLowerCase()
+        );
         if (inputValue !== "" && !isExisting) {
           filtered.push({
             inputValue,
-            name: ` "${inputValue}"`,
+            name: inputValue,
           });
         }
         return filtered;
@@ -207,18 +221,20 @@ const ColorSelector = ({
       renderOption={(props, option) => {
         const { key, ...optionProps } = props;
         return (
-          <Box component="li" {...props} sx={{ display: "flex", alignItems: "center" }}>
-            <Box
-              sx={{
-                width: "20px",
-                height: "20px",
-                borderRadius: "100px",
-                backgroundColor: option.hex,
-                marginRight: 2,
-                border: "1px solid white",
-              }}
-            />
-            <Typography fontSize={'15px'}>{option.name}</Typography>
+          <Box component="li" {...optionProps} sx={{ display: "flex", alignItems: "center" }}>
+            {option.hex && (
+              <Box
+                sx={{
+                  width: "20px",
+                  height: "20px",
+                  borderRadius: "100px",
+                  backgroundColor: option.hex,
+                  marginRight: 2,
+                  border: "1px solid white",
+                }}
+              />
+            )}
+            <Typography fontSize={"15px"}>{option.name}</Typography>
           </Box>
         );
       }}
@@ -231,13 +247,11 @@ const ColorSelector = ({
           disabled={disabled}
           error={error}
           helperText={helperText}
-          size='small'
+          size="small"
         />
       )}
     />
   );
 };
 
-
-export default ColorSelector;
-
+export default ColorSelector
