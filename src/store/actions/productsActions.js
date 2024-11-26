@@ -656,3 +656,80 @@ export const startAddMultipleOutputs = (values, navigate) => {
     }
   };
 };
+
+async function blobUrlToFile(blobUrl, fileName) {
+  const response = await fetch(blobUrl);
+  const blob = await response.blob(); // Convierte la URL Blob a un Blob
+  return new File([blob], fileName, { type: blob.type }); // Crea un archivo válido
+}
+
+async function buildFormDataWithFiles(data) {
+  const formData = new FormData();
+
+  for (const key in data) {
+    if (data[key] === null || data[key] === undefined) continue;
+
+    if (Array.isArray(data[key])) {
+      for (const [index, item] of data[key].entries()) {
+        if (key === "variants") {
+          // Procesar variantes
+          const variantKey = `${key}[${index}]`;
+          for (const [subKey, subValue] of Object.entries(item)) {
+            if (subKey === "images") {
+              for (const [imgIndex, img] of subValue.entries()) {
+                const file = await blobUrlToFile(img.filePreview, `imagen-${index}-${imgIndex}.jpeg`);
+                formData.append(`${variantKey}[${subKey}][${imgIndex}]`, file);
+              }
+            } else if (subKey === "attributes") {
+              for (const [attrKey, attrValue] of Object.entries(subValue)) {
+                formData.append(`${variantKey}[${subKey}][${attrKey}]`, attrValue);
+              }
+            } else {
+              formData.append(`${variantKey}[${subKey}]`, subValue);
+            }
+          }
+        } else if (key === "videos") {
+          // Procesar videos
+          const videoKey = `${key}[${index}]`;
+          const file = await blobUrlToFile(item.file, `video-${index}.mp4`);
+          formData.append(`${videoKey}[file]`, file);
+          formData.append(`${videoKey}[type]`, item.type);
+        } else {
+          formData.append(`${key}[${index}]`, item);
+        }
+      }
+    } else {
+      formData.append(key, data[key]);
+    }
+  }
+
+  return formData;
+}
+export const startAddProductWithVariants = (values, navigate) => {
+  return async (dispatch) => {
+    console.log(values);
+    
+    try {
+     const formData =  await buildFormDataWithFiles(values) 
+     const {data} = await instanceApi.post('/product/createProductWithVariants/ok',formData,{
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+     })
+
+      
+      // navigate("/mi-almacen/productos/salidas", { replace: true });
+    } catch (error) {
+      console.log(error);
+
+      enqueueSnackbar(`${error.response.data.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    }
+  };
+};

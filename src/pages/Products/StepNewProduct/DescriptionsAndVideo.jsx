@@ -64,7 +64,7 @@ const DescriptionsAndVideo = ({
   const fieldValues = watch("fields");
   const chips = watch("fields[2].values") || [];
   const [inputValue, setInputValue] = useState("");
-  const { dataStep4 } = useProducts();
+  const { completeStepAddProduct } = useProducts();
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter" && inputValue.trim()) {
@@ -81,7 +81,6 @@ const DescriptionsAndVideo = ({
   };
 
   const onSubmit = (data) => {
-    console.log(data.fields);
   
     const info = () => {
       let newValues = {};
@@ -100,9 +99,10 @@ const DescriptionsAndVideo = ({
     };
     const allInfo = {
       ...info(),
-      videos : {...videos}
+      videos : [...videos]
     }
-    console.log(allInfo); // Llamar a la función correctamente
+  
+    completeStepAddProduct(allInfo)
   
     // dataStep4(data); // Asegúrate de implementar o importar esta función
     // handleNext(); // Asegúrate de que esta función esté definida y accesible

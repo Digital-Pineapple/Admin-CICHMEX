@@ -8,6 +8,7 @@ import {
   startAddMultipleEntries,
   startAddMultipleOutputs,
   startAddOneImage,
+  startAddProductWithVariants,
   startDeleteOneImage,
   startLoadAllInputs,
   startLoadAllOutputs,
@@ -166,6 +167,31 @@ export const useProducts = () => {
 
 };
 
+
+const completeStepAddProduct = (data) => {
+ 
+  const videoValues = data.videos?.map((i) => {
+  
+
+    let file = i.filePreview; // Cambié la coma por un punto y coma
+    let type = i.type;
+
+    // Retorna un objeto con las propiedades deseadas
+    return { file, type };
+  });
+
+  const values = {
+    ...dataProduct,
+    description: data.description,
+    keywords: data.keywords,
+    shortDescription: data.shortDescription,
+    videos: videoValues,
+  };
+  
+  dispatch(startAddProductWithVariants(values))
+};
+
+
   
   
 
@@ -205,5 +231,6 @@ export const useProducts = () => {
     dataStep2,
     dataStep3,
     dataStep4,
+    completeStepAddProduct
   };
 };
