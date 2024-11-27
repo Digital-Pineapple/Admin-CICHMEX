@@ -72,8 +72,7 @@ const MainFeatures = ({handleNext, handleBack, index, isLastStep}) => {
   const selectedCategory = watch("category");
 
   const onSubmit = async (data) => {
-    dataStep1(data),
-    handleNext()
+    dataStep1(data, handleNext)
   };
 
   const handleCheckboxChange = (checked, index) => {

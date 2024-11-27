@@ -92,7 +92,7 @@ export const useProducts = () => {
     ...item,
   }));
 
-  const dataStep1 = (data) => {
+  const dataStep1 = (data, handleNext) => {
     const body = {
       brand: "",
       category: "",
@@ -111,9 +111,8 @@ export const useProducts = () => {
       if (i.id === "gender") body.gender = i.textInput || null;
       if (i.id === "name") body.name = i.textInput || null;
     });
-    
-  
-    dispatch (onStepNewProduct({...body})) 
+dispatch(startAddProductWithVariants(body, handleNext))
+
   };
 
   const dataStep2 = (data)=>{

@@ -14,6 +14,7 @@ import {
   onEditVideosProduct,
   startLoadingUpdate,
   stopLoadingUpdate,
+  onStepNewProduct,
 } from "../reducer/productsReducer";
 import {
   headerConfigApplication,
@@ -290,7 +291,6 @@ export const addOneProduct =
       });
       navigate("/mi-almacen/productos", { replace: true });
     } catch (error) {
-
       enqueueSnackbar(
         `${error.response.data.message || error.response.data.error}`,
         {
@@ -454,12 +454,12 @@ export const startAddOneImage = (id, file) => {
   };
 };
 
-export const startAddOneVideo = (id,type,file) => {
+export const startAddOneVideo = (id, type, file) => {
   return async (dispatch) => {
-    dispatch(startLoadingUpdate())
+    dispatch(startLoadingUpdate());
     const formData = new FormData();
-      formData.append(`videos`, file);
-      formData.append(`type`, type);
+    formData.append(`videos`, file);
+    formData.append(`type`, type);
     try {
       const { data } = await instanceApi.post(
         `/product/video/addVideo/${id}`,
@@ -487,8 +487,8 @@ export const startAddOneVideo = (id,type,file) => {
           horizontal: "right",
         },
       });
-    }finally{
-      dispatch(stopLoadingUpdate())
+    } finally {
+      dispatch(stopLoadingUpdate());
     }
   };
 };
@@ -527,7 +527,7 @@ export const startDeleteOneImage = (id, image_id) => {
 };
 export const startDeleteOneVideo = (id, video_id) => {
   return async (dispatch) => {
-    dispatch(startLoadingUpdate())
+    dispatch(startLoadingUpdate());
     try {
       const { data } = await instanceApi.post(
         `/product/deleteVideoDetail/${id}`,
@@ -539,8 +539,8 @@ export const startDeleteOneVideo = (id, video_id) => {
           },
         }
       );
-      
-     dispatch(loadProduct(data.data))
+
+      dispatch(loadProduct(data.data));
       enqueueSnackbar(`${data.message}`, {
         variant: "success",
         anchorOrigin: {
@@ -556,8 +556,8 @@ export const startDeleteOneVideo = (id, video_id) => {
           horizontal: "right",
         },
       });
-    }finally{
-      dispatch(stopLoadingUpdate())
+    } finally {
+      dispatch(stopLoadingUpdate());
     }
   };
 };
@@ -677,12 +677,18 @@ async function buildFormDataWithFiles(data) {
           for (const [subKey, subValue] of Object.entries(item)) {
             if (subKey === "images") {
               for (const [imgIndex, img] of subValue.entries()) {
-                const file = await blobUrlToFile(img.filePreview, `imagen-${index}-${imgIndex}.jpeg`);
+                const file = await blobUrlToFile(
+                  img.filePreview,
+                  `imagen-${index}-${imgIndex}.jpeg`
+                );
                 formData.append(`${variantKey}[${subKey}][${imgIndex}]`, file);
               }
             } else if (subKey === "attributes") {
               for (const [attrKey, attrValue] of Object.entries(subValue)) {
-                formData.append(`${variantKey}[${subKey}][${attrKey}]`, attrValue);
+                formData.append(
+                  `${variantKey}[${subKey}][${attrKey}]`,
+                  attrValue
+                );
               }
             } else {
               formData.append(`${variantKey}[${subKey}]`, subValue);
@@ -705,24 +711,65 @@ async function buildFormDataWithFiles(data) {
 
   return formData;
 }
-export const startAddProductWithVariants = (values, navigate) => {
+export const startAddProductWithVariants = (values, handleNext) => {
   return async (dispatch) => {
-    console.log(values);
-    
     try {
-     const formData =  await buildFormDataWithFiles(values) 
-     const {data} = await instanceApi.post('/product/createProductWithVariants/ok',formData,{
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-     })
+      const { data } = await instanceApi.post(
+        `/product/createProductWithVariants/ok`,
+        values,
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
-      
-      // navigate("/mi-almacen/productos/salidas", { replace: true });
+      dispatch(onStepNewProduct(data.data));
+      enqueueSnackbar(`${data.message}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+      handleNext();
     } catch (error) {
-      console.log(error);
+      enqueueSnackbar(`${error.response.data.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    }
+  };
+};
 
+export const startAddConditionVariant = (values, handleNext) => {
+  return async (dispatch) => {
+    try {
+      const { data } = await instanceApi.post(
+        `/product/createProductWithVariants/ok`,
+        values,
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      dispatch(onStepNewProduct(data.data));
+      enqueueSnackbar(`${data.message}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+      handleNext();
+    } catch (error) {
       enqueueSnackbar(`${error.response.data.message}`, {
         variant: "error",
         anchorOrigin: {
