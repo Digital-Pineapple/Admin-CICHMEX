@@ -7,6 +7,7 @@ const useVideos = () => {
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const { isLoading } = useSelector((state) => state.products);
+  const { loading } = useSelector((state) => state.ui);
   
 
   const deleteVideo = (type) => {
@@ -140,7 +141,8 @@ const useVideos = () => {
     setInitialVideos,
     deleteVideoDetail,
     handleSubmitVideo,
-    isLoading
+    isLoading,
+    loading
   };
 };
 

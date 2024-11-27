@@ -14,6 +14,7 @@ import {
   onEditVideosProduct,
   startLoadingUpdate,
   stopLoadingUpdate,
+  onUpdateImagesProduct,
 } from "../reducer/productsReducer";
 import {
   headerConfigApplication,
@@ -306,8 +307,9 @@ export const addOneProduct =
       });
       // navigate("/mi-almacen/productos", { replace: true });
     } catch (error) {
-
+      
       enqueueSnackbar(
+        
         `${error.response.data.message || error.response.data.error}`,
         {
           variant: "error",
@@ -335,6 +337,7 @@ export const editOneProduct =
           },
         }
       );
+      
       dispatch(editProduct(data.data));
       enqueueSnackbar("Editado con éxito", {
         variant: "success",
@@ -487,6 +490,7 @@ export const startAddOneVideo = (id,type,file) => {
           },
         }
       );
+
       dispatch(loadProduct(data.data));
       enqueueSnackbar(`${data.message}`, {
         variant: "success",
@@ -660,7 +664,6 @@ export const startAddMultipleOutputs = (values, navigate) => {
       });
       navigate("/mi-almacen/productos/salidas", { replace: true });
     } catch (error) {
-      console.log(error);
 
       enqueueSnackbar(`${error.response.data.message}`, {
         variant: "error",
@@ -670,5 +673,39 @@ export const startAddMultipleOutputs = (values, navigate) => {
         },
       });
     }
+  };
+};
+
+export const startChangeImagesPosition = (product_id,images, navigate) => {
+  return async (dispatch) => {
+  try {
+    const { data } = await instanceApi.post(
+      `/product/updateOrder/images/${product_id}`,
+      {images: images},
+      {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+    enqueueSnackbar(`${data.message}`, {
+      variant: "success",
+      anchorOrigin: {
+        vertical: "top",
+        horizontal: "right",
+      },
+    });
+    
+    dispatch(onUpdateImagesProduct(data.data.images))
+  } catch (error) {
+    enqueueSnackbar(`${error.response.data.message}`, {
+      variant: "error",
+      anchorOrigin: {
+        vertical: "top",
+        horizontal: "right",
+      },
+    });
+  }
   };
 };

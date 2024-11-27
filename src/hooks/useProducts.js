@@ -7,6 +7,7 @@ import {
   startAddMultipleEntries,
   startAddMultipleOutputs,
   startAddOneImage,
+  startChangeImagesPosition,
   startDeleteOneImage,
   startLoadAllInputs,
   startLoadAllOutputs,
@@ -60,6 +61,7 @@ export const useProducts = () => {
   const addOneImage = ( id , file ) =>  dispatch(startAddOneImage(id,file))
   const deleteImageDetail = (id, image_id)=>dispatch(startDeleteOneImage(id,image_id))
   const deleteProduct = async (id) => dispatch(deleteOneProduct(id));
+  const changeImagePositions = async (product_id,images) => dispatch(startChangeImagesPosition(product_id,images, navigate))
 
   const cleanProductD = () => dispatch(cleanProductDetail());
 
@@ -122,6 +124,7 @@ export const useProducts = () => {
     updateVideo,
     updateThumbnail,
     addOneImage,
-    deleteImageDetail
+    deleteImageDetail,
+    changeImagePositions
   };
 };

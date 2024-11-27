@@ -53,18 +53,11 @@ export const productsReducer = createSlice({
     onEditVideosProduct(state, { payload }) {
       state.product.videos = payload;
     },
+    onUpdateImagesProduct(state, { payload }) {
+      state.product.images = payload;
+    },
     editProduct: (state, { payload }) => {
-      state.products = state.products.map((product) => {
-        if (product._id === payload._id) {
-          return {
-            ...product,
-            name: payload.name,
-            description: payload.description,
-            status: payload.status,
-          };
-        }
-        return product; // Mantener los elementos no modificados tal como están
-      });
+      state.product = payload
     },
     startLoadingUpdate : ( state )=>{
       state.isLoading = true
@@ -91,6 +84,7 @@ export const {
   onEditVideosProduct,
   startLoadingUpdate,
   stopLoadingUpdate,
+  onUpdateImagesProduct
 } = productsReducer.actions;
 
 export default productsReducer.reducer;

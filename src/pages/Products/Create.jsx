@@ -29,7 +29,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useSubCategories } from "../../hooks/useSubCategories";
 import { useEffect, useState } from "react";
 import { useCategories } from "../../hooks/useCategories";
-import { AttachMoney, VideoCallSharp } from "@mui/icons-material";
+import { ArrowDownward, ArrowUpward, AttachMoney, NavigateBefore, NavigateNext, VideoCallSharp } from "@mui/icons-material";
 import VideoUploadField from "../../components/Forms/VideoUploadField";
 import { useAuthStore } from "../../hooks";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
@@ -68,7 +68,7 @@ const CreateProduct = () => {
     loadSubCategoriesByCategory,
   } = useSubCategories();
   const { categories, loadCategories } = useCategories();
-  const { images, handleImageChange, deleteImage, imagesFiles } = useImages();
+  const { images, handleImageChange, deleteImage, imagesFiles, moveImage, selectMainImage, mainImageId,  } = useImages();
 
   const {
     deleteVideo,
@@ -192,6 +192,8 @@ const CreateProduct = () => {
     );
     formik.setFieldValue("seoKeywords", newChips);
   };
+
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -554,255 +556,117 @@ const CreateProduct = () => {
           </CardContent>
         </Card>
       </Grid>
-
       <Grid
-        item
-        xs={12}
-        sx={{
-          gridColumn: "span 6",
-          gridRow: "span 3",
-        }}
-      >
-        <Card variant="outlined">
-          <CardContent>
-            <CardHeader title="Multimedia" />
-            {/* <Grid
+      item
+      xs={12}
+      sx={{
+        gridColumn: "span 6",
+        gridRow: "span 3",
+      }}
+    >
+      <Card variant="outlined">
+        <CardContent>
+          <CardHeader title="Multimedia" />
+
+          <Typography marginTop={"10px"}>
+            Imagenes de detalle (peso max de imagen: 500 kb)
+          </Typography>
+          <Grid item xs={12}>
+            <input
+              id="image"
+              name="image"
+              type="file"
+              accept="image/jpeg, image/png, image/webp"
+              onChange={handleImageChange}
+              hidden
+            />
+            <label htmlFor={"image"}>
+              <Button
+                fullWidth
+                component="span"
+                color="primary"
+                variant="contained"
+              >
+                Agrega Fotos
+              </Button>
+            </label>
+          </Grid>
+
+          {images.length > 0 && (
+            <Grid
               container
               display={"flex"}
-              spacing={2}
-              alignContent={"center"}
               justifyContent={"center"}
+              padding={"10px"}
+              marginTop={"20px"}
+              sx={{ backgroundColor: "#cfd8dc" }}
+              gap={2}
             >
-              <Grid
-                item
-                xs={12}
-                md={6}
-                display={"flex"}
-                flexDirection={"column"}
-                justifyContent={"space-between"}
-                height={"100%"}
-              >
-                <Typography variant="h6" textAlign="center">
-                  Subir video vertical
-                </Typography>
-                {!videoVertical ? (
-                  <Button
-                    component="label"
-                    variant="contained"
-                    fullWidth
-                    startIcon={<VideoCallSharp />}
-                  >
-                    Subir video vertical
-                    <VisuallyHiddenInput
-                      type="file"
-                      accept="video/mp4,video/webm,video/ogg"
-                      onChange={(e) => handleVideoChange(e, "vertical")}
-                    />
-                  </Button>
-                ) : (
-                  <Grid container width={"100%"}>
-                    <video
-                      style={{
-                        maxWidth: "200px",
-                        marginLeft: "auto",
-                        marginRight: "auto",
-                      }}
-                      controls
-                    >
-                      <source
-                        src={videoVertical?.filePreview}
-                        type="video/mp4"
-                      />
-                      Tu navegador no soporta la reproducción de videos.
-                    </video>
-                    <Button
-                      onClick={() => deleteVideo("vertical")}
-                      fullWidth
-                      sx={{ marginTop: 1 }}
-                      variant="contained"
-                      color="error"
-                    >
-                      Eliminar video vertical
-                    </Button>
-                  </Grid>
-                )}
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                md={6}
-                display={"flex"}
-                flexDirection={"column"}
-                justifyContent={"space-between"}
-                height={"100%"}
-              >
-                <Typography variant="h6" textAlign="center">
-                  Subir video horizontal
-                </Typography>
-                {!videoHorizontal ? (
-                  <Button
-                    component="label"
-                    variant="contained"
-                    fullWidth
-                    startIcon={<VideoCallSharp />}
-                  >
-                    Subir video horizontal
-                    <VisuallyHiddenInput
-                      type="file"
-                      accept="video/mp4,video/webm,video/ogg"
-                      onChange={(e) => handleVideoChange(e, "horizontal")}
-                    />
-                  </Button>
-                ) : (
-                  <Grid container width={"100%"}>
-                    <video
-                      style={{
-                        maxWidth: "300px",
-                        marginLeft: "auto",
-                        marginRight: "auto",
-                      }}
-                      controls
-                    >
-                      <source
-                        src={videoHorizontal?.filePreview}
-                        type="video/mp4"
-                      />
-                      Tu navegador no soporta la reproducción de videos.
-                    </video>
-                    <Button
-                      fullWidth
-                      onClick={() => deleteVideo("horizontal")}
-                      variant="contained"
-                      sx={{ marginTop: 1 }}
-                      color="warning"
-                    >
-                      Eliminar video horizontal
-                    </Button>
-                  </Grid>
-                )}
-              </Grid>
-
-              {error && (
-                <Typography color="error" textAlign="center" mt={2}>
-                  {error}
-                </Typography>
-              )}
-            </Grid> */}
-            {/* <Typography marginTop={"10px"}>Imagen principal</Typography> */}
-            {/* <ProfileImageUploader
-              formik={formik}
-              id={"thumbnail"}
-              name={"thumbnail"}
-            /> */}
-
-            <Typography marginTop={"10px"}>
-              {" "}
-              Imagenes de detalle (peso max de imagen:500 kb)
-            </Typography>
-            {images.length > 0 && (
-              <Grid item xs={12}>
-                <input
-                  id="image"
-                  name="image"
-                  type="file"
-                  accept="image/jpeg, image/png, image/webp"
-                  onChange={handleImageChange}
-                  hidden
-                />
-                <label htmlFor={"image"}>
-                  <Button
-                    fullWidth
-                    component="span"
-                    color="primary"
-                    variant="contained"
-                  >
-                    Agrega Fotos
-                  </Button>
-                </label>
-              </Grid>
-            )}
-            {images.length ? (
-              <>
-                <Grid
-                  container
-                  display={"flex"}
-                  justifyContent={"center"}
-                  padding={"10px"}
-                  marginTop={"20px"}
-                  sx={{ backgroundColor: "#cfd8dc" }}
-                  gap={2}
-                >
-                  {images.map(({ id, filePreview }) => (
-                    <Grid item xs={12} sm={3} key={id}>
-                      <StyledBadge
-                        badgeContent={
-                          <IconButton
-                            sx={{ backgroundColor: "black", color: "black" }}
-                            onClick={() => deleteImage(id)}
-                          >
-                            <DeleteIcon
-                              sx={{ color: "white", fontSize: "20px" }}
-                            />
-                          </IconButton>
-                        }
+              {images.map(({ id, filePreview }, index) => (
+                <Grid item xs={12} sm={3} key={id}>
+                  <StyledBadge
+                    badgeContent={
+                      <IconButton
+                        sx={{ backgroundColor: "black", color: "black" }}
+                        onClick={() => deleteImage(id)}
                       >
-                        <Box
-                          sx={{
-                            position: "relative",
-                            width: "100%",
-                            height: "200px",
-                          }}
-                        >
-                          <Avatar
-                            src={filePreview}
-                            variant="square"
-                            sx={{ width: "100%", height: "100%" }}
-                          />
-                        </Box>
-                      </StyledBadge>
-                    </Grid>
-                  ))}
+                        <DeleteIcon
+                          sx={{ color: "white", fontSize: "20px" }}
+                        />
+                      </IconButton>
+                    }
+                  >
+                    <Box
+                      sx={{
+                        position: "relative",
+                        width: "100%",
+                        height: "200px",
+                        border:
+                          mainImageId === id
+                            ? "3px solid #1976d2" // Destacar la imagen principal.
+                            : "none",
+                      }}
+                    >
+                      <Avatar
+                        src={filePreview}
+                        variant="square"
+                        sx={{ width: "100%", height: "100%" }}
+                      />
+                    </Box>
+                  </StyledBadge>
+                  <Box display="flex" justifyContent="space-between" mt={1}>
+                    <IconButton
+                      onClick={() => moveImage(index, -1)}
+                      disabled={index === 0}
+                    >
+                      <NavigateBefore />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => moveImage(index, 1)}
+                      disabled={index === images.length - 1}
+                    >
+                      <NavigateNext/>
+                    </IconButton>
+                  </Box>
+                  <Box mt={1} display="flex" justifyContent="center">
+                    <Chip
+                      label={
+                        mainImageId === id ? "Imagen Principal" : "Hacer imagen principal"
+                      }
+                      color={mainImageId === id ? "primary" : "default"}
+                      onClick={() => selectMainImage(id)}
+                      clickable
+                    />
+                  </Box>
                 </Grid>
-              </>
-            ) : (
-              <Grid
-                container
-                sx={{ backgroundColor: "#cfd8dc" }}
-                display={"flex"}
-                flexDirection={"column"}
-                alignItems={"center"}
-                justifyContent={"center"}
-                marginTop={"20px"}
-                height={"300px"}
-                borderRadius={"5px"}
-              >
-                <FilterIcon
-                  style={{
-                    fontSize: "40px",
-                    alignSelf: "center",
-                    marginBottom: "10px",
-                  }}
-                />
+              ))}
+            </Grid>
+          )}
+        </CardContent>
+      </Card>
+    </Grid>
 
-                <input
-                  id="image"
-                  name="image"
-                  type="file"
-                  accept="image/jpeg, image/png, image/webp"
-                  onChange={handleImageChange}
-                  hidden
-                />
-                <label htmlFor={"image"}>
-                  <Button component="span" color="primary" variant="contained">
-                    Agregar Fotos
-                  </Button>
-                </label>
-              </Grid>
-            )}
-          </CardContent>
-        </Card>
-      </Grid>
-
+     
       <Grid item xs={12}>
         <ButtonGroup fullWidth>
           <Button type="submit" variant="contained" color="success">

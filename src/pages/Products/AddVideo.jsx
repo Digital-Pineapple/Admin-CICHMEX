@@ -21,9 +21,10 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 const AddVideo = () => {
-  const { deleteVideoDetail, handleSubmitVideo, error, isLoading } = useVideos();
+  const { deleteVideoDetail, handleSubmitVideo, error, isLoading, loading } = useVideos();
   const { id } = useParams();
   const { product, loadProduct, navigate } = useProducts();
+  
 
   const ffmpegRef = useRef(new FFmpeg({
     log: true,
@@ -39,7 +40,7 @@ const AddVideo = () => {
 
   useEffect(() => {
     if (id) loadProduct(id);
-    loadFFmpeg();
+    // loadFFmpeg();
   }, []);
 
   const loadFFmpeg = async () => {
@@ -125,27 +126,28 @@ const AddVideo = () => {
   const handleVideoUpload = async (e, type) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
-    const file = e.target.files[0];
-    console.log(file,'ghnadle upload');
+    // const file = e.target.files[0];
+    // console.log(file,'ghnadle upload');
     
 
-    const compressedFile = await compressVideo(file);
+    // const compressedFile = await compressVideo(file);
 
-    if (compressedFile) {
-      const compressedFileBlob = new File([compressedFile], `compressed_${file.name}`, {
-        type: "video/mp4",
-      });
-      console.log(compressedFileBlob);
+    // if (compressedFile) {
+    //   const compressedFileBlob = new File([compressedFile], `compressed_${file.name}`, {
+    //     type: "video/mp4",
+    //   });
+    //   console.log(compressedFileBlob);
       
-      // handleSubmitVideo(id, compressedFileBlob, type);
-    }
+    // }
+    handleSubmitVideo(id, e, type);
   };
 
-  const { videoVertical, videoHorizontal } = valuateVideo;
-
-  if (isLoading || compressing) {
+  const { videoVertical, videoHorizontal } = valuateVideo;;
+  
+  if (isLoading || loading) {
     return <LoadingVideoUpload />;
   }
+  
   return (
     <Grid container spacing={2} alignContent="center" justifyContent="center">
       <Grid item xs={12}>
@@ -165,6 +167,7 @@ const AddVideo = () => {
       </Grid>
 
       {/* Video Vertical */}
+      
       <Grid item xs={12} md={6}>
         {!videoVertical ? (
           <Button
@@ -183,7 +186,7 @@ const AddVideo = () => {
         ) : (
           <Grid container width="100%">
             <video style={{ maxWidth: "200px", margin: "auto" }} controls>
-              <source src={videoVertical?.url} type="video/mp4" />
+              <source src={videoVertical?.url } type="video/mp4" />
               Tu navegador no soporta la reproducción de videos.
             </video>
             <Button

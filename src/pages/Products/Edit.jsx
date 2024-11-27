@@ -29,7 +29,7 @@ import { useCategories } from "../../hooks/useCategories";
 import { useSubCategories } from "../../hooks/useSubCategories";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import TextAreaInput from "../../components/inputs/TextAreaInput";
-import { AttachMoney } from "@mui/icons-material";
+import { AttachMoney, Refresh } from "@mui/icons-material";
 import WordsInput from "../../components/inputs/WordsInput";
 import VideoUpdateField from "../../components/Forms/VideoUpdateField";
 import DetailImagesUpdateField from "../../components/Forms/DetailImagesUpdateField";
@@ -39,6 +39,12 @@ const Edit = () => {
   const { loadProduct, product, editProduct, navigate, loading, updateVideo, updateThumbnail, addOneImage, deleteImageDetail } = useProducts();
   const { categories, loadCategories } = useCategories();
   const { subCategoriesByCategory, loadSubCategories, loadSubCategoriesByCategory } = useSubCategories();
+
+
+  useEffect(() => {
+    loadCategories()
+    loadProduct(id);
+  }, [id]);
 
   const formik = useFormik({
     initialValues: {
@@ -72,9 +78,6 @@ const Edit = () => {
     },
   });
 
-  useEffect(() => {
-    loadProduct(id);
-  }, [id]);
 
   useEffect(() => {
     if (product) {
@@ -84,11 +87,14 @@ const Edit = () => {
         category: product.category?._id || "",
         subCategory: product.subCategory?._id || "",
       });
-      loadCategories();
-      loadSubCategories();
-      if (product.category?._id) loadSubCategoriesByCategory(product.category._id);
+  
+      // Cargar subcategorías si hay categoría inicial
+      if (product.category?._id) {
+        loadSubCategoriesByCategory(product.category._id);
+      }
     }
   }, [product]);
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -111,6 +117,7 @@ const Edit = () => {
   if (loading) return <LoadingScreenBlue />;
 
   return (
+    <>
     <Grid
       component="form"
       onSubmit={formik.handleSubmit}
@@ -132,6 +139,11 @@ const Edit = () => {
         >
           Editar producto
         </Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <Button startIcon={<Refresh/>} onClick={()=>loadProduct(id)} variant="contained" color="primary">
+          Recargar
+        </Button>
       </Grid>
       <Grid
         item
@@ -178,47 +190,55 @@ const Edit = () => {
               onChange={formik.handleChange}
               // onKeyDown={handleKeyDown}
             />
+
             <FormControl fullWidth>
-              <FormLabel>Categoría</FormLabel>
-              <Select
-                id="category"
-                name="category"
-                size="small"
-                value={formik.values?.category}
-                label="Categoria"
-                onChange={(e) => {
-                  formik.setFieldValue("subCategory", "");
-                  formik.handleChange(e);
-                  loadSubCategoriesByCategory(e.target.value);
-                }}
-              >
-                {categories.map((category) => (
-                  <MenuItem key={category._id} value={category._id}>
-                    {category.name}
-                  </MenuItem>
-                ))}
-              </Select>
-              <FormHelperText>Selecciona una categoria</FormHelperText>
-            </FormControl>
-            <FormControl fullWidth>
-              <FormLabel>Subcategoria</FormLabel>
-              <Select
-                id="subCategory"
-                name="subCategory"
-                size="small"
-                value={formik.values?.subCategory}
-                label="Subcategoria"
-                onChange={formik.handleChange}
-              >
-                {formik.values?.category &&
-                  subCategoriesByCategory.map((subCategory) => (
-                    <MenuItem key={subCategory._id} value={subCategory._id}>
-                      {subCategory.name}
-                    </MenuItem>
-                  ))}
-              </Select>
-              <FormHelperText>Selecciona una sub-categoria</FormHelperText>
-            </FormControl>
+  <FormLabel>Categoría</FormLabel>
+  <Select
+    id="category"
+    name="category"
+    size="small"
+    value={formik.values?.category}
+    label="Categoria"
+    onChange={(e) => {
+      const selectedCategory = e.target.value;
+
+      // Actualiza la categoría y limpia subcategoría
+      formik.setFieldValue("category", selectedCategory);
+      formik.setFieldValue("subCategory", "");
+
+      // Cargar subcategorías para la nueva categoría
+      loadSubCategoriesByCategory(selectedCategory);
+    }}
+  >
+    {categories.map((category) => (
+      <MenuItem key={category._id} value={category._id}>
+        {category.name}
+      </MenuItem>
+    ))}
+  </Select>
+  <FormHelperText>Selecciona una categoria</FormHelperText>
+</FormControl>
+
+<FormControl fullWidth>
+  <FormLabel>Subcategoria</FormLabel>
+  <Select
+    id="subCategory"
+    name="subCategory"
+    size="small"
+    value={formik.values?.subCategory}
+    label="Subcategoria"
+    onChange={(e) => formik.setFieldValue("subCategory", e.target.value)}
+  >
+    {formik.values?.category &&
+      subCategoriesByCategory.map((subCategory) => (
+        <MenuItem key={subCategory._id} value={subCategory._id}>
+          {subCategory.name}
+        </MenuItem>
+      ))}
+  </Select>
+  <FormHelperText>Selecciona una sub-categoria</FormHelperText>
+</FormControl>
+
             <TextAreaInput
               aria-label="Descripcion"
               placeholder="Descripción"
@@ -399,8 +419,24 @@ const Edit = () => {
           </CardContent>
         </Card>
       </Grid>
-      <Grid item
-        xs={12}
+     
+
+      <Grid container>
+        <ButtonGroup fullWidth>
+          <Button type="submit" variant="contained" color="success">
+            Guardar Cambios
+          </Button>
+          <Button
+            onClick={() => outEdit()}
+            variant="contained"
+            color="warning"
+          >
+            Salir
+          </Button>
+        </ButtonGroup>
+      </Grid>
+    </Grid>
+    <Grid container width={'100%'}
         >
         
       <Card variant="outlined">
@@ -426,22 +462,7 @@ const Edit = () => {
         </CardContent>
       </Card>
       </Grid>
-
-      <Grid container>
-        <ButtonGroup fullWidth>
-          <Button type="submit" variant="contained" color="success">
-            Guardar Cambios
-          </Button>
-          <Button
-            onClick={() => outEdit()}
-            variant="contained"
-            color="warning"
-          >
-            Salir
-          </Button>
-        </ButtonGroup>
-      </Grid>
-    </Grid>
+    </>
   );
 };
 

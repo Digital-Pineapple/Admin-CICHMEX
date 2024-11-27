@@ -1,17 +1,22 @@
-import * as React from 'react';
-import { Box, TextField, Chip, FormControl } from '@mui/material';
+import * as React from "react";
+import { Box, TextField, Chip, FormControl } from "@mui/material";
 
 export default function WordsInput({ formik, id, name, label, keywords }) {
-  const [inputValue, setInputValue] = React.useState('');
-  const [chips, setChips] = React.useState(keywords ? keywords : []);
+  const [inputValue, setInputValue] = React.useState("");
+  const [chips, setChips] = React.useState(keywords || []);
+
+  // Sincroniza el estado local de chips con los cambios en keywords
+  React.useEffect(() => {
+    setChips(keywords || []);
+  }, [keywords]);
 
   const handleKeyPress = (event) => {
-    if (event.key === 'Enter' && inputValue.trim()) {
+    if (event.key === "Enter" && inputValue.trim()) {
       event.preventDefault();
       const newChips = [...chips, inputValue.trim()];
       setChips(newChips);
       formik.setFieldValue(name, newChips); // Guarda el arreglo de palabras en Formik
-      setInputValue(''); // Limpia el campo de entrada
+      setInputValue(""); // Limpia el campo de entrada
     }
   };
 
@@ -33,13 +38,9 @@ export default function WordsInput({ formik, id, name, label, keywords }) {
         variant="outlined"
         fullWidth
       />
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 2 }}>
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 2 }}>
         {chips.map((chip, index) => (
-          <Chip
-            key={index}
-            label={chip}
-            onDelete={handleDelete(chip)}
-          />
+          <Chip key={index} label={chip} onDelete={handleDelete(chip)} />
         ))}
       </Box>
     </FormControl>
