@@ -40,21 +40,21 @@ const CreateProduct = () => {
       label: 'Características principales',
       component:  <MainFeatures handleNext={handleNext} handleBack={handleBack} index={0} isLastStep={false} />
     },
-    {
-      label: 'Condición',
-      component:  <Condition handleNext={handleNext} handleBack={handleBack} index={1} isLastStep={false} />
-    },
+    // {
+    //   label: 'Condición',
+    //   component:  <Condition handleNext={handleNext} handleBack={handleBack} index={1} isLastStep={false} />
+    // },
     {
       label: 'Guia de Dimensiones',
-      component:  <DimensionsGuide handleNext={handleNext} handleBack={handleBack} index={2} isLastStep={false} />
+      component:  <DimensionsGuide handleNext={handleNext} handleBack={handleBack} index={1} isLastStep={false} />
     },
     {
       label: 'Variantes y fotos',
-      component:  <Variants handleNext={handleNext} handleBack={handleBack} index={3} isLastStep={false}/>
+      component:  <Variants handleNext={handleNext} handleBack={handleBack} index={2} isLastStep={false}/>
     },
     {
       label: 'Descripción y video',
-      component:  <DescriptionsAndVideo handleNext={handleNext} handleBack={handleBack} index={4} setVideoFile={setVideoFile} isLastStep={true} />
+      component:  <DescriptionsAndVideo handleNext={handleNext} handleBack={handleBack} index={3} setVideoFile={setVideoFile} isLastStep={true} handleReset={handleReset} />
     },
   ];
 

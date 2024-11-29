@@ -20,6 +20,7 @@ import { Controller, useForm } from "react-hook-form";
 import { VideoCall, Delete } from "@mui/icons-material";
 import { useProducts } from "../../../hooks";
 import useVideos from "../../../hooks/useVideos";
+import LoadingScreenBlue from "../../../components/ui/LoadingScreenBlue";
 
 const DescriptionsAndVideo = ({
   handleNext,
@@ -27,6 +28,7 @@ const DescriptionsAndVideo = ({
   index,
   isLastStep,
   setVideoFile,
+  handleReset
 }) => {
   const DefaultValues = (data) => ({
     fields: [
@@ -64,7 +66,7 @@ const DescriptionsAndVideo = ({
   const fieldValues = watch("fields");
   const chips = watch("fields[2].values") || [];
   const [inputValue, setInputValue] = useState("");
-  const { completeStepAddProduct } = useProducts();
+  const { completeStepAddProduct, dataProduct, loading } = useProducts();
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter" && inputValue.trim()) {
@@ -102,7 +104,7 @@ const DescriptionsAndVideo = ({
       videos : [...videos]
     }
   
-    completeStepAddProduct(allInfo)
+    completeStepAddProduct(dataProduct._id ,allInfo, handleReset)
   
     // dataStep4(data); // Asegúrate de implementar o importar esta función
     // handleNext(); // Asegúrate de que esta función esté definida y accesible
@@ -112,6 +114,12 @@ const DescriptionsAndVideo = ({
 
   const videoVertical = videos.filter((i) => i.type === "vertical");
   const videoHorizontal = videos.filter((i) => i.type === "horizontal");
+
+  if (loading) {
+    return (
+      <LoadingScreenBlue/>
+    )
+  }
 
   return (
     <Card component="form" onSubmit={handleSubmit(onSubmit)}>
@@ -471,7 +479,7 @@ const DescriptionsAndVideo = ({
 
       </CardContent>
       <CardActions>
-        <Button onClick={handleBack}>Cancelar</Button>
+        {/* <Button onClick={handleBack}>Cancelar</Button> */}
         <Button variant="contained" type="submit">
           {isLastStep ? "Guardar" : "Continuar"}
         </Button>

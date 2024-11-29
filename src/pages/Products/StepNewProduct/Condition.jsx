@@ -36,8 +36,8 @@ const Condition = ({ handleNext, handleBack, index, isLastStep }) => {
   });
 
   const onSubmit = (data) => {
-    dataStep2(data);
-    handleNext();
+    dataStep2(dataProduct._id, data, handleNext);
+    
   };
 
   return (

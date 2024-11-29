@@ -57,6 +57,9 @@ export const productsReducer = createSlice({
     onEditVideosProduct(state, { payload }) {
       state.product.videos = payload;
     },
+    onClearValues(state) {
+      state.dataProduct = [];
+    },
     editProduct: (state, { payload }) => {
       state.products = state.products.map((product) => {
         if (product._id === payload._id) {
@@ -96,6 +99,7 @@ export const {
   startLoadingUpdate,
   stopLoadingUpdate,
   onStepNewProduct,
+  onClearValues,
 } = productsReducer.actions;
 
 export default productsReducer.reducer;

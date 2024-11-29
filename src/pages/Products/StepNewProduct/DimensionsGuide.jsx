@@ -12,16 +12,38 @@ import {
   Typography,
   Select,
   FormHelperText,
+  Modal,
+  Box, Fab,
 } from "@mui/material";
 import { useSizeGuide } from "../../../hooks/useSizeGuide";
 import { Controller, useForm } from "react-hook-form";
 import { useProducts } from "../../../hooks";
 import { startSelectSizeGuide } from "../../../store/actions/sizeGuideActions";
+import TableGuides from "../../SizeDimensions/TableGuides";
+import { Close } from "@mui/icons-material";
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '90%',
+  height: '90%',
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
 const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
   const { loadSizeGuides, sizeGuides, navigate, dispatch } = useSizeGuide();
   const [stateAddNewGuide, setStateAddNewGuide] = useState(false);
   const { dataStep3, dataProduct } = useProducts();
+
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => {setOpen(false), loadSizeGuides()};
 
   useEffect(() => {
     loadSizeGuides();
@@ -39,10 +61,10 @@ const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
   });
 
   const onAddSizeGuide = (values) => {
-    dataStep3(values);
+    dataStep3( dataProduct._id,values, handleNext);
     const info = sizeGuides?.filter((i) => i._id === values.size_guide);
     dispatch(startSelectSizeGuide(info));
-    handleNext();
+  
   };
 
   return (
@@ -62,7 +84,7 @@ const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
                   color="secondary"
                   size="small"
                   onClick={() =>
-                    navigate("/guia-dimensiones/agregar", { replace: true })
+                    handleOpen()
                   }
                 >
                   Agregar nueva guia
@@ -131,13 +153,6 @@ const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
               </Card>
             </CardContent>
             <CardActions>
-              <Button
-                disabled={index === 0}
-                onClick={handleBack}
-                sx={{ mt: 1, mr: 1 }}
-              >
-                Cancelar
-              </Button>
               <Button variant="contained" type="submit" sx={{ mt: 1, mr: 1 }}>
                 {isLastStep ? "Guardar" : "Continuar"}
               </Button>
@@ -145,6 +160,25 @@ const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
           </Card>
         </Grid>
       </Grid>
+      <div>
+     
+      <Modal
+        open={open}
+        onClose={handleClose}
+      >
+        <Box sx={style}>
+         <Fab
+           color="primary"
+           sx={{top:0, left:'90%'}}
+           onClick={handleClose}
+         >
+           <Close/>
+         </Fab>
+        <TableGuides/>
+          
+        </Box>
+      </Modal>
+    </div>
     </>
   );
 };

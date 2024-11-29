@@ -10,7 +10,10 @@ import {
   Delete,
   ExpandLess,
   ExpandMore,
+  NavigateBefore,
+  NavigateNext,
   OpenInFull,
+  Star,
   UploadFile,
   VideoCall,
 } from "@mui/icons-material";
@@ -42,7 +45,8 @@ import { Controller, useForm } from "react-hook-form";
 import ColorSelector from "../../../components/inputs/ColorSelector";
 import { useSizeGuide } from "../../../hooks/useSizeGuide";
 import { useProducts } from "../../../hooks";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
+import LoadingScreenBlue from "../../../components/ui/LoadingScreenBlue";
 
 const style = {
   position: "absolute",
@@ -60,8 +64,8 @@ const style = {
   p: 4,
 };
 
-const Variants = ({ handleNext, handleBack, index, isLastStep, videoFile }) => {
-  const {dataStep4, dataProduct} = useProducts()
+const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
+  const { dataStep4, dataProduct, loading } = useProducts();
   const [valueVariants, setValueVariants] = useState([]); // Array to hold variants
   const [collapseOpen, setCollapseOpen] = useState([]); // Array to track the open/close state of each variant
   const [open, setOpen] = useState({ image: null, value: false });
@@ -80,75 +84,71 @@ const Variants = ({ handleNext, handleBack, index, isLastStep, videoFile }) => {
   }, [valueVariants]);
   const handleClose = () => setOpen({ image: null, value: false });
   const DefaultValues = (data) => ({
-    variants: data?.variants?.map((variant) => ({
-      id: variant.id || uuidv4(), // Asegúrate de que cada variante tenga un ID único
-      weight: variant.weight || "",
-      design:  { textInput: variant.design, checkbox: false } || { textInput: "", checkbox: true },
-      color: variant.attributes.color || "",
-      images: variant.images || [],
-      size: variant.attributes.size || "",
-      price: variant.price || 0,
-      porcentDiscount: variant.porcentDiscount || 0,
-      discountPrice: variant.discountPrice || 0,
-      stock: variant.stock || null,
-      tag : variant.tag || null,
-    })) || [],
+    variants:
+      data?.variants?.map((variant) => ({
+        id: variant.id || uuidv4(), // Asegúrate de que cada variante tenga un ID único
+        weight: variant.weight || "",
+        design: { textInput: variant.design, checkbox: false } || {
+          textInput: "",
+          checkbox: true,
+        },
+        color: variant.attributes.color || "",
+        images: variant.images || [],
+        size: variant.attributes.size || "",
+        price: variant.price || 0,
+        porcentDiscount: variant.porcentDiscount || 0,
+        discountPrice: variant.discountPrice || 0,
+        stock: variant.stock || null,
+        tag: variant.tag || null,
+      })) || [],
   });
-  
-  
+
   const {
     control,
     handleSubmit,
     setValue,
+    getValues,
     watch,
     reset,
     formState: { errors },
     unregister,
-  } = useForm({ defaultValues: DefaultValues(dataProduct)});
+  } = useForm({ defaultValues: DefaultValues(dataProduct) });
 
   useEffect(() => {
     const info = DefaultValues(dataProduct); // dataProduct debe contener los IDs
     setValueVariants(info.variants);
     reset(info); // Asegúrate de que reset incluya el ID de cada variante
   }, [dataProduct, reset]);
-  
-  
-  
 
-  const handleCheckboxChange = (variant,checked, index) => {
-    
+  const handleCheckboxChange = (variant, checked, index) => {
     setValue(`variants[${index}].design.checkbox`, checked);
-  
+
     if (checked) {
       setValue(`variants[${index}].design.textInput`, ""); // Limpia el campo relacionado
     }
   };
-  
 
+  // Al agregar una nueva variante
+  const handleAddVariant = () => {
+    const newId = uuidv4(); // Genera un ID único
+    setValueVariants([...valueVariants, { id: newId }]); // Agrega la variante con el nuevo ID
 
+    setCollapseOpen([...collapseOpen, { id: newId, value: false }]); // Control del colapso
 
-// Al agregar una nueva variante
-const handleAddVariant = () => {
-  const newId = uuidv4(); // Genera un ID único
-  setValueVariants([...valueVariants, { id: newId }]); // Agrega la variante con el nuevo ID
-
-  setCollapseOpen([...collapseOpen, { id: newId, value: false }]); // Control del colapso
-
-  // Inicializa los valores del formulario para la nueva variante
-  setValue(`variants[${newId}]`, {
-    id: newId, // Guarda el ID único en el formulario
-    weight: "",
-    design: { textInput: "", checkbox: false },
-    color: "",
-    images: [],
-    size: "",
-    price: "",
-    porcentDiscount: "",
-    discountPrice: "",
-    stock: null,
-  });
-};
-
+    // Inicializa los valores del formulario para la nueva variante
+    setValue(`variants[${newId}]`, {
+      id: newId, // Guarda el ID único en el formulario
+      weight: "",
+      design: { textInput: "", checkbox: false },
+      color: "",
+      images: [],
+      size: "",
+      price: "",
+      porcentDiscount: "",
+      discountPrice: "",
+      stock: null,
+    });
+  };
 
   // Remove variant and its form values
   const MessageDelete = (id) => {
@@ -178,7 +178,7 @@ const handleAddVariant = () => {
       )
     );
   };
-  
+
   const isMain = (value) => {
     if (value === 0) {
       return (
@@ -197,57 +197,99 @@ const handleAddVariant = () => {
   const onChangeImages = (event, indexVariant) => {
     const file = event.target.files[0];
     if (!file) return;
-  
+
     const currentImages = watch(`variants[${indexVariant}].images`) || [];
+    
     if (currentImages.length >= 6) return;
-  
+
     const filePreview = URL.createObjectURL(file);
-  
+
     setValue(`variants[${indexVariant}].images`, [
       ...currentImages,
       { filePreview }, // Incluye el archivo si planeas enviarlo al servidor
     ]);
   };
-  
-  
+
   const removeImage = (preview, index, i) => {
     const variantImages = watch(`variants.[${index}].images`);
     let updateImages = variantImages.filter((item, index) => index !== i);
     setValue(`variants.[${index}].images`, updateImages);
   };
-  
-  const imagesArray = (indexVariant) =>
-    watch(`variants[${indexVariant}].images`) || [];
+
+  const imagesArray = (indexVariant) => {
+    const images = watch(`variants[${indexVariant}].images`);
+    return Array.isArray(images) ? images : [];
+};
 
 
-  const onSubmit = ({variants}) => {
-    dataStep4(variants)
-    handleNext()
+  const onSubmit = ({ variants }) => {
+    Swal.fire({
+      title: "¿Esta seguro de guardar estas variantes?",
+      showCancelButton: true,
+      confirmButtonText: "Si guardar",
+      cancelButtonText: "Cancelar",
+      cancelButtonColor: "#ff1744",
+      confirmButtonColor: "#4caf50",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        dataStep4(dataProduct._id, variants, handleNext);
+      }
+    });
   };
 
   const calculateDiscountPrice = (price, porcentDiscount) => {
-    const parsedPrice = parseFloat(price) || 0; // Asegúrate de que no sea NaN
+    const parsedPrice = parseFloat(price); // Asegúrate de que no sea NaN
     const parsedDiscount = parseFloat(porcentDiscount) || 0;
     return parsedPrice - (parsedPrice * parsedDiscount) / 100;
   };
-  
+
   const handlePriceChange = (e, indexVariant) => {
     const { name, value } = e.target;
-    const fieldValue = parseFloat(value) || "";
-  
-    let price = watch(`variants[${indexVariant}].price`);
-    let discount = watch(`variants[${indexVariant}].porcentDiscount`);
-  
+    const fieldValue = parseFloat(value) || 0; // Convierte a número o usa 0 como predeterminado
+
+    // Obtén los valores actuales del formulario
+    let price = watch(`variants[${indexVariant}].price`) || 0;
+    let discount = watch(`variants[${indexVariant}].porcentDiscount`) || 0;
+
+    // Actualiza solo el valor relevante
     if (name.includes("price")) price = fieldValue;
     if (name.includes("porcentDiscount")) discount = fieldValue;
-  
+
+    // Calcula el precio con descuento
     const discountPrice = calculateDiscountPrice(price, discount);
-  
+
+    // Actualiza los valores del formulario
     setValue(`variants[${indexVariant}].price`, price);
     setValue(`variants[${indexVariant}].porcentDiscount`, discount);
     setValue(`variants[${indexVariant}].discountPrice`, discountPrice);
   };
 
+  const moveImage = (indexVariant, indexImage, direction) => {
+    // Obtener las imágenes actuales usando getValues
+    const images = getValues(`variants[${indexVariant}].images`);
+  
+    // Verificar que las imágenes sean un arreglo válido
+    if (!Array.isArray(images)) {
+      console.error("El valor actual no es un arreglo:", images);
+      return;
+    }
+  
+    // Crear una copia de las imágenes y realizar el movimiento
+    const newImages = [...images];
+    const [removed] = newImages.splice(indexImage, 1); // Extraer la imagen actual
+    newImages.splice(indexImage + direction, 0, removed); // Insertar en la nueva posición
+  
+    // Actualizar el campo con el nuevo valor
+    setValue(`variants[${indexVariant}].images`, newImages);
+  };
+
+  if (loading) {
+    return(
+      <LoadingScreenBlue/>
+    )
+  }
+  
+ 
 
   return (
     <>
@@ -279,7 +321,6 @@ const handleAddVariant = () => {
             }
           >
             {valueVariants?.map((item, index) => {
-       
               const isOpen = collapseOpen.find(
                 (el) => el.id === item.id
               )?.value;
@@ -310,12 +351,12 @@ const handleAddVariant = () => {
                     {isOpen ? <ExpandLess /> : <ExpandMore />}
                     <ListItemText
                       sx={{ minWidth: "150px" }}
-                      primary={`Variante ${item.id + 1}`}
+                      primary={`Variante ${index + 1}`}
                     />
-                    {isMain(item.id)}
+                    {isMain(index)}
                   </ListItem>
 
-                  <Collapse in={isOpen} timeout="auto" >
+                  <Collapse in={isOpen} timeout="auto">
                     <Grid container spacing={2}>
                       <Grid item xs={4}>
                         <FormControl
@@ -501,7 +542,7 @@ const handleAddVariant = () => {
                           )}
                         />
                       </Grid>
-                      
+
                       <Grid item xs={4}>
                         <Controller
                           control={control}
@@ -541,17 +582,14 @@ const handleAddVariant = () => {
                         <Controller
                           control={control}
                           rules={{
-                            required: {
-                              value: !watch(`variants[${index}].price`),
-                              message: "Campo requerido",
-                            },
+                            required: "Campo requerido",
                             min: {
                               value: 0,
-                              message: "Valor no menor de $1",
+                              message: "El valor no puede ser menor a $0",
                             },
                             max: {
                               value: 80000,
-                              message: "Valor no mayor de de $1000000",
+                              message: "El valor no puede superar $80000",
                             },
                           }}
                           name={`variants[${index}].price`}
@@ -560,9 +598,9 @@ const handleAddVariant = () => {
                               {...field}
                               fullWidth
                               size="small"
-                              label="Precio(MXN)*"
+                              label="Precio (MXN)*"
+                              focused
                               autoComplete="off"
-                              name={`variants[${index}].price`} // Añade el name dinámico
                               onChange={(e) => handlePriceChange(e, index)}
                               type="number"
                               error={!!errors.variants?.[index]?.price}
@@ -579,24 +617,23 @@ const handleAddVariant = () => {
                           control={control}
                           rules={{
                             min: {
-                              value: 0, // Aceptar desde 0
-                              message: "El descuento no puede ser menor a 0",
+                              value: 0,
+                              message: "El descuento no puede ser menor a 0%",
                             },
                             max: {
                               value: 99,
-                              message: "El descuento no puede ser mayor de 99",
+                              message: "El descuento no puede ser mayor al 99%",
                             },
                           }}
-                          
                           name={`variants[${index}].porcentDiscount`}
                           render={({ field }) => (
                             <TextField
                               {...field}
                               fullWidth
                               size="small"
-                              label="Descuento"
+                              label="Descuento (%)"
+                              focused
                               autoComplete="off"
-                              name={`variants[${index}].porcentDiscount`}
                               onChange={(e) => handlePriceChange(e, index)}
                               type="number"
                               error={
@@ -615,15 +652,10 @@ const handleAddVariant = () => {
                         <Controller
                           control={control}
                           rules={{
-                            min: {
-                              value: 1,
-                              message: "Valor no menor de $1",
-                            },
-                            max: {
-                              value: 80000,
-                              message: "Valor no mayor de de $1000000",
-                            },
-                            validate: (value) => value === "" || (value >= 1 && value <= 80000) || "Valor inválido",
+                            validate: (value) =>
+                              value === "" ||
+                              (value >= 0 && value <= 80000) ||
+                              "El precio con descuento debe estar entre $0 y $80000",
                           }}
                           name={`variants[${index}].discountPrice`}
                           render={({ field }) => (
@@ -631,10 +663,9 @@ const handleAddVariant = () => {
                               {...field}
                               fullWidth
                               size="small"
-                              label="Precio con descuento(MXN)"
+                              label="Precio con Descuento (MXN)"
                               autoComplete="off"
-                              name={`variants[${index}].discountPrice`} // Añade el name dinámico
-                              onChange={(e) => handlePriceChange(e, index)}
+                              focused
                               type="number"
                               error={!!errors.variants?.[index]?.discountPrice}
                               helperText={
@@ -645,18 +676,14 @@ const handleAddVariant = () => {
                         />
                       </Grid>
 
-                      <Grid
-                        item
-                        display={"flex"}
-                        xs={12}
-                      >
+                      <Grid item display={"flex"} xs={12}>
                         <Grid
                           container
                           padding={1}
                           spacing={2}
                           display={"flex"}
                           justifyContent={"center"}
-                          width={ "100%"}
+                          width={"100%"}
                         >
                           <Grid
                             item
@@ -820,13 +847,13 @@ const handleAddVariant = () => {
                             alignContent={"center"}
                             flexDirection={"row"}
                           >
-                            {imagesArray(index).map((preview, i) => {
+                            {imagesArray(index)?.map((preview, i) => {
                               return (
                                 <Grid
                                   key={i}
                                   position="relative"
-                                  width="80px"
-                                  height="80px"
+                                  width="150px"
+                                  height="150px"
                                   border="1px solid #ccc"
                                   borderRadius="4px"
                                   overflow="hidden"
@@ -856,38 +883,92 @@ const handleAddVariant = () => {
                                   ) : (
                                     ""
                                   )}
-                                  <IconButton
-                                    size="small"
-                                    sx={{
-                                      position: "absolute",
-                                      top: 0,
-                                      right: 0,
-                                      color: "red",
-                                      backgroundColor: "white",
-                                    }}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      removeImage(preview, index, i);
-                                    }}
+
+                                  <Box
+                                    display="flex"
+                                    justifyContent="space-between"
+                                    mt={1}
                                   >
-                                    <Delete fontSize="small" />
-                                  </IconButton>
-                                  <IconButton
-                                    size="small"
-                                    sx={{
-                                      position: "absolute",
-                                      top: 0,
-                                      left: 0,
-                                      color: "red",
-                                      backgroundColor: "white",
-                                    }}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleOpen(preview.filePreview);
-                                    }}
+                                    <IconButton
+                                      size="small"
+                                      sx={{
+                                        position: "absolute",
+                                        top: 0,
+                                        right: 0,
+                                        color: "red",
+                                        backgroundColor: "white",
+                                      }}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        removeImage(preview, index, i);
+                                      }}
+                                    >
+                                      <Delete fontSize="small" />
+                                    </IconButton>
+                                    <IconButton
+                                      size="small"
+                                      sx={{
+                                        position: "absolute",
+                                        top: 0,
+                                        left: 0,
+                                        color: "red",
+                                        backgroundColor: "white",
+                                      }}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleOpen(preview.filePreview);
+                                      }}
+                                    >
+                                      <OpenInFull fontSize="small" />
+                                    </IconButton>
+                                    <IconButton
+                                      size="small"
+                                      sx={{
+                                        position: "absolute",
+                                        bottom: 0,
+                                        left: 0,
+                                        color: "red",
+                                        backgroundColor: "white",
+                                      }}
+                                      onClick={() => moveImage(index,i, -1)}
+                                      disabled={i === 0} // Deshabilitar si está en la primera posición
+                                    >
+                                      <NavigateBefore />
+                                    </IconButton>
+                                    <IconButton
+                                      size="small"
+                                      sx={{
+                                        position: "absolute",
+                                        bottom: 0,
+                                        right: 0,
+                                        color: "red",
+                                        backgroundColor: "white",
+                                      }}
+                                      onClick={() => moveImage(index,i, 1)}
+                                      disabled={
+                                        i === imagesArray(index).length - 1
+                                      } // Deshabilitar si está en la última posición
+                                    >
+                                      <NavigateNext />
+                                    </IconButton>
+                                  </Box>
+
+                                  <Box
+                                    mt={1}
+                                    display="flex"
+                                    justifyContent="center"
                                   >
-                                    <OpenInFull fontSize="small" />
-                                  </IconButton>
+                                    <Chip
+                                      label={
+                                        i === 0
+                                          ? "Imagen Principal"
+                                          : "Hacer imagen principal"
+                                      }
+                                      color={i === 0 ? "primary" : "default"}
+                                      onClick={() => selectMainImage(index, i)}
+                                      clickable
+                                    />
+                                  </Box>
                                 </Grid>
                               );
                             })}
@@ -900,7 +981,6 @@ const handleAddVariant = () => {
                             </FormControl>
                           </Grid>
                         </Grid>
-                        
                       </Grid>
                     </Grid>
                   </Collapse>

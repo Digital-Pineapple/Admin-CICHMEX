@@ -5,10 +5,13 @@ import {
   // addProductAndVariants,
   deleteOneProduct,
   editOneProduct,
+  finishCreateProduct,
+  selectSizeGuide,
   startAddMultipleEntries,
   startAddMultipleOutputs,
   startAddOneImage,
   startAddProductWithVariants,
+  startAddVariantsProduct,
   startDeleteOneImage,
   startLoadAllInputs,
   startLoadAllOutputs,
@@ -18,6 +21,7 @@ import {
   startLoadProducts,
   startLoadStockProducts,
   startUpdateThumbnail,
+  updateConditionStep,
   updateProductVideos,
 } from "../store/actions/productsActions";
 import { useNavigate } from "react-router-dom";
@@ -115,20 +119,18 @@ dispatch(startAddProductWithVariants(body, handleNext))
 
   };
 
-  const dataStep2 = (data)=>{
+  const dataStep2 = (id,data, handleNext)=>{
     const condition = data.condition
-    
-  const values ={...dataProduct, condition}
- dispatch (onStepNewProduct(values))
+    dispatch(updateConditionStep(id,condition,handleNext))
+
   }
 
-  const dataStep3 = (data)=>{
+  const dataStep3 = (id, data, handleNext)=>{
     const size_guide = data?.size_guide || ""
-  const values ={...dataProduct, size_guide}
- dispatch (onStepNewProduct(values))
+ dispatch(selectSizeGuide(id,size_guide,handleNext))
   }
   
-  const dataStep4 = (data, videoFile) => { 
+  const dataStep4 = (id,data,handleNext) => { 
     const body = {
         variants: []
     };
@@ -162,32 +164,13 @@ dispatch(startAddProductWithVariants(body, handleNext))
     });
     dispatch(onStepNewProduct({...dataProduct, ...body})); 
   
-    // dispatch(addProductAndVariants({...dataProduct, ...body, videoFile}))
+     dispatch(startAddVariantsProduct(id,body, handleNext))
 
 };
 
 
-const completeStepAddProduct = (data) => {
- 
-  const videoValues = data.videos?.map((i) => {
-  
-
-    let file = i.filePreview; // Cambié la coma por un punto y coma
-    let type = i.type;
-
-    // Retorna un objeto con las propiedades deseadas
-    return { file, type };
-  });
-
-  const values = {
-    ...dataProduct,
-    description: data.description,
-    keywords: data.keywords,
-    shortDescription: data.shortDescription,
-    videos: videoValues,
-  };
-  
-  dispatch(startAddProductWithVariants(values))
+const completeStepAddProduct = (id,data, handleReset) => {
+  dispatch(finishCreateProduct(id,data, navigate, handleReset))
 };
 
 
