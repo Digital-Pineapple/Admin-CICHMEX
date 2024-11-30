@@ -77,6 +77,7 @@ import CompletedOrdersDetail from "../pages/MyStoreHouse/CompletedOrdersDetail";
 import DimensionsGuide from "../pages/Products/StepNewProduct/DimensionsGuide";
 import TableGuides from "../pages/SizeDimensions/TableGuides";
 import DescriptionsAndVideo from "../pages/Products/StepNewProduct/DescriptionsAndVideo";
+import EditWithVariants from "../pages/Products/EditWithVariants";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -175,7 +176,9 @@ export const AllRoutes = [
   { id: 69, element:<Principal/>},
   { id: 70, element:<AllSales/>},
   { id: 71, element:<CompletedOrdersDetail/>},
-  { id: 72, element: <TableGuides/>}
+  { id: 72, element: <TableGuides/>},
+  { id : 73,  element : <EditWithVariants/>}
+
 
 
 

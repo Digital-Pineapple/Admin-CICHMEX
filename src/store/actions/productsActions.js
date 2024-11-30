@@ -962,3 +962,48 @@ export const finishCreateProduct = (id, values, navigate, handleReset) => {
 
 
 };
+
+export const StartUpdateMainFeatures = (id, values) => {
+  console.log(values);
+  
+  return async (dispatch) => {
+    dispatch(startLoading())
+    try {
+    const { data } = await instanceApi.post(`/product/updateMainFeatures/${id}`,{values:values}, {
+      headers: {
+       "Content-type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: `${data.message}`,
+      showConfirmButton: false,
+      timer: 1500
+    
+    })
+    dispatch(loadProduct(data.data))
+   } catch (error) {
+    enqueueSnackbar(
+      error.response?.data?.message,
+      {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      }
+    );
+    
+   }finally{
+    dispatch(stopLoading())
+   }
+
+  
+
+
+}
+
+
+};

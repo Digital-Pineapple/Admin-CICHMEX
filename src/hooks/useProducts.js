@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
   LoadOneProduct,
+  StartUpdateMainFeatures,
   addOneProduct,
   // addProductAndVariants,
   deleteOneProduct,
@@ -173,6 +174,29 @@ const completeStepAddProduct = (id,data, handleReset) => {
   dispatch(finishCreateProduct(id,data, navigate, handleReset))
 };
 
+const dataUpdateMainFeatures = (id, data) => {
+  const body = {
+    brand: "",
+    category: "",
+    subCategory: "",
+    model: '', 
+    gender: '',  
+    name:""
+  };
+
+  body.category = data.category;
+  body.subCategory = data.subCategory;
+
+  data.fields.forEach((i) => {
+    if (i.id === "brand") body.brand = i.textInput;
+    if (i.id === "model") body.model = i.textInput ;
+    if (i.id === "gender") body.gender = i.textInput ;
+    if (i.id === "name") body.name = i.textInput;
+  });
+dispatch(StartUpdateMainFeatures(id,body))
+
+};
+
 
   
   
@@ -213,6 +237,7 @@ const completeStepAddProduct = (id,data, handleReset) => {
     dataStep2,
     dataStep3,
     dataStep4,
-    completeStepAddProduct
+    completeStepAddProduct,
+    dataUpdateMainFeatures
   };
 };
