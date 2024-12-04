@@ -664,7 +664,6 @@ async function blobUrlToFile(blobUrl, filename) {
   return new File([blob], filename, { type: blob.type });
 }
 
-
 async function buildFormDataWithFiles(data) {
   const formData = new FormData();
 
@@ -679,11 +678,13 @@ async function buildFormDataWithFiles(data) {
           for (const [subKey, subValue] of Object.entries(item)) {
             if (subKey === "images") {
               for (const [imgIndex, img] of subValue.entries()) {
-                const file = await blobUrlToFile(
-                  img.filePreview,
-                  `imagen-${index}-${imgIndex}.jpeg`
-                );
-                formData.append(`${variantKey}[${subKey}][${imgIndex}]`, file);
+                if (!!img.filePreview) {
+                  const file = await blobUrlToFile(
+                    img.filePreview,
+                    `imagen-${index}-${imgIndex}.jpeg`
+                  );
+                  formData.append(`${variantKey}[${subKey}][${imgIndex}]`, file);
+                }
               }
             } else if (subKey === "attributes") {
               for (const [attrKey, attrValue] of Object.entries(subValue)) {
@@ -747,12 +748,12 @@ export const startAddProductWithVariants = (values, handleNext) => {
     }
   };
 };
-export const updateConditionStep = (id,values, handleNext) => {
+export const updateConditionStep = (id, values, handleNext) => {
   return async (dispatch) => {
     try {
       const { data } = await instanceApi.post(
         `/product/conditionProduct/${id}`,
-        {condition: values},
+        { condition: values },
         {
           headers: {
             "Content-type": "application/json",
@@ -782,12 +783,12 @@ export const updateConditionStep = (id,values, handleNext) => {
   };
 };
 
-export const selectSizeGuide = (id,values, handleNext) => {
+export const selectSizeGuide = (id, values, handleNext) => {
   return async (dispatch) => {
     try {
       const { data } = await instanceApi.post(
         `/product/selectSizeGuide/${id}`,
-        {sizeGuide: values},
+        { sizeGuide: values },
         {
           headers: {
             "Content-type": "application/json",
@@ -795,8 +796,6 @@ export const selectSizeGuide = (id,values, handleNext) => {
           },
         }
       );
-
-      dispatch(onStepNewProduct(data.data));
       enqueueSnackbar(`${data.message}`, {
         variant: "success",
         anchorOrigin: {
@@ -804,7 +803,46 @@ export const selectSizeGuide = (id,values, handleNext) => {
           horizontal: "right",
         },
       });
-      handleNext();
+      if (!!handleNext) {
+        dispatch(onStepNewProduct(data.data));
+        handleNext();
+      }
+    } catch (error) {
+      enqueueSnackbar(`${error.response.data.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    }
+  };
+};
+
+export const sizeGuideEdit = (id, values) => {
+  return async (dispatch) => {
+    try {
+      const { data } = await instanceApi.post(
+        `/product/selectSizeGuide/${id}`,
+        { sizeGuide: values },
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      enqueueSnackbar(`${data.message}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+      if (!!handleNext) {
+        dispatch(onStepNewProduct(data.data));
+        handleNext();
+      }
     } catch (error) {
       enqueueSnackbar(`${error.response.data.message}`, {
         variant: "error",
@@ -854,7 +892,7 @@ export const startAddConditionVariant = (values, handleNext) => {
 
 export const startAddVariantsProduct = (id, values, handleNext) => {
   return async (dispatch) => {
-    dispatch(startLoading())
+    dispatch(startLoading());
     try {
       // Construcción del FormData
       const variants = await buildFormDataWithFiles(values);
@@ -887,7 +925,7 @@ export const startAddVariantsProduct = (id, values, handleNext) => {
     } catch (error) {
       // Manejo de errores con notificación
       enqueueSnackbar(
-        error.response?.data?.message || 'Error al enviar las variantes',
+        error.response?.data?.message || "Error al enviar las variantes",
         {
           variant: "error",
           anchorOrigin: {
@@ -896,114 +934,191 @@ export const startAddVariantsProduct = (id, values, handleNext) => {
           },
         }
       );
-    } finally{
-      dispatch(stopLoading())
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
+};
+
+export const startUpdateVariants = (id, values) => {
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      // Construcción del FormData
+      const variants = await buildFormDataWithFiles(values);
+      // Petición al backend
+      console.log(variants);
+      
+      const { data } = await instanceApi.post(
+        `/product/updateVariants/${id}`,
+        variants,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      // Actualización del estado en Redux
+      dispatch(onStepNewProduct(data.data));
+
+      // Notificación de éxito
+      enqueueSnackbar(`${data.message}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+
+      // Avanzar al siguiente paso
+      handleNext();
+    } catch (error) {
+      // Manejo de errores con notificación
+      enqueueSnackbar(
+        error.response?.data?.message || "Error al enviar las variantes",
+        {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        }
+      );
+    } finally {
+      dispatch(stopLoading());
     }
   };
 };
 
 export const finishCreateProduct = (id, values, navigate, handleReset) => {
   return async (dispatch) => {
-    dispatch(startLoading())
+    dispatch(startLoading());
     try {
-    const formData = new FormData();
+      const formData = new FormData();
 
-    // Añadir texto al FormData
-    formData.append('description', values?.description);
-    formData.append('shortDescription', values?.shortDescription);
-    values?.keywords.forEach((keyword, index) => {
-      formData.append(`seoKeywords`, keyword);
-    });
-    values?.videos.forEach((video, index) => {
-      formData.append(`videos/${video.type}`, video.file);
-    });
-    
-    const { data } = await instanceApi.post(`/product/addDescriptionAndVideos/${id}`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-    Swal.fire({
-      title:`${data.message}`,
-      text:`¿Quiere agregar otro producto?`,
-      showCancelButton: true,
-      confirmButtonText: "Si quiero agregar otro producto",
-      cancelButtonText: `No quiero agregar otro producto`,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        handleReset()
-      } else if (result.isDismissed) {
-        navigate('/mi-almacen/productos', {replace:true})
-      }
-    });
-    dispatch(onClearValues())
-   
-   } catch (error) {
-    enqueueSnackbar(
-      error.response?.data?.message || 'Error al enviar las variantes',
-      {
-        variant: "error",
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "right",
-        },
-      }
-    );
-    
-   }finally{
-    dispatch(stopLoading())
-   }
+      // Añadir texto al FormData
+      formData.append("description", values?.description);
+      formData.append("shortDescription", values?.shortDescription);
+      values?.keywords.forEach((keyword, index) => {
+        formData.append(`seoKeywords`, keyword);
+      });
+      values?.videos.forEach((video, index) => {
+        formData.append(`videos/${video.type}`, video.file);
+      });
 
-  
-
-
-}
-
-
+      const { data } = await instanceApi.post(
+        `/product/addDescriptionAndVideos/${id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      Swal.fire({
+        title: `${data.message}`,
+        text: `¿Quiere agregar otro producto?`,
+        showCancelButton: true,
+        confirmButtonText: "Si quiero agregar otro producto",
+        cancelButtonText: `No quiero agregar otro producto`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          handleReset();
+        } else if (result.isDismissed) {
+          navigate("/mi-almacen/productos", { replace: true });
+        }
+      });
+      dispatch(onClearValues());
+    } catch (error) {
+      enqueueSnackbar(
+        error.response?.data?.message || "Error al enviar las variantes",
+        {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        }
+      );
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
 };
 
 export const StartUpdateMainFeatures = (id, values) => {
   console.log(values);
-  
+
   return async (dispatch) => {
-    dispatch(startLoading())
+    dispatch(startLoading());
     try {
-    const { data } = await instanceApi.post(`/product/updateMainFeatures/${id}`,{values:values}, {
-      headers: {
-       "Content-type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: `${data.message}`,
-      showConfirmButton: false,
-      timer: 1500
-    
-    })
-    dispatch(loadProduct(data.data))
-   } catch (error) {
-    enqueueSnackbar(
-      error.response?.data?.message,
-      {
+      const { data } = await instanceApi.post(
+        `/product/updateMainFeatures/${id}`,
+        { values: values },
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: `${data.message}`,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      dispatch(loadProduct(data.data));
+    } catch (error) {
+      enqueueSnackbar(error.response?.data?.message, {
         variant: "error",
         anchorOrigin: {
           vertical: "top",
           horizontal: "right",
         },
-      }
-    );
-    
-   }finally{
-    dispatch(stopLoading())
-   }
-
+      });
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
   
+};
 
+export const startDelete = (id) => {
 
-}
-
-
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      const { data } = await instanceApi.delete(
+        `/variant-product/${id}`,
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: `${data.message}`,
+        showConfirmButton: false,
+      });
+    } catch (error) {
+      enqueueSnackbar(error.response?.data?.message, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
+  
 };

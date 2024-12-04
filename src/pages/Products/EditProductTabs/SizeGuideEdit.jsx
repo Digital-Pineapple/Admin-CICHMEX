@@ -46,7 +46,7 @@ const style = {
 
 const SizeGuideEdit = () => {
   const { loadSizeGuides, sizeGuides, navigate, dispatch } = useSizeGuide();
-  const { dataStep3, product, loading, loadProduct } = useProducts();
+  const { dataStep3, product, loading, loadProduct, updateSizeGuide } = useProducts();
   const [open, setOpen] = useState(false);
   const [selectedSizeGuide, setSelectedSizeGuide] = useState(product?.size_guide || ""); // Estado para almacenar la guía seleccionada
 
@@ -76,7 +76,7 @@ const SizeGuideEdit = () => {
   });
 
   const onAddSizeGuide = (values) => {
-    dataStep3(product._id, values, handleNext);
+    updateSizeGuide(id, values)
   };
 
   // Si está cargando

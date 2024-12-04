@@ -8,11 +8,13 @@ import {
   editOneProduct,
   finishCreateProduct,
   selectSizeGuide,
+  sizeGuideEdit,
   startAddMultipleEntries,
   startAddMultipleOutputs,
   startAddOneImage,
   startAddProductWithVariants,
   startAddVariantsProduct,
+  startDelete,
   startDeleteOneImage,
   startLoadAllInputs,
   startLoadAllOutputs,
@@ -22,6 +24,7 @@ import {
   startLoadProducts,
   startLoadStockProducts,
   startUpdateThumbnail,
+  startUpdateVariants,
   updateConditionStep,
   updateProductVideos,
 } from "../store/actions/productsActions";
@@ -69,6 +72,8 @@ export const useProducts = () => {
   const deleteProduct = async (id) => dispatch(deleteOneProduct(id));
 
   const cleanProductD = () => dispatch(cleanProductDetail());
+
+  const deleteVariant = ( id ) => dispatch(startDelete(id))
 
   const rowsStockProducts = stockProducts.map((item, _id) => ({
     id: _id.toString(),
@@ -131,6 +136,12 @@ dispatch(startAddProductWithVariants(body, handleNext))
  dispatch(selectSizeGuide(id,size_guide,handleNext))
   }
   
+  const updateSizeGuide = (id, data)=>{
+    const size_guide = data?.size_guide || ""
+ dispatch(sizeGuideEdit(id,size_guide))
+  }
+  
+
   const dataStep4 = (id,data,handleNext) => { 
     const body = {
         variants: []
@@ -197,6 +208,46 @@ dispatch(StartUpdateMainFeatures(id,body))
 
 };
 
+const updateVariants = (id,data) => {
+  
+  const body = {
+      variants: []
+  };
+
+  data.forEach(async(variant) => {
+
+      let values = {
+          _id : null,
+          tag: null,
+          weight: null,
+          price: null,
+          porcentDiscount: null,
+          discountPrice: null,
+          design: null,
+          stock: null,
+          images: [],
+          attributes: { color: null, size: null, material: null }
+      };
+      
+      values.attributes.color = variant.color;
+      values.attributes.size = variant.size;
+      values.tag = variant.tag;
+      values.weight = variant.weight;
+      values.price = variant.price;
+      values.porcentDiscount = variant.porcentDiscount;
+      values.discountPrice = variant.discountPrice;
+      values.design = variant.design.textInput;
+      values.stock = variant.stock;
+      values.images = variant.images;
+      values._id = variant.id
+      
+      body.variants.push(values);
+  });
+
+   dispatch(startUpdateVariants(id,body))
+};
+
+
 
   
   
@@ -238,6 +289,9 @@ dispatch(StartUpdateMainFeatures(id,body))
     dataStep3,
     dataStep4,
     completeStepAddProduct,
-    dataUpdateMainFeatures
+    dataUpdateMainFeatures,
+    updateSizeGuide,
+    updateVariants,
+    deleteVariant
   };
 };

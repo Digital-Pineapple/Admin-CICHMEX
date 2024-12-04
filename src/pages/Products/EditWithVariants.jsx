@@ -10,6 +10,7 @@ import { useProducts } from '../../hooks';
 import MainFeaturesEdit from './EditProductTabs/MainFeaturesEdit';
 import DimensionsGuide from './StepNewProduct/DimensionsGuide';
 import SizeGuideEdit from './EditProductTabs/SizeGuideEdit';
+import VariantsAndPhotos from './EditProductTabs/VariantsAndPhotos';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -34,8 +35,7 @@ function TabPanel(props) {
 const EditWithVariants = () => {
   const theme = useTheme();
   const [value, setValue] = useState(0);
-  const {id} = useParams()
-  const {loadProduct, product} = useProducts()
+  const { product} = useProducts()
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -68,7 +68,8 @@ const EditWithVariants = () => {
           variant="fullWidth"
         >
           <Tab label="Características Principales"  />
-          <Tab label="Guía de dimensiones"  />
+          <Tab label="Guía de dimensiones"/>
+          <Tab label="Variantes"/>
         </Tabs>
       </AppBar>
         <TabPanel value={value} index={0} dir={theme.direction}>
@@ -76,6 +77,9 @@ const EditWithVariants = () => {
         </TabPanel> 
         <TabPanel value={value} index={1} dir={theme.direction}>
         <SizeGuideEdit/>
+        </TabPanel> 
+        <TabPanel value={value} index={2} dir={theme.direction}>
+        <VariantsAndPhotos/>
         </TabPanel> 
     </Grid>
   );

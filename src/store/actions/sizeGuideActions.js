@@ -31,6 +31,34 @@ export const startLoadSizeGuides = () => {
   }
 }
 
+export const startLoadOneSizeGuide = (id) => {
+  return async (dispatch) => {
+    dispatch(startLoading())
+    try {
+      const { data } = await instanceApi.get(`/size-guide/${id}`, {
+        headers: {
+          "Content-type": "application/json",
+           "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      },
+      });
+      
+      dispatch(loadOneSizeGuide(data.data));
+    } catch (error) {
+      enqueueSnackbar(`${error.response.data.message}`,{
+        anchorOrigin:{
+          horizontal:'center',
+          vertical:'top'
+        },
+        autoHideDuration:500,
+        variant:'error',
+        TransitionComponent:Zoom,
+      })
+    } finally{
+        dispatch(stopLoading())
+    }
+  }
+}
+
 export const startAddOneSizeGuide = (values) => {
   
   return async (dispatch) => {
