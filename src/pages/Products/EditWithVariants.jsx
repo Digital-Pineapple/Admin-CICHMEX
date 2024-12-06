@@ -11,6 +11,7 @@ import MainFeaturesEdit from './EditProductTabs/MainFeaturesEdit';
 import DimensionsGuide from './StepNewProduct/DimensionsGuide';
 import SizeGuideEdit from './EditProductTabs/SizeGuideEdit';
 import VariantsAndPhotos from './EditProductTabs/VariantsAndPhotos';
+import DescriptionAndVideosEdit from './EditProductTabs/DescriptionAndVideosEdit';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -70,6 +71,7 @@ const EditWithVariants = () => {
           <Tab label="Características Principales"  />
           <Tab label="Guía de dimensiones"/>
           <Tab label="Variantes"/>
+          <Tab label="Descripción y video"/>
         </Tabs>
       </AppBar>
         <TabPanel value={value} index={0} dir={theme.direction}>
@@ -80,6 +82,9 @@ const EditWithVariants = () => {
         </TabPanel> 
         <TabPanel value={value} index={2} dir={theme.direction}>
         <VariantsAndPhotos/>
+        </TabPanel> 
+        <TabPanel value={value} index={3} dir={theme.direction}>
+        <DescriptionAndVideosEdit/>
         </TabPanel> 
     </Grid>
   );
