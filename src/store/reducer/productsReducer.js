@@ -60,6 +60,13 @@ export const productsReducer = createSlice({
     onClearValues(state) {
       state.dataProduct = [];
     },
+    updateVariant(state, {payload}) {
+      state.product.variants = state.product.variants.map((variant)=>{
+        if (variant._id === payload._id) {
+          return {...payload}
+        }
+      })
+    },
     editProduct: (state, { payload }) => {
       state.products = state.products.map((product) => {
         if (product._id === payload._id) {
@@ -100,6 +107,7 @@ export const {
   stopLoadingUpdate,
   onStepNewProduct,
   onClearValues,
+  updateVariant,
 } = productsReducer.actions;
 
 export default productsReducer.reducer;

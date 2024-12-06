@@ -15,6 +15,7 @@ import {
   startAddProductWithVariants,
   startAddVariantsProduct,
   startDelete,
+  startDeleteImageVariant,
   startDeleteOneImage,
   startLoadAllInputs,
   startLoadAllOutputs,
@@ -247,6 +248,8 @@ const updateVariants = (id,data) => {
    dispatch(startUpdateVariants(id,body))
 };
 
+const deleteImageVariant = ( variant_id , image_id ) =>  dispatch(startDeleteImageVariant(variant_id,image_id))
+
 
 
   
@@ -292,6 +295,7 @@ const updateVariants = (id,data) => {
     dataUpdateMainFeatures,
     updateSizeGuide,
     updateVariants,
-    deleteVariant
+    deleteVariant,
+    deleteImageVariant
   };
 };

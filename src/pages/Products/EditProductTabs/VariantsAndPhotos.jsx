@@ -67,7 +67,7 @@ const style = {
 };
 
 const VariantsAndPhotos = () => {
-  const { updateVariants, product, loading, loadProduct, deleteVariant } = useProducts();
+  const { updateVariants, product, loading, loadProduct, deleteVariant, deleteImageVariant } = useProducts();
   const [valueVariants, setValueVariants] = useState([]); // Array to hold variants
   const [collapseOpen, setCollapseOpen] = useState([]); // Array to track the open/close state of each variant
   const [open, setOpen] = useState({ image: null, value: false });
@@ -93,39 +93,43 @@ const VariantsAndPhotos = () => {
   const DefaultValues = (data) => ({
     variants:
       data?.variants?.map((variant, index) => ({
-        id: variant._id || uuidv4(), // Asegúrate de que cada variante tenga un ID único
-        weight: variant.weight || "",
-        design: { textInput: variant.design, checkbox: false } || {
+        id: variant?._id || uuidv4(), // Asegúrate de que cada variante tenga un ID único
+        weight: variant?.weight || "",
+        design: { textInput: variant?.design, checkbox: false } || {
           textInput: "",
           checkbox: true,
         },
-        color: variant.attributes.color || "",
-        images: variant.images || [],
+        color: variant?.attributes?.color || "",
+        images: variant?.images || [],
         size: variant?.attributes?.size || "",
-        price: variant.price || 0,
-        porcentDiscount: variant.porcentDiscount || 0,
-        discountPrice: variant.discountPrice || 0,
-        stock: variant.stock || null,
-        tag: variant.tag || null,
+        price: variant?.price || 0,
+        porcentDiscount: variant?.porcentDiscount || 0,
+        discountPrice: variant?.discountPrice || 0,
+        stock: variant?.stock || null,
+        tag: variant?.tag || null,
       })) || [],
   });
-  useEffect(() => {
-    const info = DefaultValues(product); // dataProduct debe contener los IDs
-    setValueVariants(info.variants);
-    loadOneSizeGuide(product.size_guide);
-  }, [product]);
 
-
-  const {
+    const {
     control,
     handleSubmit,
     setValue,
     getValues,
     watch,
-    // reset,
+    reset,
     formState: { errors },
     unregister,
   } = useForm({ defaultValues: DefaultValues(product) });
+
+  useEffect(() => {
+    const info = DefaultValues(product);
+    setValueVariants(info.variants);
+    loadOneSizeGuide(product.size_guide);
+    console.log('actualiza');
+  }, [product]);
+
+
+
 
   const handleCheckboxChange = (variant, checked, index) => {
     setValue(`variants[${index}].design.checkbox`, checked);
@@ -169,7 +173,6 @@ const VariantsAndPhotos = () => {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-      
           deleteVariant(id)
         const ChangeDelete = valueVariants.filter((item) => item.id !== id);
         setValueVariants(ChangeDelete);
@@ -219,16 +222,16 @@ const VariantsAndPhotos = () => {
     ]);
   };
 
-  const removeImage = (preview, index, i) => {
-    const variantImages = watch(`variants.[${index}].images`);
-    let updateImages = variantImages.filter((item, index) => index !== i);
-    setValue(`variants.[${index}].images`, updateImages);
-  };
-
   const imagesArray = (indexVariant) => {
     const images = watch(`variants[${indexVariant}].images`);
     return Array.isArray(images) ? images : [];
   };
+  const removeImage = (variant_id, image_id, indexVariant) => {
+    console.log(variant_id, image_id);
+    
+    deleteImageVariant(variant_id, image_id);
+  };
+
 
   const onSubmit = ({ variants }) => {
     Swal.fire({
@@ -241,7 +244,6 @@ const VariantsAndPhotos = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         updateVariants(id,variants)
-        // dataStep4(product._id, variants, handleNext);
       }
     });
   };
@@ -915,7 +917,7 @@ const VariantsAndPhotos = () => {
                                       }}
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        removeImage(preview, index, i);
+                                        removeImage(item?.id, preview?._id, index);
                                       }}
                                     >
                                       <Delete fontSize="small" />

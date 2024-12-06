@@ -16,6 +16,7 @@ import {
   stopLoadingUpdate,
   onStepNewProduct,
   onClearValues,
+  updateVariant,
 } from "../reducer/productsReducer";
 import {
   headerConfigApplication,
@@ -714,6 +715,67 @@ async function buildFormDataWithFiles(data) {
 
   return formData;
 }
+
+async function buildFormDataWithFilesUpdate(data) {
+  const formData = new FormData();
+
+  for (const key in data) {
+    if (data[key] === null || data[key] === undefined) continue;
+
+    if (Array.isArray(data[key])) {
+      for (const [index, item] of data[key].entries()) {
+        if (key === "variants") {
+          const variantKey = `${key}[${index}]`;
+          for (const [subKey, subValue] of Object.entries(item)) {
+            if (subKey === "images") {
+              for (const [imgIndex, img] of subValue.entries()) {
+                if (img?.url?.startsWith("https")) {
+                  // Si la imagen ya tiene una URL HTTPS, solo enviamos la posición
+                  formData.append(
+                    `${variantKey}[${subKey}][${imgIndex}]`,
+                    img.url
+                  );
+                } else if (img?.filePreview) {
+                  // Si es una nueva imagen, convertimos y enviamos el archivo
+                  const file = await blobUrlToFile(
+                    img.filePreview,
+                    `imagen-${index}-${imgIndex}.jpeg`
+                  );
+                  formData.append(`${variantKey}[${subKey}][${imgIndex}]`, file);
+                }
+              }
+            } else if (subKey === "attributes") {
+              for (const [attrKey, attrValue] of Object.entries(subValue)) {
+               
+                if (attrKey === 'color') {
+                  // Solo agrega el nombre del color
+                  formData.append(`${variantKey}[${subKey}][${attrKey}]`, attrValue.name ? attrValue.name : attrValue);
+                } else {
+                  // Agrega otros atributos normalmente
+                  formData.append(`${variantKey}[${subKey}][${attrKey}]`, attrValue);
+                }
+              }
+            } else {
+              formData.append(`${variantKey}[${subKey}]`, subValue);
+            }
+          }
+        } else if (key === "videos") {
+          const videoKey = `${key}[${index}]`;
+          const file = await blobUrlToFile(item.file, `video-${index}.mp4`);
+          formData.append(`${videoKey}[file]`, file);
+          formData.append(`${videoKey}[type]`, item.type);
+        } else {
+          formData.append(`${key}[${index}]`, item);
+        }
+      }
+    } else {
+      formData.append(key, data[key]);
+    }
+  }
+
+  return formData;
+}
+
 export const startAddProductWithVariants = (values, handleNext) => {
   return async (dispatch) => {
     try {
@@ -942,12 +1004,11 @@ export const startAddVariantsProduct = (id, values, handleNext) => {
 
 export const startUpdateVariants = (id, values) => {
   return async (dispatch) => {
+    
     dispatch(startLoading());
     try {
       // Construcción del FormData
-      const variants = await buildFormDataWithFiles(values);
-      // Petición al backend
-      console.log(variants);
+      const variants = await buildFormDataWithFilesUpdate(values);
       
       const { data } = await instanceApi.post(
         `/product/updateVariants/${id}`,
@@ -960,8 +1021,10 @@ export const startUpdateVariants = (id, values) => {
         }
       );
 
+      console.log(data);
+      
       // Actualización del estado en Redux
-      dispatch(onStepNewProduct(data.data));
+      dispatch(loadProduct(data.data));
 
       // Notificación de éxito
       enqueueSnackbar(`${data.message}`, {
@@ -972,10 +1035,9 @@ export const startUpdateVariants = (id, values) => {
         },
       });
 
-      // Avanzar al siguiente paso
-      handleNext();
     } catch (error) {
-      // Manejo de errores con notificación
+      console.log(error);
+      
       enqueueSnackbar(
         error.response?.data?.message || "Error al enviar las variantes",
         {
@@ -1050,8 +1112,6 @@ export const finishCreateProduct = (id, values, navigate, handleReset) => {
 };
 
 export const StartUpdateMainFeatures = (id, values) => {
-  console.log(values);
-
   return async (dispatch) => {
     dispatch(startLoading());
     try {
@@ -1121,4 +1181,43 @@ export const startDelete = (id) => {
     }
   };
   
+};
+
+export const startDeleteImageVariant = (variant_id , image_id) => {
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      const { data } = await instanceApi.post(
+        `/variant-product/delete-image/${variant_id}`,
+        {image_id:image_id},
+        {
+          headers: {
+            "Content-Type":"application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      dispatch(updateVariant(data.data))
+      enqueueSnackbar(`${data.message}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    } catch (error) {
+      enqueueSnackbar(
+        error.response?.data?.message || "Error al enviar las variantes",
+        {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        }
+      );
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
 };
