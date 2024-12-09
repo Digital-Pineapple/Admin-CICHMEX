@@ -541,7 +541,6 @@ export const startDeleteOneVideo = (id, video_id) => {
           },
         }
       );
-
       dispatch(loadProduct(data.data));
       enqueueSnackbar(`${data.message}`, {
         variant: "success",
@@ -689,10 +688,14 @@ async function buildFormDataWithFiles(data) {
               }
             } else if (subKey === "attributes") {
               for (const [attrKey, attrValue] of Object.entries(subValue)) {
-                formData.append(
-                  `${variantKey}[${subKey}][${attrKey}]`,
-                  attrValue
-                );
+               
+                if (attrKey === 'color') {
+                  // Solo agrega el nombre del color
+                  formData.append(`${variantKey}[${subKey}][${attrKey}]`, attrValue.name ? attrValue.name : attrValue);
+                } else {
+                  // Agrega otros atributos normalmente
+                  formData.append(`${variantKey}[${subKey}][${attrKey}]`, attrValue);
+                }
               }
             } else {
               formData.append(`${variantKey}[${subKey}]`, subValue);
@@ -1020,10 +1023,6 @@ export const startUpdateVariants = (id, values) => {
           },
         }
       );
-
-      console.log(data);
-      
-      // Actualización del estado en Redux
       dispatch(loadProduct(data.data));
 
       // Notificación de éxito
@@ -1097,6 +1096,58 @@ export const finishCreateProduct = (id, values, navigate, handleReset) => {
     } catch (error) {
       enqueueSnackbar(
         error.response?.data?.message || "Error al enviar las variantes",
+        {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        }
+      );
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
+};
+
+export const startUpdateDescription = (id, values) => {
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      const formData = new FormData();
+
+      // Añadir texto al FormData
+      formData.append("description", values?.description);
+      formData.append("shortDescription", values?.shortDescription);
+      values?.keywords.forEach((keyword, index) => {
+        formData.append(`seoKeywords`, keyword);
+      });
+      // values?.videos.forEach((video, index) => {
+      //   formData.append(`videos/${video.type}`, video.file);
+      // });
+
+      const { data } = await instanceApi.post(
+        `/product/addDescriptionAndVideos/${id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+    
+      dispatch(loadProduct(data.data));
+      enqueueSnackbar(data?.message, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    } catch (error) {
+      enqueueSnackbar(
+        error.response?.data?.message || "Error editar",
         {
           variant: "error",
           anchorOrigin: {

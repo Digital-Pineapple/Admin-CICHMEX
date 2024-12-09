@@ -91,14 +91,14 @@ const SizeGuideEdit = () => {
     <>
       <Grid container spacing={0}>
         <Grid item xs={12}>
-          <Button
+          {/* <Button
             variant="contained"
             onClick={() => loadProduct(id)}
             color="primary"
             startIcon={<Refresh />}
           >
             Recargar
-          </Button>
+          </Button> */}
         </Grid>
         <Grid
           item

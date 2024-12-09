@@ -60,7 +60,7 @@ const EditWithVariants = () => {
         Editar Producto {product?.name}
         </Typography>
       </Grid>
-      <AppBar position="static">
+      <AppBar position="static" sx={{borderRadius:'10px'}} >
         <Tabs
           value={value}
           onChange={handleChange}

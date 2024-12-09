@@ -22,13 +22,15 @@ import { useProducts } from "../../../hooks";
 import useVideos from "../../../hooks/useVideos";
 import LoadingScreenBlue from "../../../components/ui/LoadingScreenBlue";
 import { useParams } from "react-router-dom";
+import LoadingVideoUpload from "../../../components/ui/LoadingVideoUpload";
 
-const DescriptionAndVideosEdit = () =>  {
-    const {  loading, product, loadProduct } = useProducts();
-    const {id} = useParams()
-    useEffect(() => {
-    loadProduct(id)
-    }, [id])
+const DescriptionAndVideosEdit = () => {
+  const { loading, product, loadProduct, updateDescription } = useProducts();
+  const { id } = useParams();
+  useEffect(() => {
+    loadProduct(id);
+  }, [id]);
+
   const DefaultValues = (data) => ({
     fields: [
       {
@@ -39,7 +41,7 @@ const DescriptionAndVideosEdit = () =>  {
       {
         id: "shortDescription",
         name: "Descripción corta*",
-        textInput: data?.model || "",
+        textInput: data?.shortDescription || "",
         checkbox: false,
       },
       {
@@ -49,7 +51,6 @@ const DescriptionAndVideosEdit = () =>  {
         values: data?.seoKeywords || [],
       },
     ],
-    videos: data.videos || [],
   });
 
   const {
@@ -60,12 +61,13 @@ const DescriptionAndVideosEdit = () =>  {
     watch,
     formState: { errors },
   } = useForm({ defaultValues: DefaultValues(product) });
-  const { videos, handleVideoChange, error, deleteVideo } = useVideos();
+  const { error, deleteVideoDetail, isLoading, handleSubmitVideo } =
+    useVideos();
 
   const fieldValues = watch("fields");
   const chips = watch("fields[2].values") || [];
+  const videos = product?.videos || []
   const [inputValue, setInputValue] = useState("");
-
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter" && inputValue.trim()) {
@@ -82,39 +84,30 @@ const DescriptionAndVideosEdit = () =>  {
   };
 
   const onSubmit = (data) => {
-  
     const info = () => {
       let newValues = {};
       data.fields.forEach((i) => {
-        if (i.id === 'description') {
+
+        if (i.id === "description") {
           newValues.description = i.textInput; // Asignación correcta
         }
-        if (i.id === 'shortDescription') {
+        if (i.id === "shortDescription") {
           newValues.shortDescription = i.textInput; // Asignación correcta
         }
-        if (i.id === 'seoKeywords') {
+        if (i.id === "seoKeywords") {
           newValues.keywords = i.values; // Asignación correcta
         }
       });
       return newValues;
     };
-    const allInfo = {
-      ...info(),
-      videos : [...videos]
-    }
-  console.log(allInfo);
-  
+    updateDescription(id, info());
   };
-  
-
 
   const videoVertical = videos.filter((i) => i.type === "vertical");
   const videoHorizontal = videos.filter((i) => i.type === "horizontal");
 
   if (loading) {
-    return (
-      <LoadingScreenBlue/>
-    )
+    return <LoadingScreenBlue />;
   }
 
   return (
@@ -206,52 +199,60 @@ const DescriptionAndVideosEdit = () =>  {
           container
           padding={1}
           spacing={2}
-          display={'flex'}
+          display={"flex"}
           direction="row"
           justifyContent="center"
           width={"100%"}
-         
         >
-          <Grid item  display={!!videoVertical[0] ? 'none':'block'} xs={6} alignContent={"center"}>
-            <Controller
-              control={control}
-              name={`videos`}
-              render={({ field: { name, ref, onBlur } }) => {
-                const [isDragging, setIsDragging] = useState(false);
+          <Grid
+            item
+            display={!!videoVertical[0] ? "none" : "block"}
+            xs={6}
+            alignContent={"center"}
+          >
+            {isLoading ? (
+              <LoadingVideoUpload />
+            ) : (
+              <Controller
+                control={control}
+                name={`videos`}
+                render={({ field: { name, ref, onBlur } }) => {
+                  const [isDragging, setIsDragging] = useState(false);
 
-                const handleDragOver = (event) => {
-                  event.preventDefault();
-                  setIsDragging(true);
-                };
+                  const handleDragOver = (event) => {
+                    event.preventDefault();
+                    setIsDragging(true);
+                  };
 
-                const handleDragLeave = () => {
-                  setIsDragging(false);
-                };
+                  const handleDragLeave = () => {
+                    setIsDragging(false);
+                  };
 
-                const handleDrop = (event) => {
-                  event.preventDefault();
-                  setIsDragging(false);
-                  const droppedFiles = event.dataTransfer.files;
-                  if (droppedFiles.length) {
-                    handleVideoChange(
-                      { target: { files: droppedFiles } },
-                      "vertical"
-                    );
-                  }
-                };
+                  const handleDrop = (event) => {
+                    event.preventDefault();
+                    setIsDragging(false);
+                    const droppedFiles = event.dataTransfer.files;
+                    if (droppedFiles.length) {
+                      handleSubmitVideo(
+                        id,
+                        { target: { files: droppedFiles } },
+                        "vertical"
+                      );
+                    }
+                  };
 
-                return (
-                  <Box
-                    display="flex"
-                    flexDirection="column"
-                    alignItems="center"
-                    component="label"
-                    htmlFor={`videoVerticalInput`}
-                    sx={{ cursor: "pointer" }}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                  >
+                  return (
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="center"
+                      component="label"
+                      htmlFor={`videoVerticalInput`}
+                      sx={{ cursor: "pointer" }}
+                      onDragOver={handleDragOver}
+                      onDragLeave={handleDragLeave}
+                      onDrop={handleDrop}
+                    >
                       <Box
                         sx={{
                           position: "relative",
@@ -284,195 +285,240 @@ const DescriptionAndVideosEdit = () =>  {
                           ref={ref}
                           onBlur={onBlur}
                           name={name}
-                          onChange={(e) => handleVideoChange(e, "vertical")}
+                          onChange={(e) => handleSubmitVideo(id, e, "vertical")}
                           style={{ display: "none" }}
                           accept="video/mp4"
                         />
                       </Box>
-                    
-                  </Box>
-                );
-              }}
-            />
+                    </Box>
+                  );
+                }}
+              />
+            )}
           </Grid>
 
-          <Grid item  display={!!videoHorizontal[0] ? 'none':'block'} xs={6} alignContent={"center"}>
-            <Controller
-              control={control}
-              name={`videos`}
-              render={({ field: { name, ref, onBlur } }) => {
-                const [isDragging, setIsDragging] = useState(false);
+          <Grid
+            item
+            display={!!videoHorizontal[0] ? "none" : "block"}
+            xs={6}
+            alignContent={"center"}
+          >
+            {isLoading ? (
+              <LoadingVideoUpload />
+            ) : (
+              <Controller
+                control={control}
+                name={`videos`}
+                render={({ field: { name, ref, onBlur } }) => {
+                  const [isDragging, setIsDragging] = useState(false);
 
-                const handleDragOver = (event) => {
-                  event.preventDefault();
-                  setIsDragging(true);
-                };
+                  const handleDragOver = (event) => {
+                    event.preventDefault();
+                    setIsDragging(true);
+                  };
 
-                const handleDragLeave = () => {
-                  setIsDragging(false);
-                };
+                  const handleDragLeave = () => {
+                    setIsDragging(false);
+                  };
 
-                const handleDrop = (event) => {
-                  event.preventDefault();
-                  setIsDragging(false);
-                  const droppedFiles = event.dataTransfer.files;
-                  if (droppedFiles.length) {
-                    handleVideoChange(
-                      { target: { files: droppedFiles } },
-                      "horizontal"
-                    );
-                  }
-                };
+                  const handleDrop = (event) => {
+                    event.preventDefault();
+                    setIsDragging(false);
+                    const droppedFiles = event.dataTransfer.files;
+                    if (droppedFiles.length) {
+                      handleSubmitVideo(
+                        id,
+                        { target: { files: droppedFiles } },
+                        "horizontal"
+                      );
+                    }
+                  };
 
-                return (
-                  <Box
-                    display="flex"
-                    flexDirection="column"
-                    alignItems="center"
-                    component="label"
-                    htmlFor={`videoHorizontalInput`}
-                    sx={{ cursor: "pointer" }}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
+                  return (
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="center"
+                      component="label"
+                      htmlFor={`videoHorizontalInput`}
+                      sx={{ cursor: "pointer" }}
+                      onDragOver={handleDragOver}
+                      onDragLeave={handleDragLeave}
+                      onDrop={handleDrop}
+                    >
+                      {!!videoHorizontal[0] ? (
+                        ""
+                      ) : (
+                        <Box
+                          sx={{
+                            position: "relative",
+                            backgroundColor: isDragging ? "#bbdefb" : "#e1f5fe",
+                            width: "100%",
+                            minHeight: "150px",
+                            padding: "30px 70px",
+                            borderRadius: "20px",
+                            border: "2px dashed #bbdefb",
+                            boxShadow: "0px 0px 200px -50px #90caf9",
+                            textAlign: "center",
+                            transition: "background-color 0.3s ease-in-out",
+                            "&:hover": {
+                              backgroundColor: "#bbdefb",
+                              border: "2px dashed #42a5f5",
+                            },
+                          }}
+                        >
+                          <Typography variant="body2" color="inherit">
+                            <VideoCall style={{ color: "#42a5f5" }} />
+                            <strong style={{ color: "#42a5f5" }}>
+                              Seleccionar o arrastrar Horizontal video aquí
+                            </strong>
+                            <br />
+                            Sube tu video max 10 MB de peso.
+                          </Typography>
+                          <input
+                            id={`videoHorizontalInput`}
+                            type="file"
+                            ref={ref}
+                            onBlur={onBlur}
+                            name={name}
+                            onChange={(e) =>
+                              handleSubmitVideo(id, e, "horizontal")
+                            }
+                            style={{ display: "none" }}
+                            accept="video/mp4"
+                          />
+                        </Box>
+                      )}
+                    </Box>
+                  );
+                }}
+              />
+            )}
+          </Grid>
+
+          <Grid
+            item
+            xs={6}
+            display={!!videoHorizontal[0] ? "flex" : "none"}
+            alignItems={"center"}
+            alignContent={"center"}
+            flexDirection="column"
+          >
+            {isLoading ? (
+              <LoadingVideoUpload />
+            ) : (
+              <>
+                <Typography
+                  variant="body1"
+                  textAlign={"center"}
+                  color="inherit"
+                >
+                  Video Horizontal
+                </Typography>
+                <Grid
+                  position="relative"
+                  width="300px"
+                  height="300px"
+                  border="1px solid #ccc"
+                  borderRadius="4px"
+                  overflow="hidden"
+                  marginX={1}
+                >
+                  <video
+                    src={
+                      videoHorizontal[0]?.filePreview || videoHorizontal[0]?.url
+                    }
+                    controls
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
+                    }}
+                  />
+                  <IconButton
+                    size="small"
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      right: 0,
+                      color: "red",
+                      backgroundColor: "white",
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteVideoDetail(id, videoHorizontal[0]?._id);
+                    }}
                   >
-                    {!!videoHorizontal[0] ? (
-                      ""
-                    ) : (
-                      <Box
-                        sx={{
-                          position: "relative",
-                          backgroundColor: isDragging ? "#bbdefb" : "#e1f5fe",
-                          width: "100%",
-                          minHeight: "150px",
-                          padding: "30px 70px",
-                          borderRadius: "20px",
-                          border: "2px dashed #bbdefb",
-                          boxShadow: "0px 0px 200px -50px #90caf9",
-                          textAlign: "center",
-                          transition: "background-color 0.3s ease-in-out",
-                          "&:hover": {
-                            backgroundColor: "#bbdefb",
-                            border: "2px dashed #42a5f5",
-                          },
-                        }}
-                      >
-                        <Typography variant="body2" color="inherit">
-                          <VideoCall style={{ color: "#42a5f5" }} />
-                          <strong style={{ color: "#42a5f5" }}>
-                            Seleccionar o arrastrar Horizontal video aquí
-                          </strong>
-                          <br />
-                          Sube tu video max 10 MB de peso.
-                        </Typography>
-                        <input
-                          id={`videoHorizontalInput`}
-                          type="file"
-                          ref={ref}
-                          onBlur={onBlur}
-                          name={name}
-                          onChange={(e) => handleVideoChange(e, "horizontal")}
-                          style={{ display: "none" }}
-                          accept="video/mp4"
-                        />
-                      </Box>
-                    )}
-                  </Box>
-                );
-              }}
-            />
+                    <Delete fontSize="small" />
+                  </IconButton>
+                </Grid>
+              </>
+            )}
           </Grid>
 
-          <Grid item xs={6} display={!!videoHorizontal[0] ? 'flex':'none'} alignItems={'center'} alignContent={'center'} flexDirection="column">
-            
-              
-              <Typography variant="body1" textAlign={'center'}  color="inherit">Video Horizontal</Typography>
-              <Grid
-                position="relative"
-                width="300px"
-                height="300px"
-                border="1px solid #ccc"
-                borderRadius="4px"
-                overflow="hidden"
-                marginX={1}
-              >
-                <video
-                  src={videoHorizontal[0]?.filePreview}
-                  controls
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "contain",
-                  }}
-                />
-                <IconButton
-                  size="small"
-                  sx={{
-                    position: "absolute",
-                    top: 0,
-                    right: 0,
-                    color: "red",
-                    backgroundColor: "white",
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteVideo("horizontal");
-                  }}
+          <Grid
+            item
+            xs={6}
+            display={!!videoVertical[0] ? "flex" : "none"}
+            alignItems={"center"}
+            alignContent={"center"}
+            flexDirection="column"
+          >
+            {isLoading ? (
+              <LoadingVideoUpload />
+            ) : (
+              <>
+                <Typography
+                  variant="body1"
+                  textAlign={"center"}
+                  color="inherit"
                 >
-                  <Delete fontSize="small" />
-                </IconButton>
-              </Grid>
-              
-           
-          </Grid>
+                  Video vertical
+                </Typography>
 
-          <Grid item xs={6}  display={!!videoVertical[0] ? 'flex':'none'} alignItems={'center'} alignContent={'center'} flexDirection="column">
-  
-            <Typography variant="body1" textAlign={'center'}  color="inherit">Video vertical</Typography>
-          
-              <Grid
-                position="relative"
-                width="250px"
-                height="250px"
-                border="1px solid #ccc"
-                borderRadius="4px"
-                overflow="hidden"
-                marginX={1}
-              >
-                <video
-                  src={videoVertical[0]?.filePreview}
-                  controls
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "contain",
-                  }}
-                />
-                <IconButton
-                  size="small"
-                  sx={{
-                    position: "absolute",
-                    top: 0,
-                    right: 0,
-                    color: "red",
-                    backgroundColor: "white",
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteVideo("vertical");
-                  }}
+                <Grid
+                  position="relative"
+                  width="250px"
+                  height="250px"
+                  border="1px solid #ccc"
+                  borderRadius="4px"
+                  overflow="hidden"
+                  marginX={1}
                 >
-                  <Delete fontSize="small" />
-                </IconButton>
-              </Grid>
-         
+                  <video
+                    src={videoVertical[0]?.filePreview || videoVertical[0]?.url}
+                    controls
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
+                    }}
+                  />
+                  <IconButton
+                    size="small"
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      right: 0,
+                      color: "red",
+                      backgroundColor: "white",
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteVideoDetail(id, videoVertical[0]?._id);
+                    }}
+                  >
+                    <Delete fontSize="small" />
+                  </IconButton>
+                </Grid>
+              </>
+            )}
           </Grid>
 
           <FormControl>
             <FormHelperText error={!!error}>{error}</FormHelperText>
           </FormControl>
         </Grid>
-
       </CardContent>
       <CardActions>
         {/* <Button onClick={handleBack}>Cancelar</Button> */}
@@ -484,6 +530,4 @@ const DescriptionAndVideosEdit = () =>  {
   );
 };
 
-
-export default DescriptionAndVideosEdit
-
+export default DescriptionAndVideosEdit;

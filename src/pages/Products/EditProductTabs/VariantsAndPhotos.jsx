@@ -14,9 +14,7 @@ import {
   NavigateNext,
   OpenInFull,
   Replay,
-  Star,
   UploadFile,
-  VideoCall,
 } from "@mui/icons-material";
 import {
   Collapse,
@@ -122,10 +120,9 @@ const VariantsAndPhotos = () => {
   } = useForm({ defaultValues: DefaultValues(product) });
 
   useEffect(() => {
+    loadOneSizeGuide(product.size_guide);
     const info = DefaultValues(product);
     setValueVariants(info.variants);
-    loadOneSizeGuide(product.size_guide);
-    console.log('actualiza');
   }, [product]);
 
 
@@ -227,8 +224,6 @@ const VariantsAndPhotos = () => {
     return Array.isArray(images) ? images : [];
   };
   const removeImage = (variant_id, image_id, indexVariant) => {
-    console.log(variant_id, image_id);
-    
     deleteImageVariant(variant_id, image_id);
   };
 

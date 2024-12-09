@@ -24,6 +24,7 @@ import {
   startLoadOutputsProduct,
   startLoadProducts,
   startLoadStockProducts,
+  startUpdateDescription,
   startUpdateThumbnail,
   startUpdateVariants,
   updateConditionStep,
@@ -250,6 +251,10 @@ const updateVariants = (id,data) => {
 
 const deleteImageVariant = ( variant_id , image_id ) =>  dispatch(startDeleteImageVariant(variant_id,image_id))
 
+const updateDescription = (id,data) => {
+  dispatch(startUpdateDescription(id,data))
+};
+
 
 
   
@@ -296,6 +301,7 @@ const deleteImageVariant = ( variant_id , image_id ) =>  dispatch(startDeleteIma
     updateSizeGuide,
     updateVariants,
     deleteVariant,
-    deleteImageVariant
+    deleteImageVariant,
+    updateDescription
   };
 };

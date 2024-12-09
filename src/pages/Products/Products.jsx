@@ -234,7 +234,10 @@ const Products = () => {
                   aria-label="Editar"
                   color="success"
                   onClick={() =>
-                    navigate(`/mi-almacen/productos/editar/${params.row._id}`)
+                    params.row.variants ? 
+                    (navigate(`/mi-almacen/productos/editar/${params.row._id}`))
+                   :            
+                   ( navigate(`/mi-almacen/producto-variantes/editar/${params.row._id}`))
                   }
                 >
                   <Edit />
@@ -254,7 +257,7 @@ const Products = () => {
         ]}
         initialState={{
           sorting: {
-            sortModel: [{ field: "name", sort: "desc" }],
+            sortModel: [{ field: "createdAt", sort: "desc" }],
           },
           pagination: {
             paginationModel: { pageSize: 20 },
