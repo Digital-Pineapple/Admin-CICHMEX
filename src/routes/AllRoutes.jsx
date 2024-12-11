@@ -27,7 +27,6 @@ import Memberships from "../pages/Membership/Memberships";
 import CreateMembership from "../pages/Membership/Create";
 import EditMembership from "../pages/Membership/Edit";
 import Products from "../pages/Products/Products";
-import CreateProduct from "../pages/Products/Create";
 import EditProduct from "../pages/Products/Edit";
 import StoreHouse from "../pages/StoreHouse/StoreHouse";
 import CreateStoreHouse from "../pages/StoreHouse/Create";
@@ -78,6 +77,7 @@ import DimensionsGuide from "../pages/Products/StepNewProduct/DimensionsGuide";
 import TableGuides from "../pages/SizeDimensions/TableGuides";
 import DescriptionsAndVideo from "../pages/Products/StepNewProduct/DescriptionsAndVideo";
 import EditWithVariants from "../pages/Products/EditWithVariants";
+import CreateWithVariants from "../pages/Products/CreateWithVariants";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -121,7 +121,7 @@ export const AllRoutes = [
   { id: 30, element: <EditMembership /> },
 
   { id: 31, element: <Products /> },
-   { id: 32, element: <CreateProduct /> },
+   { id: 32, element: <CreateWithVariants /> },
   
  
   { id: 33, element: <EditProduct /> },

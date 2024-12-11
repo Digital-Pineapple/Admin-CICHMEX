@@ -249,7 +249,7 @@ const updateVariants = (id,data) => {
    dispatch(startUpdateVariants(id,body))
 };
 
-const deleteImageVariant = ( variant_id , image_id ) =>  dispatch(startDeleteImageVariant(variant_id,image_id))
+const deleteImageVariant = ( variant_id , image_id  ) =>  dispatch(startDeleteImageVariant(variant_id,image_id))
 
 const updateDescription = (id,data) => {
   dispatch(startUpdateDescription(id,data))

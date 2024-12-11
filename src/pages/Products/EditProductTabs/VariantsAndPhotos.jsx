@@ -120,9 +120,12 @@ const VariantsAndPhotos = () => {
   } = useForm({ defaultValues: DefaultValues(product) });
 
   useEffect(() => {
+    setValue('variants',[])
     loadOneSizeGuide(product.size_guide);
     const info = DefaultValues(product);
     setValueVariants(info.variants);
+    setValue('variants', info.variants)
+    
   }, [product]);
 
 
@@ -223,8 +226,28 @@ const VariantsAndPhotos = () => {
     const images = watch(`variants[${indexVariant}].images`);
     return Array.isArray(images) ? images : [];
   };
-  const removeImage = (variant_id, image_id, indexVariant) => {
-    deleteImageVariant(variant_id, image_id);
+  const removeImage = (variant_id, image, indexVariant) => {
+    const currentImages = watch(`variants[${indexVariant}].images`) || [];
+    const startName = image.split(':')
+    let start = startName[0]
+
+    if (start === 'blob') {
+     let filteredImages = currentImages.filter(i => image !== i.filePreview )
+      setValue(`variants[${indexVariant}].images`, [
+        ...filteredImages,
+      ]);
+    }    
+    
+    if (start === 'https') {
+      let imageValue = currentImages.find(i=> i.url === image)
+      try {
+        deleteImageVariant(variant_id, imageValue._id);
+        
+      } catch (error) {
+        console.log(error);
+        
+      }
+    }
   };
 
 
@@ -288,6 +311,8 @@ const VariantsAndPhotos = () => {
     // Actualizar el campo con el nuevo valor
     setValue(`variants[${indexVariant}].images`, newImages);
   };
+
+
   
 
   if (loading) {
@@ -912,7 +937,7 @@ const VariantsAndPhotos = () => {
                                       }}
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        removeImage(item?.id, preview?._id, index);
+                                        removeImage(item?.id, preview?.url ? preview?.url : preview?.filePreview ? preview?.filePreview : '', index);
                                       }}
                                     >
                                       <Delete fontSize="small" />

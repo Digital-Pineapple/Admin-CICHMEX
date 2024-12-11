@@ -15,7 +15,7 @@ import Variants from "./StepNewProduct/Variants";
 import DescriptionsAndVideo from "./StepNewProduct/DescriptionsAndVideo";
 
 
-const CreateProduct = () => {
+const CreateWithVariants = () => {
 
   const [activeStep, setActiveStep] = useState(0);
 
@@ -107,4 +107,4 @@ const CreateProduct = () => {
   );
 };
 
-export default CreateProduct;
+export default CreateWithVariants

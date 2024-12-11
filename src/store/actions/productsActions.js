@@ -1235,9 +1235,11 @@ export const startDelete = (id) => {
 };
 
 export const startDeleteImageVariant = (variant_id , image_id) => {
+
   return async (dispatch) => {
     dispatch(startLoading());
     try {
+      
       const { data } = await instanceApi.post(
         `/variant-product/delete-image/${variant_id}`,
         {image_id:image_id},
@@ -1248,6 +1250,7 @@ export const startDeleteImageVariant = (variant_id , image_id) => {
           },
         }
       );
+      
       dispatch(updateVariant(data.data))
       enqueueSnackbar(`${data.message}`, {
         variant: "success",
@@ -1256,6 +1259,7 @@ export const startDeleteImageVariant = (variant_id , image_id) => {
           horizontal: "right",
         },
       });
+      
     } catch (error) {
       enqueueSnackbar(
         error.response?.data?.message || "Error al enviar las variantes",

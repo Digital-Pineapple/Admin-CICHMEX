@@ -63,8 +63,10 @@ export const productsReducer = createSlice({
     updateVariant(state, {payload}) {
       state.product.variants = state.product.variants.map((variant)=>{
         if (variant._id === payload._id) {
-          return {...payload}
-        }
+         
+          return  payload
+         }
+         return variant
       })
     },
     editProduct: (state, { payload }) => {
