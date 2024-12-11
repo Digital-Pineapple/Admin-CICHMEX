@@ -113,6 +113,7 @@ const DescriptionsAndVideo = ({
 
 
   const videoVertical = videos.filter((i) => i.type === "vertical");
+  
   const videoHorizontal = videos.filter((i) => i.type === "horizontal");
 
   if (loading) {
