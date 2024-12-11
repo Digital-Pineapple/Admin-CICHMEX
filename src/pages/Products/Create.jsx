@@ -19,6 +19,7 @@ import {
   CardHeader,
   ButtonGroup,
   Box,
+  Chip,
 } from "@mui/material";
 import { useProducts } from "../../hooks/useProducts";
 import useImages from "../../hooks/useImages";
@@ -28,7 +29,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useSubCategories } from "../../hooks/useSubCategories";
 import { useEffect, useState } from "react";
 import { useCategories } from "../../hooks/useCategories";
-import { AttachMoney } from "@mui/icons-material";
+import { ArrowDownward, ArrowUpward, AttachMoney, NavigateBefore, NavigateNext, VideoCallSharp } from "@mui/icons-material";
 import VideoUploadField from "../../components/Forms/VideoUploadField";
 import { useAuthStore } from "../../hooks";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
@@ -36,9 +37,55 @@ import TextAreaInput from "../../components/inputs/TextAreaInput";
 import ProfileImageUploader from "../../components/ui/ProfileImageUploader";
 import WordsInput from "../../components/inputs/WordsInput";
 import * as Yup from "yup";
+import useVideos from "../../hooks/useVideos";
+
+
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
 
 
 const CreateProduct = () => {
+  const { user } = useAuthStore();
+  const { createProduct, navigate, loading } = useProducts();
+  const {
+    loadSubCategories,
+    subCategoriesByCategory,
+    loadSubCategoriesByCategory,
+  } = useSubCategories();
+  const { categories, loadCategories } = useCategories();
+  const { images, handleImageChange, deleteImage, imagesFiles, moveImage, selectMainImage, mainImageId,  } = useImages();
+
+  const {
+    deleteVideo,
+    handleVideoChange,
+    videos,
+    videosPreview,
+    videoFiles,
+    error,
+  } = useVideos();
+
+  const valuateVideo = (videos) => {
+    if (videos?.length > 0) {
+      const videoVertical = videos.find((i) => i.type === "vertical");
+      const videoHorizontal = videos.find((i) => i.type === "horizontal");
+      return { videoVertical, videoHorizontal };
+    }
+
+    // Retornar valores nulos si no hay videos
+    return { videoVertical: null, videoHorizontal: null };
+  };
+  const { videoVertical, videoHorizontal } = valuateVideo(videos);
+
+
 
   useEffect(() => {
     loadSubCategories();
@@ -76,6 +123,7 @@ const CreateProduct = () => {
       price: "",
       porcentDiscount: "",
       discountPrice: "",
+      product_key: "",
       description: "",
       shortDescription: "",
       brand: "",
@@ -86,7 +134,7 @@ const CreateProduct = () => {
       weight: "",
       thumbnail: "",
       seoDescription: "",
-      seoKeywords: "",
+      seoKeywords: [],
       images: "",
     },
     validationSchema,
@@ -94,9 +142,9 @@ const CreateProduct = () => {
       try {
         const values2 = {
           ...values,
-          videos: [video],
+          videos: videoFiles(),
           thumbnail: formik.values?.profile_image,
-          images: imagesFiles(),
+          // images: imagesFiles(),
         };
         createProduct(values2, imagesFiles());
       } catch (error) {
@@ -119,6 +167,27 @@ const CreateProduct = () => {
   if (loading) {
     return <LoadingScreenBlue />;
   }
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter" && event.target.value.trim()) {
+      event.preventDefault();
+      const newChips = [
+        ...formik.values.seoKeywords,
+        event.target.value.trim(),
+      ];
+      formik.setFieldValue("seoKeywords", newChips);
+      event.target.value = ""; // Limpiar input
+    }
+  };
+
+  const handleDelete = (chipToDelete) => () => {
+    const newChips = formik.values.seoKeywords.filter(
+      (chip) => chip !== chipToDelete
+    );
+    formik.setFieldValue("seoKeywords", newChips);
+  };
+
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -478,136 +547,144 @@ const CreateProduct = () => {
               onChange={formik.handleChange}
               placeholder="Descripción optimizada"
             />
-            <WordsInput
-              formik={formik}
-              id={"seoKeywords"}
-              name={"seoKeywords"}
-              label={"Palabras clave para CEO"}
-            />
+            <FormControl fullWidth>
+              <TextField
+                id="seoKeywords"
+                name="seoKeywordsInput"
+                label="Palabras Clave"
+                onKeyPress={handleKeyPress}
+                placeholder="Añade una palabra clave y presiona Enter"
+              />
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 2 }}>
+                {formik.values.seoKeywords.map((chip, index) => (
+                  <Chip
+                    key={index}
+                    label={chip}
+                    onDelete={handleDelete(chip)}
+                  />
+                ))}
+              </Box>
+              {formik.touched.seoKeywords &&
+                Boolean(formik.errors.seoKeywords) && (
+                  <FormHelperText error>
+                    {formik.errors.seoKeywords}
+                  </FormHelperText>
+                )}
+            </FormControl>
           </CardContent>
         </Card>
       </Grid>
-
       <Grid
-        item
-        xs={12}
-        sx={{
-          gridColumn: "span 6",
-          gridRow: "span 3",
-        }}
-      >
-        <Card variant="outlined">
-          <CardContent>
-            <CardHeader title="Multimedia" />
-            <VideoUploadField setVideo={setVideo} label={"Subir video"} />
-            <Typography marginTop={"10px"}>Imagen principal</Typography>
-            <ProfileImageUploader
-              formik={formik}
-              id={"thumbnail"}
-              name={"thumbnail"}
+      item
+      xs={12}
+      sx={{
+        gridColumn: "span 6",
+        gridRow: "span 3",
+      }}
+    >
+      <Card variant="outlined">
+        <CardContent>
+          <CardHeader title="Multimedia" />
+
+          <Typography marginTop={"10px"}>
+            Imagenes de detalle (peso max de imagen: 500 kb)
+          </Typography>
+          <Grid item xs={12}>
+            <input
+              id="image"
+              name="image"
+              type="file"
+              accept="image/jpeg, image/png, image/webp"
+              onChange={handleImageChange}
+              hidden
             />
-
-            <Typography marginTop={"10px"}>
-              {" "}
-              Imagenes de detalle (peso max de imagen:500 kb)
-            </Typography>
-            {images.length > 0 && (
-              <Grid item xs={12}>
-                <input
-                  id="image"
-                  name="image"
-                  type="file"
-                  accept="image/jpg"
-                  onChange={handleImageChange}
-                  hidden
-                />
-                <label htmlFor={"image"}>
-                  <Button
-                    fullWidth
-                    component="span"
-                    color="primary"
-                    variant="contained"
-                  >
-                    Agrega Fotos
-                  </Button>
-                </label>
-              </Grid>
-            )}
-            {images.length ? (
-              <>
-                <Grid
-                  container
-                  display={"flex"}
-                  justifyContent={"center"}
-                  padding={"10px"}
-                  marginTop={"20px"}
-                  sx={{ backgroundColor: "#cfd8dc" }}
-                  gap={2}
-                >
-                  {images.map(({ id, filePreview }) => (
-                    <Grid item xs={12} sm={3} key={id}>
-                      <StyledBadge
-                        badgeContent={
-                          <IconButton
-                            sx={{ backgroundColor: "black", color: "black" }}
-                            onClick={() => deleteImage(id)}
-                          >
-                            {" "}
-                            <DeleteIcon
-                              sx={{ color: "white", fontSize: "20px" }}
-                            />{" "}
-                          </IconButton>
-                        }
-                      >
-                        <Avatar
-                          src={filePreview}
-                          variant="square"
-                          sx={{ width: "100%", height: "200px" }}
-                        />
-                      </StyledBadge>
-                    </Grid>
-                  ))}
-                </Grid>
-              </>
-            ) : (
-              <Grid
-                container
-                sx={{ backgroundColor: "#cfd8dc" }}
-                display={"flex"}
-                flexDirection={"column"}
-                alignItems={"center"}
-                justifyContent={"center"}
-                marginTop={"20px"}
-                height={"300px"}
-                borderRadius={"5px"}
+            <label htmlFor={"image"}>
+              <Button
+                fullWidth
+                component="span"
+                color="primary"
+                variant="contained"
               >
-                <FilterIcon
-                  style={{
-                    fontSize: "40px",
-                    alignSelf: "center",
-                    marginBottom: "10px",
-                  }}
-                />
+                Agrega Fotos
+              </Button>
+            </label>
+          </Grid>
 
-                <input
-                  id="image"
-                  name="image"
-                  type="file"
-                  accept="image/png, image/jpeg, image/jpg"
-                  onChange={handleImageChange}
-                  hidden
-                />
-                <label htmlFor={"image"}>
-                  <Button component="span" color="primary" variant="contained">
-                    Agregar Fotos
-                  </Button>
-                </label>
-              </Grid>
-            )}
-          </CardContent>
-        </Card>
-      </Grid>
+          {images.length > 0 && (
+            <Grid
+              container
+              display={"flex"}
+              justifyContent={"center"}
+              padding={"10px"}
+              marginTop={"20px"}
+              sx={{ backgroundColor: "#cfd8dc" }}
+              gap={2}
+            >
+              {images.map(({ id, filePreview }, index) => (
+                <Grid item xs={12} sm={3} key={id}>
+                  <StyledBadge
+                    badgeContent={
+                      <IconButton
+                        sx={{ backgroundColor: "black", color: "black" }}
+                        onClick={() => deleteImage(id)}
+                      >
+                        <DeleteIcon
+                          sx={{ color: "white", fontSize: "20px" }}
+                        />
+                      </IconButton>
+                    }
+                  >
+                    <Box
+                      sx={{
+                        position: "relative",
+                        width: "100%",
+                        height: "200px",
+                        border:
+                          mainImageId === id
+                            ? "3px solid #1976d2" // Destacar la imagen principal.
+                            : "none",
+                      }}
+                    >
+                      <Avatar
+                        src={filePreview}
+                        variant="square"
+                        sx={{ width: "100%", height: "100%" }}
+                      />
+                    </Box>
+                  </StyledBadge>
+                  <Box display="flex" justifyContent="space-between" mt={1}>
+                    <IconButton
+                      onClick={() => moveImage(index, -1)}
+                      disabled={index === 0}
+                    >
+                      <NavigateBefore />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => moveImage(index, 1)}
+                      disabled={index === images.length - 1}
+                    >
+                      <NavigateNext/>
+                    </IconButton>
+                  </Box>
+                  <Box mt={1} display="flex" justifyContent="center">
+                    <Chip
+                      label={
+                        mainImageId === id ? "Imagen Principal" : "Hacer imagen principal"
+                      }
+                      color={mainImageId === id ? "primary" : "default"}
+                      onClick={() => selectMainImage(id)}
+                      clickable
+                    />
+                  </Box>
+                </Grid>
+              ))}
+            </Grid>
+          )}
+        </CardContent>
+      </Card>
+    </Grid>
 
+     
       <Grid item xs={12}>
         <Stepper activeStep={activeStep} orientation="vertical">
           {steps.map((step, index) => (

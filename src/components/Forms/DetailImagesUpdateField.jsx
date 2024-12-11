@@ -15,25 +15,32 @@ import {
   ImageList,  
   ImageListItem,
   ButtonGroup,
+  Chip,
 } from "@mui/material";
 import {
+  ArrowDownward,
+  ArrowUpward,
   Cancel,
   Close,
   CloudDone,
   CloudUpload,
   Done,
   Edit,
+  NavigateBefore,
+  NavigateNext,
+  Save,
 } from "@mui/icons-material";
 import noImage from "../../assets/Images/ui/no-image.png";
+import useImages from "../../hooks/useImages";
+import { useProducts } from "../../hooks";
 
 const style = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 800,
+  width: '90%',
   bgcolor: "background.paper",
-  border: "2px solid #000",
   boxShadow: 24,
   p: 4,
 };
@@ -52,52 +59,91 @@ const VisuallyHiddenInput = styled("input")({
 
 const DetailImagesUpdateField = ({ idProduct, imagesProduct, onSubmit, onDelete }) => {
   const [open, setOpen] = useState(false);
-  const [loader, setloader] = useState(false);
+  const [loader, setLoader] = useState(false);
   const handleOpen = () => setOpen(true);
   const [images, setImages]=useState([]);
+  const [mainImageId, setMainImageId] = useState(null); // Imagen principal
+  const {changeImagePositions} =useProducts()
   useEffect(() => {
     if (imagesProduct !== null) {
-      setImages(imagesProduct.map((item) => { 
-        return {
-          id: item._id, 
-          filePreview: item.url,
-          file:null
-
-        };
+      const mappedImages = imagesProduct.map((item) => ({
+        id: item._id,
+        filePreview: item.url,
+        file: null,
       }));
+      setImages(mappedImages);
+      setMainImageId(mappedImages[0]?.id || null); // Primera imagen como principal
     }
   }, [imagesProduct]);
- 
-  const handleClose = () => {
+
+   const handleClose = () => {
     setOpen(false);
     if (imagesProduct !== null) {
-        setImages(imagesProduct.map((item) => {
-          return {
-            id: item._id,
-            filePreview: item.url,
-            file:''
-  
-          };
-        }));
-      }
-    setloader(false);
+      const mappedImages = imagesProduct.map((item) => ({
+        id: item._id,
+        filePreview: item.url,
+        file: "",
+      }));
+      setImages(mappedImages);
+      setMainImageId(mappedImages[0]?.id || null); // Restaurar la imagen principal
+    }
+    setLoader(false);
   };
 
-  const deleteImage=(product_id)=>{
-    onDelete(idProduct,product_id)
-}
+  const deleteImage = (product_id) => {
+    // onDelete(idProduct, product_id);
+    setImages((prev) => prev.filter((image) => image.id !== product_id));
+    if (mainImageId === product_id) {
+      setMainImageId(images[1]?.id || null); // Nueva imagen principal
+    }
+  };
 
-const handleSubmitImage = (e) => {
-    setloader(true);
+  const handleSubmitImage = (e) => {
+    setLoader(true);
     e.preventDefault();
     let file = e.target.files[0];
-    onSubmit(idProduct,file)
-    setloader(false);
+    onSubmit(idProduct, file);
+    setLoader(false);
   };
-  
 
-  const handleSaveImage = () => {
-     onSubmit(idProduct, images);
+  const moveImage = (index, direction) => {
+    setImages((prevImages) => {
+      // Evitar que cualquier imagen se mueva a la posición 0 excepto la principal
+      if (index === 0 || (index + direction === 0 && mainImageId !== prevImages[index].id)) {
+        return prevImages;
+      }
+  
+      const newImages = [...prevImages];
+      const [removed] = newImages.splice(index, 1);
+      newImages.splice(index + direction, 0, removed);
+  
+      return newImages;
+    });
+  };;
+
+  const handleSelectMainImage = (id) => {
+    setMainImageId(id);
+  
+    setImages((prevImages) => {
+      const selectedImageIndex = prevImages.findIndex((image) => image.id === id);
+      if (selectedImageIndex > -1) {
+        const selectedImage = prevImages[selectedImageIndex];
+        // Mover la imagen seleccionada como principal a la posición 0
+        const updatedImages = [
+          selectedImage,
+          ...prevImages.filter((image) => image.id !== id),
+        ];
+        return updatedImages;
+      }
+      return prevImages;
+    });
+  };
+
+
+
+  const handleSaveChanges = (e) => {
+    e.preventDefault()
+    changeImagePositions(idProduct,images)
     handleClose();
   };
 
@@ -109,103 +155,132 @@ const handleSubmitImage = (e) => {
   return (
    
     <div>
-      <Card sx={{padding:2}} variant="elevation">
-        <CardMedia sx={{display:'flex', justifyContent:'center'}}>
-          {open ? (
-            <Skeleton variant="rectangular" width={250} height={"300px"} />
-          ) : images !== null ? (
-            <ImageList sx={{ width: 500, height: 450 }}>
-              {images?.map((item, index) => (
-                <ImageListItem key={index}>
-                  <img
-                    src={`${item.filePreview}`}
-                    alt={index}
-                  />
+    <Card sx={{ padding: 2 }} variant="elevation">
+      <CardMedia sx={{ display: "flex", justifyContent: "center" }}>
+        {open ? (
+          <Skeleton variant="rectangular" width={200} height={"300px"} />
+        ) : images.length > 0 ? (
+          <ImageList sx={{ msxWidth: 200, maxHeight: 200 }}>
+            {images?.map((item, index) => (
+              <ImageListItem key={index}>
+                <img src={`${item.filePreview}`} alt={index} />
+              </ImageListItem>
+            ))}
+          </ImageList>
+        ) : (
+          <img src={noImage} alt="No image available" />
+        )}
+      </CardMedia>
+      <CardActions>
+        <Button
+          component="label"
+          role={undefined}
+          variant="contained"
+          tabIndex={-1}
+          startIcon={images ? <Edit /> : <CloudUpload />}
+          onClick={() => setOpen(true)}
+          fullWidth
+        >
+          {images ? "Editar imagenes" : "Subir"}
+        </Button>
+      </CardActions>
+    </Card>
+
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <Grid container display={"flex"} justifyContent={"end"} spacing={0}>
+          <Fab
+            color="primary"
+            aria-label="Cancelar"
+            sx={{ alignContent: "flex-end" }}
+            title="Cancelar"
+            onClick={handleClose}
+          >
+            <Close />
+          </Fab>
+        </Grid>
+        <Card sx={{ padding: 2 }} variant="elevation">
+          <CardMedia sx={{ display: "flex", justifyContent: "center" }}>
+            <ImageList sx={{ width: "100%", height: 400 }}>
+              {images.map((item, index) => (
+                <ImageListItem  key={item.id}>
+                  <img src={`${item.filePreview}`} alt={index} style={{width:'100%', objectFit:'contain', height:'200px', display:'flex', justifyContent:'center'}} />
+                  <Grid container justifyContent="center"  mt={1}>
+                    <ButtonGroup>
+                      <Button
+                        onClick={() => moveImage(index, -1)}
+                        disabled={index === 0}
+                      >
+                        <NavigateBefore />
+                      </Button>
+                      <Button
+                        onClick={() => moveImage(index, 1)}
+                        disabled={index === images.length - 1}
+                      >
+                        <NavigateNext />
+                      </Button>
+                    </ButtonGroup>
+                    <Button
+                      onClick={() => deleteImage(item.id)}
+                      variant="contained"
+                      color="warning"
+                      sx={{marginX:1}}
+                    >
+                      Eliminar
+                    </Button>
+                    <Chip
+                      label={
+                        mainImageId === item.id ? "Principal" : "Hacer Principal"
+                      }
+                      color={mainImageId === item.id ? "primary" : "default"}
+                      onClick={() => handleSelectMainImage(item.id)}
+                      clickable
+                    />
+                  </Grid>
                 </ImageListItem>
               ))}
             </ImageList>
-          ):(
-            <img src={noImage} alt="No image available" />
-          )}
-        </CardMedia>
-        <CardActions>
-          <Button
-            component="label"
-            role={undefined}
-            variant="contained"
-            tabIndex={-1}
-            startIcon={images ? <Edit /> : <CloudUpload />}
-            onClick={() => handleOpen()}
-            fullWidth
-          >
-            {images ? "Editar imagenes " : "Subir "}
-          </Button>
-        </CardActions>
-      </Card>
-
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Grid container display={"flex"} justifyContent={"end"} spacing={0}>
-            <Fab
-              color="primary"
-              aria-label="Cancelar"
-              sx={{ alignContent: "flex-end" }}
-              title="Cancelar"
-              onClick={() => handleClose()}
+          </CardMedia>
+          <CardActions>
+            <Button
+              component="label"
+              role={undefined}
+              variant="contained"
+              tabIndex={-1}
+              startIcon={<CloudUpload />}
+              fullWidth
+              color='primary'
             >
-              <Close />
-            </Fab>
-          </Grid>
-          <Card sx={{padding:2}} variant="elevation">
-            <CardMedia sx={{display:'flex', justifyContent:'center'}}>
-              <ImageList sx={{ width: '100%', height: 450 }}>
-                {images.map((item, index) => (
-                    
-                 <ImageListItem key={index}>
-                    <img
-                      src={`${item.filePreview}`}
-                      alt={index}
-                    />
-                    <ImageListItem title={"acciones"} position="below">
-                      <Button
-                        onClick={() => deleteImage(item.id)}
-                        variant="contained"
-                        color="warning"
-                      >
-                        Eliminar
-                      </Button>
-                    </ImageListItem>
-                  </ImageListItem>
-                ))}
-              </ImageList>
-            </CardMedia>
-            <CardActions>
-              <Button
-                component="label"
-                role={undefined}
-                variant="contained"
-                tabIndex={-1}
-                startIcon={<CloudUpload />}
-                fullWidth
-                color="success"
-              >
-                Agregar
-                <VisuallyHiddenInput
-                  type="file"
-                  accept="image/png, image/jpeg "
-                  onChange={(e) => handleSubmitImage(e)}
-                />
-              </Button>
-            </CardActions>
-          </Card>
-        </Box>
-      </Modal>
-    </div>
+              Agregar
+              <VisuallyHiddenInput
+                type="file"
+                accept="image/png, image/jpeg "
+                onChange={(e) => handleSubmitImage(e)}
+              />
+            </Button>
+            <Button
+              component="label"
+              role={undefined}
+              variant="contained"
+              tabIndex={-1}
+              startIcon={<Save />}
+              fullWidth
+              color="success"
+              onClick={(e)=>handleSaveChanges(e)}
+            >
+              Guardar cambios de imagenes
+             
+            </Button>
+          </CardActions>
+        </Card>
+      </Box>
+    </Modal>
+  </div>
   );
 };
 

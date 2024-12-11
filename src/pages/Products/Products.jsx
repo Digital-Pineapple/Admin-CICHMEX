@@ -12,7 +12,7 @@ import {
 } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import MuiPagination from "@mui/material/Pagination";
-import { Add, Download, Edit, Visibility } from "@mui/icons-material";
+import { Add, Download, Edit, Refresh, Visibility } from "@mui/icons-material";
 import {
   Button,
   IconButton,
@@ -162,7 +162,7 @@ const Products = () => {
           Productos
         </Typography>
       </Grid>
-      <Grid item xs={12}>
+      <Grid item display={"flex"} alignContent={"space-around"} xs={12}>
         <Fab
           sx={{ right: "-80%" }}
           onClick={() => navigate("/mi-almacen/productos/agregar")}
@@ -172,6 +172,15 @@ const Products = () => {
         >
           <Add />
         </Fab>
+        <Button
+          size="small"
+          startIcon={<Refresh />}
+          variant="contained"
+          color="primary"
+          onClick={()=>loadProducts()}
+        >
+          Recargar
+        </Button>
       </Grid>
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}

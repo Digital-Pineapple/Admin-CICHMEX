@@ -13,6 +13,8 @@
     "@ant-design/icons": "^5.1.4",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@ffmpeg/ffmpeg": "^0.12.10",
+    "@ffmpeg/util": "^0.12.1",
     "@fontsource/roboto": "^4.5.8",
     "@headlessui/react": "^2.1.2",
     "@headlessui/tailwindcss": "^0.2.1",

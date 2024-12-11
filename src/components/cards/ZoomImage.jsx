@@ -43,7 +43,7 @@ const ZoomImage = ({alt,src}) => {
           justifyContent:'center',
         }}
       >
-        <img src={src} alt={alt} width={'400px'} style={{borderRadius:'10px'}} height={'400px'}/>
+        <img src={src} alt={alt}  width={'400px'} style={{borderRadius:'10px', objectFit:'contain'}} height={'400px'}/>
       </div>
     </>
   );

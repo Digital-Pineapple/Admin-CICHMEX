@@ -15,6 +15,7 @@ import {
   startLoadPrintOrderPDF,
   startLoadProductOrders,
   startLoadProductOrdersPaid,
+  startLoadProductOrdersPaidAndFill,
   startLoadReadyToPoint,
   startLoadVerifyPackage,
   startLoadVerifyStartRoute,
@@ -41,6 +42,9 @@ export const useProductOrder = () => {
 
   const loadProductOrdersPaid = async () =>
     dispatch(startLoadProductOrdersPaid());
+
+  const loadProductOrdersPaidAndFill = async () =>
+    dispatch(startLoadProductOrdersPaidAndFill());
 
   const loadPOPaidAndSuplyToPoint = async () =>
     dispatch(startLoadPOPaidAndSupplyToPonit());
@@ -84,10 +88,13 @@ export const useProductOrder = () => {
   const rowsProducts = () => {
     const products = productOrder?.products;
     return products?.map((product, index) => {
+      
       return {
         ...product.item,
         id: index.toString(),
         quantity: product.quantity,
+        subTotal: product.quantity * product.item.price,
+        image : product?.item?.images[0].url ? product.item?.images[0].url : 'no hay imagen'
       };
     });
   };
@@ -138,7 +145,7 @@ export const useProductOrder = () => {
     loadVerifyPackage,
     loadReadyToPoint,
     readyToPoint,
-    loadPOOutOfRegions
+    loadProductOrdersPaidAndFill
     
   };
 };

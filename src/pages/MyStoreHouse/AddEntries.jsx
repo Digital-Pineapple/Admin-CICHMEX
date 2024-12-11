@@ -19,8 +19,8 @@ const AddEntries = () => {
     getValues
   } = useForm({
     defaultValues: {
-      user_delivery: "",
-      user_received: "",
+      // user_delivery: "",
+      // user_received: "",
       products: [],
     },
   });
@@ -86,7 +86,7 @@ const AddEntries = () => {
         </Typography>
       </Grid>
 
-      <Grid item xs={12} display={"flex"} gap={2} justifyContent={"center"}>
+      {/* <Grid item xs={12} display={"flex"} gap={2} justifyContent={"center"}>
         <Controller
           control={control}
           name="user_delivery"
@@ -131,7 +131,7 @@ const AddEntries = () => {
             />
           )}
         />
-      </Grid>
+      </Grid> */}
       <Grid container padding={{xs:2,lg:4}} gap={2} justifyContent={'center'} >
         <Typography variant="h4" textAlign={"center"} color="initial">
           Introduzca el nombre o código de barras del producto
@@ -150,7 +150,6 @@ const AddEntries = () => {
          <Button  variant="contained" onClick={handleSubmit(onSubmit)} color="success">
         Subir entrada
       </Button>
-
       </ButtonGroup>
       </Grid>
 

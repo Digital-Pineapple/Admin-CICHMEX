@@ -10,7 +10,7 @@ import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import Image from "mui-image";
 import { ArrowBack } from "@mui/icons-material";
 
-const FillOrder = () => {
+const CompletedOrdersDetail = () => {
   const { id } = useParams();
   const {
     loadProductOrder,
@@ -23,6 +23,7 @@ const FillOrder = () => {
   } = useProductOrder();
   const [rowSelection, setRowSelection] = useState([]);
   const [activeButton1, setActiveButton] = useState(false);
+
   useEffect(() => {
     loadProductOrder(id);
   }, [id]);
@@ -55,6 +56,8 @@ const FillOrder = () => {
     }
     return "Desconocido"; // Valor por defecto
   };
+  console.log(productOrder.supply_detail);
+  
 
   const typeDelivery = (value) => {
     return value.deliveryLocation ? "Entrega a domicilio" : "Punto de entrega";
@@ -86,6 +89,11 @@ const FillOrder = () => {
       ];
     }
   };
+  const supplyInfo = {
+    responsible : productOrder?.supply_detail?.user?.fullname ,
+    email:productOrder?.supply_detail?.user?.email,
+    date : localDate( productOrder?.supply_detail?.date)
+  }
   if (loading) {
     return <LoadingScreenBlue />;
   }
@@ -103,7 +111,7 @@ const FillOrder = () => {
           variant="h2"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-          Surtir orden: {productOrder?.order_id}
+          Detalle de surtido: {productOrder?.order_id}
         </Typography>
       </Grid>
       <Grid container  alignContent={"center"}>
@@ -119,10 +127,9 @@ const FillOrder = () => {
           </Button>
           <Button
             variant="contained"
-            fullWidth
-            size="small"
+            size="medium"
             onClick={() => printPDF(id)}
-            color="success"
+            color="secondary"
           >
             Imprimir PDF
           </Button>
@@ -130,7 +137,7 @@ const FillOrder = () => {
         <Grid
           item
           xs={12}
-          lg={4}
+          lg={3}
           alignContent={"center"}
           justifyContent={"center"}
           display={'flex'}
@@ -142,7 +149,7 @@ const FillOrder = () => {
             value={productOrder?.order_id}
           />
         </Grid>
-        <Grid item xs={12} lg={6} padding={2}>
+        <Grid item xs={12} lg={4} padding={2}>
           <Typography variant="body1" color="inherit">
             <strong>Cliente:</strong> {productOrder.user_id?.fullname} <br />
             <strong>Fecha de compra:</strong>
@@ -161,6 +168,14 @@ const FillOrder = () => {
             ))}
           </Typography>
         </Grid>
+        <Grid item xs={12} lg={5} padding={2}>
+          <Typography variant="body1" color="inherit">
+            <strong>Responsable de surtido:</strong> {supplyInfo.responsible} <br />
+            <strong>Email:</strong>
+            {supplyInfo.email} <br />
+            <strong>Fecha de surtido:{supplyInfo.date}</strong>
+          </Typography>
+        </Grid>
 
         <Grid item xs={12}>
           {rows ? (
@@ -169,21 +184,12 @@ const FillOrder = () => {
                 <strong><i>Lista de productos</i> </strong>
               </Typography>
               <DataGrid
-              sx={{'& .theme--hedaer': {
-          backgroundColor: 'black',
-          color:"white",
-          textAlign:'center'
-        },}}
                 onRowSelectionModelChange={(value) => {
                   setRowSelection(value);
                   activeButton(value.length);
                 }}
                 rowSelectionModel={rowSelection}
                 hideFooterSelectedRowCount={true}
-                slots={{
-                  noRowsOverlay: CustomNoRows
-                }}
-                autoHeight
                 columns={[
                   {
                     field: "image",
@@ -201,14 +207,12 @@ const FillOrder = () => {
                   {
                     field: "name",
                     headerName: "Nombre del producto",
-                    headerClassName:'theme--hedaer',
                     flex: 1,
                     align: "center",
                   },
                   {
                     field: "quantity",
                     headerName: "Cantidad de producto",
-                    headerClassName:'theme--hedaer',
                     flex: 1,
                     align: "center",
                   },
@@ -220,19 +224,10 @@ const FillOrder = () => {
             <Skeleton variant="rectangular" />
           )}
 
-          <Button
-            style={{ marginTop: 10 }}
-            variant="outlined"
-            fullWidth
-            onClick={() => completeOrder()}
-            color="success"
-          >
-            Completar surtido
-          </Button>
         </Grid>
       </Grid>
     </Grid>
   );
 };
 
-export default FillOrder;
+export default CompletedOrdersDetail;

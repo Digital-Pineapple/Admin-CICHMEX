@@ -9,12 +9,7 @@ import {
   useGridSelector,
 } from "@mui/x-data-grid";
 import MuiPagination from "@mui/material/Pagination";
-import {
-  Button,
-  Grid,
-  IconButton,
-  Tooltip,
-} from "@mui/material";
+import { Button, Chip, Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import { Workbook } from "exceljs";
 import {
   ExpandLess as ExpandLessIcon,
@@ -23,13 +18,22 @@ import {
   Download as DownloadIcon,
   ScheduleSend as ScheduleSendIcon,
   ThumbUpAlt as ThumbUpAltIcon,
+  Paid,
+  Pending,
+  Looks,
+  Visibility,
+  Verified,
+  Refresh,
+  Close,
 } from "@mui/icons-material";
 import Swal from "sweetalert2";
 import { useProductOrder } from "../../hooks/useProductOrder";
 import { useAuthStore } from "../../hooks";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import CustomNoRows from "../../components/Tables/CustomNoRows";
-import {localDate} from "../../Utils/ConvertIsoDate"
+import dayjs from "dayjs";
+import SuccessButton from "../../components/Buttons/SuccessButton";
+import { usePayments } from "../../hooks/usePayments";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -77,7 +81,7 @@ function CustomToolbar() {
       "Cantidad de productos",
       "Tipo de envio",
       "Id de Pedido",
-      "Fecha de solicitud"
+      "Fecha de solicitud",
     ]);
     headerRow.eachCell((cell) => {
       cell.font = { bold: true };
@@ -89,7 +93,7 @@ function CustomToolbar() {
         row.quantityProduct,
         row.typeDelivery,
         row.order_id,
-        row.createdAt
+        row.createdAt,
       ]);
     });
 
@@ -119,25 +123,17 @@ function CustomToolbar() {
   );
 }
 
-const PaidProductOrders = () => {
-  const {
-    loadProductOrdersPaid,
-    navigate,
-    productOrders,
-    loading
-  } = useProductOrder();
+const AllSales = () => {
+  const { loadProductOrders, navigate, productOrders, loading } =
+    useProductOrder();
   const { user } = useAuthStore();
+  const {loadValidateExpiredPayments} = usePayments()
 
   useEffect(() => {
-    loadProductOrdersPaid();
+    loadProductOrders();
   }, [user]);
- 
-  
-
-  
 
   const rowsWithIds = productOrders.map((item, index) => {
-    const date = localDate(item.createdAt)
     const quantities = item.products.map((i) => i.quantity);
     const suma = quantities.reduce((valorAnterior, valorActual) => {
       return valorAnterior + valorActual;
@@ -147,85 +143,160 @@ const PaidProductOrders = () => {
     return {
       quantityProduct: suma,
       typeDelivery: TD,
-      date : date,
+      date: dayjs(item.createdAt).format("DD/MM/YYYY HH:mm:s a"),
       id: index.toString(),
       ...item,
     };
   });
 
-  const paymentValuate = (row) => {
-    if (row.payment_status !== 'approved') {
-      Swal.fire('Pendiente de pago', '', 'error');
-    } else {
-      navigate(`/almacenista/surtir-venta/${row._id}`);
+  
+
+  const renderIcon = (values) => {
+    
+    if (values.row.payment_status) {
+      return (
+        <>
+        <IconButton
+          sx={{ display: {} }}
+          aria-label="Ver detalle"
+          color="primary"
+          title="Ver detalle"
+          onClick={() => navigate(`/contaduria/venta-detalle/${values.row._id}`)}
+        >
+          <Visibility />
+        </IconButton> 
+        
+        </>
+      );
+    } else  {
+      return (
+        <IconButton
+        sx={{ display: {} }}
+        aria-label="Ver detalle"
+        color="primary"
+        title="Ver detalle"
+        disabled
+      >
+        <Visibility />
+      </IconButton> 
+      );
     }
   };
 
-  const renderIcon = (values) => {
-    if (!values.row.storeHouseStatus) {
+  const renderChip = (values) => {
+    const { payment_status, download_ticket, payment } = values.row;
+
+    if (payment_status === "approved") {
       return (
-        <Tooltip title="Surtir orden">
-          <Button
-            aria-label="Surtir"
-            color="success"
-            onClick={() => paymentValuate(values.row)}
-            variant="outlined"
-          >
-            Surtir
-          </Button>
-        </Tooltip>
-      );
-    } else if (!values.row.route_status) {
-      return (
-        <Tooltip title="Asignar Ruta">
-          <Button
-            aria-label="Asignar Ruta"
-            color="info"
-            variant="outlined"
-            onClick={() => navigate(`/auth/asignar-ruta/${values.row._id}`)}
-          >
-            Ruta
-          </Button>
-        </Tooltip>
-      );
-    } else if (!values.row.deliveryStatus) {
-      return (
-        <Tooltip title="En envío">
-          <IconButton
-            aria-label="En envío"
-            color="secondary"
-          >
-            <ScheduleSendIcon />
-          </IconButton>
-        </Tooltip>
-      );
-    } else {
-      return (
-        <Tooltip title="Pedido entregado">
-          <IconButton
-            aria-label="Pedido entregado"
-            color="primary"
-          >
-            <ThumbUpAltIcon />
-          </IconButton>
-        </Tooltip>
+        <Chip
+          icon={<Paid />}
+          label="Liquidada"
+          variant="filled"
+          color="success"
+        />
       );
     }
+  
+    if (payment_status === "pending" && !!download_ticket) {
+      return (
+        <Chip
+          icon={<Paid />}
+          label="Pendiente MP"
+          variant="filled"
+          color="primary"
+        />
+      );
+    }
+  
+    if (payment?.verification?.payment_vouchers) {
+      return (
+        <Chip
+          icon={<Paid />}
+          label="Pendiente con ticket"
+          variant="filled"
+          color="secondary"
+        />
+      );
+    }
+  
+    if (payment_status === "rejected") {
+      return (
+        <Chip
+          icon={<Close />}
+          label="Pago rechazado"
+          variant="filled"
+          color="warning"
+        />
+      );
+    }
+  
+    if (payment_status === "cancelled") {
+      return (
+        <Chip
+          icon={<Close />}
+          label="Pago cancelado o rechazado"
+          variant="filled"
+          color="warning"
+        />
+      );
+    }
+  
+    if (payment_status === "approved") {
+      return (
+        <Chip
+          icon={<Paid />}
+          label="Liquidada"
+          variant="filled"
+          color="success"
+        />
+      );
+    }
+  
+    // Default case
+    return (
+      <Chip
+        icon={<Paid />}
+        label="Pendiente sin ticket"
+        variant="filled"
+        color="info"
+      />
+    );
   };
+  
 
   if (loading) {
     return <LoadingScreenBlue />;
   }
 
   return (
-    <Grid container gap={1}>
+    <Grid container>
+         <Grid
+        item
+        marginTop={{ xs: "-30px" }}
+        xs={12}
+        minHeight={"100px"}
+        className="Titles"
+      >
+        <Typography
+          textAlign={"center"}
+          variant="h1"
+          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
+        >
+         Todas mis ventas
+        </Typography>
+      </Grid>
+      <Grid mb={2} item xs={12}>
+        <Button  title="Recargar" endIcon={<Refresh/>} onClick={()=>loadProductOrders()} color="primary">
+         Recarga
+        </Button>
+      </Grid>
       <Grid item xs={12}>
         <DataGrid
           sx={{ fontSize: "14px", fontFamily: "sans-serif" }}
           columns={[
             {
               field: "date",
-              headerName: "Fecha de solicitud",
+              headerName: "Fecha de compra",
               flex: 1,
               align: "center",
             },
@@ -236,8 +307,33 @@ const PaidProductOrders = () => {
               align: "center",
             },
             {
-              field: "typeDelivery",
-              headerName: "Tipo de envio",
+              field: "payment",
+              headerName: "Estatus",
+              flex: 1,
+              sortable: false,
+              renderCell: (params) => [renderChip(params)],
+            },
+            {
+              field: "subTotal",
+              headerName: "Subtotal",
+              flex: 1,
+              sortable: false,
+            },
+            {
+              field: "shipping_cost",
+              headerName: "Gastos de envío",
+              flex: 1,
+              sortable: false,
+            },
+            {
+              field: "discount",
+              headerName: "Descuento",
+              flex: 1,
+              sortable: false,
+            },
+            {
+              field: "total",
+              headerName: "Total a pagar",
               flex: 1,
               sortable: false,
             },
@@ -248,12 +344,7 @@ const PaidProductOrders = () => {
               flex: 1,
               sortable: false,
               type: "actions",
-              renderCell: (params) => (
-                
-                <Button  size="small" variant="contained"  onClick={()=>navigate(`/almacenista/surtir-venta/${params.row._id}`)} >
-                  Surtir
-                </Button>
-              ) 
+              getActions: (params) => [renderIcon(params)],
             },
           ]}
           rows={rowsWithIds}
@@ -287,4 +378,4 @@ const PaidProductOrders = () => {
   );
 };
 
-export default PaidProductOrders;
+export default AllSales;

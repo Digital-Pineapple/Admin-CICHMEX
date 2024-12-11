@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export const productsReducer = createSlice({
   name: "products",
   initialState: {
+    newProduct: {},
     products: [],
     stockProducts: [],
     product: {},
@@ -32,7 +33,6 @@ export const productsReducer = createSlice({
     },
     onAddNewProduct: (state, { payload }) => {
       state.product = payload;
-      state.isLoading = false;
     },
     onStepNewProduct: (state, { payload }) => {
       state.dataProduct = payload
@@ -54,19 +54,21 @@ export const productsReducer = createSlice({
     onEditImagesProduct(state, { payload }) {
       state.product.images = payload;
     },
-    editProduct: (state, { payload }) => {
-      state.products = state.products.map((product) => {
-        if (product._id === payload._id) {
-          return {
-            ...product,
-            name: payload.name,
-            description: payload.description,
-            status: payload.status,
-          };
-        }
-        return product; // Mantener los elementos no modificados tal como están
-      });
+    onEditVideosProduct(state, { payload }) {
+      state.product.videos = payload;
     },
+    onUpdateImagesProduct(state, { payload }) {
+      state.product.images = payload;
+    },
+    editProduct: (state, { payload }) => {
+      state.product = payload
+    },
+    startLoadingUpdate : ( state )=>{
+      state.isLoading = true
+    },
+    stopLoadingUpdate : ( state) =>{
+      state.isLoading = false
+    }
   },
 });
 
@@ -83,7 +85,10 @@ export const {
   cleanProductDetail,
   loadProductEntries,
   onEditImagesProduct,
-  onStepNewProduct
+  onEditVideosProduct,
+  startLoadingUpdate,
+  stopLoadingUpdate,
+  onUpdateImagesProduct
 } = productsReducer.actions;
 
 export default productsReducer.reducer;
