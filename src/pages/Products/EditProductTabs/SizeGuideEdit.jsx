@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Grid from "@mui/material/Grid";
-import MenuItem from "@mui/material/MenuItem";
 import {
+  Grid,
+  MenuItem,
   FormControl,
   FormLabel,
   Card,
@@ -13,63 +13,93 @@ import {
   Select,
   FormHelperText,
   Modal,
-  Box, Fab,
+  Box,
+  Fab,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
 } from "@mui/material";
-import { useSizeGuide } from "../../../hooks/useSizeGuide";
 import { Controller, useForm } from "react-hook-form";
+import { useSizeGuide } from "../../../hooks/useSizeGuide";
 import { useProducts } from "../../../hooks";
-import { startSelectSizeGuide } from "../../../store/actions/sizeGuideActions";
+import LoadingScreenBlue from "../../../components/ui/LoadingScreenBlue";
+import { Close, Refresh } from "@mui/icons-material";
 import TableGuides from "../../SizeDimensions/TableGuides";
-import { Close } from "@mui/icons-material";
+import { useParams } from "react-router-dom";
 
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: '90%',
-  height: '90%',
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "90%",
+  height: "90%",
+  bgcolor: "background.paper",
+  border: "2px solid #000",
   boxShadow: 24,
   p: 4,
 };
 
-const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
+const SizeGuideEdit = () => {
   const { loadSizeGuides, sizeGuides, navigate, dispatch } = useSizeGuide();
-  const [stateAddNewGuide, setStateAddNewGuide] = useState(false);
-  const { dataStep3, dataProduct } = useProducts();
-
-
+  const { dataStep3, product, loading, loadProduct, updateSizeGuide } = useProducts();
   const [open, setOpen] = useState(false);
+  const [selectedSizeGuide, setSelectedSizeGuide] = useState(product?.size_guide || ""); // Estado para almacenar la guía seleccionada
+
   const handleOpen = () => setOpen(true);
-  const handleClose = () => {setOpen(false), loadSizeGuides()};
+  const handleClose = () => {
+    setOpen(false);
+    loadSizeGuides();
+  };
+
+  const { id } = useParams();
 
   useEffect(() => {
     loadSizeGuides();
-  }, [stateAddNewGuide]);
+    loadProduct(id);
+  }, [id]);
 
   const {
     control,
     formState: { errors },
     handleSubmit,
     setValue,
+    reset,
   } = useForm({
     defaultValues: {
-      size_guide: dataProduct?.size_guide || "",
+      size_guide: product?.size_guide || "",
     },
   });
 
   const onAddSizeGuide = (values) => {
-    dataStep3( dataProduct._id,values, handleNext);
-    const info = sizeGuides?.filter((i) => i._id === values.size_guide);
-    dispatch(startSelectSizeGuide(info));
-  
+    updateSizeGuide(id, values)
   };
+
+  // Si está cargando
+  if (loading) {
+    return <LoadingScreenBlue />;
+  }
+
+  // Obtener la guía seleccionada desde el estado
+  const selectedGuide = sizeGuides.find((guide) => guide._id === selectedSizeGuide);
 
   return (
     <>
       <Grid container spacing={0}>
+        <Grid item xs={12}>
+          {/* <Button
+            variant="contained"
+            onClick={() => loadProduct(id)}
+            color="primary"
+            startIcon={<Refresh />}
+          >
+            Recargar
+          </Button> */}
+        </Grid>
         <Grid
           item
           xs={12}
@@ -83,14 +113,12 @@ const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
                   variant="contained"
                   color="secondary"
                   size="small"
-                  onClick={() =>
-                    handleOpen()
-                  }
+                  onClick={handleOpen}
                 >
-                  Agregar nueva guia
+                  Agregar nueva guía
                 </Button>
               }
-              title="Guia de dimensiones"
+              title="Guía de dimensiones"
               subheader="Asocia una guía que contenga las medidas necesarias y evita preguntas o devoluciones"
             />
             <CardContent>
@@ -114,11 +142,9 @@ const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
                     color="info"
                     error={!!errors.size_guide}
                   >
-                    <FormLabel>Guia de medidas</FormLabel>
-
-                    {/* Controller de react-hook-form para el Select */}
+                    <FormLabel>Guía de medidas</FormLabel>
                     <Controller
-                      name="size_guide" // Nombre del campo que va a controlar el select
+                      name="size_guide"
                       control={control}
                       rules={{
                         required: {
@@ -131,7 +157,8 @@ const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
                           {...field}
                           size="small"
                           onChange={(e) => {
-                            field.onChange(e.target.value); // Actualiza el valor en react-hook-form
+                            field.onChange(e.target.value);
+                            setSelectedSizeGuide(e.target.value); // Actualiza la guía seleccionada
                           }}
                         >
                           {sizeGuides.map((i) => (
@@ -142,11 +169,10 @@ const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
                         </Select>
                       )}
                     />
-
                     <FormHelperText>
                       {errors.size_guide
                         ? errors.size_guide.message
-                        : "Seleccione una guia"}{" "}
+                        : "Seleccione una guía"}
                     </FormHelperText>
                   </FormControl>
                 </CardContent>
@@ -154,33 +180,53 @@ const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
             </CardContent>
             <CardActions>
               <Button variant="contained" type="submit" sx={{ mt: 1, mr: 1 }}>
-                {isLastStep ? "Guardar" : "Continuar"}
+                Guardar
               </Button>
             </CardActions>
           </Card>
         </Grid>
+        <Grid item xs={12}>
+          <TableContainer component={Paper}>
+            <Table>
+              {/* Cabecera de la tabla */}
+              <TableHead>
+                <TableRow>
+                  <TableCell>Etiqueta</TableCell>
+                  <TableCell>Equivalencia</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {selectedGuide?.dimensions?.map((dimension) => (
+                  <TableRow key={dimension.id}>
+                    <TableCell>{dimension.label}</TableCell>
+                    <TableCell>{dimension.equivalence}</TableCell>
+                  </TableRow>
+                )) || (
+                  <TableRow>
+                    <TableCell colSpan={2} align="center">
+                      No hay dimensiones disponibles
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
       </Grid>
-      <div>
-     
-      <Modal
-        open={open}
-        onClose={handleClose}
-      >
+      <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
-         <Fab
-           color="primary"
-           sx={{top:0, left:'90%'}}
-           onClick={handleClose}
-         >
-           <Close/>
-         </Fab>
-        <TableGuides/>
-          
+          <Fab
+            color="primary"
+            sx={{ top: 0, left: "90%" }}
+            onClick={handleClose}
+          >
+            <Close />
+          </Fab>
+          <TableGuides />
         </Box>
       </Modal>
-    </div>
     </>
   );
 };
 
-export default DimensionsGuide;
+export default SizeGuideEdit;

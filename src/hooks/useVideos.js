@@ -16,7 +16,6 @@ const useVideos = () => {
   };
   const handleVideoChange = (e, type) => {
 
-
     const file = e.target.files[0];
     if (!file) {
       setError("No se seleccionó ningún archivo.");

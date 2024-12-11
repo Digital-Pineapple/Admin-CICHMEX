@@ -152,39 +152,56 @@ const colors = [
 
 const filter = createFilterOptions();
 
-const ColorSelector = () => {
-  const [value, setValue] = React.useState(null);
+const ColorSelector = ({
+  value,
+  onChange,
+  fullWidth,
+  disabled,
+  label,
+  error,
+  helperText,
+}) => {
+  
+  const [selectedValue, setSelectedValue] = React.useState(null);
 
+  React.useEffect(() => {
+    if (value) {
+      setSelectedValue(value);
+    }
+  }, [value]);
+  
   return (
     <Autocomplete
-      value={value}
+      value={selectedValue}
       onChange={(event, newValue) => {
-        if (typeof newValue === 'string') {
-          setValue({
-            name: newValue,
-          });
+        if (typeof newValue === "string") {
+          const existingColor = colors.find(
+            (color) => color.name.toLowerCase() === newValue.toLowerCase()
+          );
+          const finalValue = existingColor || { name: newValue };
+          setSelectedValue(finalValue);
+          onChange(finalValue);
         } else if (newValue && newValue.inputValue) {
-          // Create a new value from the user input
-          setValue({
-            name: newValue.inputValue,
-          });
+          const finalValue = { name: newValue.inputValue };
+          setSelectedValue(finalValue);
+          onChange(finalValue);
         } else {
-          setValue(newValue);
+          setSelectedValue(newValue);
+          onChange(newValue);
         }
       }}
       filterOptions={(options, params) => {
         const filtered = filter(options, params);
-
         const { inputValue } = params;
-        // Suggest the creation of a new value
-        const isExisting = options.some((option) => inputValue === option.name);
-        if (inputValue !== '' && !isExisting) {
+        const isExisting = options.some(
+          (option) => inputValue.toLowerCase() === option.name.toLowerCase()
+        );
+        if (inputValue !== "" && !isExisting) {
           filtered.push({
             inputValue,
-            name: ` "${inputValue}"`,
+            name: inputValue,
           });
         }
-
         return filtered;
       }}
       selectOnFocus
@@ -193,43 +210,48 @@ const ColorSelector = () => {
       id="free-solo-with-text-demo"
       options={colors}
       getOptionLabel={(option) => {
-        // Value selected with enter, right from the input
-        if (typeof option === 'string') {
+        if (typeof option === "string") {
           return option;
         }
-        // Add "xxx" option created dynamically
         if (option.inputValue) {
           return option.inputValue;
         }
-        // Regular option
         return option.name;
       }}
       renderOption={(props, option) => {
         const { key, ...optionProps } = props;
         return (
-          <Box component="li" {...props} sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box
-              sx={{
-                width: '50px',
-                height: '50px',
-                borderRadius: '100px',
-                backgroundColor: option.hex,
-                marginRight: 2,
-                border: '1px solid white',
-              }}
-            />
-            <Typography>{option.name}</Typography>
+          <Box component="li" {...optionProps} sx={{ display: "flex", alignItems: "center" }}>
+            {option.hex && (
+              <Box
+                sx={{
+                  width: "20px",
+                  height: "20px",
+                  borderRadius: "100px",
+                  backgroundColor: option.hex,
+                  marginRight: 2,
+                  border: "1px solid white",
+                }}
+              />
+            )}
+            <Typography fontSize={"15px"}>{option.name}</Typography>
           </Box>
         );
       }}
-      sx={{ width: 300 }}
+      sx={{ width: fullWidth ? "100%" : 300 }}
       freeSolo
       renderInput={(params) => (
-        <TextField {...params} label="Color" />
+        <TextField
+          {...params}
+          label={label}
+          disabled={disabled}
+          error={error}
+          helperText={helperText}
+          size="small"
+        />
       )}
     />
   );
 };
 
-export default ColorSelector;
-
+export default ColorSelector

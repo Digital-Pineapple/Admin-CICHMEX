@@ -13,9 +13,8 @@ import {
   NavigateBefore,
   NavigateNext,
   OpenInFull,
-  Star,
+  Replay,
   UploadFile,
-  VideoCall,
 } from "@mui/icons-material";
 import {
   Collapse,
@@ -47,6 +46,7 @@ import { useSizeGuide } from "../../../hooks/useSizeGuide";
 import { useProducts } from "../../../hooks";
 import { v4 as uuidv4 } from "uuid";
 import LoadingScreenBlue from "../../../components/ui/LoadingScreenBlue";
+import { useParams } from "react-router-dom";
 
 const style = {
   position: "absolute",
@@ -64,12 +64,13 @@ const style = {
   p: 4,
 };
 
-const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
-  const { dataStep4, dataProduct, loading } = useProducts();
+const VariantsAndPhotos = () => {
+  const { updateVariants, product, loading, loadProduct, deleteVariant, deleteImageVariant } = useProducts();
   const [valueVariants, setValueVariants] = useState([]); // Array to hold variants
   const [collapseOpen, setCollapseOpen] = useState([]); // Array to track the open/close state of each variant
   const [open, setOpen] = useState({ image: null, value: false });
-  const { sizeGuide } = useSizeGuide();
+  const { sizeGuide, loadOneSizeGuide } = useSizeGuide();
+  const { id } = useParams();
   const handleOpen = (image) => {
     setOpen({ image: image, value: true });
   };
@@ -82,28 +83,32 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
       }))
     );
   }, [valueVariants]);
+  useEffect(() => {
+    loadProduct(id);
+  }, [id]);
+
   const handleClose = () => setOpen({ image: null, value: false });
   const DefaultValues = (data) => ({
     variants:
-      data?.variants?.map((variant) => ({
-        id: variant.id || uuidv4(), // Asegúrate de que cada variante tenga un ID único
-        weight: variant.weight || "",
-        design: { textInput: variant.design, checkbox: false } || {
+      data?.variants?.map((variant, index) => ({
+        id: variant?._id || uuidv4(), // Asegúrate de que cada variante tenga un ID único
+        weight: variant?.weight || "",
+        design: { textInput: variant?.design, checkbox: false } || {
           textInput: "",
           checkbox: true,
         },
-        color: variant.attributes.color || "",
-        images: variant.images || [],
-        size: variant.attributes.size || "",
-        price: variant.price || 0,
-        porcentDiscount: variant.porcentDiscount || 0,
-        discountPrice: variant.discountPrice || 0,
-        stock: variant.stock || null,
-        tag: variant.tag || null,
+        color: variant?.attributes?.color || "",
+        images: variant?.images || [],
+        size: variant?.attributes?.size || "",
+        price: variant?.price || 0,
+        porcentDiscount: variant?.porcentDiscount || 0,
+        discountPrice: variant?.discountPrice || 0,
+        stock: variant?.stock || null,
+        tag: variant?.tag || null,
       })) || [],
   });
 
-  const {
+    const {
     control,
     handleSubmit,
     setValue,
@@ -112,13 +117,19 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
     reset,
     formState: { errors },
     unregister,
-  } = useForm({ defaultValues: DefaultValues(dataProduct) });
+  } = useForm({ defaultValues: DefaultValues(product) });
 
   useEffect(() => {
-    const info = DefaultValues(dataProduct); // dataProduct debe contener los IDs
+    setValue('variants',[])
+    loadOneSizeGuide(product.size_guide);
+    const info = DefaultValues(product);
     setValueVariants(info.variants);
-    reset(info); // Asegúrate de que reset incluya el ID de cada variante
-  }, [dataProduct, reset]);
+    setValue('variants', info.variants)
+    
+  }, [product]);
+
+
+
 
   const handleCheckboxChange = (variant, checked, index) => {
     setValue(`variants[${index}].design.checkbox`, checked);
@@ -150,6 +161,8 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
     });
   };
 
+
+
   // Remove variant and its form values
   const MessageDelete = (id) => {
     Swal.fire({
@@ -160,10 +173,9 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
+          deleteVariant(id)
         const ChangeDelete = valueVariants.filter((item) => item.id !== id);
         setValueVariants(ChangeDelete);
-
-        // Remove variant form values
         unregister(`variants[${id}]`);
 
         Swal.fire("Se eliminó Correctamente!", "", "success");
@@ -199,7 +211,7 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
     if (!file) return;
 
     const currentImages = watch(`variants[${indexVariant}].images`) || [];
-    
+
     if (currentImages.length >= 6) return;
 
     const filePreview = URL.createObjectURL(file);
@@ -210,16 +222,33 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
     ]);
   };
 
-  const removeImage = (preview, index, i) => {
-    const variantImages = watch(`variants.[${index}].images`);
-    let updateImages = variantImages.filter((item, index) => index !== i);
-    setValue(`variants.[${index}].images`, updateImages);
-  };
-
   const imagesArray = (indexVariant) => {
     const images = watch(`variants[${indexVariant}].images`);
     return Array.isArray(images) ? images : [];
-};
+  };
+  const removeImage = (variant_id, image, indexVariant) => {
+    const currentImages = watch(`variants[${indexVariant}].images`) || [];
+    const startName = image.split(':')
+    let start = startName[0]
+
+    if (start === 'blob') {
+     let filteredImages = currentImages.filter(i => image !== i.filePreview )
+      setValue(`variants[${indexVariant}].images`, [
+        ...filteredImages,
+      ]);
+    }    
+    
+    if (start === 'https') {
+      let imageValue = currentImages.find(i=> i.url === image)
+      try {
+        deleteImageVariant(variant_id, imageValue._id);
+        
+      } catch (error) {
+        console.log(error);
+        
+      }
+    }
+  };
 
 
   const onSubmit = ({ variants }) => {
@@ -232,7 +261,7 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
       confirmButtonColor: "#4caf50",
     }).then((result) => {
       if (result.isConfirmed) {
-        dataStep4(dataProduct._id, variants, handleNext);
+        updateVariants(id,variants)
       }
     });
   };
@@ -267,32 +296,41 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
   const moveImage = (indexVariant, indexImage, direction) => {
     // Obtener las imágenes actuales usando getValues
     const images = getValues(`variants[${indexVariant}].images`);
-  
+
     // Verificar que las imágenes sean un arreglo válido
     if (!Array.isArray(images)) {
       console.error("El valor actual no es un arreglo:", images);
       return;
     }
-  
+
     // Crear una copia de las imágenes y realizar el movimiento
     const newImages = [...images];
     const [removed] = newImages.splice(indexImage, 1); // Extraer la imagen actual
     newImages.splice(indexImage + direction, 0, removed); // Insertar en la nueva posición
-  
+
     // Actualizar el campo con el nuevo valor
     setValue(`variants[${indexVariant}].images`, newImages);
   };
 
-  if (loading) {
-    return(
-      <LoadingScreenBlue/>
-    )
-  }
+
   
- 
+
+  if (loading) {
+    return <LoadingScreenBlue />;
+  }
 
   return (
-    <>
+    <Grid container>
+      <Grid item xs={12}>
+        <Button
+          startIcon={<Replay />}
+          onClick={() => loadProduct(id)}
+          variant="contained"
+          color="primary"
+        >
+          Recargar
+        </Button>
+      </Grid>
       <Card
         variant="elevation"
         component={"form"}
@@ -358,6 +396,7 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
 
                   <Collapse in={isOpen} timeout="auto">
                     <Grid container spacing={2}>
+
                       <Grid item xs={4}>
                         <FormControl
                           fullWidth
@@ -368,36 +407,29 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                             name={`variants[${index}].size`}
                             control={control}
                             rules={{
-                              required: {
-                                value: true,
-                                message: "Campo requerido",
-                              },
+                              required: "Campo requerido",
                             }}
                             render={({ field }) => (
                               <Select
                                 {...field}
                                 size="small"
                                 label="Talla o medida*"
-                                onChange={(e) => {
-                                  field.onChange(e.target.value);
-                                  setValue(
-                                    `variants[${index}].size`,
-                                    e.target.value
-                                  ); // Ajusta el valor seleccionado
-                                }}
+                                value={watch(`variants.[${index}].size`)}
                               >
-                                {sizeGuide[0]?.dimensions?.map((i) => (
-                                  <MenuItem key={i.label} value={i.label}>
-                                    {i.label}
+                                {sizeGuide?.dimensions?.map((dimension) => (
+                                  <MenuItem
+                                    key={dimension.label}
+                                    value={dimension.label}
+                                  >
+                                    {dimension.label}
                                   </MenuItem>
                                 ))}
                               </Select>
                             )}
                           />
                           <FormHelperText>
-                            {errors.variants?.[index]?.size
-                              ? errors.variants?.[index]?.size.message
-                              : "Seleccione una medida"}
+                            {errors.variants?.[index]?.size?.message ||
+                              "Seleccione una medida"}
                           </FormHelperText>
                         </FormControl>
                       </Grid>
@@ -444,6 +476,7 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                               label="Código"
                               size="small"
                               autoComplete="off"
+                              value={watch(`variants.[${index}].tag`)}
                               error={!!errors.variants?.[index]?.tag}
                               helperText={
                                 errors.variants?.[index]?.tag?.message
@@ -516,32 +549,36 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                         />
                       </Grid>
 
-                      <Grid item xs={4}>
-                        <Controller
-                          control={control}
-                          rules={{
-                            required: {
-                              value: !watch(`variants[${index}].stock`),
-                              message: "Campo requerido",
-                            },
-                          }}
-                          name={`variants[${index}].stock`}
-                          render={({ field }) => (
-                            <TextField
-                              {...field}
-                              fullWidth
-                              size="small"
-                              label="Agregar Stock"
-                              autoComplete="off"
-                              type="number"
-                              error={!!errors.variants?.[index]?.stock}
-                              helperText={
-                                errors.variants?.[index]?.stock?.message
-                              }
-                            />
-                          )}
-                        />
-                      </Grid>
+                      {!item.stock ? (
+                        <Grid item xs={4}>
+                          <Controller
+                            control={control}
+                            rules={{
+                              required: {
+                                value: !watch(`variants[${index}].stock`),
+                                message: "Campo requerido",
+                              },
+                            }}
+                            name={`variants[${index}].stock`}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                fullWidth
+                                size="small"
+                                label="Agregar Stock"
+                                autoComplete="off"
+                                type="number"
+                                error={!!errors.variants?.[index]?.stock}
+                                helperText={
+                                  errors.variants?.[index]?.stock?.message
+                                }
+                              />
+                            )}
+                          />
+                        </Grid>
+                      ) : (
+                        ""
+                      )}
 
                       <Grid item xs={4}>
                         <Controller
@@ -860,7 +897,7 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                                   marginX={1}
                                 >
                                   <img
-                                    src={preview.filePreview}
+                                    src={preview?.url ? preview?.url : preview?.filePreview ? preview?.filePreview : ''}
                                     alt="Preview"
                                     style={{
                                       width: "100%",
@@ -900,7 +937,7 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                                       }}
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        removeImage(preview, index, i);
+                                        removeImage(item?.id, preview?.url ? preview?.url : preview?.filePreview ? preview?.filePreview : '', index);
                                       }}
                                     >
                                       <Delete fontSize="small" />
@@ -930,7 +967,7 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                                         color: "red",
                                         backgroundColor: "white",
                                       }}
-                                      onClick={() => moveImage(index,i, -1)}
+                                      onClick={() => moveImage(index, i, -1)}
                                       disabled={i === 0} // Deshabilitar si está en la primera posición
                                     >
                                       <NavigateBefore />
@@ -944,7 +981,7 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                                         color: "red",
                                         backgroundColor: "white",
                                       }}
-                                      onClick={() => moveImage(index,i, 1)}
+                                      onClick={() => moveImage(index, i, 1)}
                                       disabled={
                                         i === imagesArray(index).length - 1
                                       } // Deshabilitar si está en la última posición
@@ -990,15 +1027,8 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
           </List>
         </CardContent>
         <CardActions>
-          <Button
-            disabled={index === 0}
-            onClick={handleBack}
-            sx={{ mt: 1, mr: 1 }}
-          >
-            Cancelar
-          </Button>
           <Button variant="contained" type="submit" sx={{ mt: 1, mr: 1 }}>
-            {isLastStep ? "Terminar" : "Continuar"}
+            Guardar cambios
           </Button>
         </CardActions>
       </Card>
@@ -1029,8 +1059,8 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
           />
         </Box>
       </Modal>
-    </>
+    </Grid>
   );
 };
 
-export default Variants;
+export default VariantsAndPhotos;

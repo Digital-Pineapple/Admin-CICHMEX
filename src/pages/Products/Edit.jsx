@@ -39,6 +39,10 @@ const Edit = () => {
   const { loadProduct, product, editProduct, navigate, loading, updateVideo, updateThumbnail, addOneImage, deleteImageDetail } = useProducts();
   const { categories, loadCategories } = useCategories();
   const { subCategoriesByCategory, loadSubCategories, loadSubCategoriesByCategory } = useSubCategories();
+ 
+  useEffect(() => {
+    loadProduct(id);
+  }, [id]);
 
 
   useEffect(() => {

@@ -21,6 +21,7 @@ const Condition = ({ handleNext, handleBack, index, isLastStep }) => {
   const { dataProduct, dataStep2 } = useProducts();
 
   const DefaultValues = (data) => {
+    
     return {
       condition: data?.condition || "",
     };
@@ -35,8 +36,8 @@ const Condition = ({ handleNext, handleBack, index, isLastStep }) => {
   });
 
   const onSubmit = (data) => {
-    dataStep2(data);
-    handleNext();
+    dataStep2(dataProduct._id, data, handleNext);
+    
   };
 
   return (
