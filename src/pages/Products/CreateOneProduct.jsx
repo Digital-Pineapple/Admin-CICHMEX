@@ -39,6 +39,12 @@ import WordsInput from "../../components/inputs/WordsInput";
 import * as Yup from "yup";
 import useVideos from "../../hooks/useVideos";
 
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    right: 0,
+    top: 1,
+  },
+}));
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -53,7 +59,7 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 
-const CreateProduct = () => {
+const CreateOneProduct = () => {
   const { user } = useAuthStore();
   const { createProduct, navigate, loading } = useProducts();
   const {
@@ -83,7 +89,6 @@ const CreateProduct = () => {
     // Retornar valores nulos si no hay videos
     return { videoVertical: null, videoHorizontal: null };
   };
-  const { videoVertical, videoHorizontal } = valuateVideo(videos);
 
 
 
@@ -221,30 +226,6 @@ const CreateProduct = () => {
     });
   };
 
-  const handleReset = () => {
-    setActiveStep(0);
-  };
-
-  // Mover la definición de steps dentro del componente, para poder usar handleNext y handleBack
-  const steps = [
-    {
-      label: 'Características principales',
-      component:  <MainFeatures handleNext={handleNext} handleBack={handleBack} index={0} isLastStep={false} />
-    },
-    {
-      label: 'Condición',
-      component:  <Condition handleNext={handleNext} handleBack={handleBack} index={1} isLastStep={false} />
-    },
-    {
-      label: 'Guia de Dimensiones',
-      component:  <DimensionsGuide handleNext={handleNext} handleBack={handleBack} index={2} isLastStep={false} />
-    },
-    {
-      label: 'Variantes y fotos',
-      component:  <Variants handleNext={handleNext} handleBack={handleBack} index={3} isLastStep={true} />
-    },
-  ];
-
   return (
     <Grid
       component="form"
@@ -265,7 +246,7 @@ const CreateProduct = () => {
           variant="h1"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-          Agregar producto
+          Registar nuevo producto
         </Typography>
       </Grid>
       <Grid
@@ -686,35 +667,22 @@ const CreateProduct = () => {
 
      
       <Grid item xs={12}>
-        <Stepper activeStep={activeStep} orientation="vertical">
-          {steps.map((step, index) => (
-            <Step key={step.label}>
-              <StepLabel
-                optional={
-                  index === steps.length - 1 ? (
-                    <Typography variant="caption">Último paso</Typography>
-                  ) : null
-                }
-              >
-                {step.label}
-              </StepLabel>
-              <StepContent>
-                {step.component}
-              </StepContent>
-            </Step>
-          ))}
-        </Stepper>
-        {activeStep === steps.length && (
-          <Paper square elevation={0} sx={{ p: 3 }}>
-            <Typography>Todos los pasos completados - has terminado</Typography>
-            <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
-              Reiniciar
-            </Button>
-          </Paper>
-        )}
+        <ButtonGroup fullWidth>
+          <Button type="submit" variant="contained" color="success">
+            Crear
+          </Button>
+          <Button
+            onClick={() => navigate("/mi-almacen/productos", { replace: true })}
+            variant="contained"
+            color="warning"
+          >
+            Salir
+          </Button>
+        </ButtonGroup>
       </Grid>
     </Grid>
   );
 };
 
-export default CreateProduct;
+
+export default CreateOneProduct

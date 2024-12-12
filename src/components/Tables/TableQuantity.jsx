@@ -12,7 +12,7 @@ import {
 import Typography from "@mui/material/Typography";
 import { Grid } from "@mui/material";
 
-const TableQuantity = ({ values, setValues }) => {
+const TableQuantity = ({ values, setValues, type }) => {
   const [rowModesModel, setRowModesModel] = React.useState({});
 
   const handleRowEditStop = (params, event) => {
@@ -47,7 +47,7 @@ const TableQuantity = ({ values, setValues }) => {
 
   const processRowUpdate = (newRow) => {
     // Validate the quantity against the stock
-    if (newRow.quantity > newRow.stock) {
+    if (newRow.quantity > newRow.stock && type !== 'entries') {
       alert("La cantidad no puede ser mayor que el stock disponible.");
       return { ...newRow, quantity: newRow.stock }; // Reset quantity to max stock
     }
@@ -72,7 +72,7 @@ const TableQuantity = ({ values, setValues }) => {
       width: 150,
       editable: false,
     },
-    { field: "name", headerName: "Nombre ", width: 250, editable: false },
+    { field:'name' , headerName: "Nombre ", width: 250, editable: false },
     { field: "price", headerName: "Precio", width: 100, editable: false },
     ...(values.some(row => row.stock !== undefined)
       ? [{

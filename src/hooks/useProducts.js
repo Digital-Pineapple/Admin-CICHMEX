@@ -52,7 +52,8 @@ export const useProducts = () => {
   const loadStockProducts = async () => dispatch(startLoadStockProducts());
   const loadNoStockProducts = async () => dispatch(startLoadNonExistProduct());
   const loadProduct = async (_id) => {
-    dispatch(LoadOneProduct(_id));
+   const response =  dispatch(LoadOneProduct(_id));
+   return response
   };
 
   const createProduct = async (values, images) => {
@@ -77,7 +78,9 @@ export const useProducts = () => {
 
   const cleanProductD = () => dispatch(cleanProductDetail());
 
-  const deleteVariant = ( id ) => dispatch(startDelete(id))
+  const deleteVariant =( id ) => {
+    return  dispatch(startDelete(id))
+  }
 
   const rowsStockProducts = stockProducts.map((item, _id) => ({
     id: _id.toString(),

@@ -12,7 +12,16 @@ import {
 } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import MuiPagination from "@mui/material/Pagination";
-import { Add, Download, Edit, Refresh, Visibility } from "@mui/icons-material";
+import {
+  Add,
+  Download,
+  Edit,
+  Refresh,
+  Star,
+  Start,
+  ViewModule,
+  Visibility,
+} from "@mui/icons-material";
 import {
   Button,
   IconButton,
@@ -122,7 +131,7 @@ const Products = () => {
     return (
       <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
         <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-        <GridToolbarQuickFilter />
+        <GridToolbarQuickFilter placeholder='Buscar'/>
         <Button
           variant="text"
           startIcon={<Download />}
@@ -145,6 +154,17 @@ const Products = () => {
 
   const handleClose = () => setOpenModal(false);
 
+  const valuateNavigateEdit = async (id) => {
+    const response = await loadProduct(id);
+    let variants = response.variants;
+
+    if (variants && Array.isArray(variants) && variants.length > 0) {
+      navigate(`/mi-almacen/productos/variantes/editar/${id}`);
+    } else {
+      navigate(`/mi-almacen/productos/editar/${id}`);
+    }
+  };
+
   return (
     <Grid container gap={2} maxWidth={"85vw"}>
       <Grid
@@ -162,35 +182,45 @@ const Products = () => {
           Productos
         </Typography>
       </Grid>
-      <Grid item display={"flex"} alignContent={"space-around"} xs={12}>
-        <Fab
-          sx={{ right: "-80%" }}
-          onClick={() => navigate("/mi-almacen/productos/agregar")}
-          color="secondary"
-          aria-label="Crear producto"
-          title="Crear producto"
-        >
-          <Add />
-        </Fab>
+      <Grid item display={"flex"} justifyContent={"end"} rowSpacing={2} xs={12}>
         <Button
           size="small"
           startIcon={<Refresh />}
           variant="contained"
           color="primary"
-          onClick={()=>loadProducts()}
+          onClick={() => loadProducts()}
         >
           Recargar
+        </Button>
+        <Button
+          size="small"
+          startIcon={<ViewModule />}
+          sx={{ marginX: 2 }}
+          variant="contained"
+          color="success"
+          onClick={()=> navigate('/mi-almacen/producto/agregar-variantes')}
+        >
+          Agregar con variantes
+        </Button>
+        <Button
+          size="small"
+          startIcon={<Star />}
+          variant="contained"
+          color="error"
+          onClick={()=>navigate('/mi-almacen/producto/agregar')}
+        >
+          Agregar sin variantes
         </Button>
       </Grid>
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
-          {
-            field: "tag",
-            headerName: "Código",
-            flex: 1,
-            align: "center",
-          },
+          // {
+          //   field: "tag",
+          //   headerName: "Código",
+          //   flex: 1,
+          //   align: "center",
+          // },
           {
             field: "name",
             hideable: false,
@@ -198,12 +228,12 @@ const Products = () => {
             flex: 1,
             sortable: false,
           },
-          {
-            field: "price",
-            headerName: "Precio",
-            flex: 1,
-            align: "center",
-          },
+          // {
+          //   field: "price",
+          //   headerName: "Precio",
+          //   flex: 1,
+          //   align: "center",
+          // },
           {
             field: "Category",
             headerName: "Categoria",
@@ -233,12 +263,7 @@ const Products = () => {
                 <IconButton
                   aria-label="Editar"
                   color="success"
-                  onClick={() =>
-                    params.row.variants ? 
-                    (navigate(`/mi-almacen/productos/editar/${params.row._id}`))
-                   :            
-                   ( navigate(`/mi-almacen/producto-variantes/editar/${params.row._id}`))
-                  }
+                  onClick={() => valuateNavigateEdit(params.row._id)}
                 >
                   <Edit />
                 </IconButton>

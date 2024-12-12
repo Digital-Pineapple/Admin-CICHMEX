@@ -79,6 +79,7 @@ import TableGuides from "../pages/SizeDimensions/TableGuides";
 import DescriptionsAndVideo from "../pages/Products/StepNewProduct/DescriptionsAndVideo";
 import EditWithVariants from "../pages/Products/EditWithVariants";
 import CreateWithVariants from "../pages/Products/CreateWithVariants";
+import CreateOneProduct from "../pages/Products/CreateOneProduct";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -179,7 +180,8 @@ export const AllRoutes = [
   { id: 71, element:<CompletedOrdersDetail/>},
   { id: 72, element: <AddVideo/>},
   // { id: 72, element: <TableGuides/>},
-  { id : 73,  element : <EditWithVariants/>}
+  { id : 73,  element : <EditWithVariants/>},
+  { id : 75,  element : <CreateOneProduct/>},
 
 
 

@@ -41,8 +41,8 @@ function FormSearch({ setSelected, allValues, titleAlert }) {
       .sort((a, b) => {
         const aNameStartsWith = a.name.toLowerCase().startsWith(lowerCaseValue);
         const bNameStartsWith = b.name.toLowerCase().startsWith(lowerCaseValue);
-        const aTagStartsWith = a.tag.toLowerCase().startsWith(lowerCaseValue);
-        const bTagStartsWith = b.tag.toLowerCase().startsWith(lowerCaseValue);
+        const aTagStartsWith = a.tag?.toLowerCase().startsWith(lowerCaseValue);
+        const bTagStartsWith = b.tag?.toLowerCase().startsWith(lowerCaseValue);
 
         if (aNameStartsWith || aTagStartsWith) return -1;
         if (bNameStartsWith || bTagStartsWith) return 1;
@@ -67,7 +67,7 @@ function FormSearch({ setSelected, allValues, titleAlert }) {
         }}
         key={index}
       >
-        {suggestion.tag + " - " + suggestion.name}
+        {(suggestion.tag ? suggestion.tag : "") + " - " + suggestion.name}
       </ListItem>
     ));
   };

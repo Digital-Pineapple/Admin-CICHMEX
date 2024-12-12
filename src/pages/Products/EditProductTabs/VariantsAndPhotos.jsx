@@ -171,14 +171,19 @@ const VariantsAndPhotos = () => {
       confirmButtonText: "Eliminar",
       confirmButtonColor: "red",
       cancelButtonText: "Cancelar",
-    }).then((result) => {
+    }).then(async(result) => {
       if (result.isConfirmed) {
-          deleteVariant(id)
-        const ChangeDelete = valueVariants.filter((item) => item.id !== id);
+        try {
+         const response = await deleteVariant(id)
+        const ChangeDelete = valueVariants.filter((item) => item.id !== response.id);
         setValueVariants(ChangeDelete);
         unregister(`variants[${id}]`);
-
         Swal.fire("Se eliminó Correctamente!", "", "success");
+        } catch (error) {
+          console.log(error);
+          
+        }
+      
       }
     });
   };

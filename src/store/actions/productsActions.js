@@ -208,6 +208,7 @@ export const LoadOneProduct = (_id) => {
         },
       });
       dispatch(loadProduct(data.data));
+      return data.data
     } catch (error) {
       enqueueSnackbar(
         `${error.response.data.message}|| 'Error al consultar información'`,
@@ -218,6 +219,7 @@ export const LoadOneProduct = (_id) => {
       );
     } finally {
       dispatch(stopLoading());
+
     }
   };
 };
@@ -1274,6 +1276,7 @@ export const startDelete = (id) => {
         title: `${data.message}`,
         showConfirmButton: false,
       });
+      return data.data
     } catch (error) {
       enqueueSnackbar(error.response?.data?.message, {
         variant: "error",
