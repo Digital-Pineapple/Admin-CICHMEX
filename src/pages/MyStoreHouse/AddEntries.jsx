@@ -13,7 +13,7 @@ import {
 import { Controller, useForm } from "react-hook-form";
 import FormSearch from "../../components/Filters/FormSearch";
 import { useAuthStore, useProducts } from "../../hooks";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 import TableQuantity from "../../components/Tables/TableQuantity";
 
@@ -24,6 +24,7 @@ const AddEntries = () => {
   const [product, setProduct] = useState(null);
   const [allProducts, setAllProducts] = useState([]);
   const [productVariants, setProductVariants] = useState([]);
+  const [isFocused, setIsFocused] = useState(false);
   const {
     control,
     handleSubmit,
@@ -63,6 +64,7 @@ const AddEntries = () => {
         // Si no hay variantes, configurar el producto directamente
         setProduct(product);
       }
+    
     } catch (error) {
       console.error("Error loading product:", error);
     }
@@ -183,15 +185,19 @@ const AddEntries = () => {
         </Grid>
         <Grid item xs={5}>
         <FormControl fullWidth>
-              <FormLabel>Variantes</FormLabel>
+          <FormLabel>{ productVariants.length > 0 ?' Selecciona una variante':''}</FormLabel>
               <Select
                 id="variant"
                 name="variant"
-                size="small"
-                label="Variante"
                 onChange={(e) => {
                   setProduct(e.target.value)
                   setProductVariants([])
+                  
+                }}
+                style={{
+                  border: productVariants.length > 0 ? "2px solid blue" : "",
+                  borderRadius: "4px",
+                  transition: "border-color 0.3s ease-in-out", // Efecto de transición
                 }}
               >
                 {productVariants?.map((variant) => (

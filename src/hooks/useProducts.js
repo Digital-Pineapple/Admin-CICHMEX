@@ -33,6 +33,7 @@ import {
 } from "../store/actions/productsActions";
 import { useNavigate } from "react-router-dom";
 import { cleanProductDetail, onStepNewProduct } from "../store/reducer/productsReducer";
+import { startLoadColors } from "../store/actions/uiActions";
 
 export const useProducts = () => {
   const dispatch = useDispatch();
@@ -41,7 +42,7 @@ export const useProducts = () => {
   const { products, product, stockProducts, entries, outputs, dataProduct } = useSelector(
     (state) => state.products
   );
-  const { loading } = useSelector((state) => state.ui);
+  const { loading, colors } = useSelector((state) => state.ui);
 
   const loadProducts = async () => dispatch(startLoadProducts());
 
@@ -75,6 +76,7 @@ export const useProducts = () => {
   const deleteImageDetail = (id, image_id)=>dispatch(startDeleteOneImage(id,image_id))
   const deleteProduct = async (id) => dispatch(deleteOneProduct(id));
   const changeImagePositions = async (product_id,images) => dispatch(startChangeImagesPosition(product_id,images, navigate))
+  const loadColors = () => dispatch(startLoadColors());
 
   const cleanProductD = () => dispatch(cleanProductDetail());
 
@@ -170,6 +172,7 @@ dispatch(startAddProductWithVariants(body, handleNext))
         
         values.attributes.color = variant.color;
         values.attributes.size = variant.size;
+        values.attributes.material = values.attributes.material
         values.tag = variant.tag;
         values.weight = variant.weight;
         values.price = variant.price;
@@ -238,6 +241,7 @@ const updateVariants = (id,data) => {
       
       values.attributes.color = variant.color;
       values.attributes.size = variant.size;
+      values.attributes.material = variant.material;
       values.tag = variant.tag;
       values.weight = variant.weight;
       values.price = variant.price;
@@ -308,6 +312,8 @@ const updateDescription = (id,data) => {
     updateVariants,
     deleteVariant,
     deleteImageVariant,
-    updateDescription
+    updateDescription,
+    loadColors,
+    colors
   };
 };

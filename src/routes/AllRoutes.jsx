@@ -179,9 +179,9 @@ export const AllRoutes = [
   { id: 70, element:<AllSales/>},
   { id: 71, element:<CompletedOrdersDetail/>},
   { id: 72, element: <AddVideo/>},
-  // { id: 72, element: <TableGuides/>},
   { id : 73,  element : <EditWithVariants/>},
   { id : 75,  element : <CreateOneProduct/>},
+  { id: 76, element: <TableGuides/>},
 
 
 
