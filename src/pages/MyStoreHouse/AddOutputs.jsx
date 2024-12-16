@@ -95,7 +95,7 @@ const AddOutputs = () => {
       </Grid>
 
       <Grid item xs={12} display={"flex"} gap={2} justifyContent={"center"}>
-        <Controller
+        {/* <Controller
           control={control}
           name="user_delivery"
           rules={{
@@ -116,8 +116,8 @@ const AddOutputs = () => {
               autoComplete="off"
             />
           )}
-        />
-        <Controller
+        /> */}
+        {/* <Controller
           control={control}
           name="user_received"
           rules={{
@@ -138,7 +138,7 @@ const AddOutputs = () => {
               autoComplete="off"
             />
           )}
-        />
+        /> */}
         <Controller
           control={control}
           name="reason"
@@ -161,6 +161,7 @@ const AddOutputs = () => {
               <MenuItem value={'Muestra'}>Muestra</MenuItem>
               <MenuItem value={'Exhibición'}>Exhibición</MenuItem>
               <MenuItem value={'Préstamo'}>Préstamo</MenuItem>
+              <MenuItem value={'Falta de producto'}>Falta de producto</MenuItem>
             </Select>
             </FormControl>
           )}
