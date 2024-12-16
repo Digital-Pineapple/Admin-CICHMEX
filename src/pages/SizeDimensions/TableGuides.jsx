@@ -2,6 +2,7 @@ import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup } fro
 import TableClothes from "../Products/StepNewProduct/TablesTypeProduct/TableClothes";
 import { useState } from "react";
 import TableOthers from "../Products/StepNewProduct/TablesTypeProduct/TableOthers";
+import TableShoes from "../Products/StepNewProduct/TablesTypeProduct/TableShoes";
 
 const TableGuides = () => {
   const [value, setValue] = useState("clothes");
@@ -58,7 +59,8 @@ const TableGuides = () => {
         </FormControl>
       </Grid>
       <Grid item xs={12} display={'flex'} boxSizing={'border-box'}>
-        {value === "clothes" ? <TableClothes /> : ""}
+      {value === "clothes" ? <TableClothes /> : ""}
+      {value === "Shoes" ? <TableShoes /> : ""}
         {value === "Other" ? <TableOthers/>:""}
       </Grid>
     </Grid>
