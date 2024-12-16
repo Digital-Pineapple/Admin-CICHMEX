@@ -3,6 +3,7 @@ import TableClothes from "../Products/StepNewProduct/TablesTypeProduct/TableClot
 import { useState } from "react";
 import TableOthers from "../Products/StepNewProduct/TablesTypeProduct/TableOthers";
 import TableShoes from "../Products/StepNewProduct/TablesTypeProduct/TableShoes";
+import TableFoods from "../Products/StepNewProduct/TablesTypeProduct/TableFoods";
 
 const TableGuides = () => {
   const [value, setValue] = useState("clothes");
@@ -37,12 +38,12 @@ const TableGuides = () => {
               label="Zapatos"
               labelPlacement="top"
             />
-            <FormControlLabel
+            {/* <FormControlLabel
               value="Accesories"
               control={<Radio />}
               label="Accesorios"
               labelPlacement="top"
-            />
+            /> */}
             <FormControlLabel
               value="Food"
               control={<Radio />}
@@ -61,7 +62,8 @@ const TableGuides = () => {
       <Grid item xs={12} display={'flex'} boxSizing={'border-box'}>
       {value === "clothes" ? <TableClothes /> : ""}
       {value === "Shoes" ? <TableShoes /> : ""}
-        {value === "Other" ? <TableOthers/>:""}
+      {value === "Other" ? <TableOthers/>:""}
+      {value === "Food" ? <TableFoods/>:""}
       </Grid>
     </Grid>
   );
