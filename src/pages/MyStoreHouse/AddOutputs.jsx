@@ -58,12 +58,13 @@ const AddOutputs = () => {
   }, [user]);
 
   useEffect(() => {
-    if (product) {
+    if (product) {  
       setAllProducts((prevProducts) => [...prevProducts, product]);
     }
   }, [product]);
 
   const rowsIds = allProducts?.map((item, index) => ({
+  
     id: index,
     ...item,
   }));
@@ -95,7 +96,7 @@ const AddOutputs = () => {
       </Grid>
 
       <Grid item xs={12} display={"flex"} gap={2} justifyContent={"center"}>
-        <Controller
+        {/* <Controller
           control={control}
           name="user_delivery"
           rules={{
@@ -138,7 +139,7 @@ const AddOutputs = () => {
               autoComplete="off"
             />
           )}
-        />
+        /> */}
         <Controller
           control={control}
           name="reason"
@@ -161,6 +162,7 @@ const AddOutputs = () => {
               <MenuItem value={'Muestra'}>Muestra</MenuItem>
               <MenuItem value={'Exhibición'}>Exhibición</MenuItem>
               <MenuItem value={'Préstamo'}>Préstamo</MenuItem>
+              <MenuItem value={'Préstamo'}>Falta de producto</MenuItem>
             </Select>
             </FormControl>
           )}

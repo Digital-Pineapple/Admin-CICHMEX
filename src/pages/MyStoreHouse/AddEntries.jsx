@@ -24,7 +24,6 @@ const AddEntries = () => {
   const [product, setProduct] = useState(null);
   const [allProducts, setAllProducts] = useState([]);
   const [productVariants, setProductVariants] = useState([]);
-  const [isFocused, setIsFocused] = useState(false);
   const {
     control,
     handleSubmit,

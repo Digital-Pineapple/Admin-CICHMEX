@@ -317,6 +317,7 @@ const VariantsAndPhotos = () => {
     setValue(`variants[${indexVariant}].images`, newImages);
   };
 
+  const getCachedImageUrl = (url) => `${url}?v=${new Date().getTime()}`;
 
   
 
@@ -902,7 +903,7 @@ const VariantsAndPhotos = () => {
                                   marginX={1}
                                 >
                                   <img
-                                    src={preview?.url ? preview?.url : preview?.filePreview ? preview?.filePreview : ''}
+                                    src={preview?.url ? getCachedImageUrl(preview?.url) : preview?.filePreview ? preview?.filePreview : ''}
                                     alt="Preview"
                                     style={{
                                       width: "100%",

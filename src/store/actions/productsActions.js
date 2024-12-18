@@ -18,6 +18,7 @@ import {
   onStepNewProduct,
   onClearValues,
   updateVariant,
+  updateImageVariant,
 } from "../reducer/productsReducer";
 import {
   headerConfigApplication,
@@ -61,13 +62,31 @@ export const startLoadStockProducts = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      const info = data.data.map((item, index) => {
-        const info = item.product_id;
-        const stock = item.stock;
-        const stock_id = item._id;
-        const totInfo = { ...info, stock, stock_id };
-        return totInfo;
+      dispatch(loadProducts(data.data))  
+      
+      const info = data.data.map((item) => {
+        const { product_id, variant_id, stock, _id: stock_id } = item; // Destructura las propiedades necesarias
+         let name = product_id?.name; // Inicializa con el nombre del producto
+         let price = product_id?.price
+         let tag = product_id?.tag
+        if (variant_id) {
+          name += `-${variant_id?.attributes?.size}` + `-${variant_id?.attributes?.color}`;
+          price = variant_id?.price;
+          tag = variant_id?.tag;
+
+        }
+      
+        // Crea el objeto combinando la información del producto y las propiedades adicionales
+        return {
+          ...product_id,
+          name,
+          stock,
+          stock_id,
+          price,
+          tag,
+        };
       });
+      
       dispatch(loadProducts(info));
     } catch (error) {
       enqueueSnackbar(
@@ -158,8 +177,13 @@ export const startLoadAllOutputs = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+      const info = data.data.map((i) => {
+        let tag = i.variant_tag ? i.variant_tag : i.tag;
+        return { ...i, tag };
+      });
+      
 
-      dispatch(loadProductOutputs(data.data));
+      dispatch(loadProductOutputs(info));
     } catch (error) {
       enqueueSnackbar(
         `${error.response.data.message}` || "Error al consultar la información",
@@ -1309,7 +1333,7 @@ export const startDeleteImageVariant = (variant_id , image_id) => {
         }
       );
       
-      dispatch(updateVariant(data.data))
+      dispatch(updateImageVariant(data.data))
       enqueueSnackbar(`${data.message}`, {
         variant: "success",
         anchorOrigin: {
@@ -1319,6 +1343,8 @@ export const startDeleteImageVariant = (variant_id , image_id) => {
       });
       
     } catch (error) {
+      console.log(error,'vfjnvdfk');
+      
       enqueueSnackbar(
         error.response?.data?.message || "Error al enviar las variantes",
         {
