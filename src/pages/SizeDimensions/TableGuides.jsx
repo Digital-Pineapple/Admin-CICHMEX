@@ -78,7 +78,7 @@ const TableGuides = () => {
       {value === "clothes" ? <TableClothes fromVariants={true} /> : ""}
       {value === "Shoes" ? <TableShoes  fromVariants={true} /> : ""}
       {value === "Other" ? <TableOthers  fromVariants={true}/>:""}
-      {value === "Food" ? <TableFood  fromVariants={true}/>:""}
+      {value === "Food" ? <TableFoods  fromVariants={true}/>:""}
       </Grid>
     </Grid>
   );
