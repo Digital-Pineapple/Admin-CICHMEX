@@ -80,6 +80,8 @@ import DescriptionsAndVideo from "../pages/Products/StepNewProduct/DescriptionsA
 import EditWithVariants from "../pages/Products/EditWithVariants";
 import CreateWithVariants from "../pages/Products/CreateWithVariants";
 import CreateOneProduct from "../pages/Products/CreateOneProduct";
+import AllMySizeGuides from "../pages/SizeDimensions/AllMySizeGuides";
+import EditMySizeGuides from "../pages/SizeDimensions/EditMySizeGuide";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -182,6 +184,8 @@ export const AllRoutes = [
   { id : 73,  element : <EditWithVariants/>},
   { id : 75,  element : <CreateOneProduct/>},
   { id: 76, element: <TableGuides/>},
+  { id: 77, element: <AllMySizeGuides/>},
+  { id: 78, element: <EditMySizeGuides/>},
 
 
 

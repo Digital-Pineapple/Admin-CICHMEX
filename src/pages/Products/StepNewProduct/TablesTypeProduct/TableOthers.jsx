@@ -3,7 +3,6 @@ import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
-import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import {
   GridRowModes,
@@ -18,8 +17,7 @@ import { Controller, useForm } from "react-hook-form";
 import TextField from "@mui/material/TextField";
 import { useEffect, useState } from "react";
 import { useSizeGuide } from "../../../../hooks/useSizeGuide";
-
-const initialRows = [];
+import { useParams } from "react-router-dom";
 
 function EditToolbar(props) {
   const { setRows, setRowModesModel } = props;
@@ -45,26 +43,30 @@ function EditToolbar(props) {
         startIcon={<AddIcon />}
         onClick={handleClick}
       >
-        Agregar talla
+        Agregar
       </Button>
     </GridToolbarContainer>
   );
 }
 
-const TableOthers = ({}) => {
+const TableOthers = ({initialRows = [], sizeGuide, fromVariants = false}) => {
   const [rows, setRows] = useState(initialRows);
   const [rowModesModel, setRowModesModel] =useState({});
-  const {loadAddOneSizeGuide} =  useSizeGuide()
+  const {loadAddOneSizeGuide, updateSizeGuide} =  useSizeGuide();
+  const {id} = useParams();
+  
+  const DefaultValues = (data)=>({
+    name : data?.name || "",
+    type : "others",
+    dimensions : data?.dimensions|| [],
+})
     const {
     control,
     formState: { errors },
     setValue,
     handleSubmit,
   } = useForm({
-    defaultValues: {
-      name: "",
-      dimensions: [],
-    },
+    defaultValues: DefaultValues(sizeGuide) ,
   });
 
   useEffect(() => {
@@ -205,7 +207,13 @@ const TableOthers = ({}) => {
   ];
 
   const submitForm = handleSubmit((data) => {
-    loadAddOneSizeGuide(data)
+    if (!!id && fromVariants === false) {
+      updateSizeGuide(id, data);
+    } else if (fromVariants === true) {
+      loadAddOneSizeGuide(data);
+    }else{
+      loadAddOneSizeGuide(data);
+    }
   });
   return (
     <Box

@@ -18,8 +18,8 @@ import { Controller, useForm } from "react-hook-form";
 import TextField from "@mui/material/TextField";
 import { useEffect, useState } from "react";
 import { useSizeGuide } from "../../../../hooks/useSizeGuide";
+import { useParams } from "react-router-dom";
 
-const initialRows = [];
 
 function EditToolbar(props) {
   const { setRows, setRowModesModel } = props;
@@ -51,20 +51,24 @@ function EditToolbar(props) {
   );
 }
 
-const TableShoes = () => {
+const TableShoes = ({ initialRows = [], sizeGuide, fromVariants = false }) => {
   const [rows, setRows] = useState(initialRows);
   const [rowModesModel, setRowModesModel] =useState({});
-  const {loadAddOneSizeGuide} =  useSizeGuide()
+  const {loadAddOneSizeGuide, updateSizeGuide} =  useSizeGuide()
+  const { id } = useParams()
+  
+  const DefaultValues = (data)=>({
+    name : data?.name || "",
+    type : "shoes",
+    dimensions : data?.dimensions|| [],
+})
     const {
     control,
     formState: { errors },
     setValue,
     handleSubmit,
   } = useForm({
-    defaultValues: {
-      name: "",
-      dimensions: [],
-    },
+    defaultValues: DefaultValues(sizeGuide)
   });
 
   useEffect(() => {
@@ -210,7 +214,13 @@ const TableShoes = () => {
   ];
 
   const submitForm = handleSubmit((data) => {
-    loadAddOneSizeGuide(data)
+    if (!!id && fromVariants === false) {
+      updateSizeGuide(id, data);
+    } else if (fromVariants === true) {
+      loadAddOneSizeGuide(data);
+    }else{
+      loadAddOneSizeGuide(data);
+    }
   });
   return (
     <Box
@@ -236,7 +246,7 @@ const TableShoes = () => {
             error={!!errors.name}
             helperText={errors.name && errors.name.message}
             autoComplete="off"
-            placeholder="Ej. Blusas sanhoo mujer"
+            placeholder="Ej. Zapatos "
           />
         )}
       />

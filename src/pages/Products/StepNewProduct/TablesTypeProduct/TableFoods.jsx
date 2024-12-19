@@ -18,9 +18,15 @@ import { Controller, useForm } from "react-hook-form";
 import TextField from "@mui/material/TextField";
 import { useEffect, useState } from "react";
 import { useSizeGuide } from "../../../../hooks/useSizeGuide";
-import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
-
-const initialRows = [];
+import {
+  FormControl,
+  FormControlLabel,
+  FormHelperText,
+  FormLabel,
+  Radio,
+  RadioGroup,
+} from "@mui/material";
+import { useParams } from "react-router-dom";
 
 function EditToolbar(props) {
   const { setRows, setRowModesModel } = props;
@@ -46,34 +52,37 @@ function EditToolbar(props) {
         startIcon={<AddIcon />}
         onClick={handleClick}
       >
-        Agregar talla
+        Agregar
       </Button>
     </GridToolbarContainer>
   );
 }
 
-const TableFoods = () => {
+const TableFoods = ({ initialRows = [], sizeGuide, fromVariants = false }) => {
+  
   const [rows, setRows] = useState(initialRows);
-  const [rowModesModel, setRowModesModel] =useState({});
-  const {loadAddOneSizeGuide} =  useSizeGuide()
-  const [selectedPackage, setSelectedPackage] = useState(0);
-    const {
+  const [rowModesModel, setRowModesModel] = useState({});
+  const { loadAddOneSizeGuide, updateSizeGuide } =
+    useSizeGuide();
+  const { id } = useParams();
+  const DefaultValues = (data)=>({
+      name : data?.name || "",
+      type : "foods",
+      typePackage : data?.typePackage || "",
+      dimensions : data?.dimensions|| [],
+  })
+  const {
     control,
     formState: { errors },
     setValue,
-    register,
     handleSubmit,
   } = useForm({
-    defaultValues: {
-      name: "",
-      typePackage:"",
-      dimensions: [],
-    },
+    defaultValues: DefaultValues(sizeGuide) ,
   });
 
   useEffect(() => {
-  setValue('dimensions', rows)
-  }, [rows, setRows])
+    setValue("dimensions", rows);
+  }, [rows, setRows]);
 
   const handleRowEditStop = (params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -97,8 +106,6 @@ const TableFoods = () => {
 
     return { ...params.props, error: false };
   };
-
-  
 
   const handleDeleteClick = (id) => {
     setRows(rows.filter((row) => row.id !== id));
@@ -207,7 +214,13 @@ const TableFoods = () => {
   ];
 
   const submitForm = handleSubmit((data) => {
-     loadAddOneSizeGuide(data)
+    if (!!id && fromVariants === false) {
+      updateSizeGuide(id, data);
+    } else if (fromVariants === true) {
+      loadAddOneSizeGuide(data);
+    }else{
+      loadAddOneSizeGuide(data);
+    }
   });
   return (
     <Box
@@ -216,7 +229,7 @@ const TableFoods = () => {
         minHeight: "400px",
       }}
       component="form"
-      onSubmit={(e)=>submitForm(e)}
+      onSubmit={(e) => submitForm(e)}
     >
       <Controller
         control={control}
@@ -237,30 +250,48 @@ const TableFoods = () => {
           />
         )}
       />
-     <FormControl variant="outlined">
+       <Controller
+        control={control}
+        rules={{ required:{ value: true , message: 'Campo requerido'}}}
+        name="typePackage"
+        render={({ field: { onChange, onBlur, value, ref } }) => (
+          <FormControl error={!!errors.typePackage} variant="outlined">
         <FormLabel id="type-package">Tipo de empaque</FormLabel>
         <RadioGroup
           row
           aria-labelledby="radio-button-type-package"
-          defaultValue="Granel" // Puedes establecer un valor por defecto
-          {...register("typePackage")} // Registra el RadioGroup
+          ref={ref}
+           value={value}
+          onChange={onChange}
+          onBlur={onBlur}
         >
-          <FormControlLabel value="Granel" control={<Radio />} label="Granel" />
-          <FormControlLabel value="Envasado" control={<Radio />} label="Envasado" />
+          <FormControlLabel
+           value="Granel"
+            control={<Radio />}
+             label="Granel" />
+          <FormControlLabel
+            value="Envasado"
+            control={<Radio />}
+            label="Envasado"
+          />
         </RadioGroup>
+        <FormHelperText error={!!errors.typePackage} > {errors?.typePackage?.message} </FormHelperText>
       </FormControl>
+        )}
+      />
+    
 
       <DataGrid
-      sx={{
-        "& .actions": { color: "text.secondary" },
-        "& .Mui-error": {
-          bgcolor: red[100], // Color de fondo cuando hay error
-          color: red[700], // Color de texto cuando hay error
-          border: "solid 2px red",
-          width: "100%",
-          height: "100%",
-        },
-      }}
+        sx={{
+          "& .actions": { color: "text.secondary" },
+          "& .Mui-error": {
+            bgcolor: red[100], // Color de fondo cuando hay error
+            color: red[700], // Color de texto cuando hay error
+            border: "solid 2px red",
+            width: "100%",
+            height: "100%",
+          },
+        }}
         rows={rows}
         columns={columns1}
         editMode="row"
@@ -280,4 +311,4 @@ const TableFoods = () => {
   );
 };
 
-export default TableFoods
+export default TableFoods;

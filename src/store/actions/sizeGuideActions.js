@@ -1,6 +1,6 @@
 import { enqueueSnackbar } from "notistack";
 import { instanceApi } from "../../apis/configAxios";
-import { loadOneSizeGuide, loadSizeGuides, onAddSizeGuide } from "../reducer/sizeGuideReducer";
+import { deleteSizeGuide, editSizeGuide, loadOneSizeGuide, loadSizeGuides, onAddSizeGuide } from "../reducer/sizeGuideReducer";
 import { Zoom } from "@mui/material";
 import { startLoading, stopLoading } from "../reducer/uiReducer";
 
@@ -126,4 +126,79 @@ export const startSelectSizeGuide = (values) => {
     }
   }
 }
+
+export const startDeleteSizeGuide = (id) => {
+  
+  return async (dispatch) => {
+    dispatch(startLoading())
+    try {
+      const { data } = await instanceApi.delete(`/size-guide/${id}`, {
+        headers: {
+          "Content-type": "application/json",
+           "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      },
+      });
+      dispatch(deleteSizeGuide(data.data));
+      enqueueSnackbar(`${data.message}`,{
+        anchorOrigin:{
+          horizontal:'center',
+          vertical:'top'
+        },
+        autoHideDuration:3000,
+        variant:'success',
+        TransitionComponent:Zoom,
+      })
+    } catch (error) {
+      enqueueSnackbar(`${error.response.data.message}`,{
+        anchorOrigin:{
+          horizontal:'center',
+          vertical:'top'
+        },
+        autoHideDuration:3000,
+        variant:'error',
+        TransitionComponent:Zoom,
+      })
+    } finally{
+        dispatch(stopLoading())
+    }
+  }
+}
+
+export const startUpdateSizeGuide = (id, values, navigate) => {
+  return async (dispatch) => {
+    dispatch(startLoading())
+    try {
+      const { data } = await instanceApi.put(`/size-guide/update/${id}`,{values:values}, {
+        headers: {
+          "Content-type": "application/json",
+           "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      },
+      });
+      dispatch(editSizeGuide(data.data));
+      enqueueSnackbar(`${data.message}`,{
+        anchorOrigin:{
+          horizontal:'center',
+          vertical:'top'
+        },
+        autoHideDuration:3000,
+        variant:'success',
+        TransitionComponent:Zoom,
+      })
+      navigate(`/guia-dimensiones`,{replace:true})
+    } catch (error) {
+      enqueueSnackbar(`${error.response.data.message}`,{
+        anchorOrigin:{
+          horizontal:'center',
+          vertical:'top'
+        },
+        autoHideDuration:3000,
+        variant:'error',
+        TransitionComponent:Zoom,
+      })
+    } finally{
+        dispatch(stopLoading())
+    }
+  }
+}
+
 

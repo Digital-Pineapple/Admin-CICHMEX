@@ -1,4 +1,4 @@
-import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup } from "@mui/material";
+import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Typography } from "@mui/material";
 import TableClothes from "../Products/StepNewProduct/TablesTypeProduct/TableClothes";
 import { useState } from "react";
 import TableOthers from "../Products/StepNewProduct/TablesTypeProduct/TableOthers";
@@ -12,7 +12,22 @@ const TableGuides = () => {
   };
 
   return (
-    <Grid item spacing={2} gap={2}>
+    <Grid container gap={2}>
+        <Grid
+        item
+        marginTop={{ xs: "-30px" }}
+        xs={12}
+        minHeight={"100px"}
+        className="Titles"
+      >
+        <Typography
+          textAlign={"center"}
+          variant="h1"
+          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
+        >
+         Agregar guia
+        </Typography>
+      </Grid>
       <Grid item xs={12}>
         <FormControl fullWidth>
           <FormLabel sx={{ fontSize: "18px", textAlign:'center' }} id="type Product">
@@ -60,10 +75,10 @@ const TableGuides = () => {
         </FormControl>
       </Grid>
       <Grid item xs={12} display={'flex'} boxSizing={'border-box'}>
-      {value === "clothes" ? <TableClothes /> : ""}
-      {value === "Shoes" ? <TableShoes /> : ""}
-      {value === "Other" ? <TableOthers/>:""}
-      {value === "Food" ? <TableFoods/>:""}
+      {value === "clothes" ? <TableClothes fromVariants={true} /> : ""}
+      {value === "Shoes" ? <TableShoes  fromVariants={true} /> : ""}
+      {value === "Other" ? <TableOthers  fromVariants={true}/>:""}
+      {value === "Food" ? <TableFood  fromVariants={true}/>:""}
       </Grid>
     </Grid>
   );
