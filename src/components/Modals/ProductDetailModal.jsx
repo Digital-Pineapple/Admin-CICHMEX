@@ -45,7 +45,6 @@ const ProductDetailModal = ({ openModal, handleClose, product = {} }) => {
               <>
                 <CardHeader
                   title={`Nombre : ${product?.name}`}
-                  subheader={`SKU: ${product?.sku}, STOCK: ${product.stock}`}
                   action={
                     <IconButton title="Cerrar" onClick={handleClose}>
                       <Close />

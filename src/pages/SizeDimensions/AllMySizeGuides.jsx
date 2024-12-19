@@ -32,11 +32,11 @@ import {
   Skeleton,
 } from "@mui/material";
 import { Workbook } from "exceljs";
-import { useProducts } from "../../hooks/useProducts";
 import DeleteAlert from "../../components/ui/DeleteAlert";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import { useAuthStore } from "../../hooks";
-import ProductDetailModal from "../../components/Modals/ProductDetailModal";
+import { useSizeGuide } from "../../hooks/useSizeGuide";
+import TableGuideModal from "../../components/Modals/TableGuideModal";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -70,21 +70,21 @@ function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
-const Products = () => {
+const AllMySizeGuides = () => {
   const { user } = useAuthStore();
   const {
-    loadProducts,
+    loadSizeGuides,
+    loadOneSizeGuide,
+    rowsAllGuides,
+    sizeGuide,
+    deleteSizeGuide,
     navigate,
-    deleteProduct,
-    rowsProducts,
-    loading,
-    loadProduct,
-    product,
-  } = useProducts();
+    loading
+  } = useSizeGuide();
   const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
-    loadProducts();
+    loadSizeGuides();
   }, [user]);
 
   const exportToExcel = () => {
@@ -148,22 +148,11 @@ const Products = () => {
   if (loading) return <LoadingScreenBlue />;
 
   const handleOpen = async (id) => {
-    await loadProduct(id);
+    await loadOneSizeGuide(id);
     setOpenModal(true);
   };
 
   const handleClose = () => setOpenModal(false);
-
-  const valuateNavigateEdit = async (id) => {
-    const response = await loadProduct(id);
-    let variants = response.variants;
-
-    if (variants && Array.isArray(variants) && variants.length > 0) {
-      navigate(`/mi-almacen/productos/variantes/editar/${id}`);
-    } else {
-      navigate(`/mi-almacen/productos/editar/${id}`);
-    }
-  };
 
   return (
     <Grid container gap={2} maxWidth={"85vw"}>
@@ -179,7 +168,7 @@ const Products = () => {
           variant="h1"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-          Productos
+          Guias de tallas o medidas
         </Typography>
       </Grid>
       <Grid item display={"flex"} justifyContent={"end"} rowSpacing={2} xs={12}>
@@ -188,28 +177,9 @@ const Products = () => {
           startIcon={<Refresh />}
           variant="contained"
           color="primary"
-          onClick={() => loadProducts()}
+          onClick={() => loadSizeGuides()}
         >
           Recargar
-        </Button>
-        <Button
-          size="small"
-          startIcon={<ViewModule />}
-          sx={{ marginX: 2 }}
-          variant="contained"
-          color="success"
-          onClick={()=> navigate('/mi-almacen/producto/agregar-variantes')}
-        >
-          Agregar con variantes
-        </Button>
-        <Button
-          size="small"
-          startIcon={<Star />}
-          variant="contained"
-          color="error"
-          onClick={()=>navigate('/mi-almacen/producto/agregar')}
-        >
-          Agregar sin variantes
         </Button>
       </Grid>
       <DataGrid
@@ -256,14 +226,14 @@ const Products = () => {
             type: "actions",
             getActions: (params) => [
               <DeleteAlert
-                title={`¿Estas seguro de eliminar el producto ${params.row?.name}`}
-                callbackToDeleteItem={() => deleteProduct(params.row._id)}
+                title={`¿Estas seguro de eliminar esta guia de tallas ${params.row?.name}`}
+                callbackToDeleteItem={() => deleteSizeGuide(params.row._id)}
               />,
               <Tooltip title="Editar Producto">
                 <IconButton
                   aria-label="Editar"
                   color="success"
-                  onClick={() => valuateNavigateEdit(params.row._id)}
+                  onClick={() => navigate(`/guia-dimensiones/editar/${params.row._id}` )}
                 >
                   <Edit />
                 </IconButton>
@@ -289,7 +259,7 @@ const Products = () => {
           },
         }}
         density="compact"
-        rows={rowsProducts}
+        rows={rowsAllGuides}
         pagination
         slots={{
           pagination: CustomPagination,
@@ -314,15 +284,14 @@ const Products = () => {
         }}
         style={{ fontFamily: "sans-serif", fontSize: "15px" }}
       />
-      <ProductDetailModal
-        handleClose={handleClose}
-        handleOpen={handleOpen}
-        openModal={openModal}
-        product={product ? product : ""}
-        setOpenModal={setOpenModal}
+      <TableGuideModal
+      openModal={openModal}
+      handleClose={handleClose}
+      sizeGuide={sizeGuide}
       />
     </Grid>
   );
 };
 
-export default Products;
+
+export default AllMySizeGuides

@@ -1,10 +1,11 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'  
 
 export const uiReducer = createSlice({
   name: 'ui',
   initialState: {
     loading: false,
-    links: []
+    links: [],
+    colors: []
   },
   reducers: {
     startLoading: (state) => {
@@ -15,11 +16,14 @@ export const uiReducer = createSlice({
     },
     setLinks : (state,{payload})=>{
       state.links = payload
+    },
+    onLoadColors: (state,{payload})=>{
+      state.colors = payload
     }
    
   },
 })
 
-export const { startLoading, stopLoading, setLinks } = uiReducer.actions;
+export const { startLoading, stopLoading, setLinks, colors, onLoadColors } = uiReducer.actions;
 
 export default uiReducer.reducer;

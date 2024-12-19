@@ -59,7 +59,7 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 
-const CreateProduct = () => {
+const CreateOneProduct = () => {
   const { user } = useAuthStore();
   const { createProduct, navigate, loading } = useProducts();
   const {
@@ -89,7 +89,6 @@ const CreateProduct = () => {
     // Retornar valores nulos si no hay videos
     return { videoVertical: null, videoHorizontal: null };
   };
-  const { videoVertical, videoHorizontal } = valuateVideo(videos);
 
 
 
@@ -685,4 +684,5 @@ const CreateProduct = () => {
   );
 };
 
-export default CreateProduct;
+
+export default CreateOneProduct

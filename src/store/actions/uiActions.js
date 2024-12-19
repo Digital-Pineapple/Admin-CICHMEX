@@ -1,6 +1,6 @@
 import { enqueueSnackbar } from "notistack";
 import { instanceApi } from "../../apis/configAxios";
-import { startLoading, stopLoading } from "../reducer/uiReducer";
+import { onLoadColors, startLoading, stopLoading } from "../reducer/uiReducer";
 import { loadDynamicRoutes } from "../reducer";
 
 export const startAddRoute = (values,navigate) => {
@@ -59,6 +59,24 @@ export const loadAllRoutes = () => {
       });
     }finally{
         dispatch(stopLoading())
+    }
+  };
+};
+
+
+export const startLoadColors = () => {
+  return async (dispatch) => {
+    try {
+      const { data } = await instanceApi.get("/colorProduct");
+      dispatch(onLoadColors(data.data));
+    } catch (error) {
+      enqueueSnackbar(`Ocurrió un error al cargar las comisiones + ${error}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
     }
   };
 };

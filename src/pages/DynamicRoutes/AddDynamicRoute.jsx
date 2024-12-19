@@ -125,8 +125,7 @@ const AddDynamicRoute = () => {
         <Card variant="outlined">
           <CardHeader title="Detalles" />
           <CardContent
-            sx={{ display: "flex", gap: 2, flexDirection: "column"
-             }}
+            sx={{ display: "flex", gap: 2, flexDirection: "column" }}
           >
             <TextField
               size="small"
@@ -270,19 +269,18 @@ const AddDynamicRoute = () => {
         </Card>
       </Grid>
 
-      <Grid item xs={12}>
-        <ButtonGroup fullWidth>
-          <Button type="submit" variant="contained" color="success">
-            Crear
-          </Button>
-          <Button
-            onClick={() => navigate("/auth/Productos", { replace: true })}
-            variant="contained"
-            color="warning"
-          >
-            Salir
-          </Button>
-        </ButtonGroup>
+      <Grid item xs={12} display={"flex"} gap={2} justifyContent={"center"}>
+        <Button
+          onClick={() => navigate("/auth/Productos", { replace: true })}
+          variant="contained"
+          color="warning"
+          fullWidth
+        >
+          Salir
+        </Button>
+        <Button fullWidth type="submit" variant="contained" color="success">
+          Crear
+        </Button>
       </Grid>
     </Grid>
   );

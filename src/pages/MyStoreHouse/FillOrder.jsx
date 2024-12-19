@@ -119,9 +119,10 @@ const FillOrder = () => {
           </Button>
           <Button
             variant="contained"
-            size="medium"
+            fullWidth
+            size="small"
             onClick={() => printPDF(id)}
-            color="secondary"
+            color="success"
           >
             Imprimir PDF
           </Button>
@@ -168,12 +169,21 @@ const FillOrder = () => {
                 <strong><i>Lista de productos</i> </strong>
               </Typography>
               <DataGrid
+              sx={{'& .theme--hedaer': {
+          backgroundColor: 'black',
+          color:"white",
+          textAlign:'center'
+        },}}
                 onRowSelectionModelChange={(value) => {
                   setRowSelection(value);
                   activeButton(value.length);
                 }}
                 rowSelectionModel={rowSelection}
                 hideFooterSelectedRowCount={true}
+                slots={{
+                  noRowsOverlay: CustomNoRows
+                }}
+                autoHeight
                 columns={[
                   {
                     field: "image",
@@ -191,12 +201,14 @@ const FillOrder = () => {
                   {
                     field: "name",
                     headerName: "Nombre del producto",
+                    headerClassName:'theme--hedaer',
                     flex: 1,
                     align: "center",
                   },
                   {
                     field: "quantity",
                     headerName: "Cantidad de producto",
+                    headerClassName:'theme--hedaer',
                     flex: 1,
                     align: "center",
                   },
@@ -210,7 +222,7 @@ const FillOrder = () => {
 
           <Button
             style={{ marginTop: 10 }}
-            variant="contained"
+            variant="outlined"
             fullWidth
             onClick={() => completeOrder()}
             color="success"

@@ -7,6 +7,7 @@ import {
   StartLoadVerifyToPoint,
   startLoadAssignRoute,
   startLoadAssignedPO,
+  startLoadPOOutOfRegion,
   startLoadPOPaidAndSupply,
   startLoadPOPaidAndSupplyToPonit,
   startLoadPackageSent,
@@ -75,6 +76,8 @@ export const useProductOrder = () => {
   const loadPrintPDFOrder = async (id) => dispatch(startLoadPrintOrderPDF(id))
 
   const loadVerifyPackage = async (id) =>dispatch(startLoadVerifyPackage(id))
+
+  const loadPOOutOfRegions = async () =>dispatch(startLoadPOOutOfRegion())
 
   const validateSale = async (values) => dispatch(startValidateSale(values, navigate))
   const rejectTicket = async (values) => dispatch(startRejectTicket(values, navigate))

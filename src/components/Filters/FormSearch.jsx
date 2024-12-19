@@ -67,7 +67,7 @@ function FormSearch({ setSelected, allValues, titleAlert }) {
         }}
         key={index}
       >
-        {suggestion.tag + " - " + suggestion.name}
+        {(suggestion.tag ? suggestion.tag : "") + " - " + suggestion.name}
       </ListItem>
     ));
   };

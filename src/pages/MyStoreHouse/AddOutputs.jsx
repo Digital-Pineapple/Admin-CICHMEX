@@ -58,12 +58,13 @@ const AddOutputs = () => {
   }, [user]);
 
   useEffect(() => {
-    if (product) {
+    if (product) {  
       setAllProducts((prevProducts) => [...prevProducts, product]);
     }
   }, [product]);
 
   const rowsIds = allProducts?.map((item, index) => ({
+  
     id: index,
     ...item,
   }));

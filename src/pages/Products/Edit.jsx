@@ -29,7 +29,7 @@ import { useCategories } from "../../hooks/useCategories";
 import { useSubCategories } from "../../hooks/useSubCategories";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import TextAreaInput from "../../components/inputs/TextAreaInput";
-import { AttachMoney, Refresh } from "@mui/icons-material";
+import { AttachMoney, Refresh, ViewModule } from "@mui/icons-material";
 import WordsInput from "../../components/inputs/WordsInput";
 import VideoUpdateField from "../../components/Forms/VideoUpdateField";
 import DetailImagesUpdateField from "../../components/Forms/DetailImagesUpdateField";
@@ -39,6 +39,10 @@ const Edit = () => {
   const { loadProduct, product, editProduct, navigate, loading, updateVideo, updateThumbnail, addOneImage, deleteImageDetail } = useProducts();
   const { categories, loadCategories } = useCategories();
   const { subCategoriesByCategory, loadSubCategories, loadSubCategoriesByCategory } = useSubCategories();
+ 
+  useEffect(() => {
+    loadProduct(id);
+  }, [id]);
 
 
   useEffect(() => {
@@ -140,9 +144,12 @@ const Edit = () => {
           Editar producto
         </Typography>
       </Grid>
-      <Grid item xs={12}>
+      <Grid item display={'flex'} width={'100%'} justifyContent={'space-between'} xs={12}>
         <Button startIcon={<Refresh/>} onClick={()=>loadProduct(id)} variant="contained" color="primary">
           Recargar
+        </Button>
+        <Button startIcon={<ViewModule/>} onClick={()=>navigate(`/mi-almacen/productos/variantes/editar/${id}`)} variant="contained" color="secondary">
+          Agregar variantes
         </Button>
       </Grid>
       <Grid

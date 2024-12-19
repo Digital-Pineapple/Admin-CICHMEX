@@ -7,6 +7,7 @@ export const productsReducer = createSlice({
     products: [],
     stockProducts: [],
     product: {},
+    dataProduct:[],
     entries: [],
     outputs: [],
     isLoading: false,
@@ -33,6 +34,9 @@ export const productsReducer = createSlice({
     onAddNewProduct: (state, { payload }) => {
       state.product = payload;
     },
+    onStepNewProduct: (state, { payload }) => {
+      state.dataProduct = {...payload}
+    },    
     deleteProduct: (state, { type, payload }) => {
       state.products = state.products.filter(
         (product) => product._id !== payload
@@ -53,9 +57,33 @@ export const productsReducer = createSlice({
     onEditVideosProduct(state, { payload }) {
       state.product.videos = payload;
     },
-    onUpdateImagesProduct(state, { payload }) {
-      state.product.images = payload;
+    onClearValues(state) {
+      state.dataProduct = [];
     },
+    onUpdateImagesProduct(state,{payload}){
+      state.product.images = payload
+    },
+    updateVariant(state, {payload}) {
+      state.product.variants = state.product.variants.map((variant)=>{
+        if (variant._id === payload._id) {
+         
+          return  payload
+         }
+         return variant
+      })
+    },
+    updateImageVariant(state, { payload }) {
+      state.product.variants = state.product.variants.map((variant) => {
+        if (variant._id === payload._id) {
+          // Actualiza únicamente las imágenes de la variante correspondiente
+          return {
+            ...variant,
+            images: payload.images
+          };
+        }
+        return variant;
+      });
+    },    
     editProduct: (state, { payload }) => {
       state.product = payload
     },
@@ -84,7 +112,11 @@ export const {
   onEditVideosProduct,
   startLoadingUpdate,
   stopLoadingUpdate,
-  onUpdateImagesProduct
+  onStepNewProduct,
+  onClearValues,
+  updateVariant,
+  onUpdateImagesProduct,
+  updateImageVariant
 } = productsReducer.actions;
 
 export default productsReducer.reducer;

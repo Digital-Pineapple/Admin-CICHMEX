@@ -102,7 +102,7 @@ export const themeAdminCarWashDark = createTheme({
   palette: {
     primary: {
       main: "#0D2B6B",
-      light:blueGrey[400],
+      light:blueGrey[100],
       dark:blueGrey[900],
       contrastText: '#fff',
     },
