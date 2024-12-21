@@ -1,10 +1,8 @@
-import * as React from "react";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SortIcon from "@mui/icons-material/Sort";
 import {
   DataGrid,
-  GridActionsCellItem,
   GridPagination,
   GridToolbarContainer,
   GridToolbarQuickFilter,
@@ -12,27 +10,37 @@ import {
   useGridApiContext,
   useGridSelector,
 } from "@mui/x-data-grid";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import MuiPagination from "@mui/material/Pagination";
-import { Avatar, Button, Chip, Grid, Typography } from "@mui/material";
-import PermIdentityIcon from "@mui/icons-material/PermIdentity";
-import LocalCarWashIcon from "@mui/icons-material/LocalCarWash";
-import WashIcon from "@mui/icons-material/Wash";
-import { saveAs } from "file-saver";
 import {
-  AirportShuttle,
+  Add,
   Download,
-  SupervisorAccount,
+  Edit,
+  LocalShipping,
+  Refresh,
+  Route,
+  Star,
+  Start,
+  ViewModule,
+  Visibility,
 } from "@mui/icons-material";
-import { redirectPages } from "../../helpers";
+import {
+  Button,
+  IconButton,
+  Tooltip,
+  Grid,
+  Typography,
+  Fab,
+  Skeleton,
+} from "@mui/material";
 import { Workbook } from "exceljs";
-
-import { useUsers } from "../../hooks/useUsers";
-
 import DeleteAlert from "../../components/ui/DeleteAlert";
-import EditButton from "../../components/Buttons/EditButton";
-import { useAuthStore } from "../../hooks";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
+import { useAuthStore } from "../../hooks";
+import { useSizeGuide } from "../../hooks/useSizeGuide";
+import TableGuideModal from "../../components/Modals/TableGuideModal";
+import { useProductOrder } from "../../hooks/useProductOrder";
+import { localDate } from "../../Utils/ConvertIsoDate";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -40,7 +48,7 @@ function Pagination({ page, onPageChange, className }) {
 
   return (
     <MuiPagination
-      color="secondary"
+      color="primary"
       className={className}
       count={pageCount}
       page={page + 1}
@@ -66,58 +74,47 @@ function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
-export default function Users() {
-  const { loadUsers, deleteUser, navigate, users, loading } = useUsers();
-  const {user} =useAuthStore()
-  useEffect(() => {
-    loadUsers();
-  }, [user]);
+const ReadyToSend = () => {
+  const { user } = useAuthStore();
+  const { loadProductOrdersPaidAndFill, productOrders, loading } = useProductOrder()
+  const [openModal, setOpenModal] = useState(false);
 
-  const rowsWithIds = users?.map((user) => ({
-    id: user._id?.toString(),
-    typeUser: user.type_user?.role,
-    system: user.type_user?.system,
-    ...user,
-  }));
+  useEffect(() => {
+    loadProductOrdersPaidAndFill();
+  }, [user]);
+  console.log(productOrders);
   
+
+  const rowsAllPO = productOrders?.map((item, index) => ({
+    id: index,
+    date: localDate(item.createdAt),
+    supply_date: localDate(item.supply_detail.date),
+    ...item,
+  }));
   const exportToExcel = () => {
     const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Usuarios");
+    const worksheet = workbook.addWorksheet("Productos");
 
     // Agregar encabezados de columna
     const headerRow = worksheet.addRow([
-      "ID",
-      "Nombre",
-      "Correo",
-      "Tipo de usuario",
-      "Registro con Google",
-      "Telefono",
-      // "cuenta Verificada",
+      "Nombre del producto",
+      "Descripción",
+      "Precio",
+      "Tamaño",
+      "Código",
     ]);
     headerRow.eachCell((cell) => {
       cell.font = { bold: true };
     });
+
     // Agregar datos de las filas
-    rowsWithIds.forEach((row) => {
+    productOrders.forEach((row) => {
       worksheet.addRow([
-        row._id,
-        row.fullname,
-        row.email,
-        row.typeUser == 1
-          ? "Lavador"
-          : row.type_user2 == 0
-          ? "Cliente"
-          : row.type_user2 == 2
-          ? "Establecimiento"
-          : "usuario",
-        row.google === true ? "si" : "no",
-        row.phone?.phone_number
-          ? row.phone?.phone_number
-          : row.phone?.phone_number === undefined
-          ? "no tiene numero"
-          : null,
-        // row.accountVerify === true
-        // ? "si":"no",
+        row.name,
+        row.description,
+        row.price,
+        row.size,
+        row.tag,
       ]);
     });
 
@@ -126,7 +123,7 @@ export default function Users() {
       const blob = new Blob([buffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-      saveAs(blob, "usuarios.xlsx");
+      saveAs(blob, "productos.xlsx");
     });
   };
 
@@ -138,7 +135,7 @@ export default function Users() {
     return (
       <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
         <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-        <GridToolbarQuickFilter />
+        <GridToolbarQuickFilter placeholder='Buscar'/>
         <Button
           variant="text"
           startIcon={<Download />}
@@ -151,14 +148,18 @@ export default function Users() {
       </GridToolbarContainer>
     );
   }
-  if (loading) {
-    return(
-      <LoadingScreenBlue/>
-    )
-  }
+
+  if (loading) return <LoadingScreenBlue />;
+
+  const handleOpen = async (id) => {
+    await loadOneSizeGuide(id);
+    setOpenModal(true);
+  };
+
+  const handleClose = () => setOpenModal(false);
 
   return (
-    <Grid container maxWidth={'85vw'} style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
+    <Grid container gap={2} maxWidth={"85vw"}>
       <Grid
         item
         marginTop={{ xs: "-30px" }}
@@ -171,45 +172,48 @@ export default function Users() {
           variant="h1"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-          Usuarios
+          Pedidos listos para envío
         </Typography>
       </Grid>
+      <Grid item display={"flex"} justifyContent={"end"} rowSpacing={2} xs={12}>
+        <Button
+          size="small"
+          startIcon={<Refresh />}
+          variant="contained"
+          color="primary"
+          onClick={() => loadProductOrdersPaidAndFill()}
+        >
+          Recargar
+        </Button>
+      </Grid>
       <DataGrid
-        sx={{ fontSize: "12px", fontFamily: "sans-serif" }}
+        sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
           {
-            field: "profile_image",
-            hideable: false,
-            headerName: "Foto de perfil",
-            flex: 0.2,
-            sortable: "false",
-            renderCell: (params) =>
-              params?.value ? (
-                <Avatar alt={params.value} src={params.value} />
-              ) : null,
+            field: "date",
+            headerName: "Fecha de compra",
+            flex: 1,
+            align: "center",
           },
           {
-            field: "fullname",
+            field: "order_id",
             hideable: false,
-            headerName: "Nombre completo",
-            flex: 2,
+            headerName: "Folio",
+            flex: 1,
             sortable: false,
           },
+          // {
+          //   field: "price",
+          //   headerName: "Precio",
+          //   flex: 1,
+          //   align: "center",
+          // },
           {
-            field: "typeUser",
-            headerName: "Tipo de usuario",
+            field: "supply_date",
+            headerName: "Fecha de empaque",
             flex: 1,
             align: "center",
           },
-          {
-            field: "system",
-            headerName: "Sistema",
-            flex: 1,
-            align: "center",
-          },
-
-
-          { field: "email", headerName: "Correo", flex: 1, sortable: false },
           {
             field: "Opciones",
             headerName: "Opciones",
@@ -218,27 +222,38 @@ export default function Users() {
             sortable: false,
             type: "actions",
             getActions: (params) => [
-              <GridActionsCellItem
-                icon={<DeleteAlert />}
-                label="Eliminar"
-                onClick={() => deleteUser(params.row._id)}
-                showInMenu
-              />,
-              <GridActionsCellItem
-                icon={<EditButton />}
-                label="Editar"
-                onClick={() => navigate(`/usuarios/editar/${params.row._id}`)}
-                showInMenu
-              />,
+              <Tooltip title="Asignar compañía de envios">
+                <Button
+                  aria-label="Editar"
+                  color="success"
+                  startIcon={<LocalShipping/>}
+                  onClick={() => navigate(`/guia-dimensiones/editar/${params.row._id}` )}
+                >
+                 Asignar  
+                </Button>
+              </Tooltip>,
+              <Tooltip title="Ver detalle">
+                <IconButton
+                  aria-label="Ver detalle"
+                  color="primary"
+                  onClick={() => handleOpen(params.row._id)}
+                >
+                  <Visibility />
+                </IconButton>
+              </Tooltip>,
             ],
           },
         ]}
         initialState={{
           sorting: {
-            sortModel: [{ field: "type_customer", sort: "desc" }],
+            sortModel: [{ field: "createdAt", sort: "desc" }],
+          },
+          pagination: {
+            paginationModel: { pageSize: 20 },
           },
         }}
-        rows={rowsWithIds}
+        density="compact"
+        rows={rowsAllPO}
         pagination
         slots={{
           pagination: CustomPagination,
@@ -247,6 +262,10 @@ export default function Users() {
           columnSortedAscendingIcon: SortedAscendingIcon,
           columnUnsortedIcon: UnsortedIcon,
         }}
+        disableColumnFilter
+        disableColumnMenu
+        disableColumnSelector
+        disableDensitySelector
         slotProps={{
           toolbar: {
             showQuickFilter: true,
@@ -257,7 +276,12 @@ export default function Users() {
           hideFooter: true,
           hideToolbar: true,
         }}
+        style={{ fontFamily: "sans-serif", fontSize: "15px" }}
       />
     </Grid>
   );
-}
+};
+
+
+
+export default ReadyToSend

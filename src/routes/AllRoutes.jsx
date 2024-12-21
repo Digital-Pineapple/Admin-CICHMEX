@@ -82,6 +82,7 @@ import CreateWithVariants from "../pages/Products/CreateWithVariants";
 import CreateOneProduct from "../pages/Products/CreateOneProduct";
 import AllMySizeGuides from "../pages/SizeDimensions/AllMySizeGuides";
 import EditMySizeGuides from "../pages/SizeDimensions/EditMySizeGuide";
+import ReadyToSend from "../pages/Logistic/ReadyToSend";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -186,6 +187,9 @@ export const AllRoutes = [
   { id: 76, element: <TableGuides/>},
   { id: 77, element: <AllMySizeGuides/>},
   { id: 78, element: <EditMySizeGuides/>},
+  { id: 79, element: <AssignRoute/>},
+  { id: 80, element: <ReadyToSend/>},
+
 
 
 

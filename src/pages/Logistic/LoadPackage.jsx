@@ -25,6 +25,7 @@ import Download from "@mui/icons-material/Download";
 import Swal from "sweetalert2";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import LoadPackageModal from "../../components/Modals/LoadPackageModal";
+import { useAuthStore } from "../../hooks";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -61,10 +62,11 @@ function CustomPagination(props) {
 
 const LoadPackage = () => {
   const { loadAssignedPO, navigate, productOrders, loading } = useProductOrder();
+  const {user} = useAuthStore()
 
   useEffect(() => {
     loadAssignedPO();
-  }, []);
+  }, [user]);
 
   const [openModal, setOpenModal] = useState(false)
   const [valuePO, setValuePO] = useState(null) 

@@ -3,6 +3,7 @@ import { instanceApi } from "../../apis/configAxios";
 import { onLogin, onLogout } from "../reducer/authReducer";
 import { setLinks, startLoading, stopLoading } from "../reducer/uiReducer";
 import { createAsyncThunk } from "@reduxjs/toolkit/dist";
+import { AllRoutes } from "../../routes/AllRoutes";
 
 export const fetchRoutes = createAsyncThunk('/auth/fetchRoutes', async (token) => {
   const {data} = await instanceApi.get(`/dynamic-route/links/all`,{
@@ -14,7 +15,6 @@ export const fetchRoutes = createAsyncThunk('/auth/fetchRoutes', async (token) =
       system:"Admin"
     }
   });
-  
   return data.data;
 });
 
@@ -44,7 +44,6 @@ export const startLogin = ( email, password, navigate ) => {
 
 export const startRevalidateToken = () => {
   return async (dispatch) => {
-    dispatch(startLoading())
     try {
       const { data } = await instanceApi.get("/auth/user", {
         headers: {
@@ -53,14 +52,10 @@ export const startRevalidateToken = () => {
         },
       });
      await dispatch(fetchRoutes(data.data.token))
-     
       dispatch(onLogin(data.data.user))
     } catch (error) {
       dispatch(onLogout( error.response.data?.message || error.response.data.errors[0].message));
-    }finally{
-      dispatch(stopLoading())
     }
-
   };
 };
 

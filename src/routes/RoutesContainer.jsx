@@ -1,74 +1,66 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { useAuthStore } from "../hooks";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   themeAdminCarWashLight,
   themeAdminCichmexLight,
   themeSuperAdmin,
 } from "../theme";
 import { ThemeProvider } from "@mui/material";
-import { NotFound } from "../pages/ui/NotFound";
 import { Navbar } from "../components";
-import { useDynamicRoutes } from "../hooks/useDynamicRoutes";
-import LoadingScreenBlue from "../components/ui/LoadingScreenBlue";
 import { Login } from "../pages/Login";
 import { PrivateRoutes } from "./PrivateRoutes";
-import Principal from "../pages/Principal";
 import { PublicRoutes } from "./PublicRoutes";
 import Home from "../pages/Home";
-const RoutesContainer = () => {
-  const { logged, user, routes } = useAuthStore();
 
-  const { componentLinks } = useDynamicRoutes();
+const RoutesContainer = ({ logged, user }) => {
+  const { componentLinks, routes } = useAuthStore();
   const [theme, setTheme] = useState(themeSuperAdmin);
 
   useEffect(() => {
-    function valuateLayout() {
-      if (!!user && !!routes) {
-        valuateTheme();
-      }
-    }
-    valuateLayout();
-  }, [user, routes]);
-
-  const match = useMemo(() => componentLinks(routes), [routes]);
-
-  const routesList = () => {
-    const list = match.map((item, index) => {
-      return <Route path={item.path} element={item.element} key={index} />;
-    });
-    return list;
-  };
-
-  const valuateTheme = () => {
-    const system = user?.type_user?.system || [];
-    let newTheme = themeSuperAdmin;
-
-    if (system.includes("CICHMEX") && system.includes("CARWASH")) {
-      newTheme = themeSuperAdmin;
-    } else if (system.includes("CICHMEX")) {
-      newTheme = themeAdminCichmexLight;
-    } else if (system.includes("CARWASH")) {
-      newTheme = themeAdminCarWashLight;
-    }
-
-    if (newTheme !== theme) {
+    if (user) {
+      const newTheme = valuateTheme(user);
       setTheme(newTheme);
     }
+  }, [user]);
+
+  const allMyRoutes = componentLinks(routes);
+
+  const routesList = () => {
+    return allMyRoutes.map((item) => (
+      <Route path={item.path} element={item.element} key={item.path} />
+    ));
   };
-  
+
+  const valuateTheme = (user) => {
+    const system = user?.type_user?.system || [];
+    if (system.includes("CICHMEX") && system.includes("CARWASH")) {
+      return themeSuperAdmin;
+    } else if (system.includes("CICHMEX")) {
+      return themeAdminCichmexLight;
+    } else if (system.includes("CARWASH")) {
+      return themeAdminCarWashLight;
+    }
+    return themeSuperAdmin;
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Routes>
-        <Route element={<PublicRoutes isAllowed={!!logged} />}>
+        <Route element={<PublicRoutes logged={logged} />}>
           <Route path="/login" element={<Login />} />
           <Route path="/*" element={<Login />} />
         </Route>
+
         <Route
           element={
-            <Navbar>
-              <PrivateRoutes isAllowed={!!logged} redirectTo="/principal" />
-            </Navbar>
+            logged ? (
+              <Navbar>
+                <PrivateRoutes logged={logged} />
+              </Navbar>
+            ) : (
+              <PublicRoutes logged={logged} />
+            )
           }
         >
           {routesList()}

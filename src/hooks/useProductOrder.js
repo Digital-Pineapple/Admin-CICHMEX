@@ -94,7 +94,7 @@ export const useProductOrder = () => {
         id: index.toString(),
         quantity: product.quantity,
         subTotal: product.quantity * product.item.price,
-        image : product?.item?.images[0].url ? product.item?.images[0].url : 'no hay imagen'
+        image : product?.item?.images[0]?.url ? product.item?.images[0].url : 'no hay imagen'
       };
     });
   };

@@ -3,14 +3,15 @@ import { useAuthStore } from "./hooks";
 import LoadingScreenBlue from "./components/ui/LoadingScreenBlue";
 import RoutesContainer from "./routes/RoutesContainer";
 
-const App = () => {
-  const { RevalidateToken, token } = useAuthStore();
-  const [loader, setLoader] = useState(false)
 
+const App = () => {
+  const { RevalidateToken, logged, user } = useAuthStore();
+  const [loader, setLoader] = useState(false);
+  let token = localStorage.getItem('token') || null
   useEffect(() => {
-    setLoader(true)
    async function check (){
-      if(token)
+    setLoader(true)
+      if(!!token)
        await RevalidateToken();
       setLoader(false)
       }
@@ -20,7 +21,7 @@ const App = () => {
   if (loader) {
     return <LoadingScreenBlue />;
   }
-   return <RoutesContainer />;
+   return (<RoutesContainer logged={logged} user={user} />);
 };
 
 export default App;

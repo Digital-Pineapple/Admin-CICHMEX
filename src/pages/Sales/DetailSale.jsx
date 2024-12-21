@@ -23,14 +23,36 @@ import {
   TableRow,
   TableBody,
   TableCell,
+  Modal,
+  Fab,
 } from "@mui/material";
 import Image from "mui-image";
-import { ArrowBack, FileDownload, Refresh, ThumbUp, Visibility } from "@mui/icons-material";
+import { ArrowBack, Close, FileDownload, Refresh, Search, ThumbUp, Visibility } from "@mui/icons-material";
 import { DataGrid } from "@mui/x-data-grid";
 import SuccessButton from "../../components/Buttons/SuccessButton";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import ZoomImage from "../../components/cards/ZoomImage";
 import RejectedButton from "../../components/Buttons/RejectedButton";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination } from "swiper/modules";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  bgcolor: "background.paper",
+  border: "1px solid #bbdefb",
+  borderRadius: "15px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  flexDirection: "column",
+  boxShadow: 24,
+  maxWidth: "500px",
+  maxHeigth: "500px",
+  p: 4,
+};
 
 const DetailSale = () => {
   const { id } = useParams();
@@ -43,6 +65,7 @@ const DetailSale = () => {
     validateSale,
     rejectTicket,
   } = useProductOrder();
+  const [open, setOpen] = useState({ images: [], value: false });
 
   useEffect(() => {
     loadProductOrder(id);
@@ -66,6 +89,13 @@ const DetailSale = () => {
   const handleButtonClick = (link) => {
     window.open(link, '_blank', 'noopener,noreferrer');
   };
+
+  const handleOpen = (images) => {
+    let UrlImages = images?.map((i) => i.url);
+    setOpen({ value: true, images: UrlImages });
+  };
+  const handleClose = () => setOpen({ value: false, images: [] });
+
 
   if (loading) {
     return <LoadingScreenBlue />;
@@ -128,15 +158,6 @@ const DetailSale = () => {
             </CardContent>
           </Grid>
         <Grid item xs={12} display={'flex'}  justifyContent={'space-between'}>
-        <Button
-                title="Regresar"
-                startIcon={<ArrowBack />}
-                onClick={() => navigate(`/contaduria/Todas mis ventas`, {replace:true})}
-                variant="contained"
-                color="primary"
-              >
-                Regresar
-              </Button> 
               <Button
                 title="Recargar"
                 endIcon={<Refresh />}
@@ -180,11 +201,25 @@ const DetailSale = () => {
                     flex: 1,
                     align: "center",
                     renderCell: (params) =>
-                      params.row.images ? (
-                        <Avatar src={params.row.images[0]?.url} />
-                      ) : (
-                        "No hay imagen"
-                      ),
+                     (
+                        <Box
+                                              component={"span"}
+                                              alignContent={"center"}
+                                              onClick={() => handleOpen(params.row.images)}
+                                              width={"100%"}
+                                              height={"100%"}
+                                              display={"flex"}
+                                              padding={0.5}
+                                              justifyContent={"center"}
+                                            >
+                                              <img
+                                                src={params.row.image}
+                                                alt={params.row.name}
+                                                style={{ objectFit: "contain" }}
+                                              />
+                                              <Search />
+                                            </Box>
+                     )
                   },
                   {
                     field: "name",
@@ -352,6 +387,37 @@ const DetailSale = () => {
             )
           : ""}
       </Grid>
+      <Modal
+        open={open.value}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Fab
+            size="small"
+            sx={{
+              position: "absolute",
+              top: 10,
+              right: 20,
+              color: "red",
+              bgcolor: "#fff",
+            }}
+            onClick={handleClose}
+          >
+            <Close />
+          </Fab>
+          <Swiper pagination={true} modules={[Pagination]}>
+            {open.images?.map((image) => {
+              return (
+                <SwiperSlide>
+                  <img key={image} src={image} style={{ objectFit: "cover" }} />
+                </SwiperSlide>
+              );
+            })}
+          </Swiper>
+        </Box>
+      </Modal>
     </Grid>
   );
 };
