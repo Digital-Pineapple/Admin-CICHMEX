@@ -55,8 +55,8 @@ export const useProductOrder = () => {
     dispatch(startLoadAssignedPO())
 
 
-  const loadAssignRoute = async (values) =>
-    dispatch(startLoadAssignRoute(values, navigate));
+  const loadAssignRoute = async (values, handleClose) =>
+    dispatch(startLoadAssignRoute(values,handleClose, navigate));
 
   const loadVerifyStartRoute = async (values) =>
     dispatch(startLoadVerifyStartRoute(values, navigate));

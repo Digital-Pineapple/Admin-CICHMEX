@@ -21,7 +21,6 @@ import { AttachMoney } from "@mui/icons-material";
 import { useAuthStore, useRegions } from "../../hooks";
 import { useUsers } from "../../hooks/useUsers";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
-import { MuiTelInput, matchIsValidTel } from "mui-tel-input";
 import { lightGreen } from "@mui/material/colors";
 import { GoogleMap, OverlayView, Polygon, useLoadScript } from "@react-google-maps/api";
 
@@ -221,19 +220,7 @@ const CreateCarrier = () => {
             name="phone"
             control={control}
             rules={{ validate: matchIsValidTel, required: true }}
-            render={({ field, fieldState }) => (
-              <MuiTelInput
-                {...field}
-                onlyCountries={["MX"]}
-                fullWidth
-                size="small"
-                forceCallingCode
-                disableDropdown
-                defaultCountry="MX"
-                helperText={fieldState.invalid ? "Telefono es invalido" : ""}
-                error={fieldState.invalid}
-              />
-            )}
+           
           />
         </Grid>
 

@@ -13,34 +13,39 @@ import {
 import { useEffect, useState } from "react";
 import MuiPagination from "@mui/material/Pagination";
 import {
-  Add,
   Download,
-  Edit,
   LocalShipping,
   Refresh,
-  Route,
-  Star,
-  Start,
-  ViewModule,
   Visibility,
 } from "@mui/icons-material";
 import {
   Button,
   IconButton,
   Tooltip,
-  Grid,
   Typography,
-  Fab,
-  Skeleton,
+  Modal,
+  Box,
 } from "@mui/material";
 import { Workbook } from "exceljs";
-import DeleteAlert from "../../components/ui/DeleteAlert";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import { useAuthStore } from "../../hooks";
-import { useSizeGuide } from "../../hooks/useSizeGuide";
-import TableGuideModal from "../../components/Modals/TableGuideModal";
 import { useProductOrder } from "../../hooks/useProductOrder";
 import { localDate } from "../../Utils/ConvertIsoDate";
+import Grid from "@mui/material/Grid2";
+import AssignRoute from "../MyStoreHouse/ AssignRoute";
+import { borderRadius } from "@mui/system";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 800,
+  bgcolor: "background.paper",
+  borderRadius:'15px',
+  boxShadow: 24,
+  p: 4,
+};
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -74,23 +79,13 @@ function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
-const ReadyToSend = () => {
-  const { user } = useAuthStore();
-  const { loadProductOrdersPaidAndFill, productOrders, loading } = useProductOrder()
-  const [openModal, setOpenModal] = useState(false);
+const ReadyToSend = ({rows = [], loading = false}) => {
 
-  useEffect(() => {
-    loadProductOrdersPaidAndFill();
-  }, [user]);
-  console.log(productOrders);
-  
+  const [openModal, setOpenModal] = useState({ value: false, selectedPO: {} });
+  const handleOpen = (data) =>
+    setOpenModal({ value: true, selectedPO: { data } });
+  const handleClose = () => setOpenModal({ value: false, selectedPO: {} });
 
-  const rowsAllPO = productOrders?.map((item, index) => ({
-    id: index,
-    date: localDate(item.createdAt),
-    supply_date: localDate(item.supply_detail.date),
-    ...item,
-  }));
   const exportToExcel = () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Productos");
@@ -108,7 +103,7 @@ const ReadyToSend = () => {
     });
 
     // Agregar datos de las filas
-    productOrders.forEach((row) => {
+    rows.forEach((row) => {
       worksheet.addRow([
         row.name,
         row.description,
@@ -135,7 +130,7 @@ const ReadyToSend = () => {
     return (
       <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
         <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-        <GridToolbarQuickFilter placeholder='Buscar'/>
+        <GridToolbarQuickFilter placeholder="Buscar" />
         <Button
           variant="text"
           startIcon={<Download />}
@@ -151,41 +146,8 @@ const ReadyToSend = () => {
 
   if (loading) return <LoadingScreenBlue />;
 
-  const handleOpen = async (id) => {
-    await loadOneSizeGuide(id);
-    setOpenModal(true);
-  };
-
-  const handleClose = () => setOpenModal(false);
-
   return (
     <Grid container gap={2} maxWidth={"85vw"}>
-      <Grid
-        item
-        marginTop={{ xs: "-30px" }}
-        xs={12}
-        minHeight={"100px"}
-        className="Titles"
-      >
-        <Typography
-          textAlign={"center"}
-          variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
-        >
-          Pedidos listos para envío
-        </Typography>
-      </Grid>
-      <Grid item display={"flex"} justifyContent={"end"} rowSpacing={2} xs={12}>
-        <Button
-          size="small"
-          startIcon={<Refresh />}
-          variant="contained"
-          color="primary"
-          onClick={() => loadProductOrdersPaidAndFill()}
-        >
-          Recargar
-        </Button>
-      </Grid>
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
@@ -224,12 +186,12 @@ const ReadyToSend = () => {
             getActions: (params) => [
               <Tooltip title="Asignar compañía de envios">
                 <Button
-                  aria-label="Editar"
+                  aria-label="Asignar envio"
                   color="success"
-                  startIcon={<LocalShipping/>}
-                  onClick={() => navigate(`/guia-dimensiones/editar/${params.row._id}` )}
+                  startIcon={<LocalShipping />}
+                  onClick={() => handleOpen(params.row) }
                 >
-                 Asignar  
+                  Asignar
                 </Button>
               </Tooltip>,
               <Tooltip title="Ver detalle">
@@ -253,7 +215,7 @@ const ReadyToSend = () => {
           },
         }}
         density="compact"
-        rows={rowsAllPO}
+        rows={rows}
         pagination
         slots={{
           pagination: CustomPagination,
@@ -278,10 +240,24 @@ const ReadyToSend = () => {
         }}
         style={{ fontFamily: "sans-serif", fontSize: "15px" }}
       />
+
+      <Modal
+        open={openModal.value}
+        onClose={(event, reason) => {
+          if (reason !== 'backdropClick') {
+            handleClose(event);  // Solo cerrar si no es un clic en el backdrop
+          }
+        }}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        
+      >
+        <Box sx={{...style}}>
+        <AssignRoute productOrder={openModal.selectedPO} handleClose={handleClose} />
+        </Box>
+      </Modal>
     </Grid>
   );
 };
 
-
-
-export default ReadyToSend
+export default ReadyToSend;
