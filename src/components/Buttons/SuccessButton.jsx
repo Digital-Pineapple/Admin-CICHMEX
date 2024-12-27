@@ -50,7 +50,9 @@ const SuccessButton = ({title, titleConfirm,callbackAction,text, textButton}) =>
           title={text}
           color={'success'}
           onClick={() => ModalSweet()}
+          variant='contained'
           startIcon={<Verified />}
+          size='small'
         >
          {textButton} 
         </Button> 

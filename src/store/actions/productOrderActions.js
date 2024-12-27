@@ -610,7 +610,7 @@ export const startValidateSale = (values, navigate) => {
         timer: 3000,
         timerProgressBar: true,
       });
-      dispatch(editProductOrder(data.data));
+      dispatch(loadProductOrder(data.data));
     } catch (error) {
       console.log(error);
       enqueueSnackbar(`Ocurrió un error + ${error}`, {

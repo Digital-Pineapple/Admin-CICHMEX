@@ -1,5 +1,5 @@
 import { createTheme } from "@mui/material";
-import { blueGrey, deepOrange, green, yellow, red, orange, lime } from "@mui/material/colors";
+import { blueGrey, deepOrange, green, yellow, red, orange, lime, teal } from "@mui/material/colors";
 
 export const themeSuperAdmin = createTheme({
   palette: {
@@ -22,7 +22,7 @@ export const themeSuperAdmin = createTheme({
       contrastText: '#fff'
     },
     success: {
-      main: green[800],
+      main: teal[800],
       light: lime[700],
       dark: green[200],
       contrastText: '#fff'

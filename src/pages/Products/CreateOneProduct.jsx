@@ -575,6 +575,7 @@ const CreateOneProduct = () => {
               id="image"
               name="image"
               type="file"
+              multiple
               accept="image/jpeg, image/png, image/webp"
               onChange={handleImageChange}
               hidden

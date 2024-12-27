@@ -44,6 +44,8 @@ const RejectedButton = ({title,callbackAction,text, textButton, inputText, input
           title={text}
           onClick={() => ModalSweet()}
           endIcon={<Cancel/>}
+          size='small'
+          variant='contained'
 
         >
          {textButton} 

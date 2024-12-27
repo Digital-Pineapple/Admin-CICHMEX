@@ -16,30 +16,25 @@ const useImages = () => {
       return updatedImages;
     });
   };
-    const handleImageChange=(e)=>{
-        let file=e.target.files[0];
-        const id = new Date().getTime();
-        let filePreview=URL.createObjectURL(file);
-        if(images.length === 6){
-            return; 
-        }else{
-            setImages((prevImages) => {
-                const newImages = [...prevImages, {
-                    id:uuidv4(),
-                    file,
-                    filePreview
-                }];
-        
-                // Si es la primera imagen, configúrala como principal automáticamente
-                if (prevImages.length === 0) {
-                  setMainImageId(id);
-                  return [newImages[0], ...newImages.slice(1)];
-                }
-        
-                return newImages;
-              });
+  const handleImageChange = (e) => {
+    let files = Array.from(e.target.files); // Convertir FileList a un array para iterar fácilmente
+    const newImages = files.map((file) => ({
+        id: uuidv4(), // Generar un ID único para cada imagen
+        file,
+        filePreview: URL.createObjectURL(file), // Crear una vista previa del archivo
+    }));
+
+    setImages((prevImages) => {
+        const updatedImages = [...prevImages, ...newImages];
+
+        // Si es la primera imagen, configúrala como principal automáticamente
+        if (prevImages.length === 0 && newImages.length > 0) {
+            setMainImageId(updatedImages[0].id);
         }
-    }
+
+        return updatedImages;
+    });
+};
     const handleImageChange2=(e)=>{
         let file=e.target.files[0];
         let filePreview=URL.createObjectURL(file);
