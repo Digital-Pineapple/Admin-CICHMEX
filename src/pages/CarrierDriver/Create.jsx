@@ -1,5 +1,4 @@
 import {
-  Grid,
   TextField,
   Button,
   InputAdornment,
@@ -11,7 +10,9 @@ import {
   FormHelperText,
   FormControl,
   CardActions,
-  CardHeader, ButtonGroup,
+  CardHeader,
+  ButtonGroup,
+  Grid2,
 } from "@mui/material";
 import React, { Fragment, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -22,11 +23,24 @@ import { useAuthStore, useRegions } from "../../hooks";
 import { useUsers } from "../../hooks/useUsers";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import { lightGreen } from "@mui/material/colors";
-import { GoogleMap, OverlayView, Polygon, useLoadScript } from "@react-google-maps/api";
-
+import {
+  GoogleMap,
+  OverlayView,
+  Polygon,
+  useLoadScript,
+} from "@react-google-maps/api";
+import { ref } from "yup";
+import { matchIsValidTel, MuiTelInput } from "mui-tel-input";
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 const CreateCarrier = () => {
-  const { control, handleSubmit, setValue, watch } = useForm({
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       fullname: "",
       email: "",
@@ -40,17 +54,16 @@ const CreateCarrier = () => {
       },
     },
   });
-  
+
   const { StoreHouses, loadStoreHouse } = useStoreHouse();
   const { user, navigate } = useAuthStore();
   const { addCarrier, loading } = useUsers();
-  const { loadAllRegions, regions } = useRegions(); 
+  const { loadAllRegions, regions } = useRegions();
   const [watchRegions, setWatchRegions] = useState([]);
-  const createCarrier = (values) => {
-    addCarrier(values);
+
+  const createOneCarrier = (values) => {
+     addCarrier(values);
   };
-
-
 
   const watchField = watch("employee_detail.store_house", false);
   const [selectedRegions, setSelectedRegions] = useState([]);
@@ -69,7 +82,6 @@ const CreateCarrier = () => {
       shouldDirty: true,
     });
   };
-
 
   if (loading) {
     return <LoadingScreenBlue />;
@@ -102,14 +114,11 @@ const CreateCarrier = () => {
     };
   };
 
-
-
   return (
-    <Grid container style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-      <Grid
-        item
+    <Grid2 container padding={2}>
+      <Grid2
         marginTop={{ xs: "-30px" }}
-        xs={12}
+        size={12}
         minHeight={"100px"}
         className="Titles"
       >
@@ -120,9 +129,9 @@ const CreateCarrier = () => {
         >
           Alta transportista
         </Typography>
-      </Grid>
-      <Grid
-        onSubmit={handleSubmit(createCarrier)}
+      </Grid2>
+      <Grid2
+        onSubmit={handleSubmit(createOneCarrier)}
         component={"form"}
         container
         padding={2}
@@ -130,7 +139,7 @@ const CreateCarrier = () => {
         display={"flex"}
         textAlign={"center"}
       >
-        <Grid item xs={12} sm={6}>
+        <Grid2 size={{ xs: 12, sm: 4 }}>
           <Controller
             name="fullname"
             control={control}
@@ -155,11 +164,9 @@ const CreateCarrier = () => {
               />
             )}
           />
-        </Grid>
+        </Grid2>
 
-       
-
-        <Grid item xs={12} sm={5.5}>
+        <Grid2 size={{ xs: 12, sm: 4 }}>
           <Controller
             name="email"
             control={control}
@@ -184,9 +191,9 @@ const CreateCarrier = () => {
               />
             )}
           />
-        </Grid>
+        </Grid2>
 
-        <Grid item xs={12} sm={6}>
+        <Grid2 size={{ xs: 12, sm: 3.5 }}>
           <Controller
             name="password"
             control={control}
@@ -213,18 +220,38 @@ const CreateCarrier = () => {
               />
             )}
           />
-        </Grid>
+        </Grid2>
 
-        <Grid item xs={12} sm={5.5}>
+        <Grid2 size={{ xs: 12, sm: 4 }}>
           <Controller
             name="phone"
             control={control}
-            rules={{ validate: matchIsValidTel, required: true }}
-           
+            rules={{
+              validate: matchIsValidTel,
+              required: { value: true, message: "Teléfono requerido" },
+            }}
+            render={({ field, fieldState }) => (
+              <MuiTelInput
+                {...field}
+                onlyCountries={["MX"]}
+                defaultCountry="MX"
+                size="small"
+                fullWidth
+                forceCallingCode
+                disableDropdown
+                helperText={
+                  fieldState.invalid
+                    ? "Telefono inválido"
+                    : fieldState.error?.message
+                }
+                error={fieldState.invalid}
+                onChangeCapture={(e) => setPhone(e.target.value)}
+              />
+            )}
           />
-        </Grid>
+        </Grid2>
 
-        <Grid item xs={12} sm={6}>
+        <Grid2 size={{ xs: 12, sm: 4 }}>
           <Controller
             name="employee_detail.salary"
             control={control}
@@ -250,9 +277,9 @@ const CreateCarrier = () => {
               />
             )}
           />
-        </Grid>
+        </Grid2>
 
-        <Grid item xs={12} sm={5.5}>
+        <Grid2 size={{ xs: 12, sm: 3.5 }}>
           <Controller
             name="employee_detail.sales_commission_porcent"
             control={control}
@@ -281,9 +308,9 @@ const CreateCarrier = () => {
               />
             )}
           />
-        </Grid>
+        </Grid2>
 
-        <Grid item xs={12} sm={12}>
+        <Grid2 size={{ xs: 12, sm: 12 }}>
           <Controller
             name="employee_detail.store_house"
             control={control}
@@ -329,48 +356,15 @@ const CreateCarrier = () => {
               </CardContent>
             </Card>
           )}
-        </Grid>
-        <Grid container display={'flex'} justifyContent={'center'}>
-          {watchRegions.map((item, index) => (
-            <Grid key={index} item xs={12} md={6}>
-               <Card key={index} variant="outlined">
-              <CardHeader title={`Nombre: ${item.name}`} subheader={`Código: ${item.regionCode}`} />
-              <CardContent>
-                <GoogleMap
-                  zoom={13}
-                  center={regionWithCenter(item).center} // Usa el centro calculado dinámicamente
-                  mapContainerStyle={__mapMandatoryStyles}
-                >
-                  <Fragment key={item._id}>
-                    <Polygon
-                      path={item.path.map((point) => ({
-                        lat: point.lat,
-                        lng: point.lng,
-                      }))}
-                      options={{
-                        fillColor: "orange",
-                        fillOpacity: 0.3,
-                        strokeColor: "orange",
-                        strokeOpacity: 0.8,
-                        strokeWeight: 2,
-                      }}
-                    />
-                    <OverlayView
-                      position={regionWithCenter(item).center} // Usa el centro pre-calculado
-                      mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                    >
-                      <Typography variant="body1" color="red">
-                        {item.name}
-                      </Typography>
-                    </OverlayView>
-                  </Fragment>
-                </GoogleMap>
-              </CardContent>
-            </Card>
-            </Grid>
-           
-          ))}
+        </Grid2>
 
+        <Grid2
+          container
+          size={12}
+          gap={1}
+          display={"flex"}
+          justifyContent={"center"}
+        >
           <Controller
             name="employee_detail.operationRegions"
             control={control}
@@ -399,20 +393,70 @@ const CreateCarrier = () => {
               </FormControl>
             )}
           />
-        </Grid>
-        <Grid item xs={12}>
-          <ButtonGroup variant="contained" fullWidth color="inherit" aria-label="Actions">
-             <Button variant="contained"  onClick={()=>{navigate('/usuarios/transportistas', {replace:true})}} color="error">
-            Cancelar
-          </Button>
-          <Button variant="contained"  type="submit" color="success">
-            Crear
-          </Button>
-          </ButtonGroup>
-       
-        </Grid>
-      </Grid>
-    </Grid>
+          {watchRegions.map((item, index) => (
+            <Grid2 key={index} size={3.8}>
+              <Card key={index} sx={{ maxHeight: "400px" }} variant="outlined">
+                <CardHeader
+                  title={`Nombre: ${item.name}`}
+                  subheader={`Código: ${item.regionCode}`}
+                />
+                <CardContent>
+                  <GoogleMap
+                    zoom={13}
+                    center={regionWithCenter(item).center} // Usa el centro calculado dinámicamente
+                    mapContainerStyle={__mapMandatoryStyles}
+                  >
+                    <Fragment key={item._id}>
+                      <Polygon
+                        path={item.path.map((point) => ({
+                          lat: point.lat,
+                          lng: point.lng,
+                        }))}
+                        options={{
+                          fillColor: "orange",
+                          fillOpacity: 0.3,
+                          strokeColor: "orange",
+                          strokeOpacity: 0.8,
+                          strokeWeight: 2,
+                        }}
+                      />
+                      <OverlayView
+                        position={regionWithCenter(item).center} // Usa el centro pre-calculado
+                        mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                      >
+                        <Typography variant="body1" color="red">
+                          {item.name}
+                        </Typography>
+                      </OverlayView>
+                    </Fragment>
+                  </GoogleMap>
+                </CardContent>
+              </Card>
+            </Grid2>
+          ))}
+        </Grid2>
+
+        <Grid2 gap={2} container size={{ xs: 12 }}>
+          <Grid2 size={{xs:12, md:5.8}}>
+            <Button
+              variant="contained"
+              onClick={() => {
+                navigate("/usuarios/transportistas", { replace: true });
+              }}
+              color="error"
+              fullWidth
+            >
+              Cancelar
+            </Button>
+          </Grid2>
+          <Grid2 size={{xs:12, md:5.9}}>
+            <Button fullWidth variant="contained" type="submit" color="success">
+              Crear
+            </Button>
+          </Grid2>
+        </Grid2>
+      </Grid2>
+    </Grid2>
   );
 };
 

@@ -7,6 +7,8 @@ import {
   loadProductOrders,
   loadReadyToPoint,
   startLoadResume,
+  updateOneProductOrder,
+  
 } from "../reducer/productOrdersReducer";
 import { headerConfigApplication } from "../../apis/headersConfig";
 import Swal from "sweetalert2";
@@ -116,7 +118,7 @@ export const startLoadAssignedPO = () => {
   return async (dispatch) => {
     dispatch(startLoading());
     try {
-      const { data } = await instanceApi.get(`/product-order/autoAssignOrders/region`, {
+      const { data } = await instanceApi.get(`/product-order/AssignedPO/user`, {
         headers: {
           "Content-type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -218,16 +220,17 @@ export const startLoadPOPaidAndSupply = () => {
 };
 
 export const startLoadAssignRoute = (values,handleClose) => {
+    console.log(values.guide_pdf.file);
     
   return async (dispatch) => {
     dispatch(startLoading());
     try {
       const formData = new FormData()
-      formData.append('user_id', values.user_id)
+      formData.append('user_id', values.user)
       formData.append('order_id', values.order_id)
       formData.append('guide',values.guide)
       formData.append('shipping_company', values.shipping_company)
-      formData.append('guide_pdf', values.guide_pdf.file)
+      formData.append('guide_pdf', values.guide_pdf.file )
 
       const { data } = await instanceApi.post(
         `/product-order/assignRoute`,
@@ -244,6 +247,9 @@ export const startLoadAssignRoute = (values,handleClose) => {
         variant: "success",
         transitionDuration:5000
       });
+      
+      dispatch(updateOneProductOrder(data.data))
+      
       handleClose()
     } catch (error) {
       console.log(error);

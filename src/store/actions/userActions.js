@@ -29,7 +29,6 @@ export const getUsers = () => {
 
 export const getCarrierDrivers = () => {
   return async (dispatch) => {
-    dispatch(startLoading())
     try {
       const { data } = await instanceApi.get(
         "/user/carrier-driver/all",
@@ -51,8 +50,6 @@ export const getCarrierDrivers = () => {
         },
       });
       
-    }finally{
-      dispatch(stopLoading())
     }
   };
 };

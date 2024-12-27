@@ -4,9 +4,9 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
-import { Grid } from '@mui/material';
 import PaidProductOrders from './PaidProductOrders';
 import CompletedOrders from '../MyStoreHouse/CompletedOrders';
+import { Grid2 } from '@mui/material';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -39,11 +39,10 @@ export default function FullWidthTabs() {
 
 
   return (
-    <Grid container display={'flex'}gap={2} >
-       <Grid
-        item
+    <Grid2 container display={'flex'}gap={2} >
+       <Grid2
         marginTop={{ xs: "-30px" }}
-        xs={12}
+        size={12}
         minHeight={"100px"}
         className="Titles"
       >
@@ -54,7 +53,7 @@ export default function FullWidthTabs() {
         >
          Mi almacén
         </Typography>
-      </Grid>
+      </Grid2>
       <AppBar position="static">
         <Tabs
           value={value}
@@ -73,6 +72,6 @@ export default function FullWidthTabs() {
         <TabPanel value={value} index={1} dir={theme.direction}>
           <CompletedOrders/>
         </TabPanel> 
-    </Grid>
+    </Grid2>
   );
 }
