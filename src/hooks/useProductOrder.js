@@ -55,8 +55,8 @@ export const useProductOrder = () => {
     dispatch(startLoadAssignedPO())
 
 
-  const loadAssignRoute = async (values) =>
-    dispatch(startLoadAssignRoute(values, navigate));
+  const loadAssignRoute = async (values, handleClose) =>
+    dispatch(startLoadAssignRoute(values,handleClose, navigate));
 
   const loadVerifyStartRoute = async (values) =>
     dispatch(startLoadVerifyStartRoute(values, navigate));
@@ -94,7 +94,7 @@ export const useProductOrder = () => {
         id: index.toString(),
         quantity: product.quantity,
         subTotal: product.quantity * product.item.price,
-        image : product?.item?.images[0].url ? product.item?.images[0].url : 'no hay imagen'
+        image : product?.item?.images[0]?.url ? product.item?.images[0].url : 'no hay imagen'
       };
     });
   };

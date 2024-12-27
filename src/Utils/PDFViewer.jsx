@@ -1,29 +1,22 @@
-import { useState } from "react";
-import { Document, Page } from "react-pdf";
-import { pdfjs } from 'react-pdf';
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.js',
-  import.meta.url,
-).toString();
+import { PDFViewer } from '@react-pdf/renderer';
 
-const PDFViewer = ({pdfPath}) => {
-  const [numPages, setNumPages] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1);
-  function onDocumentLoadSuccess({ numPages }) {
-    setNumPages(numPages);
-  }
 
+const PdfPreview = ({ file }) => {
+
+  
   return (
     <div>
-      <Document file={pdfPath} onLoadSuccess={onDocumentLoadSuccess}>
-        <Page pageNumber={pageNumber} />
-      </Document>
-      <p>
-        Page {pageNumber} of {numPages}
-      </p>
+      {file && (
+        <PDFViewer
+        showToolbar={true}
+        children={ <iframe src={file}  width="800" height="600" />}
+        >
+        
+        </PDFViewer>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default PDFViewer
+export default PdfPreview;

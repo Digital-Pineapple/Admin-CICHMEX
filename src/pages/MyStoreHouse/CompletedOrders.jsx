@@ -216,6 +216,11 @@ const CompletedOrders = () => {
             columnUnsortedIcon: UnsortedIcon,
             noRowsOverlay: CustomNoRows,
           }}
+          initialState={{
+            sorting:{
+              sortModel:[{field:'date', sort:'desc'}]
+            }
+          }}
           disableColumnFilter
           disableColumnMenu
           disableColumnSelector

@@ -1,14 +1,42 @@
-import { Grid, Skeleton, Button, Typography, Avatar, Box } from "@mui/material";
+import {
+  Grid,
+  Skeleton,
+  Button,
+  Typography,
+  Avatar,
+  Box,
+  Modal,
+  Fab,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useProductOrder } from "../../hooks/useProductOrder";
 import { DataGrid } from "@mui/x-data-grid";
-import { replace } from "formik";
 import { QRCodeSVG } from "qrcode.react";
 import { localDate } from "../../Utils/ConvertIsoDate";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
-import Image from "mui-image";
-import { ArrowBack } from "@mui/icons-material";
+import { ArrowBack, Close, Search } from "@mui/icons-material";
+import CustomNoRows from "../../components/Tables/CustomNoRows";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination } from "swiper/modules";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  bgcolor: "background.paper",
+  border: "1px solid #bbdefb",
+  borderRadius: "15px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  flexDirection: "column",
+  boxShadow: 24,
+  maxWidth: "90%",
+  maxHeigth: "90%",
+  p: 4,
+};
 
 const FillOrder = () => {
   const { id } = useParams();
@@ -19,14 +47,15 @@ const FillOrder = () => {
     completeProductOrder,
     loadPrintPDFOrder,
     loading,
-    navigate
+    navigate,
   } = useProductOrder();
   const [rowSelection, setRowSelection] = useState([]);
   const [activeButton1, setActiveButton] = useState(false);
+  const [open, setOpen] = useState({ images: [], value: false });
   useEffect(() => {
     loadProductOrder(id);
   }, [id]);
- 
+
   const rows = rowsProducts();
   function activeButton(i) {
     const a1 = rows.length;
@@ -37,13 +66,12 @@ const FillOrder = () => {
       setActiveButton(false);
     }
   }
-  
 
   const completeOrder = () => {
     completeProductOrder(id);
   };
   const printPDF = (id) => {
-    loadPrintPDFOrder(id)
+    loadPrintPDFOrder(id);
   };
   const status = (value) => {
     if (value === "approved") {
@@ -86,6 +114,13 @@ const FillOrder = () => {
       ];
     }
   };
+
+  const handleOpen = (images) => {
+    let UrlImages = images?.map((i) => i.url);
+    setOpen({ value: true, images: UrlImages });
+  };
+  const handleClose = () => setOpen({ value: false, images: [] });
+
   if (loading) {
     return <LoadingScreenBlue />;
   }
@@ -106,12 +141,19 @@ const FillOrder = () => {
           Surtir orden: {productOrder?.order_id}
         </Typography>
       </Grid>
-      <Grid container  alignContent={"center"}>
-        <Grid item display={'flex'} justifyContent={'space-between'} padding={2} xs={12}>
-        <Button
+      <Grid container alignContent={"center"}>
+        <Grid
+          item
+          gap={2}
+          display={"flex"}
+          justifyContent={"space-between"}
+          padding={2}
+          xs={12}
+        >
+          <Button
             variant="contained"
             size="small"
-            startIcon={<ArrowBack/>}
+            startIcon={<ArrowBack />}
             onClick={() => navigate(`/almacenista/mis-ventas`)}
             color="primary"
           >
@@ -133,7 +175,7 @@ const FillOrder = () => {
           lg={4}
           alignContent={"center"}
           justifyContent={"center"}
-          display={'flex'}
+          display={"flex"}
           padding={2}
         >
           <QRCodeSVG
@@ -166,14 +208,18 @@ const FillOrder = () => {
           {rows ? (
             <Grid container display={"flex"} flexDirection={"column"}>
               <Typography variant="body1" textAlign={"center"} color="inherit">
-                <strong><i>Lista de productos</i> </strong>
+                <strong>
+                  <i>Lista de productos</i>{" "}
+                </strong>
               </Typography>
               <DataGrid
-              sx={{'& .theme--hedaer': {
-          backgroundColor: 'black',
-          color:"white",
-          textAlign:'center'
-        },}}
+                sx={{
+                  "& .theme--hedaer": {
+                    backgroundColor: "black",
+                    color: "white",
+                    textAlign: "center",
+                  },
+                }}
                 onRowSelectionModelChange={(value) => {
                   setRowSelection(value);
                   activeButton(value.length);
@@ -181,34 +227,48 @@ const FillOrder = () => {
                 rowSelectionModel={rowSelection}
                 hideFooterSelectedRowCount={true}
                 slots={{
-                  noRowsOverlay: CustomNoRows
+                  noRowsOverlay: CustomNoRows,
                 }}
                 autoHeight
                 columns={[
                   {
                     field: "image",
                     headerName: "Imagen",
+                    headerClassName: "theme--hedaer",
                     flex: 1,
                     align: "center",
-                    headerAlign:'center',
-                    renderCell : (params)=>(
-                      <Box width={'100%'} height={'100%'} display={'flex'} padding={0.5} justifyContent={'center'}>
-                      <Avatar src={params.row.image}  alt={params.row.name} >
-                      </Avatar>
+                    headerAlign: "center",
+                    renderCell: (params) => (
+                      <Box
+                        component={"span"}
+                        alignContent={"center"}
+                        onClick={() => handleOpen(params.row.images)}
+                        width={"100%"}
+                        height={"100%"}
+                        display={"flex"}
+                        padding={0.5}
+                        justifyContent={"center"}
+                      >
+                        <img
+                          src={params.row.image}
+                          alt={params.row.name}
+                          style={{ objectFit: "contain" }}
+                        />
+                        <Search />
                       </Box>
-                    )
+                    ),
                   },
                   {
                     field: "name",
                     headerName: "Nombre del producto",
-                    headerClassName:'theme--hedaer',
+                    headerClassName: "theme--hedaer",
                     flex: 1,
                     align: "center",
                   },
                   {
                     field: "quantity",
                     headerName: "Cantidad de producto",
-                    headerClassName:'theme--hedaer',
+                    headerClassName: "theme--hedaer",
                     flex: 1,
                     align: "center",
                   },
@@ -231,6 +291,37 @@ const FillOrder = () => {
           </Button>
         </Grid>
       </Grid>
+      <Modal
+        open={open.value}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Fab
+            size="small"
+            sx={{
+              position: "absolute",
+              top: 10,
+              right: 20,
+              color: "red",
+              bgcolor: "#fff",
+            }}
+            onClick={handleClose}
+          >
+            <Close />
+          </Fab>
+          <Swiper pagination={true} modules={[Pagination]}>
+            {open.images?.map((image) => {
+              return (
+                <SwiperSlide>
+                  <img key={image} src={image} style={{ objectFit: "cover" }} />
+                </SwiperSlide>
+              );
+            })}
+          </Swiper>
+        </Box>
+      </Modal>
     </Grid>
   );
 };

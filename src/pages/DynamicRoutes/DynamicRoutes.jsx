@@ -69,7 +69,6 @@ const DynamicRoutes = () => {
   useEffect(() => {
     loadDynamicRoutes()
   }, [user]);
-
   
   function CustomToolbar() {
     const apiRef = useGridApiContext();
@@ -113,6 +112,12 @@ const DynamicRoutes = () => {
           {
             field: "name",
             headerName: "Nombre",
+            flex: 1,
+            align: "center",
+          },
+          {
+            field: "component",
+            headerName: "Componente",
             flex: 1,
             align: "center",
           },

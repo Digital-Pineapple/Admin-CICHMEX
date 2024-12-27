@@ -1,10 +1,6 @@
 import { useFormik } from "formik";
 import TextField from "@mui/material/TextField";
-import {
-  Grid,
-  Button,
-  Typography, ButtonGroup,
-} from "@mui/material";
+import { Grid, Button, Typography, ButtonGroup } from "@mui/material";
 import ProfileImageUploader from "../../components/ui/ProfileImageUploader";
 import { useCategories } from "../../hooks/useCategories";
 
@@ -15,7 +11,7 @@ const CreateCategory = () => {
     initialValues: {
       name: "",
       description: "",
-      subCategory: ""
+      subCategory: "",
     },
     onSubmit: (values) => {
       const values2 = {
@@ -41,10 +37,10 @@ const CreateCategory = () => {
 
   return (
     <Grid
-    container
-    component="form"
-    onSubmit={formik.handleSubmit}
-    style={{ marginLeft: "10%", height: "70%", width: "80%", display:'flex', justifyContent:'center' }}
+      container
+      component="form"
+      onSubmit={formik.handleSubmit}
+      style={{ display: "flex", justifyContent: "center" }}
     >
       <Grid
         item
@@ -62,19 +58,15 @@ const CreateCategory = () => {
         </Typography>
       </Grid>
       <Grid
-         item
-         sm={8}
-         display={"flex"}
-         flexDirection={"column"}
-         alignItems={"center"}
+        item
+        sm={8}
+        display={"flex"}
+        flexDirection={"column"}
+        alignItems={"center"}
       >
-         <Grid item xs={12} sm={5} md={5.7}>
-        <ProfileImageUploader
-          formik={formik}
-          id={"image"}
-          name={"image"}
-        />
-      </Grid>
+        <Grid item xs={12} sm={5} md={5.7}>
+          <ProfileImageUploader formik={formik} id={"image"} name={"image"} />
+        </Grid>
         <TextField
           focused
           fullWidth
@@ -86,32 +78,29 @@ const CreateCategory = () => {
           sx={{ margin: 2 }}
           onChange={formik.handleChange}
         />
-       
-       
       </Grid>
-      <ButtonGroup
-        variant="contained"
-        color="inherit"
-        size="large"
-        aria-label="group"
-        fullWidth
-      >
-        <Button type="submit" variant="contained" color="success">
-          Guardar
-        </Button>
-        <Button
+      <Grid item display={'flex'} gap={2} xs={12}>
+      <Button
           onClick={outCreate}
           variant="contained"
+          fullWidth
           size="large"
           color="warning"
         >
           Salir
         </Button>
-      </ButtonGroup>
-     
+        <Button
+         type="submit"
+         fullWidth
+
+         variant="contained"
+          color="success">
+          Guardar
+        </Button>
+       
+      </Grid>
     </Grid>
   );
 };
 
 export default CreateCategory;
-

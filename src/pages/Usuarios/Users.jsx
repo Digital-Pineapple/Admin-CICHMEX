@@ -18,6 +18,7 @@ import { Avatar, Button, Chip, Grid, Typography } from "@mui/material";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import LocalCarWashIcon from "@mui/icons-material/LocalCarWash";
 import WashIcon from "@mui/icons-material/Wash";
+import { saveAs } from "file-saver";
 import {
   AirportShuttle,
   Download,
@@ -30,6 +31,8 @@ import { useUsers } from "../../hooks/useUsers";
 
 import DeleteAlert from "../../components/ui/DeleteAlert";
 import EditButton from "../../components/Buttons/EditButton";
+import { useAuthStore } from "../../hooks";
+import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -64,17 +67,19 @@ function CustomPagination(props) {
 }
 
 export default function Users() {
-  const { loadUsers, deleteUser, navigate, users } = useUsers();
+  const { loadUsers, deleteUser, navigate, users, loading } = useUsers();
+  const {user} =useAuthStore()
   useEffect(() => {
     loadUsers();
-  }, []);
+  }, [user]);
 
-  const rowsWithIds = users?.map((user, _id) => ({
-    id: _id.toString(),
-    typeUser: user.type_user?.type,
+  const rowsWithIds = users?.map((user) => ({
+    id: user._id?.toString(),
+    typeUser: user.type_user?.role,
+    system: user.type_user?.system,
     ...user,
   }));
-
+  
   const exportToExcel = () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Usuarios");
@@ -146,6 +151,11 @@ export default function Users() {
       </GridToolbarContainer>
     );
   }
+  if (loading) {
+    return(
+      <LoadingScreenBlue/>
+    )
+  }
 
   return (
     <Grid container maxWidth={'85vw'} style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
@@ -165,7 +175,7 @@ export default function Users() {
         </Typography>
       </Grid>
       <DataGrid
-        sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
+        sx={{ fontSize: "12px", fontFamily: "sans-serif" }}
         columns={[
           {
             field: "profile_image",
@@ -190,56 +200,14 @@ export default function Users() {
             headerName: "Tipo de usuario",
             flex: 1,
             align: "center",
-            renderCell: (params) =>
-              params.value === 0 ? (
-                <>
-                  <Chip
-                    icon={<PermIdentityIcon />}
-                    label="cliente"
-                    variant="outlined"
-                    color="primary"
-                  />
-                </>
-              ) : params.value === 1 ? (
-                <>
-                  <Chip
-                    icon={<WashIcon />}
-                    label="Socio"
-                    variant="outlined"
-                    color="success"
-                  />
-                </>
-              ) : params.value === 2 ? (
-                <>
-                  <Chip
-                    icon={<LocalCarWashIcon />}
-                    label="Establecimiento"
-                    variant="outlined"
-                    color="info"
-                  />
-                </>
-              ) : params.value === 3 ? (
-                <>
-                  <Chip
-                    icon={<SupervisorAccount />}
-                    label="Administrador principal"
-                    variant="outlined"
-                    color="info"
-                  />
-                </>
-              ) : params.value === 4 ? (
-                <>
-                  <Chip
-                    icon={<AirportShuttle />}
-                    label="Transportista"
-                    variant="outlined"
-                    color="secondary"
-                  />
-                </>
-              ) : (
-                ""
-              ),
           },
+          {
+            field: "system",
+            headerName: "Sistema",
+            flex: 1,
+            align: "center",
+          },
+
 
           { field: "email", headerName: "Correo", flex: 1, sortable: false },
           {
@@ -250,9 +218,18 @@ export default function Users() {
             sortable: false,
             type: "actions",
             getActions: (params) => [
-
-             <DeleteAlert title={`¿Estas seguro de eliminar a:${params.row.fullname}?`} callbackToDeleteItem={()=> deleteUser(params.row._id)}/>,
-             <EditButton title={`¿Esta seguro de editar a:${params.row.fullname}?`} callbackToEdit={()=>navigate(`/usuarios/editar/${params.row._id}`)}/>
+              <GridActionsCellItem
+                icon={<DeleteAlert />}
+                label="Eliminar"
+                onClick={() => deleteUser(params.row._id)}
+                showInMenu
+              />,
+              <GridActionsCellItem
+                icon={<EditButton />}
+                label="Editar"
+                onClick={() => navigate(`/usuarios/editar/${params.row._id}`)}
+                showInMenu
+              />,
             ],
           },
         ]}

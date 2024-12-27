@@ -1,8 +1,8 @@
 import { Navigate, Outlet } from "react-router-dom";
 
-export const PrivateRoutes = ({children, redirectTo="/login", isAllowed}) => {
+export const PrivateRoutes = ({children, redirectTo="/login", logged}) => {
 
-  if( !isAllowed )
+  if( !logged )
 {
   return (
     <Navigate to={redirectTo} />
