@@ -7,9 +7,11 @@ import {
   useJsApiLoader,
 } from "@react-google-maps/api";
 import { Button, Grid, ButtonGroup } from "@mui/material";
+import { LocalShipping } from "@mui/icons-material";
 
 const containerStyle = {
   width: "100%",
+  minWidth:'200px',
   height: "500px",
 };
 
@@ -20,7 +22,7 @@ const center = {
 
 const API_KEY = import.meta.env.VITE_REACT_APP_MAP_KEY;
 
-const MapRouteOptimized = ({ optimizedRoutes }) => {
+const MapRouteOptimized = ({ optimizedRoutes, myPosition}) => {
   const [selectedMarker, setSelectedMarker] = useState(null); // Controlar el marcador seleccionado
 
   const { isLoaded } = useJsApiLoader({
@@ -34,6 +36,7 @@ const MapRouteOptimized = ({ optimizedRoutes }) => {
 
   // Decodificar polyline para obtener la ruta
   const decodePolyline = (polyline) => {
+    
     let points = [];
     let index = 0;
     const len = polyline?.length;
@@ -70,6 +73,7 @@ const MapRouteOptimized = ({ optimizedRoutes }) => {
 
   const routePolyline = decodePolyline(optimizedRoutes.overviewPolyline);
 
+
   // Colores predefinidos o puedes generarlos aleatoriamente
   const colors = ["#FF0000", "#00FF00", "#0000FF", "#FFA500", "#800080"];
 
@@ -83,16 +87,17 @@ const MapRouteOptimized = ({ optimizedRoutes }) => {
     direction_start: item?.start_address,
     direction_end: item?.end_address,
   });
+  
 
   const points = optimizedRoutes?.points || [];
 
   const openInWaze = (item) => {
-    const wazeUrl = `https://waze.com/ul?ll=${item.end_location.lat},${item.end_location.lng}&from=${item.start_location.lat},${item.start_location.lng}&navigate=yes`;
+    const wazeUrl = `https://waze.com/ul?ll=${item.end_location.lat},${item.end_location.lng}&from=${myPosition.lat},${myPosition.lng}&navigate=yes`;
     window.open(wazeUrl, "_blank");
   };
 
   const openInGoogleMaps = (item) => {
-    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${item.end_location.lat},${item.end_location.lng}&destination=${item.start_location.lat},${item.start_location.lng}&travelmode=driving`;
+    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${item.start_location.lat},${item.start_location.lng}&destination=${item.end_location.lat},${item.end_location.lng}&travelmode=driving`;
     window.open(googleMapsUrl, "_blank");
   };
 
@@ -112,53 +117,52 @@ const MapRouteOptimized = ({ optimizedRoutes }) => {
       mapContainerStyle={containerStyle}
       options={mapOptions}
       center={center}
+      
       zoom={12}
     >
       {/* Polyline de la ruta */}
       <Polyline
         path={routePolyline}
         options={{
-          strokeColor: "#FF0000",
+          strokeColor: "#E87C10",
           strokeOpacity: 0.8,
           strokeWeight: 5,
+
         }}
       />
 
       {/* Marcadores */}
       {points.map((item, index) => (
+
         <Marker
           key={index}
-          position={item.start_location}
-          label={{
-            text: (index + 1).toString(),
-            color: "white",
-            fontSize: "14px",
-            fontWeight: "bold",
-          }}
+          position={item.end_location}
           icon={{
             path: google.maps.SymbolPath.CIRCLE,
             scale: 12,
-            fillColor: getColor(index),
+             fillColor: '#E87C10',
             fillOpacity: 1,
             strokeWeight: 1,
-            strokeColor: "#000000",
+            strokeColor: "#fff",
           }}
-          onClick={() => setSelectedMarker(item)} // Asegurarse de que pasamos las coordenadas correctas
+          onClick={(e) =>{ e.domEvent.stopPropagation(), setSelectedMarker(item)}} // Asegurarse de que pasamos las coordenadas correctas
         />
       ))}
 
       {/* InfoWindow */}
       {selectedMarker && (
         <InfoWindow
-          position={selectedMarker.start_location} // Asegurarse de que pasamos un objeto { lat, lng }
-          onCloseClick={() => setSelectedMarker(null)}
+          position={selectedMarker.end_location} // Asegurarse de que pasamos un objeto { lat, lng }
+          onCloseClick={() =>setSelectedMarker(null)}
           options={{
             pixelOffset: new window.google.maps.Size(0, -30), // Ajustar la posición del InfoWindow
             disableAutoPan: false, // Permitir que la cámara se ajuste automáticamente
           }}
+          
         >
           <Grid sx={{ fontSize: "10px" }}>
             <strong>Detalles</strong>
+            <strong>{selectedMarker?.order}</strong>
             <p>
               Direccionde salida:{" "}
               <strong>

@@ -92,17 +92,9 @@ const ReadyToSend = ({rows = [], loading = false, type = 0}) => {
   const [openDetail, setOpenDetail] = useState({value: false, selectedPO:{}});
   const {loadCarrierDrivers, CarrierDrivers} = useUsers()
 
-  const handleOpen = (data, edit) =>{
+  const handleOpen = (data) =>{    
     loadCarrierDrivers()
-    if (updateUser === true ) {
-      setOpenModal({ value: true, selectedPO: { data }, updateUser: true })
-    }
-    else if( updateGuide === true){
-      setOpenModal({ value: true, selectedPO: { data }, updateGuide: true })
-    }
-    else{
       setOpenModal({ value: true, selectedPO: { data } })
-    }
   }
 
   const handleOpenDetail = (data) =>{

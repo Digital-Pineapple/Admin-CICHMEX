@@ -4,6 +4,7 @@ import { onLogin, onLogout } from "../reducer/authReducer";
 import { setLinks, startLoading, stopLoading } from "../reducer/uiReducer";
 import { createAsyncThunk } from "@reduxjs/toolkit/dist";
 import { AllRoutes } from "../../routes/AllRoutes";
+import { enqueueSnackbar } from "notistack";
 
 export const fetchRoutes = createAsyncThunk('/auth/fetchRoutes', async (token) => {
   const {data} = await instanceApi.get(`/dynamic-route/links/all`,{
@@ -32,10 +33,15 @@ export const startLogin = ( email, password, navigate ) => {
       navigate('/principal',  { replace: true });
     } catch (error) {
       dispatch(
-        onLogout(
-          error.response.data?.message || error.response.data.errors[0].message
-        )
+        onLogout( error.response.data?.message || error.response.data.errors[0].message)
       );
+      enqueueSnackbar(`Error ${error.response.data?.message || error.response.data.errors[0].message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
     }finally{
       dispatch(stopLoading())
     }

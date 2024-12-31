@@ -65,9 +65,9 @@ import Unauthorized from "../pages/ui/Unauthorized";
 import AddDynamicRoute from "../pages/DynamicRoutes/AddDynamicRoute";
 import DynamicRoutes from "../pages/DynamicRoutes/DynamicRoutes";
 import EditDynamicRoute from "../pages/DynamicRoutes/EditDynamicRoute";
-import CreateRegion from '../pages/Regions/Create'
+import CreateRegion from "../pages/Regions/Create";
 import Regions from "../pages/Regions/Regions";
-import EditRegion from '../pages/Regions/Edit'
+import EditRegion from "../pages/Regions/Edit";
 import EditCarrierDriver from "../pages/CarrierDriver/Edit";
 import Home from "../pages/Home";
 import ReadyToDelivery from "../pages/Logistic/ReadyToDelivery";
@@ -127,9 +127,8 @@ export const AllRoutes = [
   { id: 30, element: <EditMembership /> },
 
   { id: 31, element: <Products /> },
-   { id: 32, element: <CreateWithVariants /> },
-  
- 
+  { id: 32, element: <CreateWithVariants /> },
+
   { id: 33, element: <EditProduct /> },
 
   { id: 34, element: <ShippingCost /> },
@@ -174,26 +173,20 @@ export const AllRoutes = [
   { id: 62, element: <EditDynamicRoute /> },
 
   { id: 63, element: <MyProductOrders /> },
-  {id:64, element:<CreateRegion/>},
-  {id:65, element:<Regions/>},
-  { id: 66, element: <EditRegion/>},
-  { id: 67, element: <EditCarrierDriver/>},
-  { id:68, element:<ReadyToDelivery/>},
-  { id: 69, element:<Principal/>},
-  { id: 70, element:<AllSales/>},
-  { id: 71, element:<CompletedOrdersDetail/>},
-  { id: 72, element: <AddVideo/>},
-  { id : 73,  element : <EditWithVariants/>},
-  { id : 75,  element : <CreateOneProduct/>},
-  { id: 76, element: <TableGuides/>},
-  { id: 77, element: <AllMySizeGuides/>},
-  { id: 78, element: <EditMySizeGuides/>},
-  { id: 79, element: <AssignRoute/>},
-  { id: 80, element: <MainToSend/>},
-
-
-
-
-
-
+  { id: 64, element: <CreateRegion /> },
+  { id: 65, element: <Regions /> },
+  { id: 66, element: <EditRegion /> },
+  { id: 67, element: <EditCarrierDriver /> },
+  { id: 68, element: <ReadyToDelivery /> },
+  { id: 69, element: <Principal /> },
+  { id: 70, element: <AllSales /> },
+  { id: 71, element: <CompletedOrdersDetail /> },
+  { id: 72, element: <AddVideo /> },
+  { id: 73, element: <EditWithVariants /> },
+  { id: 75, element: <CreateOneProduct /> },
+  { id: 76, element: <TableGuides /> },
+  { id: 77, element: <AllMySizeGuides /> },
+  { id: 78, element: <EditMySizeGuides /> },
+  { id: 79, element: <AssignRoute /> },
+  { id: 80, element: <MainToSend /> },
 ];

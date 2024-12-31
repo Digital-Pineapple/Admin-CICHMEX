@@ -220,8 +220,6 @@ export const startLoadPOPaidAndSupply = () => {
 };
 
 export const startLoadAssignRoute = (values,handleClose) => {
-    console.log(values.guide_pdf.file);
-    
   return async (dispatch) => {
     dispatch(startLoading());
     try {
@@ -247,6 +245,8 @@ export const startLoadAssignRoute = (values,handleClose) => {
         variant: "success",
         transitionDuration:5000
       });
+      console.log(data.data);
+      
       
       dispatch(updateOneProductOrder(data.data))
       

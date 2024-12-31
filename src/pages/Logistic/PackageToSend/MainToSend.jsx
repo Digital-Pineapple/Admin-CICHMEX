@@ -135,7 +135,7 @@ const MainToSend = () => {
           <Tab label="Todos"  />
           <Tab label="Pedidos por asignar" />
           <Tab label="Asignados a paquetería" />
-          <Tab label="Asignados a a usuario" />
+          <Tab label="Asignados a usuario" />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0} dir={theme.direction}>
