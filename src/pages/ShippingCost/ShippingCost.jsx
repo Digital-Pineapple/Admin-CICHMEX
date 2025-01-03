@@ -17,10 +17,10 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useServices } from "../../hooks/useServices";
 import MuiPagination from "@mui/material/Pagination";
-import { Download, Edit } from "@mui/icons-material";
+import { Add, Download, Edit } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { redirectPages } from '../../helpers';
-import { Button, IconButton, Tooltip, Grid, Typography } from "@mui/material";
+import { Button, IconButton, Tooltip, Typography, Grid2, Modal, Box, Fab } from "@mui/material";
 import { Workbook } from "exceljs";
 import { useProducts } from "../../hooks/useProducts";
 import { editOneProduct } from "../../store/actions/productsActions";
@@ -29,6 +29,20 @@ import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import { useAuthStore, useShippingCost } from "../../hooks";
 import EditButton from "../../components/Buttons/EditButton";
 import CustomNoRows from "../../components/Tables/CustomNoRows";
+import CreateShippingCost from '../../pages/ShippingCost/Create'
+import UpdateShippingCost from '../../pages/ShippingCost/Edit'
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  borderRadius:'15px',
+  boxShadow: 24,
+  p: 2,
+};
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -65,6 +79,20 @@ function CustomPagination(props) {
 const ShippingCost = () => {
   const { loadShippingCosts, deleteShippingCost, rowsShippingCosts, loading } = useShippingCost();
   const {user, navigate} = useAuthStore()
+
+  const [open, setOpen] = React.useState({openAdd: false, openUpdate:false, SC:{}});
+  const handleOpenAdd = () => setOpen({openAdd:true});
+  const handleOpenUpdate = (values) => setOpen({openUpdate:true,SC:values});
+  const handleCloseAdd = (event,reason) => {
+    if (reason !== "backdropClick") {
+      setOpen({openAdd: false})
+    }
+  }
+  const handleCloseUpdate = (event,reason) =>{ 
+    if (reason !== "backdropClick") {
+      setOpen({openUpdate: false, SC:{}})
+    }
+  }
 
   useEffect(() => {
     loadShippingCosts()
@@ -108,7 +136,7 @@ const ShippingCost = () => {
     return (
       <GridToolbarContainer sx={{justifyContent:'space-between'}}>
         <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-        <GridToolbarQuickFilter/>
+        <GridToolbarQuickFilter label='Buscar' placeholder="Buscar"/>
         <Button
         variant="text"
         startIcon={<Download/>}
@@ -127,18 +155,21 @@ const ShippingCost = () => {
   }
 
   return (
-    <Grid container maxWidth={'85vw'}>
-      <Grid item marginTop={{xs:'-30px'}} xs={12} minHeight={'100px'} className="Titles">   
+    <Grid2 container >
+      <Grid2  marginTop={{xs:'-30px'}} size={12} minHeight={'100px'} className="Titles">   
       <Typography textAlign={'center'} variant="h1" fontSize={{xs:'20px', sm:'30px', lg:'40px'}} >
         Costos de envio
       </Typography>
-      </Grid>
+      </Grid2>
+      <Grid2 size={12}  justifyContent={'end'} display={'flex'} >
+        <Fab onClick={()=>handleOpenAdd()} sx={{top: 10, right:20}} title="Agregar" color="secondary"> <Add/></Fab>
+      </Grid2>
       <DataGrid
-        sx={{ marginTop:5, fontSize: "15px", fontFamily: "sans-serif" }}
+        sx={{ marginTop:2, fontSize: "15px", fontFamily: "sans-serif" }}
         columns={[
           {
-            field: `uuid`,
-            headerName: "Código",
+            field: `date`,
+            headerName: "Fecha de creación",
             flex: 1,
             align: "center",
           },
@@ -174,7 +205,7 @@ const ShippingCost = () => {
                 title={`¿Estas seguro de eliminar el costo de envío ${params.row?.uuid}`}
                 callbackToDeleteItem={() => deleteShippingCost(params.row._id)}
               />,
-              <EditButton title={`Desea editar el siguiente elemento${params.row.uuid}`} callbackToEdit={()=>navigate(`/costos-envio/editar/${params.row._id}`)} />
+              <EditButton title={`Desea editar el siguiente elemento${params.row.uuid}`} callbackToEdit={()=>handleOpenUpdate(params.row)} />
             ],
           },
         ]}
@@ -210,7 +241,27 @@ const ShippingCost = () => {
           },
         }}
       />
-    </Grid>
+        <Modal
+        open={open.openAdd}
+        onClose={handleCloseAdd}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <CreateShippingCost handleCloseModal={handleCloseAdd} />
+        </Box>
+      </Modal>
+      <Modal
+        open={open.openUpdate}
+        onClose={handleOpenUpdate}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <UpdateShippingCost SC={open.SC}  handleCloseModal={handleCloseUpdate} />
+        </Box>
+      </Modal>
+    </Grid2>
   );
 }
 

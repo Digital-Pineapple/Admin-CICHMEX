@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux"
 import { startLoadOneShippingCost, startLoadShippingCosts, startCreateShippingCost, startDeleteShippingCost, startUpdateShippingCost } from "../store/actions/shippingCostActions";
 import { useNavigate } from "react-router-dom";
+import { localDate } from "../Utils/ConvertIsoDate";
 
 export const useShippingCost = () => {
 
@@ -14,14 +15,15 @@ export const useShippingCost = () => {
 
     const loadOneShippingCost = async(id) => await dispatch(startLoadOneShippingCost(id))
 
-    const createShippingCost = async (values) => await dispatch((startCreateShippingCost(values, navigate)))
+    const createShippingCost = async (values, handleCloseModal) => await dispatch((startCreateShippingCost(values, navigate, handleCloseModal)))
 
-    const updateShippingCost = async (id, values) => await dispatch(startUpdateShippingCost(id, values, navigate))
+    const updateShippingCost = async (id, value,handleCloseModal) => await dispatch(startUpdateShippingCost(id, value,handleCloseModal))
 
     const deleteShippingCost = async (id) => await dispatch(startDeleteShippingCost(id))
 
     const rowsShippingCosts = shippingCosts.map((item, _id) => ({
         id: _id.toString(),
+        date: localDate(item.createdAt),
         ...item,
       }));
  

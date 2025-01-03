@@ -132,8 +132,8 @@ export const AllRoutes = [
   { id: 33, element: <EditProduct /> },
 
   { id: 34, element: <ShippingCost /> },
-  { id: 35, element: <CrateShippingCost /> },
-  { id: 36, element: <EditShippingCost /> },
+  // { id: 35, element: <CrateShippingCost /> },
+  // { id: 36, element: <EditShippingCost /> },
 
   { id: 37, element: <StoreHouse /> },
   { id: 38, element: <CreateStoreHouse /> },

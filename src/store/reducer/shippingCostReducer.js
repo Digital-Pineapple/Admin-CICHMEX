@@ -1,11 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit'
-
+import { createSlice } from "@reduxjs/toolkit";
 
 export const shippingCostReducer = createSlice({
-  name: 'shippingCost',
+  name: "shippingCost",
   initialState: {
     shippingCosts: [],
-    shippingCost: {}
+    shippingCost: {},
   },
   reducers: {
     loadShippingCosts: (state, action) => {
@@ -15,23 +14,33 @@ export const shippingCostReducer = createSlice({
       state.shippingCost = payload;
     },
     onAddNewShippingCost: (state, { payload }) => {
-      state.shippingCost = payload;
+      state.shippingCosts = [...state.shippingCosts, payload];
     },
     deleteShippingCost: (state, { payload }) => {
-      state.shippingCosts = state.shippingCosts.filter(shippingCost => shippingCost._id !== payload._id);
+      state.shippingCosts = state.shippingCosts.filter(
+        (shippingCost) => shippingCost._id !== payload._id
+      );
     },
-    editShippingCost: ( state, { payload } ) => {
-      state.shippingCosts = state.shippingCosts.map(shippingCost => {
-        if (shippingCost._id === payload._id) {
+    editShippingCost: (state, { payload }) => {
+      state.shippingCosts = state.shippingCosts.map((i) => {
+        if (i._id === payload._id) {
           return {
-            ...shippingCost,
-            name: payload.name,
+            ...i, // Copia el objeto original
+            ...payload, // Sobrescribe con las propiedades del payload
           };
         }
-        return shippingCost; // Mantener los elementos no modificados tal como están
+        return i; // Devuelve el objeto original si no coincide
       });
-    }}})
+    },
+  },
+});
 
-export const { deleteShippingCost, editShippingCost, loadOneShippingCost, loadShippingCosts, onAddNewShippingCost } = shippingCostReducer.actions;
+export const {
+  deleteShippingCost,
+  editShippingCost,
+  loadOneShippingCost,
+  loadShippingCosts,
+  onAddNewShippingCost,
+} = shippingCostReducer.actions;
 
 export default shippingCostReducer.reducer;

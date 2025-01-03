@@ -175,7 +175,7 @@ export const Navbar = (props) => {
         </Box>
       </Drawer>
 
-      <Box component="main" sx={{ flexGrow: 1, p: 5 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 5, minHeight:'100vh' }}>
         <Toolbar />
         {props.children}
       </Box>

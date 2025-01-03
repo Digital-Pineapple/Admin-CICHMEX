@@ -298,7 +298,7 @@ const AddDynamicRoute = () => {
             Guardar cambios
           </Button>
           <Button
-            onClick={() => navigate("/Rutas", { replace: true })}
+            onClick={() => navigate("/url", { replace: true })}
             variant="contained"
             color="warning"
           >

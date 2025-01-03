@@ -1,5 +1,5 @@
 import {
-    Grid,
+    Grid2,
     TextField,
     Button,
     Typography,
@@ -9,59 +9,47 @@ import {
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
   
-  const Edit = () => {
-const { id } = useParams()
-const { loadOneShippingCost, shippingCost, updateShippingCost } = useShippingCost();
+  const Edit = ({handleCloseModal, SC}) => {
+const shippingCost = SC
+const {  updateShippingCost } = useShippingCost();
 
     const { control, handleSubmit} = useForm({
       defaultValues: {
         starting_weight: shippingCost?.starting_weight || "",
-        end_weight:  shippingCost.end_weight || "",
-        price_weight: shippingCost.price_weight|| "",
+        end_weight:  shippingCost?.end_weight || "",
+        price_weight: shippingCost?.price_weight|| "",
       },
     });
 
-    useEffect(() => {
-    loadOneShippingCost(id)
-    }, [id])
-    
-    
-    
-    // const {  logged } = useAuthStore();
   
     const updateOneShippingCost = (values) => {
-      updateShippingCost(id,values);
+      updateShippingCost(shippingCost._id,values, handleCloseModal);
     };
   
-    // if (logged) {
-    //   return <LoadingScreenBlue />;
-    // }
-  
     return (
-      <Grid container style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-        <Grid
-          item
-          marginTop={{ xs: "-30px" }}
-          xs={12}
+      <Grid2 container>
+        <Grid2
+          size={12}
           minHeight={"100px"}
           className="Titles"
+          marginBottom={1}
         >
           <Typography
             textAlign={"center"}
             variant="h1"
-            fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
+            fontSize={{ xs: "20px", sm: "30px" }}
           >
             Editar costo de envío
           </Typography>
-        </Grid>
-        <Grid
+        </Grid2>
+        <Grid2
           onSubmit={handleSubmit(updateOneShippingCost)}
           component={"form"}
           container
-          padding={2}
+        
           gap={2}
         >
-          <Grid item xs={12} sm={6}>
+          <Grid2 size={12} gap={2} flexDirection={'column'} display={'flex'} >
             <Controller
               name="starting_weight"
               control={control}
@@ -71,7 +59,7 @@ const { loadOneShippingCost, shippingCost, updateShippingCost } = useShippingCos
               }}
               render={({ field, fieldState }) => (
                 <TextField
-                  variant="filled"
+                  variant="outlined"
                   fullWidth
                   type="number"
                   label="Peso inicial"
@@ -83,9 +71,7 @@ const { loadOneShippingCost, shippingCost, updateShippingCost } = useShippingCos
                 />
               )}
             />
-          </Grid>
-  
-          <Grid item xs={12} sm={5.7} >
+         
             <Controller
               name="end_weight"
               control={control}
@@ -107,9 +93,7 @@ const { loadOneShippingCost, shippingCost, updateShippingCost } = useShippingCos
                 />
               )}
             />
-          </Grid>
-  
-          <Grid item xs={12} sm={6}>
+
             <Controller
               name="price_weight"
               control={control}
@@ -119,7 +103,7 @@ const { loadOneShippingCost, shippingCost, updateShippingCost } = useShippingCos
               }}
               render={({ field, fieldState }) => (
                 <TextField
-                  variant="filled"
+                  variant="outlined"
                   label="Precio de envio"
                   fullWidth
                   helperText={
@@ -130,16 +114,19 @@ const { loadOneShippingCost, shippingCost, updateShippingCost } = useShippingCos
                 />
               )}
             />
-          </Grid>
+          </Grid2>
 
-  <Grid item xs={4}>
-    <Button variant="contained" fullWidth type="submit" color="primary">
+  <Grid2 size={12} >
+    <Button variant="contained" fullWidth type="submit" color="success">
             Editar
           </Button>
-  </Grid>
+          <Button sx={{marginTop:1}} variant="contained" fullWidth onClick={()=>handleCloseModal()} color="warning">
+            Cancelar
+          </Button>
+  </Grid2>
           
-        </Grid>
-      </Grid>
+        </Grid2>
+      </Grid2>
     );
   };
   

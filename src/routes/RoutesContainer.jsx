@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import {
   themeAdminCarWashLight,
   themeAdminCichmexLight,
+  themeCarrierCichmex,
   themeSuperAdmin,
 } from "../theme";
 import { ThemeProvider } from "@mui/material";
@@ -16,10 +17,10 @@ import Home from "../pages/Home";
 const RoutesContainer = ({ logged, user }) => {
   const { componentLinks, routes } = useAuthStore();
   const [theme, setTheme] = useState(themeSuperAdmin);
-
   useEffect(() => {
-    if (user) {
-      const newTheme = valuateTheme(user);
+    if (logged = true) {
+      
+      const newTheme = valuateTheme(user?.type_user?.role);
       setTheme(newTheme);
     }
   }, [user]);
@@ -32,18 +33,15 @@ const RoutesContainer = ({ logged, user }) => {
     ));
   };
 
-  const valuateTheme = (user) => {
-    const system = user?.type_user?.system || [];
-    if (system.includes("CICHMEX") && system.includes("CARWASH")) {
-      return themeSuperAdmin;
-    } else if (system.includes("CICHMEX")) {
-      return themeAdminCichmexLight;
-    } else if (system.includes("CARWASH")) {
-      return themeAdminCarWashLight;
-    }
-    return themeSuperAdmin;
-  };
+  const ThemesApp ={
+    ['SUPER-ADMIN']: themeSuperAdmin,
+    ['ADMIN']: themeAdminCichmexLight,
+    ['CARRIER-DRIVER'] :themeCarrierCichmex,
+  }
+  const themeDefault = themeSuperAdmin
 
+  const valuateTheme =(role)=>role ? ThemesApp[role] : themeDefault
+  
   return (
     <ThemeProvider theme={theme}>
       <Routes>

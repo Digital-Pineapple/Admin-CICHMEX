@@ -68,7 +68,7 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
   const { dataStep4, dataProduct, loading } = useProducts();
   const [valueVariants, setValueVariants] = useState([]); // Array to hold variants
   const [collapseOpen, setCollapseOpen] = useState([]); // Array to track the open/close state of each variant
-  const [open, setOpen] = useState({ image: null, value: false });
+  const [open, setOpen] = useState({ image: null, value: true });
   const { sizeGuide } = useSizeGuide();
   const handleOpen = (image) => {
     setOpen({ image: image, value: true });
