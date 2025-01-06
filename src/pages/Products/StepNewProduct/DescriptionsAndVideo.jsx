@@ -27,7 +27,6 @@ const DescriptionsAndVideo = ({
   handleBack,
   index,
   isLastStep,
-  setVideoFile,
   handleReset
 }) => {
   const DefaultValues = (data) => ({

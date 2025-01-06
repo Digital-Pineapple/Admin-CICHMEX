@@ -23,8 +23,8 @@ export const themeSuperAdmin = createTheme({
     },
     success: {
       main: teal[800],
-      light: lime[700],
-      dark: green[200],
+      light: teal[700],
+      dark: teal[200],
       contrastText: '#fff'
     },
     warning: {
