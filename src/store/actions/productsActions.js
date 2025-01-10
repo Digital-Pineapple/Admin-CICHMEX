@@ -19,6 +19,7 @@ import {
   onClearValues,
   updateVariant,
   updateImageVariant,
+  onStepNewProductUpdate,
 } from "../reducer/productsReducer";
 import {
   headerConfigApplication,
@@ -823,7 +824,7 @@ async function buildFormDataWithFilesUpdate(data) {
                   // Si es una nueva imagen, convertimos y enviamos el archivo
                   const file = await blobUrlToFile(
                     img.filePreview,
-                    `imagen-${index}-${imgIndex}.jpeg`
+                    `imagen-${index}-${imgIndex}.webp`
                   );
                   formData.append(`${variantKey}[${subKey}][${imgIndex}]`, file);
                 }
@@ -1036,7 +1037,7 @@ export const startAddConditionVariant = (values, handleNext) => {
   };
 };
 
-export const startAddVariantsProduct = (id, values, handleNext) => {
+export const startAddVariantsProduct = (id, values, handleClose) => {
   return async (dispatch) => {
     dispatch(startLoading());
     try {
@@ -1068,6 +1069,56 @@ export const startAddVariantsProduct = (id, values, handleNext) => {
 
       // Avanzar al siguiente paso
       handleNext();
+    } catch (error) {
+      // Manejo de errores con notificación
+      enqueueSnackbar(
+        error.response?.data?.message || "Error al enviar las variantes",
+        {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        }
+      );
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
+};
+
+export const startAddVariantsProductUpdate = (id, values, handleClose) => {
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      // Construcción del FormData
+      const variants = await buildFormDataWithFiles(values);
+      // Petición al backend
+      const { data } = await instanceApi.post(
+        `/product/addVariants/${id}`,
+        variants,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      // Actualización del estado en Redux
+      dispatch(onStepNewProductUpdate(data.data));
+
+      // Notificación de éxito
+      enqueueSnackbar(`${data.message}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+
+      // Avanzar al siguiente paso
+      handleClose();
     } catch (error) {
       // Manejo de errores con notificación
       enqueueSnackbar(
@@ -1165,6 +1216,51 @@ export const startAddVariantsProductClothes = (id, values, handleNext) => {
         },
       });
       handleNext();
+    } catch (error) {
+      // Manejo de errores con notificación
+      enqueueSnackbar(
+        error.response?.data?.message || "Error al enviar las variantes",
+        {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        }
+      );
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
+};
+export const startAddVariantsProductClothes2 = (id, values, handleClose) => {  
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      
+      // Construcción del FormData
+       const variantsData = await buildFormDataWithFilesClothes(values);
+
+      // //Petición al backend
+      const { data } = await instanceApi.post(
+        `/product/addVariants/clothes-shoes/${id}`,
+        variantsData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+       dispatch(loadProduct(data.data));
+      enqueueSnackbar(`${data.message}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+      handleClose();
     } catch (error) {
       // Manejo de errores con notificación
       enqueueSnackbar(
@@ -1440,8 +1536,6 @@ export const startDeleteImageVariant = (variant_id , image_id) => {
       });
       
     } catch (error) {
-      console.log(error,'vfjnvdfk');
-      
       enqueueSnackbar(
         error.response?.data?.message || "Error al enviar las variantes",
         {

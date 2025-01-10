@@ -69,7 +69,7 @@ const VariantsAndPhotos = () => {
   const [valueVariants, setValueVariants] = useState([]); // Array to hold variants
   const [collapseOpen, setCollapseOpen] = useState([]); // Array to track the open/close state of each variant
   const [open, setOpen] = useState({ image: null, value: false });
-  const { sizeGuide, loadOneSizeGuide } = useSizeGuide();
+  const sizeGuide = product?.size_guide?.dimensions || []
   const { id } = useParams();
   const handleOpen = (image) => {
     setOpen({ image: image, value: true });
@@ -121,7 +121,6 @@ const VariantsAndPhotos = () => {
 
   useEffect(() => {
     setValue('variants',[])
-    loadOneSizeGuide(product.size_guide);
     const info = DefaultValues(product);
     setValueVariants(info.variants);
     setValue('variants', info.variants)
@@ -422,7 +421,7 @@ const VariantsAndPhotos = () => {
                                 label="Talla o medida*"
                                 value={watch(`variants.[${index}].size`)}
                               >
-                                {sizeGuide?.dimensions?.map((dimension) => (
+                                {sizeGuide?.map((dimension) => (
                                   <MenuItem
                                     key={dimension.label}
                                     value={dimension.label}

@@ -31,6 +31,8 @@ import {
   updateConditionStep,
   updateProductVideos,
   startAddVariantsProductClothes,
+  startAddVariantsProductUpdate,
+  startAddVariantsProductClothes2,
 } from "../store/actions/productsActions";
 import { useNavigate } from "react-router-dom";
 import {
@@ -39,6 +41,7 @@ import {
 } from "../store/reducer/productsReducer";
 import { startLoadColors } from "../store/actions/uiActions";
 import { color } from "@mui/system";
+import { startUpdateMultipleImages, startUpdateOneVariant } from "../store/actions/variantActions";
 
 export const useProducts = () => {
   const dispatch = useDispatch();
@@ -73,6 +76,10 @@ export const useProducts = () => {
 
   const editProduct = async (id, values) =>
     dispatch(editOneProduct(id, values, navigate));
+
+  const editVariant = async (id, values, handleClose) =>
+    dispatch(startUpdateOneVariant(id, values, handleClose));
+
   const updateVideo = (id, values) => dispatch(updateProductVideos(id, values));
   const updateThumbnail = (id, values) =>
     dispatch(startUpdateThumbnail(id, values));
@@ -191,6 +198,45 @@ export const useProducts = () => {
     dispatch(startAddVariantsProduct(id, body, handleNext));
   };
 
+  const dataAddVariants = (id, data, handleClose) => {
+    
+    const body = {
+      variants: [],
+      images: [],
+    };
+  
+    data.forEach((variant) => {
+      variant.sizes.forEach((item) => {
+        const values = {
+          tag: item.tag, // Etiqueta del tamaño
+          weight: item.weight, // Peso del tamaño
+          price: item.price, // Precio del tamaño
+          porcentDiscount: item.porcentDiscount, // Porcentaje de descuento
+          discountPrice: item.discountPrice, // Precio con descuento
+          design: variant.design.textInput, // Texto del diseño
+          stock: item.stock, // Stock
+          attributes: {
+            color: variant.color.name, // Nombre del color
+            size: item.size, // Tamaño
+            material: null, // Sin material definido
+          },
+        };
+        body.variants.push(values); // Agregar al array de variantes
+      });
+  
+      // Procesar imágenes
+      variant.images.forEach((img) => {
+        const image = {
+          filePreview: img.filePreview,
+          color: variant.color.name,
+        };
+        body.images.push(image); // Agregar al array de imágenes
+      });
+    });
+  
+    dispatch(startAddVariantsProductClothes2(id, body, handleClose));
+  };
+
   const dataClothesShoes = (id, data, handleNext) => {
   
     const body = {
@@ -302,6 +348,10 @@ export const useProducts = () => {
     dispatch(startUpdateDescription(id, data));
   };
 
+  const updateMultipleImagesVariant =(data, handleClose)=>{
+    dispatch(startUpdateMultipleImages(data, handleClose))
+  }
+
   return {
     loadProducts,
     rowsOutOfStockProducts,
@@ -349,5 +399,8 @@ export const useProducts = () => {
     loadColors,
     colors,
     dataClothesShoes,
+    editVariant,
+    updateMultipleImagesVariant,
+    dataAddVariants
   };
 };

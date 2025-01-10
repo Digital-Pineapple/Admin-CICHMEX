@@ -4,7 +4,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import { useEffect, useState } from 'react';
-import { Grid } from '@mui/material';
+import { Grid2 } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { useProducts } from '../../hooks';
 import MainFeaturesEdit from './EditProductTabs/MainFeaturesEdit';
@@ -12,6 +12,7 @@ import DimensionsGuide from './StepNewProduct/DimensionsGuide';
 import SizeGuideEdit from './EditProductTabs/SizeGuideEdit';
 import VariantsAndPhotos from './EditProductTabs/VariantsAndPhotos';
 import DescriptionAndVideosEdit from './EditProductTabs/DescriptionAndVideosEdit';
+import VariantsAndPhotosShoes from './EditProductTabs/VariantsAndPhotosShoes';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -33,6 +34,14 @@ function TabPanel(props) {
     </div>
   );
 }
+
+const valueteTypeSizeGuide = (type)=>{
+  if (type === 'clothes' || type=== 'shoes') {
+    return <VariantsAndPhotosShoes/>
+  }else{
+    return <VariantsAndPhotos/>
+  }
+}
 const EditWithVariants = () => {
   const theme = useTheme();
   const [value, setValue] = useState(0);
@@ -44,11 +53,11 @@ const EditWithVariants = () => {
 
 
   return (
-    <Grid container display={'flex'}gap={2} >
-       <Grid
+    <Grid2 container display={'flex'}gap={2} >
+       <Grid2
         item
         marginTop={{ xs: "-30px" }}
-        xs={12}
+        size={12}
         minHeight={"100px"}
         className="Titles"
       >
@@ -59,7 +68,7 @@ const EditWithVariants = () => {
         >
         Editar Producto {product?.name}
         </Typography>
-      </Grid>
+      </Grid2>
       <AppBar position="static" sx={{borderRadius:'10px'}} >
         <Tabs
           value={value}
@@ -81,12 +90,12 @@ const EditWithVariants = () => {
         <SizeGuideEdit/>
         </TabPanel> 
         <TabPanel value={value} index={2} dir={theme.direction}>
-        <VariantsAndPhotos/>
+        {valueteTypeSizeGuide(product?.size_guide?.type)}  
         </TabPanel> 
         <TabPanel value={value} index={3} dir={theme.direction}>
         <DescriptionAndVideosEdit/>
         </TabPanel> 
-    </Grid>
+    </Grid2>
   );
 }
 

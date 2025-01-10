@@ -36,6 +36,9 @@ export const productsReducer = createSlice({
     },
     onStepNewProduct: (state, { payload }) => {
       state.dataProduct = {...payload}
+    },
+    onStepNewProductUpdate: (state, { payload }) => {
+      state.product = {...payload}
     },    
     deleteProduct: (state, { type, payload }) => {
       state.products = state.products.filter(
@@ -72,6 +75,14 @@ export const productsReducer = createSlice({
          return variant
       })
     },
+
+    updateVariantsImages(state, { payload }) {
+      state.product.variants = state.product.variants.map((variant) => {
+        const updatedVariant = payload.find((i) => i._id === variant._id);
+        return updatedVariant || variant; // Si encuentra un match, reemplaza; de lo contrario, conserva el original
+      });
+    },
+
     updateImageVariant(state, { payload }) {
       state.product.variants = state.product.variants.map((variant) => {
         if (variant._id === payload._id) {
@@ -116,7 +127,9 @@ export const {
   onClearValues,
   updateVariant,
   onUpdateImagesProduct,
-  updateImageVariant
+  updateImageVariant,
+  updateVariantsImages,
+  onStepNewProductUpdate
 } = productsReducer.actions;
 
 export default productsReducer.reducer;

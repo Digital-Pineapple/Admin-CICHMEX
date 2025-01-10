@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
-  Grid,
+  Grid2,
   MenuItem,
   FormControl,
   FormLabel,
@@ -46,10 +46,12 @@ const style = {
 
 const SizeGuideEdit = () => {
   const { loadSizeGuides, sizeGuides, navigate, dispatch } = useSizeGuide();
-  const { dataStep3, product, loading, loadProduct, updateSizeGuide } = useProducts();
+  const { dataStep3, product, loading, loadProduct, updateSizeGuide } =
+    useProducts();
   const [open, setOpen] = useState(false);
-  const [selectedSizeGuide, setSelectedSizeGuide] = useState(product?.size_guide || ""); // Estado para almacenar la guía seleccionada
-
+  const [selectedSizeGuide, setSelectedSizeGuide] = useState(
+    product?.size_guide?._id || {}
+  );
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
@@ -58,10 +60,13 @@ const SizeGuideEdit = () => {
 
   const { id } = useParams();
 
-  useEffect(() => {
-    loadSizeGuides();
+  const callbackSizeGuide = useCallback(() => {
     loadProduct(id);
+    loadSizeGuides();
   }, [id]);
+  useEffect(() => {
+    callbackSizeGuide();
+  }, [callbackSizeGuide]);
 
   const {
     control,
@@ -71,12 +76,12 @@ const SizeGuideEdit = () => {
     reset,
   } = useForm({
     defaultValues: {
-      size_guide: product?.size_guide || "",
+      size_guide: product?.size_guide?._id || "",
     },
   });
 
   const onAddSizeGuide = (values) => {
-    updateSizeGuide(id, values)
+    updateSizeGuide(id, values);
   };
 
   // Si está cargando
@@ -85,12 +90,14 @@ const SizeGuideEdit = () => {
   }
 
   // Obtener la guía seleccionada desde el estado
-  const selectedGuide = sizeGuides.find((guide) => guide._id === selectedSizeGuide);
+  const selectedGuide = sizeGuides.find(
+    (guide) => guide._id === selectedSizeGuide
+  );
 
   return (
     <>
-      <Grid container spacing={0}>
-        <Grid item xs={12}>
+      <Grid2 container spacing={0}>
+        <Grid2 size={12}>
           {/* <Button
             variant="contained"
             onClick={() => loadProduct(id)}
@@ -99,10 +106,10 @@ const SizeGuideEdit = () => {
           >
             Recargar
           </Button> */}
-        </Grid>
-        <Grid
+        </Grid2>
+        <Grid2
           item
-          xs={12}
+          size={12}
           component={"form"}
           onSubmit={handleSubmit(onAddSizeGuide)}
         >
@@ -184,8 +191,8 @@ const SizeGuideEdit = () => {
               </Button>
             </CardActions>
           </Card>
-        </Grid>
-        <Grid item xs={12}>
+        </Grid2>
+        <Grid2 size={12}>
           <TableContainer component={Paper}>
             <Table>
               {/* Cabecera de la tabla */}
@@ -211,8 +218,8 @@ const SizeGuideEdit = () => {
               </TableBody>
             </Table>
           </TableContainer>
-        </Grid>
-      </Grid>
+        </Grid2>
+      </Grid2>
       <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
           <Fab
