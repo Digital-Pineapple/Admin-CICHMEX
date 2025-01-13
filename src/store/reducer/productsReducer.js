@@ -95,6 +95,22 @@ export const productsReducer = createSlice({
         return variant;
       });
     },    
+    onAddNewSizeVariant(state, { payload }) {
+      // Validar que payload no esté vacío
+      if (!payload || typeof payload !== 'object') {
+        console.error('El payload no tiene la estructura esperada.');
+        return;
+      }
+    
+      // Asegurarse de que variants es un array
+      if (!Array.isArray(state.product.variants)) {
+        state.product.variants = [];
+      }
+    
+      // Agregar la nueva variante al estado
+      state.product.variants.push(payload);
+    },
+     
     editProduct: (state, { payload }) => {
       state.product = payload
     },
@@ -129,7 +145,8 @@ export const {
   onUpdateImagesProduct,
   updateImageVariant,
   updateVariantsImages,
-  onStepNewProductUpdate
+  onStepNewProductUpdate,
+  onAddNewSizeVariant
 } = productsReducer.actions;
 
 export default productsReducer.reducer;

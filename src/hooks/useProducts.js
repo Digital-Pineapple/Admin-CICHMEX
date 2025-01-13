@@ -41,7 +41,7 @@ import {
 } from "../store/reducer/productsReducer";
 import { startLoadColors } from "../store/actions/uiActions";
 import { color } from "@mui/system";
-import { startUpdateMultipleImages, startUpdateOneVariant } from "../store/actions/variantActions";
+import { startAddVariantsize, startUpdateMultipleImages, startUpdateOneVariant } from "../store/actions/variantActions";
 
 export const useProducts = () => {
   const dispatch = useDispatch();
@@ -352,6 +352,10 @@ export const useProducts = () => {
     dispatch(startUpdateMultipleImages(data, handleClose))
   }
 
+  const addOneSizeVariant =(data, handleClose)=>{
+    dispatch(startAddVariantsize(data, handleClose))
+  }
+
   return {
     loadProducts,
     rowsOutOfStockProducts,
@@ -401,6 +405,7 @@ export const useProducts = () => {
     dataClothesShoes,
     editVariant,
     updateMultipleImagesVariant,
-    dataAddVariants
+    dataAddVariants,
+    addOneSizeVariant
   };
 };

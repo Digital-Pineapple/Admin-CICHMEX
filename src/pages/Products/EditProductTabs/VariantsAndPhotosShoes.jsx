@@ -15,7 +15,6 @@ import {
   MenuItem,
   Divider,
 } from "@mui/material";
-import { useSizeGuide } from "../../../hooks/useSizeGuide";
 import { useProducts } from "../../../hooks";
 import LoadingScreenBlue from "../../../components/ui/LoadingScreenBlue";
 import { useParams } from "react-router-dom";
@@ -25,7 +24,8 @@ import TableSizesActions from "../../../components/Tables/TableSizesActions";
 import UpdateVariantColor from "./UpdateVariantColor";
 import VariantImagesUpdate from "../../../components/Forms/VariantImagesUpdate";
 import AddVariantModal from "./AddVariantModal";
-import { maxHeight } from "@mui/system";
+import AddSizeModal from "./AddSizeModal";
+import Swal from "sweetalert2";
 
 const style = {
   position: "absolute",
@@ -80,6 +80,8 @@ const VariantsAndPhotosShoes = () => {
 
   const [openAddVariant, setOpenAddVariant] = useState(false);
 
+  const [openAddSize, setOpenAddSize] = useState({value: false, sizes: [], variant:{}, product_id: ''});
+
   const [anchorEl, setAnchorEl] = useState({ value: null, color: null });
   const openMore = Boolean(anchorEl.value);
 
@@ -102,6 +104,19 @@ const VariantsAndPhotosShoes = () => {
    };
   const handleCloseAddOneVariant = () => {
     setOpenAddVariant(false);
+  };
+
+  const handleOpenAddSize = (data, product) => {
+    
+    const dataSize = product.size_guide.dimensions.length
+    const variant = data.find(i=> i.color === anchorEl.color)
+    if(variant.items.length >= dataSize){
+      return Swal.fire('No se pueden agregar mas tallas', '', 'error')
+    }
+   setOpenAddSize({product_id:id, variant: variant,  value: true, sizes : product.size_guide.dimensions })
+   };
+  const handleCloseAddSize = () => {
+    setOpenAddSize({product_id:'', variant: {}, value: false, sizes : []});
   };
 
   const handleOpenImages = (data) => {
@@ -131,7 +146,7 @@ const VariantsAndPhotosShoes = () => {
 
   const handleClose = () => setOpen({ image: null, value: false });
 
-  const grouped = product.variants?.reduce((acc, item) => {
+  const grouped = product?.variants?.reduce((acc, item) => {
     const color = item.attributes.color;
 
     // Inicializar la estructura del grupo si no existe
@@ -354,6 +369,30 @@ const VariantsAndPhotosShoes = () => {
           <AddVariantModal handleCloseModal={handleCloseAddOneVariant}/>
         </Box>
       </Modal>
+
+      <Modal
+        open={openAddSize.value}
+        onClose={handleCloseAddSize}
+        aria-labelledby="modal-add-size"
+        aria-describedby="modal-add-size"
+      >
+        <Box sx={styleFull}>
+          <Fab
+            size="small"
+            sx={{
+              position: "absolute",
+              top: 10,
+              right: 20,
+              color: "red",
+              bgcolor: "#fff",
+            }}
+            onClick={handleCloseAddSize}
+          >
+            <Close />
+          </Fab>
+          <AddSizeModal handleClose={handleCloseAddSize} productId={openAddSize.product_id} variant={openAddSize.variant}  sizes={openAddSize.sizes} />
+        </Box>
+      </Modal>
       <Menu
         anchorEl={anchorEl.value}
         id="variant-menu"
@@ -391,15 +430,15 @@ const VariantsAndPhotosShoes = () => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={() => handleOpenColor(groupedArray)}>
+        {/* <MenuItem onClick={() => handleOpenColor(groupedArray)}>
           Editar color y diseño
         </MenuItem>
-        <Divider />
+        <Divider /> */}
         <MenuItem onClick={() => handleOpenImages(groupedArray)}>
           Editar imagenes
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleClose}>Agregar talla</MenuItem>
+        <MenuItem onClick={()=>handleOpenAddSize(groupedArray, product)}>Agregar talla</MenuItem>
       </Menu>
     </>
   );

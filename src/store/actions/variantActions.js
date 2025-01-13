@@ -1,7 +1,7 @@
 import { enqueueSnackbar } from "notistack";
 import { instanceApi } from "../../apis/configAxios";
 import { startLoading, stopLoading } from "../reducer/uiReducer";
-import { updateVariant, updateVariantsImages } from "../reducer/productsReducer";
+import { onAddNewSizeVariant, updateVariant, updateVariantsImages } from "../reducer/productsReducer";
 import Swal from "sweetalert2";
 import { green } from "@mui/material/colors";
 import { Button } from "@mui/material";
@@ -33,12 +33,6 @@ export const startUpdateOneVariant = (id, values, handleClose) => {
     }
   };
 };
-async function blobUrlToFile(blobUrl, filename) {
-  const response = await fetch(blobUrl); // Espera a obtener la respuesta
-  const blob = await response.blob();   // Convierte la respuesta en un Blob
-  return new File([blob], filename, { type: blob.type }); // Crea un archivo con el blob
-}
-
 export const startUpdateMultipleImages = ({ product_id, images, color }, handleClose) => {
   
   return async (dispatch) => {
@@ -87,3 +81,34 @@ export const startUpdateMultipleImages = ({ product_id, images, color }, handleC
     }
   };
 };
+
+export const startAddVariantsize = (info, handleClose) => {
+  
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      const { data } = await instanceApi.post(
+        `/variant-product/addVariant/newSize`,
+        {body: info},
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      handleClose()
+      dispatch(onAddNewSizeVariant(data.data))
+      Swal.fire({title:`${data.message}`, confirmButtonColor:green[500], icon:'success'})
+      
+    } catch (error) {
+      enqueueSnackbar(`${error.response?.data?.message || "Error desconocido"}`, {
+        anchorOrigin: { horizontal: "center", vertical: "top" },
+        variant: "error",
+      });
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
+};
+
