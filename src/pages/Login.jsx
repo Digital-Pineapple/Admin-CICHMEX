@@ -7,7 +7,7 @@ import {
   IconButton,
   InputAdornment,
   FormControl,
-  Grid,
+  Grid2,
   Divider,
   TextField,
 } from "@mui/material";
@@ -23,10 +23,13 @@ import { useAuthStore } from "../hooks";
 import Image from "mui-image";
 import logo from "../assets/Images/logotipo.png";
 import LogoCHMX from "../assets/Images/CHMX/Imagotipo CHMX Blanco.png";
-import { blue, orange } from "@mui/material/colors";
+import { blue, orange, teal } from "@mui/material/colors";
 import { ErrorMessage } from "@hookform/error-message";
+import ReCAPTCHA from "react-google-recaptcha";
+import Swal from "sweetalert2";
 
 export const Login = () => {
+  const captchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
   const { register, control, formState, handleSubmit } = useForm({
     defaultValues: {
       email: "",
@@ -36,34 +39,52 @@ export const Login = () => {
 
   const { StartLogin } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
+
+  const [captcha, setCaptcha] = useState(null); // Estado para almacenar el valor del captcha
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+
+  const handleCaptchaChange = (value) => {
+    setCaptcha(value); // Captura el valor del reCAPTCHA
+  };
+
   const onSubmit = (data) => {
-    StartLogin(data.email, data.password);
-};
+    if (!captcha) {
+      Swal.fire({
+        title: "Por favor, verifica que no eres un robot.",
+        confirmButtonColor: "red",
+        icon: "error",
+        iconColor: "red",
+      });
+      return;
+    }
+    // Inicia sesión pasando el token de reCAPTCHA
+    StartLogin(data.email, data.password, captcha); // Pasa el token de reCAPTCHA a tu función de login
+  };
 
   return (
     <>
-      <Grid
+      <Grid2
         bgcolor={"#0D0318"}
         container
         minHeight={"100vh"}
         justifyContent={"center"}
         padding={{ xs: 2, sm: 4 }}
         display={"flex"}
-        alignContent={'space-evenly'}
+        alignContent={"space-evenly"}
       >
-        <Grid
+        <Grid2
           maxHeight={"250px"}
           padding={2}
           display={"flex"}
           justifyContent={"center"}
-          alignContent={'center'}
+          alignContent={"center"}
           container
+          width={'100%'}
         >
-          <Grid item xs={12}>
+          <Grid2 size={12}>
             <Typography
               variant="h1"
               fontWeight={"Bold"}
@@ -73,8 +94,8 @@ export const Login = () => {
             >
               Administrador
             </Typography>
-          </Grid>
-          <Grid item xs={6} xl={4}>
+          </Grid2>
+          <Grid2 size={{ xs: 6, lg:4 }}>
             <Image
               src={logo}
               fit="contain"
@@ -85,8 +106,8 @@ export const Login = () => {
                 maxWidth: "300px",
               }}
             />
-          </Grid>
-          <Grid item xs={6} xl={4}>
+          </Grid2>
+          <Grid2 size={{ xs: 6, lg:4 }}>
             <Image
               src={LogoCHMX}
               fit="contain"
@@ -97,32 +118,31 @@ export const Login = () => {
                 maxWidth: "300px",
               }}
             />
-          </Grid>
-        </Grid>
-        <Grid
+          </Grid2>
+
+        </Grid2>
+        <Grid2
           component="form"
           autoComplete="off"
           onSubmit={handleSubmit(onSubmit)}
           borderRadius={"20px"}
           border={"4px solid"}
-          borderColor={blue[900]}
+          borderColor={teal[900]}
           sx={{ backgroundColor: "white" }}
           container
           maxWidth={{ sm: "70%", md: "60%", lg: "40%" }}
           maxHeight={{ xs: "400px" }}
-          padding={{ xs: 1, md:4 }}
-          
-
+          padding={{ xs: 1, md: 4 }}
         >
-          <Grid item xs={12}>
+          <Grid2 size={12}>
             <Typography
-              fontSize={{ xs: 25, sm: 30, md: 35, lg: 34, xl: 40 }}
+              fontSize={{ xs: 25, sm: 30, md: 35, lg: 34}}
               textAlign={"center"}
               color={orange[900]}
             >
               Inicio de Sesión
             </Typography>
-          </Grid>
+          </Grid2>
 
           {/* CORREO */}
           <Controller
@@ -141,7 +161,7 @@ export const Login = () => {
                 variant="outlined"
                 fullWidth
                 label="Correo"
-                sx={{marginY:2}}
+                sx={{ marginY: 2 }}
                 helperText={
                   fieldState.error ? <b>{fieldState.error.message}</b> : ""
                 }
@@ -174,7 +194,7 @@ export const Login = () => {
                 error={fieldState.invalid}
                 inputProps={{ ...field }}
                 fullWidth
-                type={showPassword ? "text":"password"}
+                type={showPassword ? "text" : "password"}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -191,18 +211,25 @@ export const Login = () => {
               />
             )}
           />
-            <Button
-              variant="contained"
-              fullWidth
-              type="submit"
-              endIcon={<SendSharp />}
-              sx={{maxHeight:'50px', bgcolor:orange[900], marginY:2}}
-            >
-              Iniciar sesión
-            </Button>
+          <Grid2 display={"flex"} justifyContent={"center"} mt={1} size={12}>
+            <ReCAPTCHA
+              sitekey={captchaSiteKey}
+              onChange={handleCaptchaChange}
+            />
+          </Grid2>
+          <Button
+            variant="contained"
+            fullWidth
+            type="submit"
+            disabled={!captcha}
+            endIcon={<SendSharp />}
+            sx={{ maxHeight: "50px", bgcolor: orange[900], marginY: 2 }}
+          >
+            Iniciar sesión
+          </Button>
 
-        </Grid>
-      </Grid>
+        </Grid2>
+      </Grid2>
     </>
   );
 };

@@ -41,7 +41,7 @@ import {
 } from "../store/reducer/productsReducer";
 import { startLoadColors } from "../store/actions/uiActions";
 import { color } from "@mui/system";
-import { startAddVariantsize, startUpdateMultipleImages, startUpdateOneVariant } from "../store/actions/variantActions";
+import { startAddVariantsize, startAssignMain, startAssignMainOneVariant, startUpdateMultipleImages, startUpdateOneVariant } from "../store/actions/variantActions";
 
 export const useProducts = () => {
   const dispatch = useDispatch();
@@ -116,7 +116,7 @@ export const useProducts = () => {
   }));
   const rowsAllInputs = entries?.map((item, index) => ({
     id: index,
-
+    tag: item.tag ? item.tag : item.variant_tag,
     ...item,
   }));
   const rowsAllOutputs = outputs?.map((item, index) => ({
@@ -193,8 +193,6 @@ export const useProducts = () => {
 
       body.variants.push(values);
     });
-    dispatch(onStepNewProduct({ ...dataProduct, ...body }));
-
     dispatch(startAddVariantsProduct(id, body, handleNext));
   };
 
@@ -355,6 +353,12 @@ export const useProducts = () => {
   const addOneSizeVariant =(data, handleClose)=>{
     dispatch(startAddVariantsize(data, handleClose))
   }
+  const assignMain =(data)=>{
+    dispatch(startAssignMain(data))
+  }
+  const assignMainOneVariant =(data)=>{
+    dispatch(startAssignMainOneVariant(data))
+  }
 
   return {
     loadProducts,
@@ -406,6 +410,8 @@ export const useProducts = () => {
     editVariant,
     updateMultipleImagesVariant,
     dataAddVariants,
-    addOneSizeVariant
+    addOneSizeVariant,
+    assignMain,
+    assignMainOneVariant
   };
 };

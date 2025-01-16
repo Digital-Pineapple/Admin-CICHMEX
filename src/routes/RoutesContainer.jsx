@@ -9,7 +9,7 @@ import {
 } from "../theme";
 import { ThemeProvider } from "@mui/material";
 import { Navbar } from "../components";
-import { Login } from "../pages/Login";
+import  {Login}  from "../pages/Login";
 import { PrivateRoutes } from "./PrivateRoutes";
 import { PublicRoutes } from "./PublicRoutes";
 import Home from "../pages/Home";

@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { Login } from "../pages/Login";
+import  {Login}  from "../pages/Login";
 import Users from "../pages/Usuarios/Users";
 import Services from "../pages/Services/Services";
 import EditUser from "../pages/Usuarios/Edit";

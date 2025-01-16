@@ -1,7 +1,7 @@
 import { enqueueSnackbar } from "notistack";
 import { instanceApi } from "../../apis/configAxios";
 import { startLoading, stopLoading } from "../reducer/uiReducer";
-import { onAddNewSizeVariant, updateVariant, updateVariantsImages } from "../reducer/productsReducer";
+import { onAddNewSizeVariant, updateIsMainVariant, updateVariant, updateVariantsImages } from "../reducer/productsReducer";
 import Swal from "sweetalert2";
 import { green } from "@mui/material/colors";
 import { Button } from "@mui/material";
@@ -106,6 +106,63 @@ export const startAddVariantsize = (info, handleClose) => {
         anchorOrigin: { horizontal: "center", vertical: "top" },
         variant: "error",
       });
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
+};
+
+export const startAssignMain = ({product_id,color}) => {
+  
+  
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      const { data } = await instanceApi.post(
+        `/variant-product/update-is-main/ok/${product_id}`,
+        {color},
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      
+      dispatch(updateIsMainVariant(data.data))
+      Swal.fire({title:`${data.message}`, confirmButtonColor:green[500], icon:'success'})
+      
+    } catch (error) {
+      console.log(error);
+      
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
+};
+
+export const startAssignMainOneVariant = ({product_id, variant_id}) => {  
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      const { data } = await instanceApi.post(
+        `/variant-product/update/oneVariant/${product_id}`,
+        {variant_id:variant_id},
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      
+      
+      dispatch(updateIsMainVariant(data.data))
+      Swal.fire({title:`${data.message}`, confirmButtonColor:green[500], icon:'success'})
+      
+    } catch (error) {
+      console.log(error);
+      
     } finally {
       dispatch(stopLoading());
     }

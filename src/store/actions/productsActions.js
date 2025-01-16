@@ -40,11 +40,12 @@ export const startLoadProducts = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+      
       dispatch(loadProducts(data.data));
       dispatch(stopLoading());
     } catch (error) {
       enqueueSnackbar(
-        `${error.response.data.message}|| 'Error al consultar información'`,
+        `${error.response.data.message}`,
         {
           anchorOrigin: { horizontal: "center", vertical: "top" },
           variant: "error",
@@ -1037,7 +1038,7 @@ export const startAddConditionVariant = (values, handleNext) => {
   };
 };
 
-export const startAddVariantsProduct = (id, values, handleClose) => {
+export const startAddVariantsProduct = (id, values, handleNext) => {
   return async (dispatch) => {
     dispatch(startLoading());
     try {
@@ -1055,9 +1056,6 @@ export const startAddVariantsProduct = (id, values, handleClose) => {
         }
       );
 
-      // Actualización del estado en Redux
-      dispatch(onStepNewProduct(data.data));
-
       // Notificación de éxito
       enqueueSnackbar(`${data.message}`, {
         variant: "success",
@@ -1070,7 +1068,6 @@ export const startAddVariantsProduct = (id, values, handleClose) => {
       // Avanzar al siguiente paso
       handleNext();
     } catch (error) {
-      // Manejo de errores con notificación
       enqueueSnackbar(
         error.response?.data?.message || "Error al enviar las variantes",
         {

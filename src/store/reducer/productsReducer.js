@@ -76,6 +76,10 @@ export const productsReducer = createSlice({
       })
     },
 
+    updateIsMainVariant(state, {payload}) {
+      state.product.variants = payload
+    },
+
     updateVariantsImages(state, { payload }) {
       state.product.variants = state.product.variants.map((variant) => {
         const updatedVariant = payload.find((i) => i._id === variant._id);
@@ -146,7 +150,8 @@ export const {
   updateImageVariant,
   updateVariantsImages,
   onStepNewProductUpdate,
-  onAddNewSizeVariant
+  onAddNewSizeVariant,
+  updateIsMainVariant
 } = productsReducer.actions;
 
 export default productsReducer.reducer;

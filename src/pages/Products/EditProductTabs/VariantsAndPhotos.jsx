@@ -23,7 +23,7 @@ import {
   ListItemText,
   Chip,
   ListItem,
-  Grid,
+  Grid2,
   Typography,
   TextField,
   FormControlLabel,
@@ -47,6 +47,7 @@ import { useProducts } from "../../../hooks";
 import { v4 as uuidv4 } from "uuid";
 import LoadingScreenBlue from "../../../components/ui/LoadingScreenBlue";
 import { useParams } from "react-router-dom";
+import { blue, green, teal } from "@mui/material/colors";
 
 const style = {
   position: "absolute",
@@ -65,11 +66,19 @@ const style = {
 };
 
 const VariantsAndPhotos = () => {
-  const { updateVariants, product, loading, loadProduct, deleteVariant, deleteImageVariant } = useProducts();
+  const {
+    updateVariants,
+    product,
+    loading,
+    loadProduct,
+    deleteVariant,
+    deleteImageVariant,
+    assignMainOneVariant,
+  } = useProducts();
   const [valueVariants, setValueVariants] = useState([]); // Array to hold variants
   const [collapseOpen, setCollapseOpen] = useState([]); // Array to track the open/close state of each variant
   const [open, setOpen] = useState({ image: null, value: false });
-  const sizeGuide = product?.size_guide?.dimensions || []
+  const sizeGuide = product?.size_guide?.dimensions || [];
   const { id } = useParams();
   const handleOpen = (image) => {
     setOpen({ image: image, value: true });
@@ -105,10 +114,11 @@ const VariantsAndPhotos = () => {
         discountPrice: variant?.discountPrice || 0,
         stock: variant?.stock || null,
         tag: variant?.tag || null,
+        is_main: variant.is_main || null
       })) || [],
   });
 
-    const {
+  const {
     control,
     handleSubmit,
     setValue,
@@ -120,15 +130,11 @@ const VariantsAndPhotos = () => {
   } = useForm({ defaultValues: DefaultValues(product) });
 
   useEffect(() => {
-    setValue('variants',[])
+    setValue("variants", []);
     const info = DefaultValues(product);
     setValueVariants(info.variants);
-    setValue('variants', info.variants)
-    
+    setValue("variants", info.variants);
   }, [product]);
-
-
-
 
   const handleCheckboxChange = (variant, checked, index) => {
     setValue(`variants[${index}].design.checkbox`, checked);
@@ -160,8 +166,6 @@ const VariantsAndPhotos = () => {
     });
   };
 
-
-
   // Remove variant and its form values
   const MessageDelete = (id) => {
     Swal.fire({
@@ -170,19 +174,19 @@ const VariantsAndPhotos = () => {
       confirmButtonText: "Eliminar",
       confirmButtonColor: "red",
       cancelButtonText: "Cancelar",
-    }).then(async(result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-         const response = await deleteVariant(id)
-        const ChangeDelete = valueVariants.filter((item) => item.id !== response.id);
-        setValueVariants(ChangeDelete);
-        unregister(`variants[${id}]`);
-        Swal.fire("Se eliminó Correctamente!", "", "success");
+          const response = await deleteVariant(id);
+          const ChangeDelete = valueVariants.filter(
+            (item) => item.id !== response.id
+          );
+          setValueVariants(ChangeDelete);
+          unregister(`variants[${id}]`);
+          Swal.fire("Se eliminó Correctamente!", "", "success");
         } catch (error) {
           console.log(error);
-          
         }
-      
       }
     });
   };
@@ -193,21 +197,6 @@ const VariantsAndPhotos = () => {
         item.id === id ? { ...item, value: !item.value } : item
       )
     );
-  };
-
-  const isMain = (value) => {
-    if (value === 0) {
-      return (
-        <ListItem>
-          <Chip
-            variant="filled"
-            size="small"
-            color="secondary"
-            label="Variante principal"
-          ></Chip>
-        </ListItem>
-      );
-    }
   };
 
   const onChangeImages = (event, indexVariant) => {
@@ -232,28 +221,23 @@ const VariantsAndPhotos = () => {
   };
   const removeImage = (variant_id, image, indexVariant) => {
     const currentImages = watch(`variants[${indexVariant}].images`) || [];
-    const startName = image.split(':')
-    let start = startName[0]
+    const startName = image.split(":");
+    let start = startName[0];
 
-    if (start === 'blob') {
-     let filteredImages = currentImages.filter(i => image !== i.filePreview )
-      setValue(`variants[${indexVariant}].images`, [
-        ...filteredImages,
-      ]);
-    }    
-    
-    if (start === 'https') {
-      let imageValue = currentImages.find(i=> i.url === image)
+    if (start === "blob") {
+      let filteredImages = currentImages.filter((i) => image !== i.filePreview);
+      setValue(`variants[${indexVariant}].images`, [...filteredImages]);
+    }
+
+    if (start === "https") {
+      let imageValue = currentImages.find((i) => i.url === image);
       try {
         deleteImageVariant(variant_id, imageValue._id);
-        
       } catch (error) {
         console.log(error);
-        
       }
     }
   };
-
 
   const onSubmit = ({ variants }) => {
     Swal.fire({
@@ -265,7 +249,7 @@ const VariantsAndPhotos = () => {
       confirmButtonColor: "#4caf50",
     }).then((result) => {
       if (result.isConfirmed) {
-        updateVariants(id,variants)
+        updateVariants(id, variants);
       }
     });
   };
@@ -318,15 +302,12 @@ const VariantsAndPhotos = () => {
 
   const getCachedImageUrl = (url) => `${url}?v=${new Date().getTime()}`;
 
-  
-
   if (loading) {
     return <LoadingScreenBlue />;
   }
-
   return (
-    <Grid container>
-      <Grid item xs={12}>
+    <Grid2 container>
+      <Grid2 size={12}>
         <Button
           startIcon={<Replay />}
           onClick={() => loadProduct(id)}
@@ -335,7 +316,7 @@ const VariantsAndPhotos = () => {
         >
           Recargar
         </Button>
-      </Grid>
+      </Grid2>
       <Card
         variant="elevation"
         component={"form"}
@@ -368,41 +349,94 @@ const VariantsAndPhotos = () => {
                 (el) => el.id === item.id
               )?.value;
 
+              const isMain = ({ is_main, index, variant_id }) => {
+                console.log(is_main);
+                
+                if (is_main === true) {
+                  return (
+                    <>
+                      <Chip
+                        label={"Variante principal"}
+                        sx={{ bgcolor: blue[300] }}
+                      ></Chip>
+                    </>
+                  );
+                } else if ((index === 0 && is_main === undefined) || (index === 0 && is_main !== null)) {
+                  return (
+                    <>
+                      <Chip
+                        label={"Variante principal"}
+                        sx={{ bgcolor: blue[300] }}
+                      ></Chip>
+                    </>
+                  );
+                }
+                return (
+                  <Button
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation(),
+                        assignMainOneVariant({
+                          product_id: id,
+                          variant_id: variant_id,
+                        });
+                    }}
+                    sx={{ textTransform: "capitalize" }}
+                    variant="contained"
+                    color="success"
+                  >
+                    Asignar como principal
+                  </Button>
+                );
+              };
+
               return (
                 <div key={item.id}>
                   <ListItem
                     secondaryAction={
-                      <Button
-                        title="Borrar"
-                        sx={{
-                          alignContent: "center",
-                          maxWidth: "40px",
-                          color: "red",
-                          "&:hover": {
-                            border: "1px solid",
-                          },
-                        }}
-                        onClick={(e) => {
-                          e.stopPropagation(), MessageDelete(item.id);
-                        }}
-                      >
-                        <Delete />
-                      </Button>
+                      <>
+                        <Button
+                          title="Borrar"
+                          sx={{
+                            alignContent: "center",
+                            maxWidth: "40px",
+                            color: "red",
+                            "&:hover": {
+                              border: "1px solid",
+                            },
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation(), MessageDelete(item.id);
+                          }}
+                        >
+                          <Delete />
+                        </Button>
+                      </>
                     }
                     onClick={() => handleClick(item.id)}
                   >
                     {isOpen ? <ExpandLess /> : <ExpandMore />}
                     <ListItemText
                       sx={{ minWidth: "150px" }}
-                      primary={`Variante ${index + 1}`}
+                      primary={`Variante ${item?.size? item.size : 'New'}`}
                     />
-                    {isMain(index)}
+                    <Box
+                      display="flex"
+                      width={"100%"}
+                      justifyContent={"start"}
+                      padding={1}
+                    >
+                      {isMain({
+                        is_main: item?.is_main,
+                        index,
+                        variant_id: item.id,
+                      })}
+                    </Box>
                   </ListItem>
 
                   <Collapse in={isOpen} timeout="auto">
-                    <Grid container spacing={2}>
-
-                      <Grid item xs={4}>
+                    <Grid2 container spacing={2}>
+                      <Grid2 size={4}>
                         <FormControl
                           fullWidth
                           error={!!errors.variants?.[index]?.size}
@@ -437,9 +471,9 @@ const VariantsAndPhotos = () => {
                               "Seleccione una medida"}
                           </FormHelperText>
                         </FormControl>
-                      </Grid>
+                      </Grid2>
 
-                      <Grid item xs={4}>
+                      <Grid2 size={4}>
                         <Controller
                           control={control}
                           name={`variants[${index}].color`}
@@ -462,9 +496,9 @@ const VariantsAndPhotos = () => {
                             />
                           )}
                         />
-                      </Grid>
+                      </Grid2>
 
-                      <Grid item xs={4}>
+                      <Grid2 size={4}>
                         <Controller
                           control={control}
                           rules={{
@@ -489,9 +523,9 @@ const VariantsAndPhotos = () => {
                             />
                           )}
                         />
-                      </Grid>
+                      </Grid2>
 
-                      <Grid item xs={4}>
+                      <Grid2 size={4}>
                         <Controller
                           control={control}
                           name={`variants[${index}].design.textInput`}
@@ -552,10 +586,10 @@ const VariantsAndPhotos = () => {
                             />
                           )}
                         />
-                      </Grid>
+                      </Grid2>
 
                       {!item.stock ? (
-                        <Grid item xs={4}>
+                        <Grid2 size={4}>
                           <Controller
                             control={control}
                             rules={{
@@ -580,12 +614,12 @@ const VariantsAndPhotos = () => {
                               />
                             )}
                           />
-                        </Grid>
+                        </Grid2>
                       ) : (
                         ""
                       )}
 
-                      <Grid item xs={4}>
+                      <Grid2 size={4}>
                         <Controller
                           control={control}
                           rules={{
@@ -618,9 +652,9 @@ const VariantsAndPhotos = () => {
                             />
                           )}
                         />
-                      </Grid>
+                      </Grid2>
 
-                      <Grid item xs={4}>
+                      <Grid2 size={4}>
                         <Controller
                           control={control}
                           rules={{
@@ -652,9 +686,9 @@ const VariantsAndPhotos = () => {
                             />
                           )}
                         />
-                      </Grid>
+                      </Grid2>
 
-                      <Grid item xs={4}>
+                      <Grid2 size={4}>
                         <Controller
                           control={control}
                           rules={{
@@ -688,9 +722,9 @@ const VariantsAndPhotos = () => {
                             />
                           )}
                         />
-                      </Grid>
+                      </Grid2>
 
-                      <Grid item xs={4}>
+                      <Grid2 size={4}>
                         <Controller
                           control={control}
                           rules={{
@@ -716,10 +750,10 @@ const VariantsAndPhotos = () => {
                             />
                           )}
                         />
-                      </Grid>
+                      </Grid2>
 
-                      <Grid item display={"flex"} xs={12}>
-                        <Grid
+                      <Grid2 display={"flex"} size={12}>
+                        <Grid2
                           container
                           padding={1}
                           spacing={2}
@@ -727,10 +761,7 @@ const VariantsAndPhotos = () => {
                           justifyContent={"center"}
                           width={"100%"}
                         >
-                          <Grid
-                            item
-                            xs={imagesArray(index).length > 0 ? 1 : 12}
-                          >
+                          <Grid2 size={imagesArray(index).length > 0 ? 1 : 12}>
                             <Controller
                               control={control}
                               rules={{
@@ -880,18 +911,17 @@ const VariantsAndPhotos = () => {
                                 );
                               }}
                             />
-                          </Grid>
+                          </Grid2>
 
-                          <Grid
-                            item
-                            xs={10}
+                          <Grid2
+                            size={10}
                             display={"flex"}
                             alignContent={"center"}
                             flexDirection={"row"}
                           >
                             {imagesArray(index)?.map((preview, i) => {
                               return (
-                                <Grid
+                                <Grid2
                                   key={i}
                                   position="relative"
                                   width="150px"
@@ -902,7 +932,13 @@ const VariantsAndPhotos = () => {
                                   marginX={1}
                                 >
                                   <img
-                                    src={preview?.url ? getCachedImageUrl(preview?.url) : preview?.filePreview ? preview?.filePreview : ''}
+                                    src={
+                                      preview?.url
+                                        ? getCachedImageUrl(preview?.url)
+                                        : preview?.filePreview
+                                        ? preview?.filePreview
+                                        : ""
+                                    }
                                     alt="Preview"
                                     style={{
                                       width: "100%",
@@ -942,7 +978,15 @@ const VariantsAndPhotos = () => {
                                       }}
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        removeImage(item?.id, preview?.url ? preview?.url : preview?.filePreview ? preview?.filePreview : '', index);
+                                        removeImage(
+                                          item?.id,
+                                          preview?.url
+                                            ? preview?.url
+                                            : preview?.filePreview
+                                            ? preview?.filePreview
+                                            : "",
+                                          index
+                                        );
                                       }}
                                     >
                                       <Delete fontSize="small" />
@@ -958,7 +1002,11 @@ const VariantsAndPhotos = () => {
                                       }}
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        handleOpen(preview.filePreview);
+                                        handleOpen(
+                                          preview.filePreview
+                                            ? preview.filePreview
+                                            : preview.url
+                                        );
                                       }}
                                     >
                                       <OpenInFull fontSize="small" />
@@ -1011,7 +1059,7 @@ const VariantsAndPhotos = () => {
                                       clickable
                                     />
                                   </Box>
-                                </Grid>
+                                </Grid2>
                               );
                             })}
                             <FormControl>
@@ -1021,10 +1069,10 @@ const VariantsAndPhotos = () => {
                                 {errors.variants?.[index]?.images?.message}
                               </FormHelperText>
                             </FormControl>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </Grid>
+                          </Grid2>
+                        </Grid2>
+                      </Grid2>
+                    </Grid2>
                   </Collapse>
                 </div>
               );
@@ -1064,7 +1112,7 @@ const VariantsAndPhotos = () => {
           />
         </Box>
       </Modal>
-    </Grid>
+    </Grid2>
   );
 };
 

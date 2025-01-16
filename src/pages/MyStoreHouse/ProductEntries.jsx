@@ -169,7 +169,7 @@ const ProductEntries = () => {
       </Grid>
       <Grid item xs={12} >
         <DataGrid
-          sx={{ fontSize: "20px", fontFamily: "sans-serif" }}
+          sx={{ fontSize: "12px", fontFamily: "sans-serif" }}
           columns={
             [
               {

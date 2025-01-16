@@ -93,7 +93,7 @@ const MainFeaturesEdit = () => {
     )
   }
   return (
-    <Card variant="elevation" component="form" onSubmit={handleSubmit(onSubmit)}>
+    <Card sx={{padding:1}} variant="elevation" component="form" onSubmit={handleSubmit(onSubmit)}>
       <CardHeader
         title="Características principales"
         subheader="Completa estos datos con las especificaciones de la tienda"

@@ -4,7 +4,7 @@ import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
 import CardHeader from "@mui/material/CardHeader";
-import { Add, Close, MoreVertOutlined } from "@mui/icons-material";
+import { Add, Close, MoreVertOutlined, Refresh } from "@mui/icons-material";
 import {
   Grid2,
   Box,
@@ -14,6 +14,8 @@ import {
   Menu,
   MenuItem,
   Divider,
+  Avatar,
+  Grid,
 } from "@mui/material";
 import { useProducts } from "../../../hooks";
 import LoadingScreenBlue from "../../../components/ui/LoadingScreenBlue";
@@ -26,6 +28,7 @@ import VariantImagesUpdate from "../../../components/Forms/VariantImagesUpdate";
 import AddVariantModal from "./AddVariantModal";
 import AddSizeModal from "./AddSizeModal";
 import Swal from "sweetalert2";
+import { green } from "@mui/material/colors";
 
 const style = {
   position: "absolute",
@@ -55,17 +58,20 @@ const styleFull = {
   justifyContent: "center",
   flexDirection: "column",
   boxShadow: 24,
-  maxHeight:'90vh',
+  maxHeight: "90vh",
   p: 4,
 };
 const VariantsAndPhotosShoes = () => {
   const { id } = useParams();
-  const { loading, loadProduct, product, deleteVariant } = useProducts();
+  const { loading, loadProduct, product, deleteVariant, assignMain,  } =
+    useProducts();
   const [open, setOpen] = useState({ image: null, value: false });
   const [openUpdateVariant, setOpenUpdateVariant] = useState({
     variant: {},
     value: false,
   });
+
+  
   const [openUpdateColor, setOpenUpdateColor] = useState({
     data: {},
     color: "",
@@ -80,7 +86,12 @@ const VariantsAndPhotosShoes = () => {
 
   const [openAddVariant, setOpenAddVariant] = useState(false);
 
-  const [openAddSize, setOpenAddSize] = useState({value: false, sizes: [], variant:{}, product_id: ''});
+  const [openAddSize, setOpenAddSize] = useState({
+    value: false,
+    sizes: [],
+    variant: {},
+    product_id: "",
+  });
 
   const [anchorEl, setAnchorEl] = useState({ value: null, color: null });
   const openMore = Boolean(anchorEl.value);
@@ -100,23 +111,27 @@ const VariantsAndPhotosShoes = () => {
   };
 
   const handleOpenAddOneVariant = () => {
-    setOpenAddVariant(true)
-   };
+    setOpenAddVariant(true);
+  };
   const handleCloseAddOneVariant = () => {
     setOpenAddVariant(false);
   };
 
   const handleOpenAddSize = (data, product) => {
-    
-    const dataSize = product.size_guide.dimensions.length
-    const variant = data.find(i=> i.color === anchorEl.color)
-    if(variant.items.length >= dataSize){
-      return Swal.fire('No se pueden agregar mas tallas', '', 'error')
+    const dataSize = product.size_guide.dimensions.length;
+    const variant = data.find((i) => i.color === anchorEl.color);
+    if (variant.items.length >= dataSize) {
+      return Swal.fire("No se pueden agregar mas tallas", "", "error");
     }
-   setOpenAddSize({product_id:id, variant: variant,  value: true, sizes : product.size_guide.dimensions })
-   };
+    setOpenAddSize({
+      product_id: id,
+      variant: variant,
+      value: true,
+      sizes: product.size_guide.dimensions,
+    });
+  };
   const handleCloseAddSize = () => {
-    setOpenAddSize({product_id:'', variant: {}, value: false, sizes : []});
+    setOpenAddSize({ product_id: "", variant: {}, value: false, sizes: [] });
   };
 
   const handleOpenImages = (data) => {
@@ -155,22 +170,25 @@ const VariantsAndPhotosShoes = () => {
         items: [],
         images: new Set(), // Usar Set para evitar imágenes duplicadas
         design: new Set(),
+        is_main: new Set(),
       };
     }
 
     // Agregar el objeto actual al grupo
     acc[color].items.push(item);
     acc[color].design.add(item.design);
+    acc[color].is_main.add(item.is_main ? item.is_main : false);
     item.images.forEach((image) => acc[color].images.add(image.url)); // Iterar sobre imágenes
 
     return acc;
   }, {});
 
   const groupedArray = Object.entries(grouped)?.map(
-    ([color, { items, images, design }]) => ({
+    ([color, { items, images, design, is_main }]) => ({
       color,
       items,
       design: Array.from(design),
+      is_main: Array.from(is_main),
       images: Array.from(images),
     })
   );
@@ -181,6 +199,19 @@ const VariantsAndPhotosShoes = () => {
   const handleCloseUpdate = () => {
     setOpenUpdateVariant({ variant: {}, value: false });
   };
+  const handleAssignMain = ({ product_id, color }) => {
+    assignMain({ product_id: product_id, color: color });
+  };
+
+  const getAvatarForMain = ({ is_main, index }) => {
+    
+    if (Array.isArray(is_main) && is_main[0] === true) {
+      return <Avatar sx={{ bgcolor: green[400] }}>P</Avatar>;
+    } else if (index === 0 && is_main?.[0]) {
+      return <Avatar sx={{ bgcolor: green[400] }}>P</Avatar>;
+    }
+    return null; // Maneja el caso en el que no se retorna un Avatar
+  };
 
   if (loading) {
     return <LoadingScreenBlue />;
@@ -188,20 +219,41 @@ const VariantsAndPhotosShoes = () => {
 
   return (
     <>
+      <Grid2
+        container
+        display={"flex"}
+        alignContent={"center"}
+        padding={1}
+        justifyContent={"start"}
+      >
+        <Button
+          variant="contained"
+          onClick={() => loadProduct(id)}
+          color="primary"
+          size="small"
+        >
+          <Refresh /> Recargar
+        </Button>
+      </Grid2>
       <Card variant="elevation">
         <CardHeader
           title="Variantes y fotos (ropa y zapatos)"
           action={
-            <Button aria-label="add-variant" onClick={()=>handleOpenAddOneVariant()}>
-            <Add />Agregar variante
-          </Button>
+            <Button
+              aria-label="add-variant"
+              onClick={() => handleOpenAddOneVariant()}
+            >
+              <Add />
+              Agregar variante
+            </Button>
           }
         />
         <CardContent>
           <Grid2 container display={"flex"} gap={2} size={12}>
             {groupedArray.map((item, index) => {
+               const avatar = getAvatarForMain({ is_main: item.is_main, index })
               return (
-                <Grid2 size={{ xs: 3.8 }}>
+                <Grid2 size={{ xs: 3.8 }}  key={`${item.color}-${index}`}>
                   <Card variant="elevation">
                     <CardHeader
                       action={
@@ -216,9 +268,11 @@ const VariantsAndPhotosShoes = () => {
                           <MoreVertOutlined />
                         </IconButton>
                       }
+                      avatar={avatar}
                       title={item.color}
                       subheader={item.design}
                     />
+
                     <CardContent>
                       <SlideSwiperVariantImages images={item.images} />
                       <TableSizesActions
@@ -366,7 +420,7 @@ const VariantsAndPhotosShoes = () => {
           >
             <Close />
           </Fab>
-          <AddVariantModal handleCloseModal={handleCloseAddOneVariant}/>
+          <AddVariantModal handleCloseModal={handleCloseAddOneVariant} />
         </Box>
       </Modal>
 
@@ -390,7 +444,12 @@ const VariantsAndPhotosShoes = () => {
           >
             <Close />
           </Fab>
-          <AddSizeModal handleClose={handleCloseAddSize} productId={openAddSize.product_id} variant={openAddSize.variant}  sizes={openAddSize.sizes} />
+          <AddSizeModal
+            handleClose={handleCloseAddSize}
+            productId={openAddSize.product_id}
+            variant={openAddSize.variant}
+            sizes={openAddSize.sizes}
+          />
         </Box>
       </Modal>
       <Menu
@@ -430,15 +489,21 @@ const VariantsAndPhotosShoes = () => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        {/* <MenuItem onClick={() => handleOpenColor(groupedArray)}>
-          Editar color y diseño
+        <MenuItem
+          onClick={() =>
+            handleAssignMain({ product_id: id, color: anchorEl.color })
+          }
+        >
+          Asignar como principal
         </MenuItem>
-        <Divider /> */}
+        <Divider />
         <MenuItem onClick={() => handleOpenImages(groupedArray)}>
           Editar imagenes
         </MenuItem>
         <Divider />
-        <MenuItem onClick={()=>handleOpenAddSize(groupedArray, product)}>Agregar talla</MenuItem>
+        <MenuItem onClick={() => handleOpenAddSize(groupedArray, product)}>
+          Agregar talla
+        </MenuItem>
       </Menu>
     </>
   );

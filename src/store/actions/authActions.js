@@ -19,36 +19,33 @@ export const fetchRoutes = createAsyncThunk('/auth/fetchRoutes', async (token) =
   return data.data;
 });
 
-export const startLogin = ( email, password, navigate ) => {
+export const startLogin = (email, password, captcha, navigate) => {
+  
   return async (dispatch) => {
-    dispatch( startLoading() );
+    dispatch(startLoading());
     try {
       const { data } = await instanceApi.post("/auth/login", {
         email: email,
         password: password,
+        captchaToken: captcha,
       });
+      
       localStorage.setItem("token", data.data.token);
       dispatch(onLogin(data.data.user));
-      await dispatch(fetchRoutes(data.data.token))
-      navigate('/principal',  { replace: true });
+      await dispatch(fetchRoutes(data.data.token));
+      navigate("/principal", { replace: true });
+      
     } catch (error) {
-      dispatch(
-        onLogout( error.response.data?.message || error.response.data.errors[0].message)
-      );
-      enqueueSnackbar(`Error ${error.response.data?.message || error.response.data.errors[0].message}`, {
-        variant: "error",
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "right",
-        },
-      });
-    }finally{
-      dispatch(stopLoading())
+     console.log(error);
+     
+    } finally {
+      dispatch(stopLoading());
     }
   };
 };
 
-export const startRevalidateToken = () => {
+
+export const startRevalidateToken = (navigate) => {
   return async (dispatch) => {
     try {
       const { data } = await instanceApi.get("/auth/user", {
@@ -57,10 +54,17 @@ export const startRevalidateToken = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-     await dispatch(fetchRoutes(data.data.token))
-      dispatch(onLogin(data.data.user))
+
+      await dispatch(fetchRoutes(data.data.token));
+      dispatch(onLogin(data.data.user));
     } catch (error) {
-      dispatch(onLogout( error.response.data?.message || error.response.data.errors[0].message));
+      const errorMessage = 
+        error.response?.data?.message || 
+        (error.response?.data?.errors?.[0]?.message) || 
+        'Ocurrió un error inesperado';
+      dispatch(onLogout(errorMessage));
+      localStorage.clear();
+      navigate('/login', { replace: true });
     }
   };
 };
