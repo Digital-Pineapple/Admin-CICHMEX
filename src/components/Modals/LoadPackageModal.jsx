@@ -3,13 +3,16 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Typography from "@mui/material/Typography";
-import { Grid, ButtonGroup, Button } from "@mui/material";
+import { Grid2, ButtonGroup, Button, Grid, Skeleton } from "@mui/material";
 import { useEffect, useState } from "react";
 import { localDate } from "../../Utils/ConvertIsoDate";
 import { startLoadVerifyStartRoute } from "../../store/actions/productOrderActions";
 import QRScanner from "../QR/QRScanner";
 import { enqueueSnackbar } from "notistack";
 import { useProductOrder } from "../../hooks/useProductOrder";
+import { generateSrcGoogleMaps } from "../../Utils/GoogleSources";
+import { MarkerF, useLoadScript } from "@react-google-maps/api";
+import MapGoogle from "../Google/MapGoogle";
 
 const style = {
   position: "absolute",
@@ -21,22 +24,20 @@ const style = {
   borderRadius: "20px",
   boxShadow: 24,
   p: 4,
-
-
 };
 
 const LoadPackageModal = ({ openModal, handleClose, productOrder }) => {
   const date = localDate(productOrder?.supply_detail?.date);
   const [valueQr, setValueQr] = useState(null);
-  const [enabledButton, setEnabledButton] = useState(true)
+  const [enabledButton, setEnabledButton] = useState(true);
   const [sCard, setSCard] = useState({});
-  const {loadVerifyPackage} = useProductOrder()
+  const { loadVerifyPackage } = useProductOrder();
 
   const verifyPackage = (id) => {
-    loadVerifyPackage(id)
+    loadVerifyPackage(id);
     setValueQr(null);
     setSCard(null);
-    setEnabledButton(true)
+    setEnabledButton(true);
     handleClose();
   };
 
@@ -45,12 +46,11 @@ const LoadPackageModal = ({ openModal, handleClose, productOrder }) => {
       styleCard(valueQr.order_id);
     }
   }, [valueQr, productOrder]);
-  
 
   const styleCard = (v) => {
     if (v === productOrder.order_id) {
       setSCard({ border: "10px solid", borderColor: "success.light" });
-      setEnabledButton(false)
+      setEnabledButton(false);
       enqueueSnackbar({
         message: "Codigo valido",
         variant: "success",
@@ -61,7 +61,7 @@ const LoadPackageModal = ({ openModal, handleClose, productOrder }) => {
       });
     } else {
       setSCard({ border: "10px solid", borderColor: "error.main" });
-      setEnabledButton(true)
+      setEnabledButton(true);
       enqueueSnackbar({
         message: "Codigo invalido",
         variant: "error",
@@ -72,6 +72,16 @@ const LoadPackageModal = ({ openModal, handleClose, productOrder }) => {
       });
     }
   };
+  const coords = {
+    lat: productOrder?.branch?.location?.lat ?productOrder.branch?.location?.lat : productOrder?.deliveryLocation?.lat,
+    lng: productOrder?.branch?.location?.lgt ?productOrder.branch?.location?.lgt : productOrder?.deliveryLocation?.lgt,
+  };
+  
+  const { isLoaded } = useLoadScript({
+    id: "google-map-script",
+    googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
+  });
+
 
   return (
     <div>
@@ -93,17 +103,15 @@ const LoadPackageModal = ({ openModal, handleClose, productOrder }) => {
         }}
       >
         <Fade in={openModal}>
-          <Box sx={{...style, ...sCard}}>
-            <Grid
+          <Box sx={{ ...style, ...sCard }}>
+            <Grid2
               container
               padding={{ xs: 2, md: 5 }}
               display={"flex"}
-              justifyContent={"space-between"}
             >
-              <Grid
-                item
+              <Grid2
                 marginTop={{ xs: "-30px" }}
-                xs={12}
+                size={12}
                 minHeight={"100px"}
                 className="Titles"
               >
@@ -114,14 +122,14 @@ const LoadPackageModal = ({ openModal, handleClose, productOrder }) => {
                 >
                   Verificar y cargar paquete
                 </Typography>
-              </Grid>
-              <Grid item xs={12} m={2}>
+              </Grid2>
+              <Grid2 size={12} m={2}>
                 <Typography variant="h3" textAlign={"center"}>
                   Id de orden: {productOrder?.order_id}
                 </Typography>
-              </Grid>
+              </Grid2>
 
-              <Grid item xs={12} md={5}>
+              <Grid2 size={{ xs: 6 }}>
                 <h2>Almacén:</h2>
 
                 <Typography>
@@ -130,59 +138,96 @@ const LoadPackageModal = ({ openModal, handleClose, productOrder }) => {
                 </Typography>
                 <Typography>Fecha de empaque: {date}</Typography>
 
-                {productOrder?.branch ? (
+             
+              </Grid2>
+
+              <Grid2 size={6}>
+                <QRScanner setValueQR={setValueQr} />
+              </Grid2>
+
+              <Grid2 size={6}>
+              {productOrder?.branch ? (
                   <>
                     <h2>Sucursal de Entrega:</h2>
 
                     <Typography>
-                      Nombre de la sucursal: {productOrder?.branch?.name}
-                    </Typography>
-                    <Typography>
+                      <strong> Nombre de la sucursal:</strong>{" "}
+                      {productOrder?.branch?.name}
                       Estado: {productOrder?.branch?.location?.state}
-                    </Typography>
-                    <Typography>
                       Municipio: {productOrder?.branch?.location?.municipality}
-                    </Typography>
-                    <Typography>
                       Localidad: {productOrder?.branch?.location?.neighborhood}
-                    </Typography>
-                    <Typography>
                       Dirección: {productOrder?.branch?.location?.direction}
+                      CP: {productOrder?.branch?.location?.cp}
                     </Typography>
-                    <Typography>CP: {productOrder?.branch?.location?.cp}</Typography>
                   </>
                 ) : (
                   <>
                     <h2>Direccion de envío:</h2>
                     <Typography>
-                      Estado: {productOrder?.deliveryLocation?.state}
+                      <strong>Estado:</strong>{" "}
+                      {productOrder?.deliveryLocation?.state} <br />
+                      <strong> Municipio: </strong>
+                      {productOrder?.deliveryLocation?.municipality} <br />
+                      <strong>Localidad: </strong>
+                      {productOrder?.deliveryLocation?.neighborhood} <br />
+                      <strong> Calle: </strong>
+                      {productOrder?.deliveryLocation?.street} <br />
+                      <strong>No. exterior: </strong>
+                      {productOrder?.deliveryLocation?.numext} <br />
+                      <strong>No. interior: </strong>
+                      {productOrder?.deliveryLocation?.numint || "N/A"} <br />
+                      <strong>Código postal: </strong>
+                      {productOrder?.deliveryLocation?.zipcode} <br />
+                      <strong>Referencias: </strong>{" "}
+                      {productOrder?.deliveryLocation?.references ||
+                        "Sin información"}
+                      <br />
                     </Typography>
-                    <Typography>
-                      Municipio: {productOrder?.deliveryLocation?.municipality}
-                    </Typography>
-                    <Typography>
-                      Calle: {productOrder?.deliveryLocation?.direction}
-                    </Typography>
-                    <Typography>Código postal: {productOrder?.deliveryLocation?.cp}</Typography>
-                    <Typography>Referencias: {productOrder?.deliveryLocation?.references}</Typography>
                   </>
                 )}
-              </Grid>
-              <Grid item xs={6}>
-                <QRScanner setValueQR={setValueQr} />
-              </Grid>
+              </Grid2>
 
-              <Grid mt={2} item xs={12}>
-                <ButtonGroup fullWidth variant="contained" color="inherit">
-                  <Button color="success" disabled={enabledButton} onClick={() => verifyPackage(productOrder._id)}>
-                    Verificar y cargar paquete
-                  </Button>
-                  <Button color="error" onClick={() => { handleClose(); setValueQr(null); setSCard(null); setEnabledButton(true) }}>
-                    Cancelar
-                  </Button>
-                </ButtonGroup>
-              </Grid>
-            </Grid>
+             
+              <Grid2 size={5.6}>
+              {isLoaded ?  (
+            <MapGoogle
+              styles={{ width: "100%", height: "300px" }}
+              zoom={18}
+              center={coords}
+              scrollable={false}
+            >
+              <MarkerF position={coords} />
+            </MapGoogle>
+          
+        ) : (
+          <Skeleton variant="rectangular" />
+        )}
+                
+              </Grid2>
+
+              <Grid2 mt={2} gap={2} display={"flex"} size={12}>
+                <Button
+                  fullWidth
+                  color="error"
+                  onClick={() => {
+                    handleClose();
+                    setValueQr(null);
+                    setSCard(null);
+                    setEnabledButton(true);
+                  }}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  fullWidth
+                  color="success"
+                  disabled={enabledButton}
+                  onClick={() => verifyPackage(productOrder._id)}
+                >
+                  Verificar y cargar paquete
+                </Button>
+              </Grid2>
+            </Grid2>
           </Box>
         </Fade>
       </Modal>

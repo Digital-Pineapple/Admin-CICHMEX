@@ -26,6 +26,7 @@ import Swal from "sweetalert2";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import LoadPackageModal from "../../components/Modals/LoadPackageModal";
 import { useAuthStore } from "../../hooks";
+import { localDate } from "../../Utils/ConvertIsoDate";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -70,6 +71,8 @@ const LoadPackage = () => {
 
   const [openModal, setOpenModal] = useState(false)
   const [valuePO, setValuePO] = useState(null) 
+  console.log(valuePO);
+  
   
   const handleOpen = (values)=>{
     setValuePO(values)
@@ -83,15 +86,16 @@ const LoadPackage = () => {
   const rowsWithIds = productOrders?.map((item, index) => {
     const quantities = item.products.map((i) => i.quantity);
     const suma = quantities.reduce((valorAnterior, valorActual) => valorAnterior + valorActual, 0);
-
+    const date = localDate(item.createdAt)
     const TD = item.branch ? "En Punto de entrega" : "A domicilio";
-    const statusRoute = item?.route_detail?.route_status || 'No asignado';
+    const statusRoute = item?.route_detail?.route_status === 'assigned'? 'Asignado' : 'No asignado';
 
     return {
       quantityProduct: suma,
       typeDelivery: TD,
       id: index.toString(),
       status_route: statusRoute,
+      date: date,
       ...item,
     };
   });
@@ -173,7 +177,7 @@ const LoadPackage = () => {
           sx={{ fontSize: "20px", fontFamily: "sans-serif" }}
           columns={[
             {
-              field: "createdAt",
+              field: "date",
               headerName: "Fecha de solicitud",
               flex: 1,
               align: "center",

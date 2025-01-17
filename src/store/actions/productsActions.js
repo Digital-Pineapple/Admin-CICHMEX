@@ -19,6 +19,7 @@ import {
   onClearValues,
   updateVariant,
   updateImageVariant,
+  onStepNewProductUpdate,
 } from "../reducer/productsReducer";
 import {
   headerConfigApplication,
@@ -39,11 +40,12 @@ export const startLoadProducts = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+      
       dispatch(loadProducts(data.data));
       dispatch(stopLoading());
     } catch (error) {
       enqueueSnackbar(
-        `${error.response.data.message}|| 'Error al consultar información'`,
+        `${error.response.data.message}`,
         {
           anchorOrigin: { horizontal: "center", vertical: "top" },
           variant: "error",
@@ -823,7 +825,7 @@ async function buildFormDataWithFilesUpdate(data) {
                   // Si es una nueva imagen, convertimos y enviamos el archivo
                   const file = await blobUrlToFile(
                     img.filePreview,
-                    `imagen-${index}-${imgIndex}.jpeg`
+                    `imagen-${index}-${imgIndex}.webp`
                   );
                   formData.append(`${variantKey}[${subKey}][${imgIndex}]`, file);
                 }
@@ -1054,9 +1056,6 @@ export const startAddVariantsProduct = (id, values, handleNext) => {
         }
       );
 
-      // Actualización del estado en Redux
-      dispatch(onStepNewProduct(data.data));
-
       // Notificación de éxito
       enqueueSnackbar(`${data.message}`, {
         variant: "success",
@@ -1068,6 +1067,197 @@ export const startAddVariantsProduct = (id, values, handleNext) => {
 
       // Avanzar al siguiente paso
       handleNext();
+    } catch (error) {
+      enqueueSnackbar(
+        error.response?.data?.message || "Error al enviar las variantes",
+        {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        }
+      );
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
+};
+
+export const startAddVariantsProductUpdate = (id, values, handleClose) => {
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      // Construcción del FormData
+      const variants = await buildFormDataWithFiles(values);
+      // Petición al backend
+      const { data } = await instanceApi.post(
+        `/product/addVariants/${id}`,
+        variants,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      // Actualización del estado en Redux
+      dispatch(onStepNewProductUpdate(data.data));
+
+      // Notificación de éxito
+      enqueueSnackbar(`${data.message}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+
+      // Avanzar al siguiente paso
+      handleClose();
+    } catch (error) {
+      // Manejo de errores con notificación
+      enqueueSnackbar(
+        error.response?.data?.message || "Error al enviar las variantes",
+        {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        }
+      );
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
+};
+
+async function buildFormDataWithFilesClothes(data) {
+  const formData = new FormData();
+
+  for (const key in data) {
+    if (data[key] === null || data[key] === undefined) continue;
+
+    if (Array.isArray(data[key])) {
+      for (const [index, item] of data[key].entries()) {
+        if (key === "variants") {
+          // Procesar variantes
+          const variantKey = `${key}[${index}]`;
+          for (const [subKey, subValue] of Object.entries(item)) {
+            if (subKey === "attributes") {
+              for (const [attrKey, attrValue] of Object.entries(subValue)) {
+                if (attrKey === "color") {
+                  // Solo agregar el nombre del color
+                  formData.append(`${variantKey}[${subKey}][${attrKey}]`, attrValue.name || attrValue);
+                } else {
+                  formData.append(`${variantKey}[${subKey}][${attrKey}]`, attrValue);
+                }
+              }
+            } else {
+              formData.append(`${variantKey}[${subKey}]`, subValue);
+            }
+          }
+        } else if (key === "videos") {
+          // Procesar videos
+          const videoKey = `${key}[${index}]`;
+          const file = await blobUrlToFile(item.file, `video-${index}.mp4`);
+          formData.append(`${videoKey}[file]`, file);
+          formData.append(`${videoKey}[type]`, item.type);
+        } else if (key === "images") {
+          // Procesar imágenes
+          const file = await blobUrlToFile(item.filePreview, `${item.color}-${index}.jpeg`);
+          formData.append(`${index}[${item.color}]`, file);
+        } else {
+          // Otros arrays
+          formData.append(`${key}[${index}]`, item);
+        }
+      }
+    } else {
+      // Agregar valores simples
+      formData.append(key, data[key]);
+    }
+  }
+
+  return formData;
+}
+
+
+
+export const startAddVariantsProductClothes = (id, values, handleNext) => {  
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      
+      // Construcción del FormData
+       const variantsData = await buildFormDataWithFilesClothes(values);
+
+      // //Petición al backend
+      const { data } = await instanceApi.post(
+        `/product/addVariants/clothes-shoes/${id}`,
+        variantsData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+       dispatch(onStepNewProduct(data.data));
+      enqueueSnackbar(`${data.message}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+      handleNext();
+    } catch (error) {
+      // Manejo de errores con notificación
+      enqueueSnackbar(
+        error.response?.data?.message || "Error al enviar las variantes",
+        {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        }
+      );
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
+};
+export const startAddVariantsProductClothes2 = (id, values, handleClose) => {  
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      
+      // Construcción del FormData
+       const variantsData = await buildFormDataWithFilesClothes(values);
+
+      // //Petición al backend
+      const { data } = await instanceApi.post(
+        `/product/addVariants/clothes-shoes/${id}`,
+        variantsData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+       dispatch(loadProduct(data.data));
+      enqueueSnackbar(`${data.message}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+      handleClose();
     } catch (error) {
       // Manejo de errores con notificación
       enqueueSnackbar(
@@ -1343,8 +1533,6 @@ export const startDeleteImageVariant = (variant_id , image_id) => {
       });
       
     } catch (error) {
-      console.log(error,'vfjnvdfk');
-      
       enqueueSnackbar(
         error.response?.data?.message || "Error al enviar las variantes",
         {

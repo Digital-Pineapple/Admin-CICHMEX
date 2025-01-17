@@ -19,7 +19,7 @@ export const userReducer = createSlice({
             state.user   = {};
             state.errorMessage = payload;
             state.logged = false;
-            state.routes = []
+            state.routes = [];
         },
     },
     extraReducers: (builder) => {

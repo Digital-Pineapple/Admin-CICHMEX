@@ -17,7 +17,7 @@ export const dynamicRoutesReducer = createSlice({
       state.dynamicRoute = payload;
     },
     deleteDynamicRoute: (state, { payload }) => {
-      state.dynamicRoutes = state.dynamicRoutes.filter(i => i._id !== payload);
+      state.dynamicRoutes = state.dynamicRoutes.filter(i => i._id !== payload._id);
     },
     editDynamicRoute: ( state, { payload } ) => {
       state.dynamicRoutes = state.dynamicRoutes.map(i => {

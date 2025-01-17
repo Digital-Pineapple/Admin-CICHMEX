@@ -13,8 +13,8 @@ export const useAuthStore = () => {
   const { loading } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const StartLogin = async (email, password) => dispatch(startLogin(email, password, navigate));
-  const RevalidateToken = async () => dispatch(startRevalidateToken());
+  const StartLogin = async (email, password, captcha) => dispatch(startLogin(email, password,captcha, navigate));
+  const RevalidateToken = async () => dispatch(startRevalidateToken(navigate));
   const LoadPublicRoutes = async ()=>  dispatch(startPublicLinks());
   const loadLogout = async () => dispatch(startLogout(navigate));
 

@@ -35,6 +35,7 @@ const QRLoader = ({ setValueQR, orderID }) => {
     {
       loadQR ? (
          <Button
+         fullWidth
         variant="contained"
         onClick={() => setLoadQR(!loadQR)}
         color="primary"
@@ -48,6 +49,7 @@ const QRLoader = ({ setValueQR, orderID }) => {
         variant="contained"
         onClick={() => setLoadQR(!loadQR)}
         color='error'
+        fullWidth
       >
         Cerrar
       </Button>

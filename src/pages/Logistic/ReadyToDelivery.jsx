@@ -15,7 +15,7 @@ import MuiPagination from "@mui/material/Pagination";
 import {
   Box,
   Button,
-  Grid,
+  Grid2,
   Modal,
   Tooltip,
   Typography, IconButton,
@@ -34,6 +34,7 @@ import { localDate } from "../../Utils/ConvertIsoDate";
 import { Close, Handshake, Visibility } from "@mui/icons-material";
 import MapGoogleMarker from "../../components/Google/MapGoogleMarker";
 import CustomNoRows from "../../components/Tables/CustomNoRows";
+import { useAuthStore } from "../../hooks";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -82,9 +83,11 @@ const style = {
 
 const ReadyToDelivery = () => {
   const { loading, readyToPoint, loadReadyToPoint, navigate } = useProductOrder();
+  const {user} =useAuthStore()
   const {loadOptimizedRoutes,optimizedRoutes} = useUsers()
   const [detail, setDetail] = useState(null)
   const [open, setOpen] = useState(false);
+  const [myPosition, setMyPosition] = useState({lat:'', lng:''});
   const handleOpen = (values) => {
     const location = values.deliveryLocation || values.branch?.location
     const coords = {lat: location.lat, lng: location.lgt}
@@ -96,6 +99,7 @@ const ReadyToDelivery = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords;
+        setMyPosition({lat: latitude, lng:longitude})
         loadOptimizedRoutes({lat: latitude, lgt: longitude})
       }, (error) => {
         console.error('Error obteniendo la ubicación:', error);
@@ -103,7 +107,8 @@ const ReadyToDelivery = () => {
     } else {
       console.log("La geolocalización no es soportada por este navegador.");
     }
-  }, []);
+  }, [user]);
+  
   
    
 
@@ -199,11 +204,12 @@ const ReadyToDelivery = () => {
       console.log("La geolocalización no es soportada por este navegador.");
     }
   }
+  
 
 
   return (
-    <Grid container>
-      <Grid item marginTop={{ xs: "-30px" }} xs={12} minHeight={"100px"} className="Titles">
+    <Grid2 size={12} width={'100%'} >
+      <Grid2 marginTop={{ xs: "-30px" }} size={12} minHeight={"100px"} className="Titles">
         <Typography
           textAlign={"center"}
           variant="h1"
@@ -212,20 +218,20 @@ const ReadyToDelivery = () => {
           Paquetes listos para entregar
         </Typography>
        
-      </Grid>
+      </Grid2>
       {
         optimizedRoutes ? (
-      <Grid item xs={12} padding={2} >
-      <MapRouteOptimized optimizedRoutes={optimizedRoutes}  />
+      <Grid2  size={12} padding={2} >
+      <MapRouteOptimized optimizedRoutes={optimizedRoutes} myPosition={myPosition} />
       <Typography variant="h5" color="initial">
         Distancia aprox: <strong>{optimizedRoutes.totalDistance}</strong> ,{" "}
         Tiempo aprox: <strong>{optimizedRoutes.totalDuration}</strong>
       </Typography>
-      </Grid>
+      </Grid2>
         ): ''
       }
      
-      <Grid item xs={12} marginY={2}>
+      <Grid2 size={12} >
       
         <DataGrid
           sx={{ fontSize: "12px", fontFamily: "sans-serif" }}
@@ -301,7 +307,8 @@ const ReadyToDelivery = () => {
             hideToolbar: true,
           }}
         />
-      </Grid>
+      </Grid2>
+
       <Modal
         open={open}
         onClose={handleClose}
@@ -327,7 +334,7 @@ const ReadyToDelivery = () => {
      
       
       
-    </Grid>
+    </Grid2>
   );
 };
 

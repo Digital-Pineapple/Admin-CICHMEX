@@ -98,7 +98,7 @@ const DynamicRoutes = () => {
       <Grid item xs={12}>
         <Fab
           sx={{ right: "-80%" }}
-          onClick={() => navigate("/Rutas/agregar")}
+          onClick={() => navigate("/url/agregar")}
           color="secondary"
           aria-label="Agregar ruta"
           title="Agregar ruta"
@@ -155,7 +155,7 @@ const DynamicRoutes = () => {
               />,
               <Tooltip title='Editar Ruta' >
 
-              <IconButton aria-label="Editar" color="success" onClick={()=>(navigate(`/Rutas/editar/${params.row._id}`, {replace:true}))} >
+              <IconButton aria-label="Editar" color="success" onClick={()=>(navigate(`/url/editar/${params.row._id}`, {replace:true}))} >
                 <Edit />
               </IconButton> 
               </Tooltip>

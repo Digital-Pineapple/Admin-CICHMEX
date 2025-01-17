@@ -55,7 +55,7 @@ const AddEntries = () => {
         const productVariants = variants.map((item) => {
           return {
             ...item,
-            name: product.name +'-' + item.attributes.color, // Ejemplo: agregar un campo del producto
+            name: product.name +'-' + item.attributes.color +'-'+ item.attributes.size, // Ejemplo: agregar un campo del producto
           };
         });
         setProductVariants(productVariants); // Configurar las variantes procesadas

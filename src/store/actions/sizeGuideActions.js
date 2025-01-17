@@ -76,7 +76,7 @@ export const startAddOneSizeGuide = (values) => {
           horizontal:'center',
           vertical:'top'
         },
-        autoHideDuration:1000,
+        autoHideDuration:3000,
         variant:'success',
         TransitionComponent:Zoom,
       })
@@ -86,7 +86,7 @@ export const startAddOneSizeGuide = (values) => {
           horizontal:'center',
           vertical:'top'
         },
-        autoHideDuration:1000,
+        autoHideDuration:3000,
         variant:'error',
         TransitionComponent:Zoom,
       })
@@ -107,7 +107,7 @@ export const startSelectSizeGuide = (values) => {
           horizontal:'center',
           vertical:'top'
         },
-        autoHideDuration:1000,
+        autoHideDuration:3000,
         variant:'success',
         TransitionComponent:Zoom,
       })
@@ -117,7 +117,7 @@ export const startSelectSizeGuide = (values) => {
           horizontal:'center',
           vertical:'top'
         },
-        autoHideDuration:1000,
+        autoHideDuration:3000,
         variant:'error',
         TransitionComponent:Zoom,
       })

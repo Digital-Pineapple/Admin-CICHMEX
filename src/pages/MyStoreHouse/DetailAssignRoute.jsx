@@ -21,9 +21,9 @@ const DetailAssignRoute = ({ productOrder, carrierDrivers = [] }) => {
     const user = carrierDrivers.find((i) => user_id === i._id);
     return (
       <Typography>
-        <strong>Nombre:</strong> {user.fullname} <br />
-        <strong>Correo:</strong> {user.email} <br />
-        <strong>Telefono:</strong> {user.phone_id.phone_number} <br />
+        <strong>Nombre:</strong> {user?.fullname} <br />
+        <strong>Correo:</strong> {user?.email} <br />
+        <strong>Telefono:</strong> {user?.phone_id?.phone_number} <br />
       </Typography>
     );
   };

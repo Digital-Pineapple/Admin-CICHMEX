@@ -36,6 +36,9 @@ export const productsReducer = createSlice({
     },
     onStepNewProduct: (state, { payload }) => {
       state.dataProduct = {...payload}
+    },
+    onStepNewProductUpdate: (state, { payload }) => {
+      state.product = {...payload}
     },    
     deleteProduct: (state, { type, payload }) => {
       state.products = state.products.filter(
@@ -72,6 +75,18 @@ export const productsReducer = createSlice({
          return variant
       })
     },
+
+    updateIsMainVariant(state, {payload}) {
+      state.product.variants = payload
+    },
+
+    updateVariantsImages(state, { payload }) {
+      state.product.variants = state.product.variants.map((variant) => {
+        const updatedVariant = payload.find((i) => i._id === variant._id);
+        return updatedVariant || variant; // Si encuentra un match, reemplaza; de lo contrario, conserva el original
+      });
+    },
+
     updateImageVariant(state, { payload }) {
       state.product.variants = state.product.variants.map((variant) => {
         if (variant._id === payload._id) {
@@ -84,6 +99,22 @@ export const productsReducer = createSlice({
         return variant;
       });
     },    
+    onAddNewSizeVariant(state, { payload }) {
+      // Validar que payload no esté vacío
+      if (!payload || typeof payload !== 'object') {
+        console.error('El payload no tiene la estructura esperada.');
+        return;
+      }
+    
+      // Asegurarse de que variants es un array
+      if (!Array.isArray(state.product.variants)) {
+        state.product.variants = [];
+      }
+    
+      // Agregar la nueva variante al estado
+      state.product.variants.push(payload);
+    },
+     
     editProduct: (state, { payload }) => {
       state.product = payload
     },
@@ -116,7 +147,11 @@ export const {
   onClearValues,
   updateVariant,
   onUpdateImagesProduct,
-  updateImageVariant
+  updateImageVariant,
+  updateVariantsImages,
+  onStepNewProductUpdate,
+  onAddNewSizeVariant,
+  updateIsMainVariant
 } = productsReducer.actions;
 
 export default productsReducer.reducer;

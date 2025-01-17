@@ -173,6 +173,11 @@ const ColorSelector = ({
   return (
     <Autocomplete
       value={selectedValue}
+      onKeyDown={(event) => {
+        if (event.key === "Enter") {
+          event.stopPropagation();
+        }
+      }}
       onChange={(event, newValue) => {
         if (typeof newValue === "string") {
           const existingColor = colors.find(
@@ -248,6 +253,11 @@ const ColorSelector = ({
           error={error}
           helperText={helperText}
           size="small"
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.stopPropagation();
+            }
+          }}
         />
       )}
     />

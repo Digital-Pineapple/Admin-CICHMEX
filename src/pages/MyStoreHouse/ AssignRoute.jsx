@@ -163,15 +163,16 @@ const AssignRoute = ({
           ) :
             [
               <BottomNavigationAction
-                key={"Usuario"}
-                label="Usuario"
-                icon={<Group />}
-              />,
-              <BottomNavigationAction
                 key={"Compañia"}
                 label="Compañía"
                 icon={<LocalShipping />}
               />,
+              <BottomNavigationAction
+                key={"Usuario"}
+                label="Usuario"
+                icon={<Group />}
+              />,
+              
             ]
           }
         </BottomNavigation>
