@@ -62,7 +62,7 @@ function FormSearch({ setSelected, allValues, titleAlert }) {
           fontSize: "16px",
           padding: "10px 5px 5px 10px",
           cursor: "pointer",
-          backgroundColor: index === activeSuggestionIndex ? "#b0bec5" : "",
+          backgroundColor: index === activeSuggestionIndex ? "secondary.main" : "",
           fontWeight: index === 0 ? "bold" : "normal", 
         }}
         key={index}
@@ -124,7 +124,7 @@ function FormSearch({ setSelected, allValues, titleAlert }) {
               borderRadius: "4px",
               padding: "0px",
               margin: "0px",
-              backgroundColor: "#0d2b6b",
+              backgroundColor: "success.main",
               width: "100%",
               maxHeight: "200px",
               overflowY: "auto",

@@ -5,16 +5,27 @@ export const productsReducer = createSlice({
   initialState: {
     newProduct: {},
     products: [],
+
     stockProducts: [],
     product: {},
     dataProduct:[],
     entries: [],
     outputs: [],
     isLoading: false,
+    productsPaginate :{
+      products: [],
+      totalProducts: 0,
+      totalPages: 0,
+      currentPage: 0,
+      pageSize: 0
+    } 
   },
   reducers: {
     loadProducts: (state, { type, payload }) => {
       state.products = payload;
+    },
+    loadProductsPaginate: (state, { type, payload }) => {
+      state.productsPaginate = {...payload};
     },
     loadStockProducts: (state, { payload }) => {
       state.stockProducts = payload;
@@ -151,7 +162,8 @@ export const {
   updateVariantsImages,
   onStepNewProductUpdate,
   onAddNewSizeVariant,
-  updateIsMainVariant
+  updateIsMainVariant,
+  loadProductsPaginate
 } = productsReducer.actions;
 
 export default productsReducer.reducer;

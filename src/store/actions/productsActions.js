@@ -20,6 +20,7 @@ import {
   updateVariant,
   updateImageVariant,
   onStepNewProductUpdate,
+  loadProductsPaginate,
 } from "../reducer/productsReducer";
 import {
   headerConfigApplication,
@@ -40,19 +41,46 @@ export const startLoadProducts = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      
       dispatch(loadProducts(data.data));
-      dispatch(stopLoading());
     } catch (error) {
       enqueueSnackbar(
+        console.log(error)
+        
         `${error.response.data.message}`,
         {
           anchorOrigin: { horizontal: "center", vertical: "top" },
           variant: "error",
         }
       );
+    }finally{
+      dispatch(stopLoading());
     }
-    dispatch(stopLoading());
+  };
+};
+export const startLoadAllProducts = (page, limit) => {
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      const { data } = await instanceApi.get(`/product/paginate?page=${page}&limit=${limit}`, {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      dispatch(loadProductsPaginate(data.data));
+    } catch (error) {
+      enqueueSnackbar(
+        console.log(error)
+        
+        `${error.response.data.message}`,
+        {
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+          variant: "error",
+        }
+      );
+    }finally{
+      dispatch(stopLoading());
+    }
   };
 };
 export const startLoadStockProducts = () => {
@@ -1548,3 +1576,30 @@ export const startDeleteImageVariant = (variant_id , image_id) => {
     }
   };
 }
+
+export const startSearchProducts = (value) => {
+
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      
+      const { data } = await instanceApi.post(
+        `/product/search/ok`,
+        {search: value},
+        {
+          headers: {
+            "Content-Type":"application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      dispatch(loadProductsPaginate({products:data.data.products, totalProducts: data.data.total}))
+    } catch (error) {
+      console.log(error);
+      
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
+}
+

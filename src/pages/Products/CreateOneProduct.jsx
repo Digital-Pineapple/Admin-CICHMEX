@@ -71,12 +71,8 @@ const CreateOneProduct = () => {
   const { images, handleImageChange, deleteImage, imagesFiles, moveImage, selectMainImage, mainImageId,  } = useImages();
 
   const {
-    deleteVideo,
-    handleVideoChange,
-    videos,
-    videosPreview,
+   
     videoFiles,
-    error,
   } = useVideos();
 
   const valuateVideo = (videos) => {

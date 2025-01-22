@@ -10,15 +10,14 @@ import {
   useGridApiContext,
   useGridSelector,
 } from "@mui/x-data-grid";
-import { useEffect, useState } from "react";
-import MuiPagination from "@mui/material/Pagination";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  Add,
+  AccountCircle,
   Download,
   Edit,
   Refresh,
+  Search,
   Star,
-  Start,
   ViewModule,
   Visibility,
 } from "@mui/icons-material";
@@ -26,66 +25,72 @@ import {
   Button,
   IconButton,
   Tooltip,
-  Grid,
   Typography,
-  Fab,
-  Skeleton,
+  Grid2,
+  Stack,
+  TextField,
+  Box,
+  InputAdornment,
 } from "@mui/material";
 import { Workbook } from "exceljs";
 import { useProducts } from "../../hooks/useProducts";
 import DeleteAlert from "../../components/ui/DeleteAlert";
-import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import { useAuthStore } from "../../hooks";
 import ProductDetailModal from "../../components/Modals/ProductDetailModal";
-
-function Pagination({ page, onPageChange, className }) {
-  const apiRef = useGridApiContext();
-  const pageCount = useGridSelector(apiRef, gridPageCountSelector);
-
-  return (
-    <MuiPagination
-      color="primary"
-      className={className}
-      count={pageCount}
-      page={page + 1}
-      onChange={(event, newPage) => {
-        onPageChange(event, newPage - 1);
-      }}
-    />
-  );
-}
-export function SortedDescendingIcon() {
-  return <ExpandMoreIcon className="icon" />;
-}
-
-export function SortedAscendingIcon() {
-  return <ExpandLessIcon className="icon" />;
-}
-
-export function UnsortedIcon() {
-  return <SortIcon className="icon" />;
-}
-
-function CustomPagination(props) {
-  return <GridPagination ActionsComponent={Pagination} {...props} />;
-}
 
 const Products = () => {
   const { user } = useAuthStore();
   const {
-    loadProducts,
+    loadProductsPaginate,
     navigate,
     deleteProduct,
-    rowsProducts,
-    loading,
     loadProduct,
+    productsPaginate,
     product,
+    loading,
+    loadProductsBySearch
   } = useProducts();
   const [openModal, setOpenModal] = useState(false);
 
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 20,
+  });
+
+  const [rows, setRows] = useState([]);
+
+  const [searchInput, setSearchInput] = useState('')
+  const searchInputRef = useRef(null); 
+
+
   useEffect(() => {
-    loadProducts();
-  }, [user]);
+    loadProductsPaginate(paginationModel.page + 1, paginationModel.pageSize);
+  }, [paginationModel, user]);
+  
+  useEffect(() => {
+    if (productsPaginate?.products) {
+      setRows(rowsProducts(productsPaginate.products));
+    }
+  }, [productsPaginate]);
+
+  const rowsProducts = useCallback((data) =>
+    data?.map((item, _id) => ({
+      id: _id.toString(),
+      Category: item?.category?.name,
+      SubCategory: item?.subCategory?.name,
+      ...item,
+    })), []
+  );
+  const [value, setValue] = useState('')
+
+  function searchProduct() {
+    const search = value.trim();
+    if(search.length < 1){
+      return
+    } 
+    loadProductsBySearch(search);
+  }
+  
 
   const exportToExcel = () => {
     const workbook = new Workbook();
@@ -124,28 +129,22 @@ const Products = () => {
   };
 
   function CustomToolbar() {
+
     const apiRef = useGridApiContext();
 
-    const handleGoToPage1 = () => apiRef.current.setPage(1);
+    const handleGoToPage1 = () => apiRef.current.setPage(0);
 
     return (
       <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
-        <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-        <GridToolbarQuickFilter placeholder='Buscar'/>
-        <Button
-          variant="text"
-          startIcon={<Download />}
-          disableElevation
-          sx={{ color: "secondary" }}
-          onClick={exportToExcel}
-        >
-          Descargar Excel
-        </Button>
+       
+            <Button variant="text" sx={{fontStyle:'oblique'}} onClick={()=> handleGoToPage1()} color="primary">
+              Regresar a pagina 1
+            </Button>
       </GridToolbarContainer>
     );
   }
 
-  if (loading) return <LoadingScreenBlue />;
+  // if (loading) return <LoadingScreenBlue />;
 
   const handleOpen = async (id) => {
     await loadProduct(id);
@@ -166,11 +165,10 @@ const Products = () => {
   };
 
   return (
-    <Grid container gap={2} maxWidth={"85vw"}>
-      <Grid
-        item
+    <Grid2 container gap={2} maxWidth={"85vw"}>
+      <Grid2
         marginTop={{ xs: "-30px" }}
-        xs={12}
+        size={12}
         minHeight={"100px"}
         className="Titles"
       >
@@ -181,14 +179,14 @@ const Products = () => {
         >
           Productos
         </Typography>
-      </Grid>
-      <Grid item display={"flex"} justifyContent={"end"} rowSpacing={2} xs={12}>
+      </Grid2>
+      <Grid2 display={"flex"} justifyContent={"end"} rowSpacing={2} size={12}>
         <Button
           size="small"
           startIcon={<Refresh />}
           variant="contained"
           color="primary"
-          onClick={() => loadProducts()}
+          onClick={() => setPaginationModel({page:0, pageSize:20})}
         >
           Recargar
         </Button>
@@ -198,7 +196,7 @@ const Products = () => {
           sx={{ marginX: 2 }}
           variant="contained"
           color="success"
-          onClick={()=> navigate('/mi-almacen/producto/agregar-variantes')}
+          onClick={() => navigate("/mi-almacen/producto/agregar-variantes")}
         >
           Agregar con variantes
         </Button>
@@ -207,13 +205,44 @@ const Products = () => {
           startIcon={<Star />}
           variant="contained"
           color="error"
-          onClick={()=>navigate('/mi-almacen/producto/agregar')}
+          onClick={() => navigate("/mi-almacen/producto/agregar")}
         >
           Agregar sin variantes
         </Button>
-      </Grid>
+      </Grid2>
+      <TextField
+        size='small'
+        value={value}
+        fullWidth
+        placeholder="Buscar productos"
+        onChange={(e)=>setValue(e.target.value)}    
+        onKeyUp={(e)=>{
+          if(e.key === 'Enter'){
+            searchProduct()
+          }          
+        }}                    
+        // focused
+        InputProps={{ 
+          // autoComplete:false,   
+          style: {
+            borderRadius: '5px',
+            backgroundColor: 'white',
+            paddingLeft :'8px',
+            // width:
+          },   
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton onClick={()=>searchProduct()} aria-label='search'>
+                <Search />
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+    
       <DataGrid
-        sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
+        sx={{ fontSize: "15px", fontFamily: "sans-serif" }}
+        density="compact"
         columns={[
           // {
           //   field: "tag",
@@ -280,38 +309,16 @@ const Products = () => {
             ],
           },
         ]}
-        initialState={{
-          sorting: {
-            sortModel: [{ field: "createdAt", sort: "desc" }],
-          },
-          pagination: {
-            paginationModel: { pageSize: 20 },
-          },
-        }}
-        density="compact"
-        rows={rowsProducts}
-        pagination
+        rows={rows}
         slots={{
-          pagination: CustomPagination,
-          toolbar: CustomToolbar,
-          columnSortedDescendingIcon: SortedDescendingIcon,
-          columnSortedAscendingIcon: SortedAscendingIcon,
-          columnUnsortedIcon: UnsortedIcon,
+          toolbar: CustomToolbar
         }}
-        disableColumnFilter
-        disableColumnMenu
-        disableColumnSelector
-        disableDensitySelector
-        slotProps={{
-          toolbar: {
-            showQuickFilter: true,
-            quickFilterProps: { debounceMs: 500 },
-          },
-        }}
-        printOptions={{
-          hideFooter: true,
-          hideToolbar: true,
-        }}
+        pagination
+        paginationMode="server"
+        rowCount={productsPaginate.totalProducts}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
+        loading={loading}
         style={{ fontFamily: "sans-serif", fontSize: "15px" }}
       />
       <ProductDetailModal
@@ -321,7 +328,7 @@ const Products = () => {
         product={product ? product : ""}
         setOpenModal={setOpenModal}
       />
-    </Grid>
+    </Grid2>
   );
 };
 

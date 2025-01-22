@@ -33,6 +33,8 @@ import {
   startAddVariantsProductClothes,
   startAddVariantsProductUpdate,
   startAddVariantsProductClothes2,
+  startSearchProducts,
+  startLoadAllProducts,
 } from "../store/actions/productsActions";
 import { useNavigate } from "react-router-dom";
 import {
@@ -47,11 +49,12 @@ export const useProducts = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { products, product, stockProducts, entries, outputs, dataProduct } =
+  const { products, product, stockProducts, productsPaginate, entries, outputs, dataProduct } =
     useSelector((state) => state.products);
   const { loading, colors } = useSelector((state) => state.ui);
 
   const loadProducts = async () => dispatch(startLoadProducts());
+  const loadProductsPaginate = async (page, limit) => dispatch(startLoadAllProducts(page, limit));
 
   const loadEntriesProducts = async () => dispatch(startLoadEntriesProduct());
   const loadOutputsProducts = async () => dispatch(startLoadOutputsProduct());
@@ -359,6 +362,9 @@ export const useProducts = () => {
   const assignMainOneVariant =(data)=>{
     dispatch(startAssignMainOneVariant(data))
   }
+  const loadProductsBySearch =(value)=>{
+    dispatch(startSearchProducts(value))
+  }
 
   return {
     loadProducts,
@@ -412,6 +418,9 @@ export const useProducts = () => {
     dataAddVariants,
     addOneSizeVariant,
     assignMain,
-    assignMainOneVariant
+    assignMainOneVariant,
+    productsPaginate,
+    loadProductsBySearch,
+    loadProductsPaginate
   };
 };

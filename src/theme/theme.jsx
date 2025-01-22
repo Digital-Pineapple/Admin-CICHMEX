@@ -1,13 +1,16 @@
 import { createTheme } from "@mui/material";
-import { blueGrey, deepOrange, green, yellow, red, orange, lime, teal } from "@mui/material/colors";
+import { blueGrey, deepOrange, green, yellow, red, orange, lime, teal, indigo, cyan, blue, brown, purple } from "@mui/material/colors";
 
 export const themeSuperAdmin = createTheme({
   palette: {
     primary: {
-      main: "#184059",
+       main:blueGrey[900],
+      //main: brown[900],
+      // main: purple[900],
       light: blueGrey[400],
       dark: blueGrey[900],
       contrastText: '#fff',
+      contrastTextSecond : orange[700],
     },
     secondary: {
       main: orange[900],
@@ -36,7 +39,7 @@ export const themeSuperAdmin = createTheme({
     error: {
       main: red[600],
       light: red[900],
-      dark: red['A400'],
+      dark: red[200],
       contrastText: '#fff'
     },
     background:{
@@ -44,8 +47,9 @@ export const themeSuperAdmin = createTheme({
     }
   },
   typography: {
-    fontFamily: 'sans-serif',
+    fontFamily: ['sans-serif'],
   },
+ 
 });
 
 export const themeAdminCarWashLight = createTheme({
@@ -70,7 +74,7 @@ export const themeAdminCarWashLight = createTheme({
       contrastText: '#fff'
     },
     success: {
-      main: green[800],
+      main: teal[800],
       light: lime[700],
       dark: green[200],
       contrastText: '#fff'
@@ -141,7 +145,7 @@ export const themeAdminCarWashDark = createTheme({
 export const themeAdminCichmexLight = createTheme({
   palette: {
     primary: {
-      main: deepOrange[900],
+      main: orange[900],
       light: deepOrange[800],
       contrastText: '#fff',
     },
@@ -158,7 +162,7 @@ export const themeAdminCichmexLight = createTheme({
       contrastText: '#fff'
     },
     success: {
-      main: green[800],
+      main: teal[800],
       light: lime[700],
       dark: green[200],
       contrastText: '#fff'
@@ -248,7 +252,7 @@ export const themeCarrierCichmex = createTheme({
       contrastText: '#fff'
     },
     success: {
-      main: green[800],
+      main: teal[900],
       light: lime[700],
       dark: green[200],
       contrastText: '#fff'

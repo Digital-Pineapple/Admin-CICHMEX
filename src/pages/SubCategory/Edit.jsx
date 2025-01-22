@@ -1,176 +1,322 @@
-import React, { useState } from "react";
-import Grid from "@mui/material/Grid";
+
+import TextField from "@mui/material/TextField";
 import {
-  ButtonGroup,
+  Button,
+  Typography,
+  Grid2,
+  IconButton,
   FormControl,
   FormHelperText,
-  FormLabel,
-  MenuItem,
+  Box,
+  InputLabel,
   Select,
-  TextField,
-  TextareaAutosize,
+  MenuItem,
 } from "@mui/material";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import { useNavigate, useParams } from "react-router-dom";
-import { useEffect } from "react";
-import { useServices } from "../../hooks/useServices";
-import { useFormik } from "formik";
-import { enqueueSnackbar } from "notistack";
-import { useSubCategories } from "../../hooks/useSubCategories";
 import { useCategories } from "../../hooks/useCategories";
-import { useSelector } from "react-redux";
-import ProfileImageUploader from "../../components/ui/ProfileImageUploader";
-import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
-
-
-const Edit = () => {
-  const { id } = useParams();
-  const { loadSubCategory,editSubCategory, navigate, subCategory, loading } = useSubCategories();
-  const { loadCategories, categories } = useCategories();
-
-
-  useEffect(() => {
-    loadCategories();
-    loadSubCategory(id);
-  }, [id]);
-
-  useEffect(() => {
-    formik.setValues({
-      name: subCategory.name,
-      category_id: subCategory.category_id,
-      subCategory_image: subCategory.subCategory_image || "",
-    });
-  }, [subCategory]);
-
-  const formik = useFormik({
-    initialValues: {
-      name: "",
-      category_id:""
-    },
-    onSubmit: (values) => {
-      const values2 = {
-        ...values,
-        subCategory_image: values?.profile_image ? values?.profile_image : null,
-      };
-      try {
-        editSubCategory(id,values2)
-      } catch (error) {
-        return enqueueSnackbar("Error al editar", {
-          variant: "error",
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "right",
-          },
-        });
-      }
-    },
+import { Controller, useForm } from "react-hook-form";
+import {
+  Delete,
+  UploadFileRounded,
+} from "@mui/icons-material";
+import { useState } from "react";
+import { orange } from "@mui/material/colors";
+import { name } from "dayjs/locale/es";
+import { useSubCategories } from "../../hooks/useSubCategories";
+const Edit = ({handleClose, subCategory, categories = []}) => {
+  const { editSubCategory } = useSubCategories()
+  
+  const {
+    formState: { errors },
+    control,
+    handleSubmit,
+    setValue,
+    watch,
+  } = useForm({
+    defaultValues:{
+      name: subCategory?.name || '',
+      category_id: subCategory?.category_id || '',
+      image: {
+        filePreview: subCategory?.subCategory_image || '',
+        file: null,
+      },
+    }
   });
-  const outEdit = () => {
-    navigate("/mi-almacen/subcategorias");
+  
+
+  const outCreate = () => {
+   handleClose()
   };
-  if (loading) {
-    return(<LoadingScreenBlue/>)
-  }
+
+  const onSubmit = (e) => {
+   if (e.image.filePreview.startsWith('https://')) {
+   editSubCategory(subCategory._id, {name: e.name, subCategory_image: e.image.filePreview, category_id: e.category_id}, handleClose)
+   
+   }else{
+    editSubCategory(subCategory._id,{name: e.name, subCategory_image: e.image.file, category_id: e.category_id}, handleClose)
+   }
+  };
+
+  const currentImage = watch("image.filePreview");
+
+  const onChangeImage = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+  
+    // Validación básica
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      alert("El formato de imagen no es válido");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      alert("La imagen debe ser menor a 10MB");
+      return;
+    }
+  
+    const filePreview = URL.createObjectURL(file);
+    setValue("image.filePreview", filePreview);
+    setValue("image.file", file);
+  };
+  
+  const removeImage = () => {
+    setValue('image.filePreview',null)
+  };
+  
 
   return (
-    <Grid
+    <Grid2
       container
       component="form"
-      onSubmit={formik.handleSubmit}
-      style={{ marginLeft: "10%", height: "70%", width: "80%", display:'flex', justifyContent:'center' }}
+      onSubmit={handleSubmit(onSubmit)}
+      style={{ display: "flex", justifyContent: "center" }}
+      gap={1}
     >
-      <Grid
-        item
-        marginTop={{ xs: "-30px" }}
-        xs={12}
-        minHeight={"100px"}
-        className="Titles"
-      >
+      <Grid2 size={12} minHeight={"80px"} className="Titles">
         <Typography
           textAlign={"center"}
           variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
+          fontSize={{ xs: "20px", sm: "30px", lg:'40px' }}
         >
-          Editar Subcategoría
+          Editar {subCategory.name ? subCategory.name :''} 
         </Typography>
-      </Grid>
+      </Grid2>
 
-      <Grid
-        item
-        sm={8}
-        display={"flex"}
-        flexDirection={"column"}
-        alignItems={"center"}
-      >
-        <Grid item xs={12} sm={5} md={5.7}>
-          <ProfileImageUploader
-            formik={formik}
-            previewImage1={subCategory?.subCategory_image}
-            id={"service_image"}
-            name={"service_image"}
-          />
-        </Grid>
-
-        <TextField
-          focused
-          fullWidth
-          id="name"
-          name="name"
-          label="Nombre de subcategoría"
-          variant="outlined"
-          value={formik.values.name}
-          sx={{ margin: 2 }}
-          onChange={formik.handleChange}
+      <Grid2 size={12}>
+        <Controller
+          control={control}
+          rules={{
+            required: "Campo requerido",
+          }}
+          name={`name`}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              label="Nombre*"
+              size="small"
+              autoComplete="off"
+              error={!!errors.name}
+              helperText={errors?.name?.message}
+            />
+          )}
         />
-        <FormControl fullWidth>
-          <FormLabel>Categoría</FormLabel>
-          <Select
-            id="category_id"
-            name="category_id"
-            value={formik.values.category_id}
-            label="Categoría"
-            onChange={formik.handleChange}
-          >
-            {categories ? categories.map((item, index) => {
-                  return (
-                    <MenuItem key={index} value={item?._id}>
-                      {item.name}
-                    </MenuItem>
-                  );
-                }):""}
-          </Select>
-          <FormHelperText>Selecciona una Categoria</FormHelperText>
-        </FormControl>
+      </Grid2>
 
-        <Grid
+      <Grid2 size={12}>
+        <Controller
+          control={control}
+          name="category_id"
+          rules={{
+            required: { message: "Campo requerido", value: true },
+          }}
+          render={({ field }) => (
+            <FormControl fullWidth>
+              <InputLabel>Categoria</InputLabel>
+              <Select
+                {...field}
+                id="category_id "
+                label="Categoria"
+                value={field.value}
+                onChange={(e) => field.onChange(e.target.value)}
+                error={!!errors.category_id}
+                helperText={errors.category_id && errors.category_id.message}
+                autoComplete="off"
+              >
+                {categories.map((item, index) => (
+                  <MenuItem value={item._id} key={index}>
+                    {item.name}
+                  </MenuItem>
+                ))}
+              </Select>
+              <FormHelperText sx={{color:'error.main'}} >{errors?.category_id?.message}</FormHelperText>
+            </FormControl>
+            
+          )}
+        />
+      </Grid2>
+
+
+      <Grid2 display={"flex"} size={12}>
+        <Grid2
           container
+          spacing={2}
+          display={"flex"}
           justifyContent={"center"}
-          justifyItems={"center"}
-          alignItems={"center"}
+          width={"100%"}
         >
-           <ButtonGroup
-        variant="contained"
-        color="inherit"
-        size="large"
-        aria-label="group"
-        fullWidth
-      >
-        <Button type="submit" variant="contained" color="success">
-          Guardar
-        </Button>
+          <Grid2 size={12}>
+            <Controller
+              control={control}
+              rules={{
+                required: "Campo requerido*",
+              }}
+              name={`image.filePreview`}
+              render={({ field: { name, ref, onBlur } }) => {
+                const [isDragging, setIsDragging] = useState(false);
+
+                const handleDragOver = (event) => {
+                  event.preventDefault();
+                  setIsDragging(true);
+                };
+
+                const handleDragLeave = () => {
+                  setIsDragging(false);
+                };
+
+                const handleDrop = (event) => {
+                  event.preventDefault();
+                  setIsDragging(false);
+                  const droppedFiles = event.dataTransfer.files;
+                  if (droppedFiles.length) {
+                    onChangeImage({ target: { files: droppedFiles } });
+                  }
+                };
+
+                return (
+                  <Grid2
+                    display={!currentImage ? "flex" : "none"}
+                    flexDirection="column"
+                    alignItems="center"
+                    component="label"
+                    htmlFor={`imageInput`}
+                    sx={{ cursor: "pointer" }}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                  >
+                    <Box
+                      sx={{
+                        position: "relative",
+                        backgroundColor: isDragging
+                          ? "secondary.main"
+                          : !!errors?.image?.filePreview
+                            ? "error.dark"
+                            : orange[200],
+                        width: "100%",
+                        minHeight: "150px",
+                        padding: "30px 70px",
+                        borderRadius: "20px",
+                        border: "2px dashed rgb(224, 115, 13)",
+                        textAlign: "center",
+                        transition: "background-color 0.3s ease-in-out",
+                        "&:hover": {
+                          backgroundColor: orange[400],
+                          border: "2px dashedrgb(250, 142, 0)",
+                        },
+                      }}
+                    >
+                      <Typography variant="body2" color="inherit">
+                        <UploadFileRounded />{" "}
+                        <strong>
+                          Seleccionar o arrastrar los archivos aquí
+                        </strong>
+                        <br />
+                        Sube tu imagen en WPEG, JPEG o PNG, con una resolución
+                        mínima de 50 píxeles en ambos lados y hasta 10 MB de
+                        peso.
+                      </Typography>
+                      <input
+                        id={`imageInput`}
+                        type="file"
+                        ref={ref}
+                        onBlur={onBlur}
+                        name={name}
+                        onChange={(e) => onChangeImage(e)}
+                        style={{ display: "none" }}
+                        accept="image/png, image/jpeg, image/wpeg"
+                      />
+                    </Box>
+                    <FormControl>
+                      <FormHelperText error={!!errors?.image?.filePreview}>
+                        {errors?.image?.filePreview?.message}
+                      </FormHelperText>
+                    </FormControl>
+                  </Grid2>
+                );
+              }}
+            />
+          </Grid2>
+
+          <Grid2
+            size={12}
+            display={currentImage ? "flex" : "none"}
+            alignContent={"center"}
+            flexDirection={"row"}
+          >
+            <Grid2
+              position="relative"
+              border="1px solid #ccc"
+              borderRadius="4px"
+              overflow="hidden"
+              marginX={1}
+            >
+              <img
+                src={currentImage}
+                alt="Preview"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+
+              <Box display="flex" justifyContent="space-between" mt={1}>
+                <IconButton
+                  size="small"
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    color: "red",
+                    backgroundColor: "white",
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeImage();
+                  }}
+                >
+                  <Delete fontSize="small" />
+                </IconButton>
+              </Box>
+            </Grid2>
+          </Grid2>
+        </Grid2>
+      </Grid2>
+
+      <Grid2 display={"flex"} gap={2} size={6}>
         <Button
-          onClick={outEdit}
+          onClick={()=>outCreate()}
           variant="contained"
+          fullWidth
           size="large"
           color="warning"
         >
           Salir
         </Button>
-      </ButtonGroup>
-        </Grid>
-      </Grid>
-    </Grid>
+        <Button type="submit" fullWidth variant="contained" color="success">
+          Guardar
+        </Button>
+      </Grid2>
+    </Grid2>
   );
 };
 

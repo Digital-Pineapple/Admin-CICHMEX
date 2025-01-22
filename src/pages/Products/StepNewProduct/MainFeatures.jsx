@@ -86,6 +86,7 @@ const MainFeatures = ({handleNext, handleBack, index, isLastStep}) => {
       variant="elevation"
       component={"form"}
       onSubmit={handleSubmit(onSubmit)}
+      sx={{paddingX:2}}
       
     >
       <CardHeader
