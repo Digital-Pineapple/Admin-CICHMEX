@@ -52,10 +52,15 @@ export const productsReducer = createSlice({
       state.product = {...payload}
     },    
     deleteProduct: (state, { type, payload }) => {
-      state.products = state.products.filter(
-        (product) => product._id !== payload
+      state.productsPaginate.products = state.productsPaginate.products.filter(
+        (product) => product._id !== payload._id
       );
     },
+    onDeleteVariant: (state, { payload }) => {
+      state.product.variants = state.product.variants.filter(
+        (variant) => variant._id !== payload._id
+      );
+    },    
     cleanProductDetail(state) {
       state.product = {};
     },
@@ -163,7 +168,8 @@ export const {
   onStepNewProductUpdate,
   onAddNewSizeVariant,
   updateIsMainVariant,
-  loadProductsPaginate
+  loadProductsPaginate,
+  onDeleteVariant
 } = productsReducer.actions;
 
 export default productsReducer.reducer;

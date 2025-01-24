@@ -20,6 +20,7 @@ import {
   ButtonGroup,
   Box,
   Chip,
+  Grid2,
 } from "@mui/material";
 import { useProducts } from "../../hooks/useProducts";
 import useImages from "../../hooks/useImages";
@@ -29,7 +30,14 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useSubCategories } from "../../hooks/useSubCategories";
 import { useEffect, useState } from "react";
 import { useCategories } from "../../hooks/useCategories";
-import { ArrowDownward, ArrowUpward, AttachMoney, NavigateBefore, NavigateNext, VideoCallSharp } from "@mui/icons-material";
+import {
+  ArrowDownward,
+  ArrowUpward,
+  AttachMoney,
+  NavigateBefore,
+  NavigateNext,
+  VideoCallSharp,
+} from "@mui/icons-material";
 import VideoUploadField from "../../components/Forms/VideoUploadField";
 import { useAuthStore } from "../../hooks";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
@@ -38,6 +46,7 @@ import ProfileImageUploader from "../../components/ui/ProfileImageUploader";
 import WordsInput from "../../components/inputs/WordsInput";
 import * as Yup from "yup";
 import useVideos from "../../hooks/useVideos";
+import { Link } from "react-router-dom";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -58,7 +67,6 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-
 const CreateOneProduct = () => {
   const { user } = useAuthStore();
   const { createProduct, navigate, loading } = useProducts();
@@ -68,12 +76,17 @@ const CreateOneProduct = () => {
     loadSubCategoriesByCategory,
   } = useSubCategories();
   const { categories, loadCategories } = useCategories();
-  const { images, handleImageChange, deleteImage, imagesFiles, moveImage, selectMainImage, mainImageId,  } = useImages();
-
   const {
-   
-    videoFiles,
-  } = useVideos();
+    images,
+    handleImageChange,
+    deleteImage,
+    imagesFiles,
+    moveImage,
+    selectMainImage,
+    mainImageId,
+  } = useImages();
+
+  const { videoFiles } = useVideos();
 
   const valuateVideo = (videos) => {
     if (videos?.length > 0) {
@@ -86,8 +99,6 @@ const CreateOneProduct = () => {
     return { videoVertical: null, videoHorizontal: null };
   };
 
-
-
   useEffect(() => {
     loadSubCategories();
     loadCategories();
@@ -97,9 +108,6 @@ const CreateOneProduct = () => {
     name: Yup.string()
       .required("El nombre del producto es obligatorio")
       .min(3, "El nombre debe tener al menos 3 caracteres"),
-    price: Yup.number()
-      .required("El precio es obligatorio")
-      .min(1, "El precio debe ser mayor o igual a 0"),
     porcentDiscount: Yup.number()
       .min(0, "El descuento no puede ser negativo")
       .max(100, "El descuento no puede ser mayor al 100"),
@@ -108,6 +116,20 @@ const CreateOneProduct = () => {
     tag: Yup.string().required("El código es obligatorio"),
     category: Yup.string().required("La categoría es obligatoria"),
     subCategory: Yup.string().required("La subcategoría es obligatoria"),
+    product_key: Yup.string().required("La clave sat es obligatoria"),
+    price: Yup.number()
+      .required("El precio es obligatorio")
+      .min(1, "El precio debe ser mayor o igual a 1"), // Se corrige el valor mínimo
+    purchase_price: Yup.number()
+      .required("El precio de compra es obligatorio")
+      .test(
+        "is-less-than-price", // Nombre del test
+        "El precio de compra debe ser menor o igual que el precio neto", // Mensaje de error
+        function (value) {
+          const { price } = this.parent; // Accede al campo `price`
+          return value <= price; // Valida que sea menor
+        }
+      ),
     // dimensions: Yup.string().required("Las dimensiones son obligatorias"),
     weight: Yup.number()
       .required("El peso es obligatorio")
@@ -137,6 +159,7 @@ const CreateOneProduct = () => {
       seoDescription: "",
       seoKeywords: [],
       images: "",
+      purchase_price: "",
     },
     validationSchema,
     onSubmit: (values) => {
@@ -188,8 +211,6 @@ const CreateOneProduct = () => {
     formik.setFieldValue("seoKeywords", newChips);
   };
 
-  
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     const newValue = parseFloat(value) || "";
@@ -223,17 +244,16 @@ const CreateOneProduct = () => {
   };
 
   return (
-    <Grid
+    <Grid2
       component="form"
       onSubmit={formik.handleSubmit}
       display={"flex"}
       container
       gap={2}
     >
-      <Grid
-        item
+      <Grid2
         marginTop={{ xs: "-30px" }}
-        xs={12}
+        size={12}
         minHeight={"100px"}
         className="Titles"
       >
@@ -244,11 +264,9 @@ const CreateOneProduct = () => {
         >
           Registar nuevo producto
         </Typography>
-      </Grid>
-      <Grid
-        item
-        xs={12}
-        lg={3}
+      </Grid2>
+      <Grid2
+        size={{ xs: 12, lg: 3 }}
         sx={{
           gridColumn: "span 2",
           gridRow: "span 4",
@@ -372,11 +390,9 @@ const CreateOneProduct = () => {
             />
           </CardContent>
         </Card>
-      </Grid>
-      <Grid
-        item
-        xs={12}
-        lg={2}
+      </Grid2>
+      <Grid2
+        size={{ xs: 12, lg: 2 }}
         sx={{
           gridColumn: "span 2",
           gridRow: "span 1",
@@ -420,11 +436,9 @@ const CreateOneProduct = () => {
             />
           </CardContent>
         </Card>
-      </Grid>
-      <Grid
-        item
-        xs={12}
-        lg={3}
+      </Grid2>
+      <Grid2
+        size={{ xs: 12, lg: 3 }}
         sx={{
           gridColumn: "span 2",
           gridRow: "span 4",
@@ -435,6 +449,25 @@ const CreateOneProduct = () => {
           <CardContent
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
           >
+            <TextField
+              fullWidth
+              id="purchase_price"
+              name="purchase_price"
+              type="number"
+              label="Precio de compra"
+              variant="outlined"
+              value={formik.values.purchase_price}
+              onChange={formik.handleChange}
+              error={Boolean(formik.errors.purchase_price)} // Añade el atributo error
+              helperText={formik.errors.purchase_price} // Muestra el mensaje de error
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <AttachMoney />
+                  </InputAdornment>
+                ),
+              }}
+            />
             <TextField
               fullWidth
               id="price"
@@ -463,6 +496,8 @@ const CreateOneProduct = () => {
               variant="outlined"
               value={formik.values.porcentDiscount}
               onChange={handleInputChange}
+              error={Boolean(formik.errors.porcentDiscount)} // Añade el atributo error
+              helperText={formik.errors.porcentDiscount}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="start">%</InputAdornment>
@@ -477,6 +512,8 @@ const CreateOneProduct = () => {
               label="Precio con descuento"
               variant="outlined"
               value={formik.values.discountPrice}
+              error={Boolean(formik.errors.discountPrice)} // Añade el atributo error
+              helperText={formik.errors.discountPrice}
               onChange={handleInputChange}
               InputProps={{
                 startAdornment: (
@@ -495,14 +532,17 @@ const CreateOneProduct = () => {
               variant="outlined"
               value={formik.values.product_key}
               onChange={formik.handleChange}
+              error={Boolean(formik.errors.product_key)} // Añade el atributo error
+              helperText={formik.errors.product_key}
             />
+            <Link to={'https://www.sat.gob.mx/consultas/53693/catalogo-de-productos-y-servicios'} target="_blank" rel="noopener noreferrer" >
+            Buscar código
+          </Link>
           </CardContent>
         </Card>
-      </Grid>
-      <Grid
-        item
-        xs={12}
-        lg={3}
+      </Grid2>
+      <Grid2
+        size={{ xs: 12, lg: 3 }}
         sx={{
           gridColumn: "span 2",
           gridRow: "span 3",
@@ -550,136 +590,137 @@ const CreateOneProduct = () => {
             </FormControl>
           </CardContent>
         </Card>
-      </Grid>
-      <Grid
-      item
-      xs={12}
-      sx={{
-        gridColumn: "span 6",
-        gridRow: "span 3",
-      }}
-    >
-      <Card variant="outlined">
-        <CardContent>
-          <CardHeader title="Multimedia" />
+      </Grid2>
+      <Grid2
+        size={12}
+        sx={{
+          gridColumn: "span 6",
+          gridRow: "span 3",
+        }}
+      >
+        <Card variant="outlined">
+          <CardContent>
+            <CardHeader title="Multimedia" />
 
-          <Typography marginTop={"10px"}>
-            Imagenes de detalle (peso max de imagen: 500 kb)
-          </Typography>
-          <Grid item xs={12}>
-            <input
-              id="image"
-              name="image"
-              type="file"
-              multiple
-              accept="image/jpeg, image/png, image/webp"
-              onChange={handleImageChange}
-              hidden
-            />
-            <label htmlFor={"image"}>
-              <Button
-                fullWidth
-                component="span"
-                color="primary"
-                variant="contained"
+            <Typography marginTop={"10px"}>
+              Imagenes de detalle (peso max de imagen: 500 kb)
+            </Typography>
+            <Grid2 size={12}>
+              <input
+                id="image"
+                name="image"
+                type="file"
+                multiple
+                accept="image/jpeg, image/png, image/webp"
+                onChange={handleImageChange}
+                hidden
+              />
+              <label htmlFor={"image"}>
+                <Button
+                  fullWidth
+                  component="span"
+                  color="primary"
+                  variant="contained"
+                >
+                  Agrega Fotos
+                </Button>
+              </label>
+            </Grid2>
+
+            {images.length > 0 && (
+              <Grid2
+                container
+                display={"flex"}
+                justifyContent={"center"}
+                padding={"10px"}
+                marginTop={"20px"}
+                sx={{ backgroundColor: "#cfd8dc" }}
+                gap={2}
               >
-                Agrega Fotos
-              </Button>
-            </label>
-          </Grid>
-
-          {images.length > 0 && (
-            <Grid
-              container
-              display={"flex"}
-              justifyContent={"center"}
-              padding={"10px"}
-              marginTop={"20px"}
-              sx={{ backgroundColor: "#cfd8dc" }}
-              gap={2}
-            >
-              {images.map(({ id, filePreview }, index) => (
-                <Grid item xs={12} sm={3} key={id}>
-                  <StyledBadge
-                    badgeContent={
-                      <IconButton
-                        sx={{ backgroundColor: "black", color: "black" }}
-                        onClick={() => deleteImage(id)}
-                      >
-                        <DeleteIcon
-                          sx={{ color: "white", fontSize: "20px" }}
-                        />
-                      </IconButton>
-                    }
-                  >
-                    <Box
-                      sx={{
-                        position: "relative",
-                        width: "100%",
-                        height: "200px",
-                        border:
-                          mainImageId === id
-                            ? "3px solid #1976d2" // Destacar la imagen principal.
-                            : "none",
-                      }}
+                {images.map(({ id, filePreview }, index) => (
+                  <Grid2 size={{ xs: 12, sm: 3 }} key={id}>
+                    <StyledBadge
+                      badgeContent={
+                        <IconButton
+                          sx={{ backgroundColor: "black", color: "black" }}
+                          onClick={() => deleteImage(id)}
+                        >
+                          <DeleteIcon
+                            sx={{ color: "white", fontSize: "20px" }}
+                          />
+                        </IconButton>
+                      }
                     >
-                      <Avatar
-                        src={filePreview}
-                        variant="square"
-                        sx={{ width: "100%", height: "100%" }}
+                      <Box
+                        sx={{
+                          position: "relative",
+                          width: "100%",
+                          height: "200px",
+                          border:
+                            mainImageId === id
+                              ? "3px solid #1976d2" // Destacar la imagen principal.
+                              : "none",
+                        }}
+                      >
+                        <Avatar
+                          src={filePreview}
+                          variant="square"
+                          sx={{ width: "100%", height: "100%" }}
+                        />
+                      </Box>
+                    </StyledBadge>
+                    <Box display="flex" justifyContent="space-between" mt={1}>
+                      <IconButton
+                        onClick={() => moveImage(index, -1)}
+                        disabled={index === 0}
+                      >
+                        <NavigateBefore />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => moveImage(index, 1)}
+                        disabled={index === images.length - 1}
+                      >
+                        <NavigateNext />
+                      </IconButton>
+                    </Box>
+                    <Box mt={1} display="flex" justifyContent="center">
+                      <Chip
+                        label={
+                          mainImageId === id
+                            ? "Imagen Principal"
+                            : "Hacer imagen principal"
+                        }
+                        color={mainImageId === id ? "primary" : "default"}
+                        onClick={() => selectMainImage(id)}
+                        clickable
                       />
                     </Box>
-                  </StyledBadge>
-                  <Box display="flex" justifyContent="space-between" mt={1}>
-                    <IconButton
-                      onClick={() => moveImage(index, -1)}
-                      disabled={index === 0}
-                    >
-                      <NavigateBefore />
-                    </IconButton>
-                    <IconButton
-                      onClick={() => moveImage(index, 1)}
-                      disabled={index === images.length - 1}
-                    >
-                      <NavigateNext/>
-                    </IconButton>
-                  </Box>
-                  <Box mt={1} display="flex" justifyContent="center">
-                    <Chip
-                      label={
-                        mainImageId === id ? "Imagen Principal" : "Hacer imagen principal"
-                      }
-                      color={mainImageId === id ? "primary" : "default"}
-                      onClick={() => selectMainImage(id)}
-                      clickable
-                    />
-                  </Box>
-                </Grid>
-              ))}
-            </Grid>
-          )}
-        </CardContent>
-      </Card>
-    </Grid>
+                  </Grid2>
+                ))}
+              </Grid2>
+            )}
+          </CardContent>
+        </Card>
+      </Grid2>
 
-     
-      <Grid item xs={12}>
-        <ButtonGroup fullWidth>
-          <Button type="submit" variant="contained" color="success">
-            Crear
-          </Button>
+      <Grid2 size={12} display={'flex'} gap={2}>
+        
           <Button
+          fullWidth
             onClick={() => navigate("/mi-almacen/productos", { replace: true })}
             variant="contained"
             color="warning"
           >
             Salir
           </Button>
-        </ButtonGroup>
-      </Grid>
-    </Grid>
+          <Button fullWidth type="submit" variant="contained" color="success">
+            Crear
+          </Button>
+          
+        
+      </Grid2>
+    </Grid2>
   );
 };
 
-
-export default CreateOneProduct
+export default CreateOneProduct;

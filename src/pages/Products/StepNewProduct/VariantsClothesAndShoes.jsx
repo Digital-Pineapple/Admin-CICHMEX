@@ -142,6 +142,7 @@ const VariantsClothesAndShoes = ({
       size: "",
       price: "",
       porcentDiscount: "",
+      purchase_price: "",
       discountPrice: "",
       stock: null,
     };
@@ -270,8 +271,7 @@ const VariantsClothesAndShoes = ({
     return Array.isArray(images) ? images : [];
   };
 
-  const onSubmit = ({variants}) => {
-
+  const onSubmit = ({ variants }) => {
     Swal.fire({
       title: "¿Esta seguro de guardar estas variantes?",
       showCancelButton: true,
@@ -403,7 +403,6 @@ const VariantsClothesAndShoes = ({
                     }
                     onClick={() => handleClick(item.id)}
                   >
-
                     <ListItemText
                       sx={{ minWidth: "150px" }}
                       primary={`Variante ${index + 1}`}
@@ -928,9 +927,6 @@ const VariantsClothesAndShoes = ({
                                             positive: (value) =>
                                               value > 0 ||
                                               "El número debe ser mayor que cero",
-                                            lessThanMax: (value) =>
-                                              value < 10000 ||
-                                              "El número debe ser menor a 10,000",
                                           },
                                         }}
                                         name={`variants[${index}].sizes[${index1}].stock`}
@@ -966,9 +962,6 @@ const VariantsClothesAndShoes = ({
                                             positive: (value) =>
                                               value > 0 ||
                                               "El número debe ser mayor que cero",
-                                            lessThanMax: (value) =>
-                                              value < 100000 ||
-                                              "El número debe ser menor a 100,000",
                                           },
                                         }}
                                         name={`variants[${index}].sizes[${index1}].weight`}
@@ -994,6 +987,51 @@ const VariantsClothesAndShoes = ({
                                         )}
                                       />
                                     </Grid2>
+                                    <Grid2 size={3.9}>
+                                      <Controller
+                                        control={control}
+                                        rules={{
+                                          required: "Campo requerido",
+                                          validate: {
+                                            positive: (value) =>
+                                              value > 0 ||
+                                              "El número debe ser mayor que cero",
+                                            lessThanNetPrice: (value) => {
+                                              const netPrice = getValues(
+                                                `variants[${index}].sizes[${index1}].price`
+                                              ); // Obtén el valor del precio neto
+                                              return (
+                                                value <= netPrice ||
+                                                "El precio de compra debe ser menor o igual que el precio neto"
+                                              );
+                                            },
+                                          },
+                                        }}
+                                        name={`variants[${index}].sizes[${index1}].purchase_price`}
+                                        render={({ field }) => (
+                                          <TextField
+                                            {...field}
+                                            fullWidth
+                                            size="small"
+                                            label="Precio de compra (MXN)*"
+                                            focused
+                                            autoComplete="off"
+                                            onChange={(e) => field.onChange(e)}
+                                            type="number"
+                                            error={
+                                              !!errors.variants?.[index]?.sizes[
+                                                index1
+                                              ]?.purchase_price
+                                            }
+                                            helperText={
+                                              errors.variants?.[index]?.sizes[
+                                                index1
+                                              ]?.purchase_price?.message
+                                            }
+                                          />
+                                        )}
+                                      />
+                                    </Grid2>
 
                                     <Grid2 size={3.9}>
                                       <Controller
@@ -1004,9 +1042,6 @@ const VariantsClothesAndShoes = ({
                                             positive: (value) =>
                                               value > 0 ||
                                               "El número debe ser mayor que cero",
-                                            lessThanMax: (value) =>
-                                              value < 100000 ||
-                                              "El número debe ser menor a 100,000",
                                           },
                                         }}
                                         name={`variants[${index}].sizes[${index1}].price`}
@@ -1015,7 +1050,7 @@ const VariantsClothesAndShoes = ({
                                             {...field}
                                             fullWidth
                                             size="small"
-                                            label="Precio (MXN)*"
+                                            label="Precio neto (MXN)*"
                                             focused
                                             autoComplete="off"
                                             onChange={(e) =>

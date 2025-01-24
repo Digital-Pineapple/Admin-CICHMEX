@@ -109,7 +109,9 @@ export const Navbar = (props) => {
             <Menu />
           </IconButton>
           <Grid2 width={drawerWidth} sx={{display:{xs:'none', md:'flex'}}} alignContent={'center'}  display={'flex'} paddingX={5} >
+          <Link to={'/'}>
           <Image  src={ImageMain}  alt="image-main" style={{objectFit:'contain'}}  width={'160px'} />
+          </Link>
           </Grid2>
           <Divider orientation="vertical" flexItem/>
           <Grid2 size={{xs:6, md:8, xl:9}} padding={1}>

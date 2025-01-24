@@ -59,9 +59,6 @@ const Products = () => {
 
   const [rows, setRows] = useState([]);
 
-  const [searchInput, setSearchInput] = useState('')
-  const searchInputRef = useRef(null); 
-
 
   useEffect(() => {
     loadProductsPaginate(paginationModel.page + 1, paginationModel.pageSize);
@@ -136,7 +133,6 @@ const Products = () => {
 
     return (
       <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
-       
             <Button variant="text" sx={{fontStyle:'oblique'}} onClick={()=> handleGoToPage1()} color="primary">
               Regresar a pagina 1
             </Button>
@@ -287,6 +283,7 @@ const Products = () => {
               <DeleteAlert
                 title={`¿Estas seguro de eliminar el producto ${params.row?.name}`}
                 callbackToDeleteItem={() => deleteProduct(params.row._id)}
+                disabled={params.row?.has_variants ? true: false} 
               />,
               <Tooltip title="Editar Producto">
                 <IconButton

@@ -42,9 +42,8 @@ import {
   onStepNewProduct,
 } from "../store/reducer/productsReducer";
 import { startLoadColors } from "../store/actions/uiActions";
-import { color } from "@mui/system";
 import { startAddVariantsize, startAssignMain, startAssignMainOneVariant, startUpdateMultipleImages, startUpdateOneVariant } from "../store/actions/variantActions";
-
+import { validate as isUUID } from "uuid";
 export const useProducts = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -97,7 +96,7 @@ export const useProducts = () => {
   const cleanProductD = () => dispatch(cleanProductDetail());
 
   const deleteVariant = (id) => {
-    return dispatch(startDelete(id));
+     dispatch(startDelete(id));
   };
 
   const rowsStockProducts = stockProducts.map((item, _id) => ({
@@ -135,10 +134,12 @@ export const useProducts = () => {
       model: null,
       gender: null,
       name: "",
+      product_key:"",
     };
 
     body.category = data.category;
     body.subCategory = data.subCategory;
+    body.product_key = data.product_key
 
     data.fields.forEach((i) => {
       if (i.id === "brand") body.brand = i.textInput;
@@ -174,6 +175,7 @@ export const useProducts = () => {
         tag: null,
         weight: null,
         price: null,
+        purchase_price: null,
         porcentDiscount: null,
         discountPrice: null,
         design: null,
@@ -193,6 +195,7 @@ export const useProducts = () => {
       values.design = variant.design.textInput;
       values.stock = variant.stock;
       values.images = variant.images;
+      values.purchase_price = variant.purchase_price;
 
       body.variants.push(values);
     });
@@ -211,6 +214,7 @@ export const useProducts = () => {
         const values = {
           tag: item.tag, // Etiqueta del tamaño
           weight: item.weight, // Peso del tamaño
+          purchase_price: item.purchase_price,
           price: item.price, // Precio del tamaño
           porcentDiscount: item.porcentDiscount, // Porcentaje de descuento
           discountPrice: item.discountPrice, // Precio con descuento
@@ -251,6 +255,7 @@ export const useProducts = () => {
           tag: item.tag, // Etiqueta del tamaño
           weight: item.weight, // Peso del tamaño
           price: item.price, // Precio del tamaño
+          purchase_price: item.purchase_price,
           porcentDiscount: item.porcentDiscount, // Porcentaje de descuento
           discountPrice: item.discountPrice, // Precio con descuento
           design: variant.design.textInput, // Texto del diseño
@@ -272,9 +277,8 @@ export const useProducts = () => {
         };
         body.images.push(image); // Agregar al array de imágenes
       });
-    });
-  
-    dispatch(startAddVariantsProductClothes(id, body, handleNext));
+    });  
+     dispatch(startAddVariantsProductClothes(id, body, handleNext));
   };
   
 
@@ -290,10 +294,12 @@ export const useProducts = () => {
       model: "",
       gender: "",
       name: "",
+      product_key:''
     };
 
     body.category = data.category;
     body.subCategory = data.subCategory;
+    body.product_key = data.product_key
 
     data.fields.forEach((i) => {
       if (i.id === "brand") body.brand = i.textInput;
@@ -314,6 +320,7 @@ export const useProducts = () => {
         _id: null,
         tag: null,
         weight: null,
+        purchase_price: null,
         price: null,
         porcentDiscount: null,
         discountPrice: null,
@@ -334,7 +341,8 @@ export const useProducts = () => {
       values.design = variant.design.textInput;
       values.stock = variant.stock;
       values.images = variant.images;
-      values._id = variant.id;
+      values._id = variant.id
+      values.purchase_price = JSON.parse(variant.purchase_price);
 
       body.variants.push(values);
     });

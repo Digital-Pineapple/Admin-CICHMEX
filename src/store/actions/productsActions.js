@@ -21,6 +21,7 @@ import {
   updateImageVariant,
   onStepNewProductUpdate,
   loadProductsPaginate,
+  onDeleteVariant,
 } from "../reducer/productsReducer";
 import {
   headerConfigApplication,
@@ -298,6 +299,7 @@ export const addOneProduct =
       shortDescription,
       thumbnail,
       seoKeywords,
+      purchase_price,
       // images,
     },
     images,
@@ -322,6 +324,7 @@ export const addOneProduct =
       formData.append("seoDescription", seoDescription);
       formData.append("shortDescription", shortDescription);
       formData.append("thumbnail", thumbnail);
+      formData.append("purchase_price", purchase_price)
 
       for (let i = 0; i < images.length; i++) {
         formData.append("images", images[i]);
@@ -651,7 +654,7 @@ export const deleteOneProduct = (id) => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      dispatch(deleteProduct(data.data?._id));
+      dispatch(deleteProduct(data.data));
       Swal.fire({
         title: "Producto eliminado con éxito",
         icon: "success",
@@ -659,7 +662,6 @@ export const deleteOneProduct = (id) => {
         timer: 3000,
         timerProgressBar: true,
       });
-      dispatch(deleteProduct(data.data));
     } catch (error) {
       enqueueSnackbar(`${error.response.data.message}`, {
         variant: "error",
@@ -1333,9 +1335,7 @@ export const startUpdateVariants = (id, values) => {
         },
       });
 
-    } catch (error) {
-      console.log(error);
-      
+    } catch (error) {      
       enqueueSnackbar(
         error.response?.data?.message || "Error al enviar las variantes",
         {
@@ -1518,15 +1518,13 @@ export const startDelete = (id) => {
         title: `${data.message}`,
         showConfirmButton: false,
       });
-      return data.data
+      console.log(data.data);
+      
+      dispatch(onDeleteVariant(data.data))
     } catch (error) {
-      enqueueSnackbar(error.response?.data?.message, {
-        variant: "error",
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "right",
-        },
-      });
+
+     console.log(error);
+     
     } finally {
       dispatch(stopLoading());
     }

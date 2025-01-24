@@ -42,12 +42,11 @@ import {
 import Swal from "sweetalert2";
 import { Controller, useForm } from "react-hook-form";
 import ColorSelector from "../../../components/inputs/ColorSelector";
-import { useSizeGuide } from "../../../hooks/useSizeGuide";
 import { useProducts } from "../../../hooks";
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4, validate as isUUID } from "uuid";
 import LoadingScreenBlue from "../../../components/ui/LoadingScreenBlue";
 import { useParams } from "react-router-dom";
-import { blue, green, teal } from "@mui/material/colors";
+import { blue } from "@mui/material/colors";
 
 const style = {
   position: "absolute",
@@ -75,7 +74,7 @@ const VariantsAndPhotos = () => {
     deleteImageVariant,
     assignMainOneVariant,
   } = useProducts();
-  const [valueVariants, setValueVariants] = useState([]); // Array to hold variants
+
   const [collapseOpen, setCollapseOpen] = useState([]); // Array to track the open/close state of each variant
   const [open, setOpen] = useState({ image: null, value: false });
   const sizeGuide = product?.size_guide?.dimensions || [];
@@ -83,18 +82,12 @@ const VariantsAndPhotos = () => {
   const handleOpen = (image) => {
     setOpen({ image: image, value: true });
   };
-  useEffect(() => {
-    // Inicializa collapseOpen en función de las variantes actuales
-    setCollapseOpen(
-      valueVariants.map((variant) => ({
-        id: variant.id,
-        value: false, // Por defecto, todas las variantes colapsadas
-      }))
-    );
-  }, [valueVariants]);
+
   useEffect(() => {
     loadProduct(id);
   }, [id]);
+
+  
 
   const handleClose = () => setOpen({ image: null, value: false });
   const DefaultValues = (data) => ({
@@ -114,7 +107,8 @@ const VariantsAndPhotos = () => {
         discountPrice: variant?.discountPrice || 0,
         stock: variant?.stock || null,
         tag: variant?.tag || null,
-        is_main: variant.is_main || null
+        is_main: variant.is_main || null,
+        purchase_price: variant.purchase_price || null,
       })) || [],
   });
 
@@ -127,14 +121,25 @@ const VariantsAndPhotos = () => {
     reset,
     formState: { errors },
     unregister,
-  } = useForm({ defaultValues: DefaultValues(product) });
+  } = useForm({ defaultValues: DefaultValues(product), shouldUnregister: true, });
 
   useEffect(() => {
-    setValue("variants", []);
-    const info = DefaultValues(product);
-    setValueVariants(info.variants);
-    setValue("variants", info.variants);
+    if (product) {
+      const {variants} = DefaultValues(product);
+     setValue('variants', variants)
+    }
   }, [product]);
+  
+  const valueVariants = watch('variants')
+
+  useEffect(() => {
+    const initialCollapseState = valueVariants?.map((item) => ({
+      id: item.id,
+      value: false,
+    }));
+    setCollapseOpen(initialCollapseState);
+  }, [valueVariants]);
+  
 
   const handleCheckboxChange = (variant, checked, index) => {
     setValue(`variants[${index}].design.checkbox`, checked);
@@ -146,25 +151,25 @@ const VariantsAndPhotos = () => {
 
   // Al agregar una nueva variante
   const handleAddVariant = () => {
-    const newId = uuidv4(); // Genera un ID único
-    setValueVariants([...valueVariants, { id: newId }]); // Agrega la variante con el nuevo ID
-
-    setCollapseOpen([...collapseOpen, { id: newId, value: false }]); // Control del colapso
-
-    // Inicializa los valores del formulario para la nueva variante
-    setValue(`variants[${newId}]`, {
-      id: newId, // Guarda el ID único en el formulario
-      weight: "",
-      design: { textInput: "", checkbox: false },
-      color: "",
+    const currentVariants = valueVariants.length
+    const newId = uuidv4();
+    const newVariant = {
+      id: newId,
+      weight: '',
+      design: { textInput: '', checkbox: false },
+      color: '',
       images: [],
-      size: "",
-      price: "",
-      porcentDiscount: "",
-      discountPrice: "",
+      size: '',
+      price: '',
+      porcentDiscount: '',
+      discountPrice: '',
       stock: null,
-    });
+      purchase_price: null,
+    };
+    setValue(`variants[${currentVariants+1}]`, newVariant )
+    setCollapseOpen((prevState) => [...prevState, { id: newId, value: true }]); // Mantén el colapso sincronizado
   };
+  
 
   // Remove variant and its form values
   const MessageDelete = (id) => {
@@ -177,15 +182,16 @@ const VariantsAndPhotos = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await deleteVariant(id);
-          const ChangeDelete = valueVariants.filter(
-            (item) => item.id !== response.id
-          );
-          setValueVariants(ChangeDelete);
-          unregister(`variants[${id}]`);
-          Swal.fire("Se eliminó Correctamente!", "", "success");
+          if (isUUID(id)) {
+            const filtered = valueVariants.filter((i)=> i.id !== id)
+            setValue('variants', filtered)
+            Swal.fire("Se eliminó correctamente!", "", "success");
+          }else {
+            deleteVariant(id);
+          }
         } catch (error) {
-          console.log(error);
+          console.error("Error al eliminar la variante:", error);
+          Swal.fire("Error al eliminar", "No se pudo completar la operación", "error");
         }
       }
     });
@@ -193,28 +199,33 @@ const VariantsAndPhotos = () => {
 
   const handleClick = (id) => {
     setCollapseOpen((prevState) =>
-      prevState.map((item) =>
-        item.id === id ? { ...item, value: !item.value } : item
-      )
+      prevState.map((item) => ({
+        ...item,
+        value: item.id === id ? !item.value : item.value,
+      }))
     );
   };
-
+  
   const onChangeImages = (event, indexVariant) => {
-    const file = event.target.files[0];
-    if (!file) return;
+    const files = Array.from(event.target.files); // Convierte FileList a un array
+    if (!files.length) return;
 
     const currentImages = watch(`variants[${indexVariant}].images`) || [];
 
-    if (currentImages.length >= 6) return;
+    const availableSlots = 10 - currentImages.length;
+    if (availableSlots <= 0) return;
 
-    const filePreview = URL.createObjectURL(file);
+    // Crea un array de objetos con las previsualizaciones y archivos
+    const newImages = files.slice(0, availableSlots).map((file) => ({
+      filePreview: URL.createObjectURL(file), // Previsualización de la imagen
+      file, // Incluye el archivo si necesitas enviarlo al servidor
+    }));
 
     setValue(`variants[${indexVariant}].images`, [
       ...currentImages,
-      { filePreview }, // Incluye el archivo si planeas enviarlo al servidor
+      ...newImages, // Añade las nuevas imágenes
     ]);
   };
-
   const imagesArray = (indexVariant) => {
     const images = watch(`variants[${indexVariant}].images`);
     return Array.isArray(images) ? images : [];
@@ -350,8 +361,6 @@ const VariantsAndPhotos = () => {
               )?.value;
 
               const isMain = ({ is_main, index, variant_id }) => {
-                console.log(is_main);
-                
                 if (is_main === true) {
                   return (
                     <>
@@ -361,7 +370,10 @@ const VariantsAndPhotos = () => {
                       ></Chip>
                     </>
                   );
-                } else if ((index === 0 && is_main === undefined) || (index === 0 && is_main !== null)) {
+                } else if (
+                  (index === 0 && is_main === undefined) ||
+                  (index === 0 && is_main !== null)
+                ) {
                   return (
                     <>
                       <Chip
@@ -418,7 +430,7 @@ const VariantsAndPhotos = () => {
                     {isOpen ? <ExpandLess /> : <ExpandMore />}
                     <ListItemText
                       sx={{ minWidth: "150px" }}
-                      primary={`Variante ${item?.size? item.size : 'New'}`}
+                      primary={`Variante ${item?.size ? item.size : "New"} - ${item?.color?.name ? item.color?.name :item.color? item.color:''}`}
                     />
                     <Box
                       display="flex"
@@ -588,7 +600,7 @@ const VariantsAndPhotos = () => {
                         />
                       </Grid2>
 
-                      {!item.stock ? (
+                      {isUUID(item.id) ? (
                         <Grid2 size={4}>
                           <Controller
                             control={control}
@@ -631,10 +643,6 @@ const VariantsAndPhotos = () => {
                               value: 1,
                               message: "Valor no menor de 1gr",
                             },
-                            max: {
-                              value: 80000,
-                              message: "Valor no mayor de de 80000gr",
-                            },
                           }}
                           name={`variants[${index}].weight`}
                           render={({ field }) => (
@@ -653,7 +661,6 @@ const VariantsAndPhotos = () => {
                           )}
                         />
                       </Grid2>
-
                       <Grid2 size={4}>
                         <Controller
                           control={control}
@@ -663,9 +670,45 @@ const VariantsAndPhotos = () => {
                               value: 0,
                               message: "El valor no puede ser menor a $0",
                             },
-                            max: {
-                              value: 80000,
-                              message: "El valor no puede superar $80000",
+                            validate: (value) => {
+                              const price = getValues(
+                                `variants[${index}].price`
+                              );
+                              return (
+                                value <= price ||
+                                "El precio de compra no puede ser mayor que el precio neto"
+                              );
+                            },
+                          }}
+                          name={`variants[${index}].purchase_price`}
+                          render={({ field }) => (
+                            <TextField
+                              {...field}
+                              fullWidth
+                              size="small"
+                              label="Precio de compra*"
+                              focused
+                              autoComplete="off"
+                              onChange={(e) => field.onChange(e)}
+                              type="number"
+                              error={!!errors.variants?.[index]?.purchase_price}
+                              helperText={
+                                errors.variants?.[index]?.purchase_price
+                                  ?.message
+                              }
+                            />
+                          )}
+                        />
+                      </Grid2>
+
+                      <Grid2 size={4}>
+                        <Controller
+                          control={control}
+                          rules={{
+                            required: "Campo requerido",
+                            min: {
+                              value: 0,
+                              message: "El valor no puede ser menor a $0",
                             },
                           }}
                           name={`variants[${index}].price`}
@@ -730,8 +773,8 @@ const VariantsAndPhotos = () => {
                           rules={{
                             validate: (value) =>
                               value === "" ||
-                              (value >= 0 && value <= 80000) ||
-                              "El precio con descuento debe estar entre $0 y $80000",
+                              (value >= 0) ||
+                              "El precio con descuento debe ser mayor a 0",
                           }}
                           name={`variants[${index}].discountPrice`}
                           render={({ field }) => (
@@ -936,8 +979,8 @@ const VariantsAndPhotos = () => {
                                       preview?.url
                                         ? getCachedImageUrl(preview?.url)
                                         : preview?.filePreview
-                                        ? preview?.filePreview
-                                        : ""
+                                          ? preview?.filePreview
+                                          : ""
                                     }
                                     alt="Preview"
                                     style={{
@@ -983,8 +1026,8 @@ const VariantsAndPhotos = () => {
                                           preview?.url
                                             ? preview?.url
                                             : preview?.filePreview
-                                            ? preview?.filePreview
-                                            : "",
+                                              ? preview?.filePreview
+                                              : "",
                                           index
                                         );
                                       }}
