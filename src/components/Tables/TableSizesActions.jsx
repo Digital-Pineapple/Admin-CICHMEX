@@ -15,7 +15,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: teal[700],
     color: theme.palette.common.white,
-    fontSize:12
+    fontSize: 12,
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
@@ -43,8 +43,11 @@ const TableSizesActions = ({ items = [], handleOpenUpdate, deleteVariant }) => {
         <TableHead>
           <TableRow>
             <StyledTableCell>Talla</StyledTableCell>
-            <StyledTableCell>Precio</StyledTableCell>
-            <StyledTableCell>Descuento <br /> (%)</StyledTableCell>
+            <StyledTableCell>Precio de compra </StyledTableCell>
+            <StyledTableCell>Precio neto</StyledTableCell>
+            <StyledTableCell>
+              Descuento <br /> (%)
+            </StyledTableCell>
             <StyledTableCell>Precio Total</StyledTableCell>
             <StyledTableCell>Peso</StyledTableCell>
             <StyledTableCell>Opciones</StyledTableCell>
@@ -52,9 +55,12 @@ const TableSizesActions = ({ items = [], handleOpenUpdate, deleteVariant }) => {
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <StyledTableRow key={row.name}>
+            <StyledTableRow key={row._id}>
               <StyledTableCell acomponent="th" scope="row">
-                <strong>{row.attributes.size}</strong> 
+                <strong>{row.attributes.size}</strong>
+              </StyledTableCell>
+              <StyledTableCell acomponent="th" scope="row">
+                {row?.purchase_price}
               </StyledTableCell>
               <StyledTableCell acomponent="th" scope="row">
                 {row.price}
@@ -80,8 +86,8 @@ const TableSizesActions = ({ items = [], handleOpenUpdate, deleteVariant }) => {
                       <Edit />
                     </IconButton>{" "}
                     <IconButton
-                    title="Eliminar"
-                    color="warning"
+                      title="Eliminar"
+                      color="warning"
                       aria-label="Eliminar variante"
                       onClick={() => deleteVariant(row._id)}
                     >

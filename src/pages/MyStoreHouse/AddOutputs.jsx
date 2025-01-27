@@ -8,6 +8,7 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  Grid2,
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import FormSearch from "../../components/Filters/FormSearch";
@@ -50,7 +51,7 @@ const AddOutputs = () => {
     }
     setValue("products", allProducts);
     const values = getValues();
-     addMultipleOutputs(values)
+    addMultipleOutputs(values);
   };
 
   useEffect(() => {
@@ -58,19 +59,18 @@ const AddOutputs = () => {
   }, [user]);
 
   useEffect(() => {
-    if (product) {  
+    if (product) {
       setAllProducts((prevProducts) => [...prevProducts, product]);
     }
   }, [product]);
 
   const rowsIds = allProducts?.map((item, index) => ({
-  
     id: index,
     ...item,
   }));
 
   return (
-    <Grid
+    <Grid2
       component={"form"}
       onSubmit={(e) => {
         e.preventDefault(); // Previene el envío por defecto
@@ -79,10 +79,9 @@ const AddOutputs = () => {
       container
       gap={2}
     >
-      <Grid
-        item
+      <Grid2
         marginTop={{ xs: "-30px" }}
-        xs={12}
+        size={12}
         minHeight={"100px"}
         className="Titles"
       >
@@ -93,108 +92,70 @@ const AddOutputs = () => {
         >
           Agregar salida
         </Typography>
-      </Grid>
+      </Grid2>
 
-      <Grid item xs={12} display={"flex"} gap={2} justifyContent={"center"}>
-        {/* <Controller
-          control={control}
-          name="user_delivery"
-          rules={{
-            required: { message: "Campo requerido", value: true },
-            pattern: { message: "Ingrese un nombre válido", value: regexName },
-          }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              fullWidth
-              id="user_delivery"
-              name="user_delivery"
-              label="Usuario que entrega el producto"
-              value={field.value}
-              onChange={(e) => field.onChange(e.target.value)}
-              error={!!errors.user_delivery}
-              helperText={errors.user_delivery && errors.user_delivery.message}
-              autoComplete="off"
-            />
-          )}
-        /> */}
-        {/* <Controller
-          control={control}
-          name="user_received"
-          rules={{
-            required: { message: "Campo requerido", value: true },
-            pattern: { message: "Ingrese un nombre válido", value: regexName },
-          }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              fullWidth
-              id="user_received"
-              name="user_received"
-              label="Usuario que recibe el producto"
-              value={field.value}
-              onChange={(e) => field.onChange(e.target.value)}
-              error={!!errors.user_received}
-              helperText={errors.user_received && errors.user_received.message}
-              autoComplete="off"
-            />
-          )}
-        /> */}
-        <Controller
-          control={control}
-          name="reason"
-          rules={{
-            required: { message: "Campo requerido", value: true },
-          }}
-          render={({ field }) => (
-            <FormControl fullWidth>
-            <InputLabel>Motivo</InputLabel>
-            <Select
-              {...field}
-              id="reason"
-              label="Motivo"
-              value={field.value}
-              onChange={(e) => field.onChange(e.target.value)}
-              error={!!errors.reason}
-              helperText={errors.reason && errors.reason.message}
-              autoComplete="off"
-            >
-              <MenuItem value={'Muestra'}>Muestra</MenuItem>
-              <MenuItem value={'Exhibición'}>Exhibición</MenuItem>
-              <MenuItem value={'Préstamo'}>Préstamo</MenuItem>
-              <MenuItem value={'Falta de producto'}>Falta de producto</MenuItem>
-            </Select>
-            </FormControl>
-          )}
-        />
-      </Grid>
-      <Grid
-        container
-        padding={{ xs: 2, lg: 4 }}
-        gap={2}
-        justifyContent={"center"}
-      >
-        <Typography variant="h4" textAlign={"center"} color="initial">
-          Introduzca el nombre o código de barras del producto
-        </Typography>
-        <Grid item xs={10}>
+      <Grid2 container gap={2} paddingX={10} justifyContent={"center"}>
+        <Grid2
+          size={{xs:12, lg:5.8}}
+        >
+          <Typography variant="h6" textAlign={"center"} color="initial">
+            Introduzca el motivo de la salida del producto
+          </Typography>
+          <Controller
+            control={control}
+            name="reason"
+            rules={{
+              required: { message: "Campo requerido", value: true },
+            }}
+            render={({ field }) => (
+              <FormControl fullWidth>
+                <InputLabel>Motivo</InputLabel>
+                <Select
+                  {...field}
+                  id="reason"
+                  label="Motivo"
+                  value={field.value}
+                  onChange={(e) => field.onChange(e.target.value)}
+                  error={!!errors.reason}
+                  helperText={errors.reason && errors.reason.message}
+                  autoComplete="off"
+                >
+                  <MenuItem value={"Muestra"}>Muestra</MenuItem>
+                  <MenuItem value={"Exhibición"}>Exhibición</MenuItem>
+                  <MenuItem value={"Préstamo"}>Préstamo</MenuItem>
+                  <MenuItem value={"Préstamo"}>Falta de producto</MenuItem>
+                </Select>
+              </FormControl>
+            )}
+          />
+        </Grid2>
+
+        <Grid2
+          size={{xs:12, lg:5.8}}
+        >
+          <Typography variant="h6" textAlign={"center"} color="initial">
+            Introduzca el nombre o código de barras del producto
+          </Typography>
           <FormSearch
             setSelected={setProduct}
             allValues={allProducts}
             titleAlert={"Ya se agrego este producto"}
           />
-        </Grid>
-        <Grid item xs={12} lg={8}>
+        </Grid2>
+
+        <Grid2 size={12}>
           <TableQuantity
             values={rowsIds}
             setValues={setAllProducts}
             allValues={allProducts}
           />
-        </Grid>
-        <Grid item xs={12} lg={6}>
-          <ButtonGroup fullWidth variant="text" color="primary" aria-label="">
+        </Grid2>
+        <Grid2 size={12} display={'flex'} gap={2}>
+          
             <Button
               variant="contained"
+              fullWidth
+              size="small"
               onClick={() => navigate("/mi-almacen/productos/salidas")}
               color="error"
             >
@@ -202,15 +163,16 @@ const AddOutputs = () => {
             </Button>
             <Button
               variant="contained"
+              fullWidth
+              size="small"
               onClick={handleSubmit(onSubmit)}
               color="success"
             >
               Subir salida
             </Button>
-          </ButtonGroup>
-        </Grid>
-      </Grid>
-    </Grid>
+        </Grid2>
+      </Grid2>
+    </Grid2>
   );
 };
 

@@ -12,11 +12,12 @@ import {
 } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import MuiPagination from "@mui/material/Pagination";
-import { Add, Download } from "@mui/icons-material";
+import { Add, Download, Refresh } from "@mui/icons-material";
 import {
   Button,
   Fab,
   Grid,
+  Grid2,
   Typography,
 } from "@mui/material";
 import { Workbook } from "exceljs";
@@ -26,6 +27,7 @@ import { orange } from "@mui/material/colors";
 import { useAuthStore } from "../../hooks";
 import EntriesOutputsModal from "../../components/Modals/EntriesOutputsModal";
 import CustomNoRows from "../../components/Tables/CustomNoRows";
+import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -64,6 +66,7 @@ const ProductEntries = () => {
     loadAllInputs,
     rowsAllInputs,
   } = useProducts();
+  const {loading} =useAuthStore()
   const { user, navigate } = useAuthStore();
   const [open, setOpen] = useState(false);
   const [details, setDetails] = useState('')
@@ -127,7 +130,7 @@ const ProductEntries = () => {
     return (
       <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
         <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-        <GridToolbarQuickFilter />
+        <GridToolbarQuickFilter placeholder="Buscar" />
         <Button
           variant="text"
           startIcon={<Download />}
@@ -141,15 +144,19 @@ const ProductEntries = () => {
     );
   }
 
+  if (loading) {
+    return (
+      <LoadingScreenBlue/>
+    )
+  }
   
   
 
   return (
-    <Grid container gap={1} >
-      <Grid
-        item
+    <Grid2 container gap={1} >
+      <Grid2
         marginTop={{ xs: "-30px" }}
-        xs={12}
+        size={12}
         minHeight={"100px"}
         className="Titles"
         
@@ -161,13 +168,16 @@ const ProductEntries = () => {
         >
           Entradas de producto
         </Typography>
-      </Grid>
-      <Grid item xs={12} >
+      </Grid2>
+      <Grid2  size={12} >
+        <Button variant="contained" size="small" onClick={()=>loadAllInputs()} color="primary">
+          <Refresh/> Recargar
+        </Button>
       <Fab sx={{right:'-80%'}} onClick={()=>navigate('/mi-almacen/agregar-entrada')} color="secondary" aria-label="Agregar entrada" title="Agragar entradas" >
   <Add />
 </Fab>
-      </Grid>
-      <Grid item xs={12} >
+      </Grid2>
+      <Grid2 size={12} >
         <DataGrid
           sx={{ fontSize: "12px", fontFamily: "sans-serif" }}
           columns={
@@ -251,9 +261,9 @@ const ProductEntries = () => {
           }}
           style={{fontFamily:'sans-serif', fontSize:'15px'}}
         />
-      </Grid>
+      </Grid2>
       <EntriesOutputsModal open={open} handleClose={handleClose} details={details}  />
-    </Grid>
+    </Grid2>
   );
 };
 

@@ -138,7 +138,7 @@ export default function Users() {
     return (
       <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
         <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-        <GridToolbarQuickFilter />
+        <GridToolbarQuickFilter placeholder="Buscar" />
         <Button
           variant="text"
           startIcon={<Download />}

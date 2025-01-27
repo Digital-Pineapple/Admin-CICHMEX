@@ -9,7 +9,7 @@ import {
   useGridSelector,
 } from "@mui/x-data-grid";
 import MuiPagination from "@mui/material/Pagination";
-import { Button, Chip, Grid, IconButton, Tooltip, Typography } from "@mui/material";
+import { Button, Chip, Grid, Grid2, IconButton, Tooltip, Typography } from "@mui/material";
 import { Workbook } from "exceljs";
 import {
   ExpandLess as ExpandLessIcon,
@@ -109,7 +109,7 @@ function CustomToolbar() {
   return (
     <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
       <Button onClick={handleGoToPage1}>Regresar a la página 1</Button>
-      <GridToolbarQuickFilter />
+      <GridToolbarQuickFilter placeholder="Buscar" variant="outlined" />
       <Button
         variant="text"
         startIcon={<DownloadIcon />}
@@ -127,7 +127,6 @@ const AllSales = () => {
   const { loadProductOrders, navigate, productOrders, loading } =
     useProductOrder();
   const { user } = useAuthStore();
-  const {loadValidateExpiredPayments} = usePayments()
 
   useEffect(() => {
     loadProductOrders();
@@ -269,11 +268,10 @@ const AllSales = () => {
   }
 
   return (
-    <Grid container>
-         <Grid
-        item
+    <Grid2 container>
+         <Grid2
         marginTop={{ xs: "-30px" }}
-        xs={12}
+        size={12}
         minHeight={"100px"}
         className="Titles"
       >
@@ -284,13 +282,13 @@ const AllSales = () => {
         >
          Todas mis ventas
         </Typography>
-      </Grid>
-      <Grid mb={2} item xs={12}>
-        <Button  title="Recargar" endIcon={<Refresh/>} onClick={()=>loadProductOrders()} color="primary">
-         Recarga
+      </Grid2>
+      <Grid2 marginY={1} display={'flex'} alignContent={'center'} justifyContent={'end'} size={12}>
+        <Button  title="Recargar" variant="contained" endIcon={<Refresh/>} onClick={()=>loadProductOrders()} color="primary">
+         Recargar
         </Button>
-      </Grid>
-      <Grid item xs={12}>
+      </Grid2>
+      <Grid2  size={12}>
         <DataGrid
           sx={{ fontSize: "14px", fontFamily: "sans-serif" }}
           columns={[
@@ -373,8 +371,8 @@ const AllSales = () => {
             hideToolbar: true,
           }}
         />
-      </Grid>
-    </Grid>
+      </Grid2>
+    </Grid2>
   );
 };
 

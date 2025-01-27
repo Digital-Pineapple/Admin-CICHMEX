@@ -5,6 +5,7 @@ import {
   loadCategory,
   deleteCategory,
   editCategory,
+  onAddNewCategory,
 } from "../reducer/categoryReducer";
 import {
   headerConfig,
@@ -12,6 +13,7 @@ import {
   headerConfigFormData,
 } from "./headers";
 import { startLoading, stopLoading } from "../reducer/uiReducer";
+import Swal from "sweetalert2";
 
 export const startLoadCategories = () => {
   return async (dispatch) => {
@@ -56,18 +58,20 @@ export const getOneCategory = (category_id) => async (dispatch) => {
   }
 };
 export const addOneCategory =
-  ({ name, image }, navigate) =>
+  ({ name, image }, handleClose) =>
   async (dispatch) => {
+    dispatch(startLoading())
     try {
       const formData = new FormData();
       formData.append("name", name);
       formData.append("image", image);
-      await instanceApi.post(`/category/`, formData, {
+    const {data} =  await instanceApi.post(`/category`, formData, {
         headers: {
           "Content-type": "/multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+      dispatch(onAddNewCategory(data.data))
       enqueueSnackbar("Categoria creada con éxito", {
         variant: "success",
         anchorOrigin: {
@@ -75,15 +79,12 @@ export const addOneCategory =
           horizontal: "right",
         },
       });
-      navigate("/mi-almacen/categorias", { replace: true });
+      handleClose()
     } catch (error) {
-      enqueueSnackbar(`Error : ${error.response.data?.message}`, {
-        variant: "error",
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "right",
-        },
-      });
+      console.log(error)
+      handleClose()
+    }finally{
+      dispatch(stopLoading())
     }
   };
 
@@ -105,7 +106,7 @@ export const deleteOneCategory = (category_id) => async (dispatch) => {
 export const editOneCategory = (
   category_id,
   { name, category_image },
-  navigate
+  handleClose
 ) => {
   return async (dispatch) => {
     dispatch(startLoading());
@@ -124,24 +125,13 @@ export const editOneCategory = (
         }
       );
       dispatch(editCategory(data.data));
-      // navigate(`/mi-almacen/categorias`, { replace: true });
-      enqueueSnackbar(`${data.message}`, {
-        variant: "success",
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "right",
-        },
-      });
+      Swal.fire(`${data.message}`, '', 'success')
     } catch (error) {
-      enqueueSnackbar(`Ocurrió un error`, {
-        variant: "error",
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "right",
-        },
-      });
+     console.log(error);
+     
     } finally {
       dispatch(stopLoading());
+      handleClose()
     }
   };
 };

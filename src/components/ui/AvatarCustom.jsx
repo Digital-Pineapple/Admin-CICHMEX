@@ -38,7 +38,7 @@ export default function AvatarCustom() {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-            <Avatar sx={{ width: 32, height: 32 }} src={user.profile_image}>M</Avatar>
+            <Avatar sx={{ width: 45, height: 45 }} src={user.profile_image}>M</Avatar>
           </IconButton>
         </Tooltip>
       </Box>

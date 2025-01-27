@@ -105,11 +105,11 @@ export const AllRoutes = [
   { id: 13, element: <EditTypeCar /> },
 
   { id: 14, element: <Categories /> },
-  { id: 15, element: <CreateCategory /> },
-  { id: 16, element: <EditCategory /> },
+  // { id: 15, element: <CreateCategory /> },
+  // { id: 16, element: <EditCategory /> },
 
   { id: 17, element: <SubCategories /> },
-  { id: 18, element: <CreateSubCategory /> },
+  // { id: 18, element: <CreateSubCategory /> },
   { id: 19, element: <EditSubCategory /> },
 
   { id: 20, element: <TypeUser /> },

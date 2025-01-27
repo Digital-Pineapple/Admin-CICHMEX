@@ -16,6 +16,7 @@ import {
 } from "./headers";
 import { replace } from "formik";
 import { startLoading, stopLoading } from "../reducer/uiReducer";
+import Swal from "sweetalert2";
 
 export const startLoadSubCategories = () => {
   return async (dispatch) => {
@@ -89,7 +90,7 @@ export const getOneDetailSubCategory = (id) => async (dispatch) => {
     });
   }
 };
-export const addOneSubCategory = ({name, category_id, subCategory_image}, navigate) => {
+export const addOneSubCategory = ({name, category_id, subCategory_image}, handleClose) => {
   return async (dispatch) => {
     dispatch(startLoading())
     try {
@@ -107,15 +108,8 @@ export const addOneSubCategory = ({name, category_id, subCategory_image}, naviga
         },
         }
       );
-      enqueueSnackbar(`${data.message}`, {
-        variant: "success",
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "right",
-        },
-      });
-      navigate('/mi-almacen/subcategorias', {replace:true})
-      stopLoading()
+      dispatch(onAddNewSubCategory(data.data))
+       Swal.fire(`${data.message}`, '', 'success')
     } catch (error) {
       enqueueSnackbar(`${error.response.data.message}`, {
         variant: "error",
@@ -124,7 +118,9 @@ export const addOneSubCategory = ({name, category_id, subCategory_image}, naviga
           horizontal: "right",
         },
       });
-      stopLoading()
+    }finally{
+     handleClose(),
+     dispatch( stopLoading())
     }
   };
 };
@@ -166,7 +162,7 @@ export const deleteOneSubCategory = (id, navigate) => async (dispatch) => {
 
 export const editOneSubCategory = (
   subCategory_id,
-  { name, subCategory_image, category_id }, navigate
+  { name, subCategory_image, category_id }, handleClose
 ) => {
   return async (dispatch) => {
     dispatch(startLoading())
@@ -174,7 +170,7 @@ export const editOneSubCategory = (
       const formData = new FormData();
       formData.append("name", name);
       formData.append("subCategory_image", subCategory_image);
-      formData.append("category", category_id);
+      formData.append("category_id", category_id);
       const { data } = await instanceApi.patch(
         `/sub-category/${subCategory_id}`,
         formData,
@@ -185,26 +181,19 @@ export const editOneSubCategory = (
         },
         }
       );
-      enqueueSnackbar(`${data.message}`, {
-        variant: "success",
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "right",
-        },
-      });
+      console.log(data.data);
+      
+      
       dispatch(editSubCategory(data.data))
-      navigate(`/mi-almacen/subcategorias`)
+    Swal.fire(`${data.message}`, '', 'success')
     } catch (error) {
-      enqueueSnackbar(`${error.response.data.message}`, {
-        variant: "error",
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "right",
-        },
-      });
+      console.log(error);
+      
      
     }finally{
+      handleClose()
       dispatch(stopLoading())
+
     }
   };
 };

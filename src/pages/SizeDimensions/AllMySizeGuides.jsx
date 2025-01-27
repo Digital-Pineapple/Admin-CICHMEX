@@ -129,10 +129,10 @@ const AllMySizeGuides = () => {
     const handleGoToPage1 = () => apiRef.current.setPage(1);
 
     return (
-      <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
-        <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
+      <GridToolbarContainer sx={{ justifyContent: "space-between", paddingX:5 }}>
         <GridToolbarQuickFilter placeholder='Buscar'/>
-        <Button
+        <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
+        {/* <Button
           variant="text"
           startIcon={<Download />}
           disableElevation
@@ -140,7 +140,7 @@ const AllMySizeGuides = () => {
           onClick={exportToExcel}
         >
           Descargar Excel
-        </Button>
+        </Button> */}
       </GridToolbarContainer>
     );
   }

@@ -24,7 +24,7 @@ import {
   ListItemText,
   Chip,
   ListItem,
-  Grid,
+  Grid2,
   Typography,
   TextField,
   FormControlLabel,
@@ -100,6 +100,7 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
         discountPrice: variant.discountPrice || 0,
         stock: variant.stock || null,
         tag: variant.tag || null,
+        purchase_price: variant.purchase_price || 0
       })) || [],
   });
 
@@ -195,18 +196,23 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
   };
 
   const onChangeImages = (event, indexVariant) => {
-    const file = event.target.files[0];
-    if (!file) return;
+    const files = Array.from(event.target.files); // Convierte FileList a un array
+    if (!files.length) return;
 
     const currentImages = watch(`variants[${indexVariant}].images`) || [];
-    
-    if (currentImages.length >= 6) return;
 
-    const filePreview = URL.createObjectURL(file);
+    const availableSlots = 10 - currentImages.length;
+    if (availableSlots <= 0) return;
+
+    // Crea un array de objetos con las previsualizaciones y archivos
+    const newImages = files.slice(0, availableSlots).map((file) => ({
+      filePreview: URL.createObjectURL(file), // Previsualización de la imagen
+      file, // Incluye el archivo si necesitas enviarlo al servidor
+    }));
 
     setValue(`variants[${indexVariant}].images`, [
       ...currentImages,
-      { filePreview }, // Incluye el archivo si planeas enviarlo al servidor
+      ...newImages, // Añade las nuevas imágenes
     ]);
   };
 
@@ -357,8 +363,8 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                   </ListItem>
 
                   <Collapse in={isOpen} timeout="auto">
-                    <Grid container spacing={2}>
-                      <Grid item xs={4}>
+                    <Grid2 container spacing={2}>
+                      <Grid2 size={4}>
                         <FormControl
                           fullWidth
                           error={!!errors.variants?.[index]?.size}
@@ -400,9 +406,9 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                               : "Seleccione una medida"}
                           </FormHelperText>
                         </FormControl>
-                      </Grid>
+                      </Grid2>
 
-                      <Grid item xs={4}>
+                      <Grid2 size={4}>
                         <Controller
                           control={control}
                           name={`variants[${index}].color`}
@@ -425,9 +431,9 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                             />
                           )}
                         />
-                      </Grid>
+                      </Grid2>
 
-                      <Grid item xs={4}>
+                      <Grid2 size={4}>
                         <Controller
                           control={control}
                           rules={{
@@ -451,9 +457,9 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                             />
                           )}
                         />
-                      </Grid>
+                      </Grid2>
 
-                      <Grid item xs={4}>
+                      <Grid2 size={4}>
                         <Controller
                           control={control}
                           name={`variants[${index}].design.textInput`}
@@ -514,9 +520,9 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                             />
                           )}
                         />
-                      </Grid>
+                      </Grid2>
 
-                      <Grid item xs={4}>
+                      <Grid2 size={4}>
                         <Controller
                           control={control}
                           rules={{
@@ -541,9 +547,9 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                             />
                           )}
                         />
-                      </Grid>
+                      </Grid2>
 
-                      <Grid item xs={4}>
+                      <Grid2 size={4}>
                         <Controller
                           control={control}
                           rules={{
@@ -576,9 +582,9 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                             />
                           )}
                         />
-                      </Grid>
+                      </Grid2>
 
-                      <Grid item xs={4}>
+                      <Grid2 size={4}>
                         <Controller
                           control={control}
                           rules={{
@@ -587,9 +593,41 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                               value: 0,
                               message: "El valor no puede ser menor a $0",
                             },
-                            max: {
-                              value: 80000,
-                              message: "El valor no puede superar $80000",
+                            validate: (value) => {
+                              const price = getValues(`variants[${index}].price`);
+                              return (
+                                value <= price || "El precio de compra no puede ser mayor que el precio neto"
+                              );
+                            },
+                          }}
+                          name={`variants[${index}].purchase_price`}
+                          render={({ field }) => (
+                            <TextField
+                              {...field}
+                              fullWidth
+                              size="small"
+                              label="Precio de compra*"
+                              focused
+                              autoComplete="off"
+                              onChange={(e)=>field.onChange(e)}
+                              type="number"
+                              error={!!errors.variants?.[index]?.purchase_price}
+                              helperText={
+                                errors.variants?.[index]?.purchase_price?.message
+                              }
+                            />
+                          )}
+                        />
+                      </Grid2>
+
+                      <Grid2 size={4}>
+                        <Controller
+                          control={control}
+                          rules={{
+                            required: "Campo requerido",
+                            min: {
+                              value: 0,
+                              message: "El valor no puede ser menor a $0",
                             },
                           }}
                           name={`variants[${index}].price`}
@@ -598,7 +636,7 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                               {...field}
                               fullWidth
                               size="small"
-                              label="Precio (MXN)*"
+                              label="Precio neto(MXN)*"
                               focused
                               autoComplete="off"
                               onChange={(e) => handlePriceChange(e, index)}
@@ -610,9 +648,9 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                             />
                           )}
                         />
-                      </Grid>
+                      </Grid2>
 
-                      <Grid item xs={4}>
+                      <Grid2 size={4}>
                         <Controller
                           control={control}
                           rules={{
@@ -646,16 +684,16 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                             />
                           )}
                         />
-                      </Grid>
+                      </Grid2>
 
-                      <Grid item xs={4}>
+                      <Grid2 size={4}>
                         <Controller
                           control={control}
                           rules={{
                             validate: (value) =>
                               value === "" ||
-                              (value >= 0 && value <= 80000) ||
-                              "El precio con descuento debe estar entre $0 y $80000",
+                              (value >= 0) ||
+                              "El precio con descuento debe ser mayor a 0",
                           }}
                           name={`variants[${index}].discountPrice`}
                           render={({ field }) => (
@@ -674,10 +712,10 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                             />
                           )}
                         />
-                      </Grid>
+                      </Grid2>
 
-                      <Grid item display={"flex"} xs={12}>
-                        <Grid
+                      <Grid2 display={"flex"} size={12}>
+                        <Grid2
                           container
                           padding={1}
                           spacing={2}
@@ -685,9 +723,8 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                           justifyContent={"center"}
                           width={"100%"}
                         >
-                          <Grid
-                            item
-                            xs={imagesArray(index).length > 0 ? 1 : 12}
+                          <Grid2 
+                            size={{xs:imagesArray(index).length > 0 ? 1 : 12}}
                           >
                             <Controller
                               control={control}
@@ -838,18 +875,18 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                                 );
                               }}
                             />
-                          </Grid>
+                          </Grid2>
 
-                          <Grid
-                            item
-                            xs={10}
+                          <Grid2
+                  
+                            size={10}
                             display={"flex"}
                             alignContent={"center"}
                             flexDirection={"row"}
                           >
                             {imagesArray(index)?.map((preview, i) => {
                               return (
-                                <Grid
+                                <Grid2
                                   key={i}
                                   position="relative"
                                   width="150px"
@@ -969,7 +1006,7 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                                       clickable
                                     />
                                   </Box>
-                                </Grid>
+                                </Grid2>
                               );
                             })}
                             <FormControl>
@@ -979,10 +1016,10 @@ const Variants = ({ handleNext, handleBack, index, isLastStep }) => {
                                 {errors.variants?.[index]?.images?.message}
                               </FormHelperText>
                             </FormControl>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </Grid>
+                          </Grid2>
+                        </Grid2>
+                      </Grid2>
+                    </Grid2>
                   </Collapse>
                 </div>
               );

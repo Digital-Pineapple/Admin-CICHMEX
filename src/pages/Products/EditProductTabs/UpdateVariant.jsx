@@ -3,20 +3,22 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useProducts } from "../../../hooks";
 
-const UpdateVariant = ({ variantValues, handleClose}) => {
-  const {editVariant} = useProducts()
+const UpdateVariant = ({ variantValues, handleClose }) => {
+  const { editVariant } = useProducts();
   const DefaultValues = (data) => ({
     price: data.price || "",
     porcentDiscount: data.porcentDiscount || "",
-    discountPrice: data.price || "",
+    discountPrice: data.price || 0,
     tag: data.tag || "",
     weight: data.weight || "",
+    purchase_price: data.purchase_price || "",
   });
   const {
     control,
     formState: { errors },
     handleSubmit,
     watch,
+    getValues,
     setValue,
   } = useForm({
     defaultValues: DefaultValues(variantValues),
@@ -49,23 +51,54 @@ const UpdateVariant = ({ variantValues, handleClose}) => {
   };
 
   const onSubmit = (e) => {
-    editVariant(variantValues._id, e, handleClose)
+    editVariant(variantValues._id, e, handleClose);
   };
   return (
-    <Grid2 component={"form"} display={'flex'} gap={2} onSubmit={handleSubmit(onSubmit)} container>
-      <Grid2
-
-        size={12}
-        minHeight={"100px"}
-        className="Titles"
-      >
+    <Grid2
+      component={"form"}
+      display={"flex"}
+      gap={2}
+      onSubmit={handleSubmit(onSubmit)}
+      container
+    >
+      <Grid2 size={12} minHeight={"100px"} className="Titles">
         <Typography
           textAlign={"center"}
           variant="h1"
           fontSize={{ xs: "20px", sm: "30px" }}
         >
-          Editar talla : { variantValues.attributes?.size }
+          Editar talla : {variantValues.attributes?.size}
         </Typography>
+      </Grid2>
+      <Grid2 size={12}>
+        <Controller
+          name={"purchase_price"}
+          control={control}
+          rules={{
+            required: "Campo requerido",
+            validate: (value) => {
+              const price = getValues("price");
+              return (
+                value <= price ||
+                "El precio de compra no puede ser mayor que el precio neto"
+              );
+            },
+          }}
+          render={({ field: textField }) => (
+            <TextField
+              {...textField}
+              fullWidth
+              size="small"
+              label={"Precio de compra (MXN)*"}
+              autoComplete="off"
+              onChange={textField.onChange}
+              placeholder="Precio de compra"
+              type="number"
+              error={!!errors.purchase_price}
+              helperText={errors.purchase_price?.message}
+            />
+          )}
+        />
       </Grid2>
       <Grid2 size={12}>
         <Controller
@@ -180,8 +213,13 @@ const UpdateVariant = ({ variantValues, handleClose}) => {
           )}
         />
       </Grid2>
-      <Grid2 display={'flex'} gap={2} size={12}>
-        <Button fullWidth onClick={()=> handleClose()} variant="contained" color="warning">
+      <Grid2 display={"flex"} gap={2} size={12}>
+        <Button
+          fullWidth
+          onClick={() => handleClose()}
+          variant="contained"
+          color="warning"
+        >
           Cancelar
         </Button>
         <Button fullWidth type="submit" variant="contained" color="success">

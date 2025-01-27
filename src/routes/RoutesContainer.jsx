@@ -2,7 +2,6 @@ import { Route, Routes } from "react-router-dom";
 import { useAuthStore } from "../hooks";
 import { useEffect, useState } from "react";
 import {
-  themeAdminCarWashLight,
   themeAdminCichmexLight,
   themeCarrierCichmex,
   themeSuperAdmin,
