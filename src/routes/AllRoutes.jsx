@@ -84,6 +84,11 @@ import AllMySizeGuides from "../pages/SizeDimensions/AllMySizeGuides";
 import EditMySizeGuides from "../pages/SizeDimensions/EditMySizeGuide";
 import ReadyToSend from "../pages/Logistic/ReadyToSend";
 import MainToSend from "../pages/Logistic/PackageToSend/MainToSend";
+import CreateDeliveryPoint from "../pages/Points/Create";
+import { PointsList } from "../pages/Points/PointsList";
+import BranchOfficeEdit from "../pages/Points/Edit";
+import BranchOfficeDetail from "../pages/Points/Detail";
+import { DeliveryPointsOrder } from "../pages/Points/DeliveryPointOrders";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -188,5 +193,12 @@ export const AllRoutes = [
   { id: 77, element: <AllMySizeGuides /> },
   { id: 78, element: <EditMySizeGuides /> },
   { id: 79, element: <AssignRoute /> },
-  { id: 80, element: <MainToSend /> },
+  // { id: 80, element: <MainToSend /> },
+  // { id: 80, element: <OrdersDeliveryPoint /> },
+  
+  { id: 90, element: <CreateDeliveryPoint /> },
+  { id: 91, element: <BranchOfficeEdit /> },    
+  { id: 92, element: <BranchOfficeDetail />},    
+  {id: 93, element: <DeliveryPointsOrder />},
+  { id: 74, element: <PointsList /> }
 ];
