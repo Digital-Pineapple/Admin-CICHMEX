@@ -10,7 +10,8 @@ import {
   GridRowEditStopReasons,
 } from "@mui/x-data-grid";
 import Typography from "@mui/material/Typography";
-import { Grid } from "@mui/material";
+import { Grid, Grid2 } from "@mui/material";
+import CustomNoRows from "./CustomNoRows";
 
 const TableQuantity = ({ values, setValues, type }) => {
   const [rowModesModel, setRowModesModel] = React.useState({});
@@ -139,7 +140,7 @@ const TableQuantity = ({ values, setValues, type }) => {
   ];
 
   return (
-    <Grid>
+    <Grid2>
       <Typography variant="h5" color="inherit">
         Productos seleccionados:
       </Typography>
@@ -149,6 +150,7 @@ const TableQuantity = ({ values, setValues, type }) => {
         editMode="row"
         rowModesModel={rowModesModel}
         onRowModesModelChange={handleRowModesModelChange}
+       slots={{noRowsOverlay: CustomNoRows}}
         onRowEditStop={handleRowEditStop}
         processRowUpdate={processRowUpdate}
         pageSizeOptions={[10, 15, 20]}
@@ -156,7 +158,7 @@ const TableQuantity = ({ values, setValues, type }) => {
         density="compact"
         sx={{ minHeight: "200px", width: "100%" }}
       />
-    </Grid>
+    </Grid2>
   );
 };
 

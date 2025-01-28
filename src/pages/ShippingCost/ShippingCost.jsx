@@ -134,18 +134,10 @@ const ShippingCost = () => {
     const handleGoToPage1 = () => apiRef.current.setPage(1);
   
     return (
-      <GridToolbarContainer sx={{justifyContent:'space-between'}}>
+      <GridToolbarContainer sx={{justifyContent:'space-between', paddingX:5}}>
+        <GridToolbarQuickFilter label='Buscar' placeholder="Buscar" />
         <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-        <GridToolbarQuickFilter label='Buscar' placeholder="Buscar"/>
-        <Button
-        variant="text"
-        startIcon={<Download/>}
-        disableElevation
-        sx={{ color: "secondary" }}
-        onClick={exportToExcel}
-      >
-        Descargar Excel
-      </Button>
+       
       </GridToolbarContainer>
     );
   }

@@ -10,19 +10,40 @@ import {
   useGridApiContext,
   useGridSelector,
 } from "@mui/x-data-grid";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import MuiPagination from "@mui/material/Pagination";
-import { Add, Download, Visibility } from "@mui/icons-material";
+import {
+  Add,
+  Close,
+  Download,
+  RefreshOutlined,
+  Visibility,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useCategories } from "../../hooks/useCategories";
-import { Button, Avatar, Grid, Typography, Fab, Tooltip, IconButton } from "@mui/material";
+import {
+  Button,
+  Avatar,
+  Grid2,
+  Typography,
+  Fab,
+  Tooltip,
+  IconButton,
+  Modal,
+  Card,
+  CardHeader,
+  CardMedia,
+} from "@mui/material";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver";
 import DeleteAlert from "../../components/ui/DeleteAlert";
 import EditButton from "../../components/Buttons/EditButton";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import CategoryModal from "../../components/Modals/CategoryModal";
+import CreateCategory from "./Create";
+import EditCategory from "./Edit";
+import { Box } from "@mui/system";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -56,23 +77,57 @@ function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 600,
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 2,
+  borderRadius: "10px",
+};
+
 const Categories = () => {
-  const { loadCategories, deleteCategory, categories, loadCategory,category, navigate, loading } =
+  const { loadCategories, deleteCategory, categories, loading } =
     useCategories();
   useEffect(() => {
     loadCategories();
   }, []);
-  const [open, setOpen] = useState(false)
-  const handleOpen = async(id) =>{
-   await loadCategory(id)
-    setOpen(true)}
-  const handleClose = () => setOpen(false);
 
+  const [open, setOpen] = useState({ value: false, category: null });
+  const [openCreate, setOpenCreate] = useState(false);
+  const [openUpdate, setOpenUpdate] = useState({value: false, category:null});
 
-  const rowsWithIds = categories.map((category, _id) => ({
-    id: _id.toString(),
-    ...category,
-  }));
+  const handleOpen = (data) => {
+    setOpen({ value: true, category: data });
+  };
+  const handleClose = () => setOpen({ value: false, category: null });
+
+  const handleOpenCreate = () => {
+    setOpenCreate(true);
+  };
+  const handleCloseCreate = (e, reason) => {
+    if (reason !== "backdropClick") {
+      setOpenCreate(false);
+    }
+  };
+
+  const handleOpenUpdate = (data) => {
+    setOpenUpdate({value:true, category: data});
+  };
+  const handleCloseUpdate = (e, reason) => {
+    if (reason !== "backdropClick") {
+      setOpenUpdate({value: false, category: null})
+    }
+  };
+
+  const rowsWithIds = (categories) =>
+    categories?.map((category, _id) => ({
+      id: _id.toString(),
+      ...category,
+    })) || [];
 
   const exportToExcel = () => {
     const workbook = new Workbook();
@@ -108,18 +163,9 @@ const Categories = () => {
     const handleGoToPage1 = () => apiRef.current.setPage(1);
 
     return (
-      <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
-        <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-        <GridToolbarQuickFilter />
-        <Button
-          variant="text"
-          startIcon={<Download />}
-          disableElevation
-          sx={{ color: "secondary" }}
-          onClick={exportToExcel}
-        >
-          Descargar Excel
-        </Button>
+      <GridToolbarContainer sx={{ justifyContent: "space-between", paddingX:5 }}>
+        <GridToolbarQuickFilter placeholder="Buscar" />
+        <Button variant="text" onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
       </GridToolbarContainer>
     );
   }
@@ -128,13 +174,12 @@ const Categories = () => {
   }
 
   return (
-    <Grid container maxWidth={"85vw"} gap={2}>
-      <Grid
-        item
+    <Grid2 container maxWidth={"85vw"} gap={2}>
+      <Grid2
         marginTop={{ xs: "-30px" }}
-        xs={12}
-        minHeight={"100px"}
+        size={12}
         className="Titles"
+        minHeight={"80px"}
       >
         <Typography
           textAlign={"center"}
@@ -143,18 +188,26 @@ const Categories = () => {
         >
           Categorías
         </Typography>
-      </Grid>
-      <Grid item xs={12}>
+      </Grid2>
+      <Grid2 size={12}>
+        <Button
+          onClick={() => loadCategories()}
+          variant="contained"
+          color="primary"
+        >
+          <RefreshOutlined />
+          Recargar
+        </Button>
         <Fab
           sx={{ right: "-80%" }}
-          onClick={() => navigate("/mi-almacen/categorias/agregar")}
+          onClick={() => handleOpenCreate()}
           color="secondary"
           aria-label="Agregar categoría"
           title="Agragar categoría"
         >
           <Add />
         </Fab>
-      </Grid>
+      </Grid2>
 
       <DataGrid
         sx={{ fontSize: "20px", marginTop: 2, fontFamily: "BikoBold" }}
@@ -191,29 +244,30 @@ const Categories = () => {
               />,
               <EditButton
                 title={`Desea editar ${params.row.name}?`}
-                callbackToEdit={() =>
-                  navigate(`/mi-almacen/categorias/editar/${params.row._id}`)
-                }
+               callbackToEdit={()=>handleOpenUpdate(params.row)}
               />,
-              <Tooltip title='Ver Detalles'>
-                <IconButton aria-label="ver detalle" color="primary" onClick={()=>handleOpen(params.row._id)}>
-                  <Visibility/>
+              <Tooltip title="Ver Detalles">
+                <IconButton
+                  aria-label="ver detalle"
+                  color="primary"
+                  onClick={() => handleOpen(params.row)}
+                >
+                  <Visibility />
                 </IconButton>
-
-              </Tooltip>
+              </Tooltip>,
             ],
           },
         ]}
         initialState={{
           sorting: {
-            sortModel: [{ field: "createdAt", sort: "desc" }],
+            sortModel: [{ field: "createdAt", sort: "asc" }],
           },
           pagination: {
             paginationModel: { pageSize: 10 },
           },
         }}
         density="standard"
-        rows={rowsWithIds}
+        rows={rowsWithIds(categories)}
         pagination
         slots={{
           pagination: CustomPagination,
@@ -229,7 +283,7 @@ const Categories = () => {
         slotProps={{
           toolbar: {
             showQuickFilter: true,
-            quickFilterProps: { debounceMs: 500 },
+            quickFilterProps: { debounceMs: 500},
           },
         }}
         printOptions={{
@@ -238,8 +292,35 @@ const Categories = () => {
         }}
         style={{ fontFamily: "sans-serif", fontSize: "15px" }}
       />
-      <CategoryModal category={category? category :''} handleClose={handleClose} handleOpen={handleOpen} open={open} setOpen={setOpen}/>
-    </Grid>
+      <Modal open={open.value} onClose={handleClose}>
+        <Card sx={style} variant="outlined">
+          <CardHeader
+            action={
+              <IconButton onClick={() => handleClose()} aria-label="Cerrar">
+                <Close />
+              </IconButton>
+            }
+            title={`Nombre: ${open?.category?.name}`}
+          />
+          <CardMedia
+            sx={{ borderRadius: "10px" }}
+            component={"img"}
+            title="Imagen"
+            image={open?.category?.category_image}
+          />
+        </Card>
+      </Modal>
+      <Modal open={openCreate} onClose={handleCloseCreate}>
+        <Box sx={style}>
+          <CreateCategory handleClose={handleCloseCreate} />
+        </Box>
+      </Modal>
+      <Modal open={openUpdate.value} onClose={handleCloseUpdate}>
+        <Box sx={style}>
+          <EditCategory handleClose={handleCloseUpdate} category={openUpdate.category} />
+        </Box>
+      </Modal>
+    </Grid2>
   );
 };
 

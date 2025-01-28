@@ -19,20 +19,17 @@ export const useSubCategories = () => {
 
     const deleteSubCategory = async id =>await dispatch(deleteOneSubCategory(id, navigate))
     
-    const editSubCategory = async (subCategory_id, values) =>  await dispatch(editOneSubCategory(subCategory_id,values, navigate));
+    const editSubCategory = async (subCategory_id, values, handleClose) =>  await dispatch(editOneSubCategory(subCategory_id,values, handleClose));
  
    
     
-    const addSubCategory = async values => await dispatch(addOneSubCategory(values, navigate));
+    const addSubCategory = async (values, handleClose) => await dispatch(addOneSubCategory(values, handleClose));
 
     const searchSubCategory = async value => await dispatch(searchSubCategories(value));
 
-    const rowsSubCategories = subCategories.map((category, _id) => ({
-        id: _id.toString(),
-        ...category,
-      }));
+   
 
-    return { subCategories,loading, navigate,rowsSubCategories, subCategory, loadSubCategories, loadSubCategory, deleteSubCategory, editSubCategory, addSubCategory,loadSubCategoryDetail, searchSubCategory, loadSubCategoriesByCategory, subCategoriesByCategory  }
+    return { subCategories,loading, navigate, subCategory, loadSubCategories, loadSubCategory, deleteSubCategory, editSubCategory, addSubCategory,loadSubCategoryDetail, searchSubCategory, loadSubCategoriesByCategory, subCategoriesByCategory  }
 
 
 }

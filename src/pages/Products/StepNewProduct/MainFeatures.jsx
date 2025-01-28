@@ -6,7 +6,7 @@ import { useForm, Controller } from "react-hook-form";
 import { useEffect } from "react";
 import {
   Checkbox,
-  Grid,
+  Grid2,
   TextField,
   FormControlLabel,
   CardHeader,
@@ -21,8 +21,9 @@ import { useSubCategories } from "../../../hooks/useSubCategories";
 import { useCategories } from "../../../hooks/useCategories";
 import { useProducts } from "../../../hooks/useProducts";
 import { name } from "dayjs/locale/es";
+import { Link } from "react-router-dom";
 
-const MainFeatures = ({handleNext, handleBack, index, isLastStep}) => {
+const MainFeatures = ({ handleNext, handleBack, index, isLastStep }) => {
   const {
     loadSubCategories,
     subCategoriesByCategory,
@@ -30,20 +31,27 @@ const MainFeatures = ({handleNext, handleBack, index, isLastStep}) => {
   } = useSubCategories();
 
   const { categories, loadCategories } = useCategories();
-  const{ dataProduct, dataStep1 } =  useProducts()
-  
+  const { dataProduct, dataStep1 } = useProducts();
 
   useEffect(() => {
     loadCategories();
   }, []);
 
   const DefaultValues = (data) => {
-    
     return {
       fields: [
-        { id: "name", name: "Nombre del producto *", textInput: data?.name || "" },
+        {
+          id: "name",
+          name: "Nombre del producto *",
+          textInput: data?.name || "",
+        },
         { id: "brand", name: "Marca*", textInput: data?.brand || "" },
-        { id: "model", name: "Modelo", textInput: data?.model || "", checkbox: false },
+        {
+          id: "model",
+          name: "Modelo",
+          textInput: data?.model || "",
+          checkbox: false,
+        },
         {
           id: "gender",
           name: "Genero",
@@ -54,11 +62,11 @@ const MainFeatures = ({handleNext, handleBack, index, isLastStep}) => {
       ],
       category: data?.category || "",
       subCategory: data?.subCategory || "",
-      name : data?.name || "",
+      name: data?.name || "",
+      product_key: data?.product_key || "",
     };
   };
-  
-  
+
   const {
     control,
     handleSubmit,
@@ -66,13 +74,12 @@ const MainFeatures = ({handleNext, handleBack, index, isLastStep}) => {
     watch,
     formState: { errors },
   } = useForm({ defaultValues: DefaultValues(dataProduct) });
-  
 
   const fieldValues = watch("fields");
   const selectedCategory = watch("category");
 
   const onSubmit = async (data) => {
-    dataStep1(data, handleNext)
+    dataStep1(data, handleNext);
   };
 
   const handleCheckboxChange = (checked, index) => {
@@ -86,18 +93,18 @@ const MainFeatures = ({handleNext, handleBack, index, isLastStep}) => {
       variant="elevation"
       component={"form"}
       onSubmit={handleSubmit(onSubmit)}
-      
+      sx={{ paddingX: 2 }}
     >
       <CardHeader
         title="Características principales"
         subheader="Completa estos datos con las especificaciones del la tienda"
       />
 
-      <Grid container gap={2} padding={2}>
+      <Grid2 container gap={2} padding={2}>
         {fieldValues?.map(
           (field, index) =>
             field && (
-              <Grid item xs={12} sm={5} key={index}>
+              <Grid2 size={{ xs: 12, sm: 5 }} key={index}>
                 {/* Si el campo tiene "values", renderiza el Select, si no tiene, renderiza el TextField */}
                 {field.hasOwnProperty("values") ? (
                   <Controller
@@ -110,27 +117,27 @@ const MainFeatures = ({handleNext, handleBack, index, isLastStep}) => {
                       },
                     }}
                     render={({ field: valuesField }) => (
-                        <FormControl fullWidth>
-                        <InputLabel id='SelectedLabel'>Género</InputLabel>
-                      <Select
-                        {...valuesField}
-                        fullWidth
-                        labelId="SelectedLabel"
-                        label='Género'
-                        size="small"
-                        disabled={fieldValues[index]?.checkbox} // Deshabilita el Select si el checkbox está activo
-                        onChange={(e) => {
-                          valuesField.onChange(e.target.value);
-                        }}
-                        error={!!errors.fields?.[index]?.textInput}
-                      >
-                        {field.values.map((valueOption, idx) => (
-                          <MenuItem key={idx} value={valueOption}>
-                            {valueOption}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                        </FormControl>
+                      <FormControl fullWidth>
+                        <InputLabel id="SelectedLabel">Género</InputLabel>
+                        <Select
+                          {...valuesField}
+                          fullWidth
+                          labelId="SelectedLabel"
+                          label="Género"
+                          size="small"
+                          disabled={fieldValues[index]?.checkbox} // Deshabilita el Select si el checkbox está activo
+                          onChange={(e) => {
+                            valuesField.onChange(e.target.value);
+                          }}
+                          error={!!errors.fields?.[index]?.textInput}
+                        >
+                          {field.values.map((valueOption, idx) => (
+                            <MenuItem key={idx} value={valueOption}>
+                              {valueOption}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
                     )}
                   />
                 ) : (
@@ -184,12 +191,12 @@ const MainFeatures = ({handleNext, handleBack, index, isLastStep}) => {
                     )}
                   />
                 )}
-              </Grid>
+              </Grid2>
             )
         ) || []}
-      </Grid>
+      </Grid2>
 
-      <Grid container spacing={2} padding={2}>
+      <Grid2 container spacing={2} padding={2}>
         {/* Select de categoría */}
         <FormControl fullWidth error={!!errors.category}>
           <FormLabel>Categoría</FormLabel>
@@ -267,25 +274,50 @@ const MainFeatures = ({handleNext, handleBack, index, isLastStep}) => {
               : "Selecciona una subcategoría"}
           </FormHelperText>
         </FormControl>
-      </Grid>
+        <Controller
+        
+        control={control}
+        rules={{
+          required: {value:true, message:'Campo requerido *'},
+        }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextField
+            label='Clave SAT'
+            type="number"
+            size="small"
+            onBlur={onBlur}
+            onChange={onChange}
+            value={value}
+            error={errors.product_key ? true : false}
+            helperText={errors.product_key?.message ? errors.product_key.message : '' }
+           
+           
+          />
+        )}
+        name="product_key"
+      />
+        <Link
+          to={
+            "https://www.sat.gob.mx/consultas/53693/catalogo-de-productos-y-servicios"
+          }
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Buscar código
+        </Link>
+      </Grid2>
 
       <CardActions>
-      
-          <Button
-            disabled={index === 0}
-            onClick={handleBack}
-            sx={{ mt: 1, mr: 1 }}
-          >
-            Cancelar
-          </Button>
-      <Button
-            variant="contained"
-            type="submit"
-            sx={{ mt: 1, mr: 1 }}
-          >
-            {isLastStep ? 'Guardar' : 'Continuar'}
-          </Button>
-    
+        <Button
+          disabled={index === 0}
+          onClick={handleBack}
+          sx={{ mt: 1, mr: 1 }}
+        >
+          Cancelar
+        </Button>
+        <Button variant="contained" type="submit" sx={{ mt: 1, mr: 1 }}>
+          {isLastStep ? "Guardar" : "Continuar"}
+        </Button>
       </CardActions>
     </Card>
   );

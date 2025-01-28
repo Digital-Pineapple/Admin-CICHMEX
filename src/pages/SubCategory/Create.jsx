@@ -1,147 +1,317 @@
-import Box from "@mui/material/Box";
-import { useFormik } from "formik";
 import TextField from "@mui/material/TextField";
 import {
-  Grid,
-  TextareaAutosize,
   Button,
+  Typography,
+  Grid2,
+  IconButton,
   FormControl,
-  FormLabel,
+  FormHelperText,
+  Box,
+  InputLabel,
   Select,
   MenuItem,
-  FormHelperText,
-  Typography, ButtonGroup,
 } from "@mui/material";
-import { useServices } from "../../hooks/useServices";
-import { useSubCategories } from "../../hooks/useSubCategories";
-import { useEffect } from "react";
-import ProfileImageUploader from "../../components/ui/ProfileImageUploader";
 import { useCategories } from "../../hooks/useCategories";
-import { useAuthStore } from "../../hooks";
+import { Controller, useForm } from "react-hook-form";
+import { Delete, UploadFileRounded } from "@mui/icons-material";
+import { useEffect, useState } from "react";
+import { orange } from "@mui/material/colors";
+import { useSubCategories } from "../../hooks/useSubCategories";
 
-const Create = () => {
-  const { addSubCategory, navigate} = useSubCategories();
-  const { loadCategories, categories } = useCategories();
-  const {user} = useAuthStore()
-  useEffect(() => {
-    loadCategories();
-  }, [user]);
+const CreateSubCategory = ({ handleClose, categories, subCategory }) => {
 
-  const formik = useFormik({
-    initialValues: {
+  const { addSubCategory } = useSubCategories();
+
+  const {
+    formState: { errors },
+    control,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    resetField,
+  } = useForm({
+    defaultValues: {
       name: "",
-      category_id: ""
-    },
-    onSubmit: (values) => {
-      const values2 = {
-        ...values,
-        subCategory_image: values?.profile_image ? values?.profile_image : null,
-      };
-      try {
-         addSubCategory(values2);
-      } catch (error) {
-        return enqueueSnackbar(`Error: ${error.data.response?.message}`, {
-          variant: "error",
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "right",
-          },
-        });
-      }
+      category_id: "",
+      image: {
+        filePreview: null,
+        file: null,
+      },
     },
   });
-  
   const outCreate = () => {
-    navigate("/mi-almacen/subCategorias", { replace: true });
+    reset();
+    handleClose();
+  };
+  const onSubmit = (e) => {
+    addSubCategory(
+      {
+        name: e.name,
+        category_id: e.category_id,
+        subCategory_image: e.image.file,
+      },
+      handleClose
+    );
+  };
+
+  const currentImage = watch("image.filePreview");
+
+  const onChangeImage = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Crear vista previa del archivo
+    const filePreview = URL.createObjectURL(file);
+
+    // Actualizar los valores en el estado o formulario
+    setValue("image.filePreview", filePreview);
+    setValue("image.file", file);
+
+    // Limpiar el recurso de la URL cuando ya no sea necesario
+    return () => {
+      URL.revokeObjectURL(filePreview);
+    };
+  };
+
+  const removeImage = () => {
+    resetField("image");
   };
 
   return (
-    <Grid
-    container
-    component="form"
-    onSubmit={formik.handleSubmit}
-    style={{ marginLeft: "10%", height: "70%", width: "80%", display:'flex', justifyContent:'center' }}
+    <Grid2
+      container
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+      style={{ display: "flex", justifyContent: "center" }}
+      gap={1}
     >
-      <Grid
-        item
-        marginTop={{ xs: "-30px" }}
-        xs={12}
-        minHeight={"100px"}
-        className="Titles"
-      >
+      <Grid2 size={12} minHeight={"60px"} className="Titles">
         <Typography
           textAlign={"center"}
           variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
+          fontSize={{ xs: "20px", sm: "30px" }}
         >
-          Crear Subcategoría
+          Crear SubCategoria
         </Typography>
-      </Grid>
-      <Grid
-         item
-         sm={8}
-         display={"flex"}
-         flexDirection={"column"}
-         alignItems={"center"}
-      >
-         <Grid item xs={12} sm={5} md={5.7}>
-        <ProfileImageUploader
-          formik={formik}
-          id={"image"}
-          name={"image"}
+      </Grid2>
+
+      <Grid2 my={1} size={12}>
+        <Controller
+          control={control}
+          rules={{
+            required: "Campo requerido",
+          }}
+          name={`name`}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              label="Nombre*"
+              size="small"
+              autoComplete="off"
+              error={!!errors.name}
+              helperText={errors?.name?.message}
+            />
+          )}
         />
-      </Grid>
-        <TextField
-          focused
-          fullWidth
-          id="name"
-          name="name"
-          label="Nombre de la Subcategoría"
-          variant="outlined"
-          value={formik.values.name}
-          sx={{ margin: 2 }}
-          onChange={formik.handleChange}
-        />        
-        <FormControl fullWidth>
-          <FormLabel>Selecciona la categoría</FormLabel>
-          <Select
-            id="category_id"
-            name="category_id"
-            value={formik.values.category_id}
-            label="Selecciona la categoría"
-            onChange={formik.handleChange}
+      </Grid2>
+      <Grid2 size={12}>
+        <Controller
+          control={control}
+          name="category_id"
+          rules={{
+            required: { message: "Campo requerido", value: true },
+          }}
+          render={({ field }) => (
+            <FormControl fullWidth>
+              <InputLabel>Categoria</InputLabel>
+              <Select
+                {...field}
+                id="category_id "
+                label="Categoria"
+                value={field.value}
+                onChange={(e) => field.onChange(e.target.value)}
+                error={!!errors.category_id}
+                helperText={errors.category_id && errors.category_id.message}
+                autoComplete="off"
+              >
+                {categories.map((item, index) => (
+                  <MenuItem value={item._id} key={index}>
+                    {item.name}
+                  </MenuItem>
+                ))}
+              </Select>
+              <FormHelperText sx={{color:'error.main'}} >{errors?.category_id?.message}</FormHelperText>
+            </FormControl>
+            
+          )}
+        />
+      </Grid2>
+
+      <Grid2 display={"flex"} size={12}>
+        <Grid2
+          container
+          spacing={2}
+          display={"flex"}
+          justifyContent={"center"}
+          width={"100%"}
+        >
+          <Grid2 size={12}>
+            <Controller
+              control={control}
+              rules={{
+                required: "Campo requerido*",
+              }}
+              name={`image.file`}
+              render={({ field: { name, ref, onBlur } }) => {
+                const [isDragging, setIsDragging] = useState(false);
+
+                const handleDragOver = (event) => {
+                  event.preventDefault();
+                  setIsDragging(true);
+                };
+
+                const handleDragLeave = () => {
+                  setIsDragging(false);
+                };
+
+                const handleDrop = (event) => {
+                  event.preventDefault();
+                  setIsDragging(false);
+                  const droppedFiles = event.dataTransfer.files;
+                  if (droppedFiles.length) {
+                    onChangeImage({ target: { files: droppedFiles } });
+                  }
+                };
+
+                return (
+                  <Grid2
+                    display={!currentImage ? "flex" : "none"}
+                    flexDirection="column"
+                    alignItems="center"
+                    component="label"
+                    htmlFor={`imageInput`}
+                    sx={{ cursor: "pointer" }}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                  >
+                    <Box
+                      sx={{
+                        position: "relative",
+                        backgroundColor: isDragging
+                          ? "secondary.main"
+                          : !!errors?.image?.file
+                            ? "error.dark"
+                            : orange[200],
+                        width: "100%",
+                        minHeight: "150px",
+                        padding: "30px 70px",
+                        borderRadius: "20px",
+                        border: "2px dashed rgb(224, 115, 13)",
+                        textAlign: "center",
+                        transition: "background-color 0.3s ease-in-out",
+                        "&:hover": {
+                          backgroundColor: orange[400],
+                          border: "2px dashedrgb(250, 142, 0)",
+                        },
+                      }}
+                    >
+                      <Typography variant="body2" color="inherit">
+                        <UploadFileRounded />{" "}
+                        <strong>
+                          Seleccionar o arrastrar los archivos aquí
+                        </strong>
+                        <br />
+                        Sube tu imagen en WPEG, JPEG o PNG, con una resolución
+                        mínima de 50 píxeles en ambos lados y hasta 10 MB de
+                        peso.
+                      </Typography>
+                      <input
+                        id={`imageInput`}
+                        type="file"
+                        ref={ref}
+                        onBlur={onBlur}
+                        name={name}
+                        onChange={(e) => onChangeImage(e)}
+                        style={{ display: "none" }}
+                        accept="image/png, image/jpeg, image/wpeg"
+                      />
+                    </Box>
+                    <FormControl>
+                      <FormHelperText error={!!errors?.image?.file}>
+                        {errors?.image?.file?.message}
+                      </FormHelperText>
+                    </FormControl>
+                  </Grid2>
+                );
+              }}
+            />
+          </Grid2>
+
+          <Grid2
+            size={12}
+            display={currentImage ? "flex" : "none"}
+            alignContent={"center"}
+            flexDirection={"row"}
           >
-            {categories.map((category) => (
-              <MenuItem key={category._id} value={category._id}>
-                {category.name}
-              </MenuItem>
-            ))}
-          </Select>
-          <FormHelperText>Selecciona una Categoría</FormHelperText>
-        </FormControl>
-      </Grid>
-      <ButtonGroup
-        variant="contained"
-        color="inherit"
-        size="large"
-        aria-label="group"
-        fullWidth
-      >
-        <Button type="submit" variant="contained" color="success">
-          Guardar
-        </Button>
+            <Grid2
+              position="relative"
+              border="1px solid #ccc"
+              borderRadius="4px"
+              overflow="hidden"
+              marginX={1}
+            >
+              <img
+                src={currentImage}
+                alt="Preview"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+
+              <Box display="flex" justifyContent="space-between" mt={1}>
+                <IconButton
+                  size="small"
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    color: "red",
+                    backgroundColor: "white",
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeImage();
+                  }}
+                >
+                  <Delete fontSize="small" />
+                </IconButton>
+              </Box>
+            </Grid2>
+          </Grid2>
+        </Grid2>
+      </Grid2>
+
+      <Grid2 display={"flex"} gap={2} size={12}>
         <Button
           onClick={outCreate}
           variant="contained"
+          fullWidth
           size="large"
           color="warning"
         >
           Salir
         </Button>
-      </ButtonGroup>
-     
-    </Grid>
+        <Button type="submit" fullWidth variant="contained" color="success">
+          Guardar
+        </Button>
+      </Grid2>
+    </Grid2>
   );
 };
 
-export default Create;
+export default CreateSubCategory;

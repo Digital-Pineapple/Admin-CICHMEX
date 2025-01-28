@@ -66,11 +66,11 @@ const style = {
   p: 4,
 };
 
-const VariantsClothesAndShoes = ({handleCloseModal}) => {
+const VariantsClothesAndShoes = ({ handleCloseModal }) => {
   const { product, loading, dataAddVariants } = useProducts();
   const [collapseOpen, setCollapseOpen] = useState([]); // Array to track the open/close state of each variant
   const [open, setOpen] = useState({ image: null, value: false });
-  const sizeGuide = product?.size_guide
+  const sizeGuide = product?.size_guide;
   const handleOpen = (image) => {
     setOpen({ image: image, value: true });
   };
@@ -137,6 +137,7 @@ const VariantsClothesAndShoes = ({handleCloseModal}) => {
       size: "",
       price: "",
       porcentDiscount: "",
+      purchase_price: "",
       discountPrice: "",
       stock: null,
     };
@@ -153,40 +154,36 @@ const VariantsClothesAndShoes = ({handleCloseModal}) => {
 
   // Remove variant and its form values
   const MessageDelete = (variantId) => {
-    
-        const currentVariants = watch("variants") || [];
+    const currentVariants = watch("variants") || [];
 
-        // Filtra las variantes para eliminar la seleccionada
-        const updatedVariants = currentVariants.filter(
-          (variant) => variant.id !== variantId
-        );
+    // Filtra las variantes para eliminar la seleccionada
+    const updatedVariants = currentVariants.filter(
+      (variant) => variant.id !== variantId
+    );
 
-        // Actualiza el estado del formulario con las variantes restantes
-        setValue("variants", updatedVariants);
+    // Actualiza el estado del formulario con las variantes restantes
+    setValue("variants", updatedVariants);
   };
 
   const MessageDeleteSize = (variantId, sizeId) => {
-    
-        // Obtiene las variantes actuales
-        const currentVariants = watch("variants") || [];
+    // Obtiene las variantes actuales
+    const currentVariants = watch("variants") || [];
 
-        // Encuentra la variante por ID
-        const variantIndex = currentVariants.findIndex(
-          (variant) => variant.id === variantId
-        );
-        if (variantIndex === -1) return;
+    // Encuentra la variante por ID
+    const variantIndex = currentVariants.findIndex(
+      (variant) => variant.id === variantId
+    );
+    if (variantIndex === -1) return;
 
-        // Filtra las tallas para eliminar la seleccionada
-        const currentSizes = currentVariants[variantIndex]?.sizes || [];
-        const updatedSizes = currentSizes.filter((size) => size.id !== sizeId);
+    // Filtra las tallas para eliminar la seleccionada
+    const currentSizes = currentVariants[variantIndex]?.sizes || [];
+    const updatedSizes = currentSizes.filter((size) => size.id !== sizeId);
 
-        // Actualiza las tallas de la variante correspondiente
-        currentVariants[variantIndex].sizes = updatedSizes;
+    // Actualiza las tallas de la variante correspondiente
+    currentVariants[variantIndex].sizes = updatedSizes;
 
-        // Actualiza el estado del formulario con las variantes modificadas
-        setValue("variants", currentVariants);
-
-    
+    // Actualiza el estado del formulario con las variantes modificadas
+    setValue("variants", currentVariants);
   };
 
   const handleClick = (id) => {
@@ -197,36 +194,42 @@ const VariantsClothesAndShoes = ({handleCloseModal}) => {
     );
   };
 
-
-
   const onChangeImages = (event, indexVariant) => {
     const files = event.target.files; // Obtiene todos los archivos seleccionados
     if (!files || files.length === 0) return;
-  
+
     const currentImages = watch(`variants[${indexVariant}].images`) || [];
-  
+
     // Liberar memoria de URLs previas si necesitas limpiar vistas no utilizadas
     currentImages.forEach((image) => {
       if (image.filePreview) {
         URL.revokeObjectURL(image.filePreview);
       }
     });
-  
+
     // Filtrar los archivos seleccionados por tipo (solo imágenes)
-    const validFiles = Array.from(files).filter((file) => file.type.startsWith("image/"));
-  
+    const validFiles = Array.from(files).filter((file) =>
+      file.type.startsWith("image/")
+    );
+
     // Evitar duplicados verificando si ya existe un archivo con el mismo nombre
-    const newImages = validFiles.filter(
-      (file) => !currentImages.some((img) => img.file && img.file.name === file.name)
-    ).map((file) => ({
-      filePreview: URL.createObjectURL(file),
-      file, // Incluye el archivo para su uso futuro
-    }));
-  
+    const newImages = validFiles
+      .filter(
+        (file) =>
+          !currentImages.some((img) => img.file && img.file.name === file.name)
+      )
+      .map((file) => ({
+        filePreview: URL.createObjectURL(file),
+        file, // Incluye el archivo para su uso futuro
+      }));
+
     // Actualizar el estado con las nuevas imágenes
-    setValue(`variants[${indexVariant}].images`, [...currentImages, ...newImages]);
+    setValue(`variants[${indexVariant}].images`, [
+      ...currentImages,
+      ...newImages,
+    ]);
   };
-  
+
   const removeImage = (preview, index, i) => {
     const variantImages = watch(`variants.[${index}].images`);
     let updateImages = variantImages.filter((item, index) => index !== i);
@@ -238,8 +241,8 @@ const VariantsClothesAndShoes = ({handleCloseModal}) => {
     return Array.isArray(images) ? images : [];
   };
 
-  const onSubmit = ({variants}) => {
-        dataAddVariants(product._id, variants, handleCloseModal);
+  const onSubmit = ({ variants }) => {
+    dataAddVariants(product._id, variants, handleCloseModal);
   };
 
   const calculateDiscountPrice = (price, porcentDiscount) => {
@@ -297,10 +300,10 @@ const VariantsClothesAndShoes = ({handleCloseModal}) => {
     setValue(`variants[${indexVariant}].images`, newImages);
   };
 
-  const handleClickCloseModal =()=>{
-    handleCloseModal()
-    reset({variants:[]})
-  }
+  const handleClickCloseModal = () => {
+    handleCloseModal();
+    reset({ variants: [] });
+  };
 
   if (loading) {
     return <LoadingScreenBlue />;
@@ -311,10 +314,9 @@ const VariantsClothesAndShoes = ({handleCloseModal}) => {
       <Grid2
         component={"form"}
         onSubmit={handleSubmit(onSubmit)}
-        sx={{display:'flex', overflow: 'auto'}}
+        sx={{ display: "flex", overflow: "auto" }}
         container
       >
-       
         <Grid2 container size={12}>
           <Button
             variant="contained"
@@ -357,12 +359,10 @@ const VariantsClothesAndShoes = ({handleCloseModal}) => {
                     }
                     onClick={() => handleClick(item.id)}
                   >
-
                     <ListItemText
                       sx={{ minWidth: "150px" }}
                       primary={`Variante ${index + 1}`}
                     />
-                   
                   </ListItem>
 
                   <Grid2 container spacing={2}>
@@ -920,9 +920,6 @@ const VariantsClothesAndShoes = ({handleCloseModal}) => {
                                             positive: (value) =>
                                               value > 0 ||
                                               "El número debe ser mayor que cero",
-                                            lessThanMax: (value) =>
-                                              value < 100000 ||
-                                              "El número debe ser menor a 100,000",
                                           },
                                         }}
                                         name={`variants[${index}].sizes[${index1}].weight`}
@@ -948,6 +945,51 @@ const VariantsClothesAndShoes = ({handleCloseModal}) => {
                                         )}
                                       />
                                     </Grid2>
+                                    <Grid2 size={3.9}>
+                                      <Controller
+                                        control={control}
+                                        rules={{
+                                          required: "Campo requerido",
+                                          validate: {
+                                            positive: (value) =>
+                                              value > 0 ||
+                                              "El número debe ser mayor que cero",
+                                            lessThanNetPrice: (value) => {
+                                              const netPrice = getValues(
+                                                `variants[${index}].sizes[${index1}].price`
+                                              ); // Obtén el valor del precio neto
+                                              return (
+                                                value <= netPrice ||
+                                                "El precio de compra debe ser menor o igual que el precio neto"
+                                              );
+                                            },
+                                          },
+                                        }}
+                                        name={`variants[${index}].sizes[${index1}].purchase_price`}
+                                        render={({ field }) => (
+                                          <TextField
+                                            {...field}
+                                            fullWidth
+                                            size="small"
+                                            label="Precio de compra (MXN)*"
+                                            focused
+                                            autoComplete="off"
+                                            onChange={(e) => field.onChange(e)}
+                                            type="number"
+                                            error={
+                                              !!errors.variants?.[index]?.sizes[
+                                                index1
+                                              ]?.purchase_price
+                                            }
+                                            helperText={
+                                              errors.variants?.[index]?.sizes[
+                                                index1
+                                              ]?.purchase_price?.message
+                                            }
+                                          />
+                                        )}
+                                      />
+                                    </Grid2>
 
                                     <Grid2 size={3.9}>
                                       <Controller
@@ -958,9 +1000,6 @@ const VariantsClothesAndShoes = ({handleCloseModal}) => {
                                             positive: (value) =>
                                               value > 0 ||
                                               "El número debe ser mayor que cero",
-                                            lessThanMax: (value) =>
-                                              value < 100000 ||
-                                              "El número debe ser menor a 100,000",
                                           },
                                         }}
                                         name={`variants[${index}].sizes[${index1}].price`}
@@ -969,7 +1008,7 @@ const VariantsClothesAndShoes = ({handleCloseModal}) => {
                                             {...field}
                                             fullWidth
                                             size="small"
-                                            label="Precio (MXN)*"
+                                            label="Precio neto (MXN)*"
                                             focused
                                             autoComplete="off"
                                             onChange={(e) =>
@@ -1098,17 +1137,13 @@ const VariantsClothesAndShoes = ({handleCloseModal}) => {
           </List>
         </Grid2>
         <Grid2 size={12}>
-          <Button
-            onClick={handleClickCloseModal}
-            sx={{ mt: 1, mr: 1 }}
-          >
+          <Button onClick={handleClickCloseModal} sx={{ mt: 1, mr: 1 }}>
             Cancelar
           </Button>
           <Button variant="contained" type="submit" sx={{ mt: 1, mr: 1 }}>
-            Guardar 
+            Guardar
           </Button>
         </Grid2>
-
       </Grid2>
 
       <Modal

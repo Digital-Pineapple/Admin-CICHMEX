@@ -18,21 +18,20 @@ export const subCategoryReducer = createSlice({
       state.subCategory = payload;
     },
     onAddNewSubCategory: (state, { payload }) => {
-      state.subCategory = payload;
+      state.subCategories.push(payload);
     },
     deleteSubCategory: (state, { type, payload }) => {
       state.subCategories = state.subCategories.filter(subCategory => subCategory._id !== payload);
     },
-    editSubCategory: ( state, { payload } ) => {
-      state.subCategories = state.subCategories.map(subCategory => {
-        if (subCategory._id === payload._id) {
-          return {
-            ...subCategory,
-          };
-        }
-        return subCategory; // Mantener los elementos no modificados tal como están
-      });
-    }}})
+    editSubCategory: (state, { payload }) => {
+      state.subCategories = state.subCategories.map(subCategory =>
+        subCategory._id === payload._id
+          ? { ...subCategory, ...payload } // Actualizar solo la subcategoría coincidente
+          : subCategory // Retornar las demás sin cambios
+      );
+    } 
+  }})
+    
 
 export const { loadSubCategories,loadSubCategoriesByCategory, loadSubCategory, onAddNewSubCategory, deleteSubCategory, editSubCategory } = subCategoryReducer.actions;
 

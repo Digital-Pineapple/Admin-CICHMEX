@@ -6,7 +6,7 @@ import {
   CardHeader,
   Button,
   Checkbox,
-  Grid,
+  Grid2,
   TextField,
   FormControlLabel,
   FormControl,
@@ -17,7 +17,7 @@ import {
   InputLabel,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useSubCategories } from "../../../hooks/useSubCategories";
 import { useCategories } from "../../../hooks/useCategories";
 import { useProducts } from "../../../hooks/useProducts";
@@ -56,6 +56,7 @@ const MainFeaturesEdit = () => {
     category: data?.category?._id || "",
     subCategory: data?.subCategory?._id || "",
     name: data?.name || "",
+    product_key: data?.product_key || "",
   });
 
   const {
@@ -103,11 +104,11 @@ const MainFeaturesEdit = () => {
           </Button>
         }
       />
-      <Grid container gap={2} padding={2}>
+      <Grid2 container gap={2} padding={2}>
         {fieldValues?.map(
           (field, index) =>
             field && (
-              <Grid item xs={12} sm={5} key={index}>
+              <Grid2 size={{xs:12,sm:5}} key={index}>
                 {field.values ? (
                   <Controller
                     name={`fields.${index}.textInput`}
@@ -121,6 +122,8 @@ const MainFeaturesEdit = () => {
                         <Select
                           {...valuesField}
                           label={field.name}
+                          size="small"
+                          
                           disabled={field.checkbox}
                           error={!!errors.fields?.[index]?.textInput}
                         >
@@ -178,11 +181,11 @@ const MainFeaturesEdit = () => {
                     )}
                   />
                 )}
-              </Grid>
+              </Grid2>
             )
         )}
-      </Grid>
-      <Grid container spacing={2} padding={2}>
+      </Grid2>
+      <Grid2 container spacing={2} gap={1} padding={2}>
         <FormControl fullWidth error={!!errors.category}>
           <FormLabel>Categoría</FormLabel>
           <Controller
@@ -232,7 +235,37 @@ const MainFeaturesEdit = () => {
             {errors.subCategory?.message || "Selecciona una subcategoría"}
           </FormHelperText>
         </FormControl>
-      </Grid>
+         <Controller
+                control={control}
+                rules={{
+                  required: {value:true, message:'Campo requerido *'},
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextField
+                    label='Clave SAT'
+                    type="number"
+                    size="small"
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    value={value}
+                    error={errors.product_key ? true : false}
+                    helperText={errors.product_key?.message ? errors.product_key.message : '' }
+                   
+                   
+                  />
+                )}
+                name="product_key"
+              />
+                <Link
+                  to={
+                    "https://www.sat.gob.mx/consultas/53693/catalogo-de-productos-y-servicios"
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Buscar código
+                </Link>
+      </Grid2>
       <CardActions>
         <Button variant="contained" type="submit">
           Guardar

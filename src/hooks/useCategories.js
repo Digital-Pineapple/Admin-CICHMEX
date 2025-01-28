@@ -16,13 +16,13 @@ export const useCategories = () => {
 
     const deleteCategory = async category_id => await dispatch(deleteOneCategory(category_id));
     
-    const editCategory = async (category_id, values) => await dispatch(editOneCategory(category_id,values,navigate));
+    const editCategory = async (category_id, values, handleClose) => await dispatch(editOneCategory(category_id,values,handleClose));
     
-    const addCategory = async (values) => await dispatch(addOneCategory(values, navigate));
+    const addCategory = async (values, handleClose) => await dispatch(addOneCategory(values, handleClose));
 
     const searchCategory = async value => await dispatch(searchCategories(value));
 
-    return { navigate, categories, category, loadCategories, loadCategory, deleteCategory, editCategory, addCategory, searchCategory, loading }
+    return { navigate, categories, category, loadCategories, loadCategory, deleteCategory, editCategory, addCategory, searchCategory, loading, dispatch }
 
 
 }

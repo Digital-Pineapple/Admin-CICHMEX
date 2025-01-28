@@ -15,7 +15,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useProducts } from "../../../hooks/useProducts";
 
 const AddSizeModal = ({ productId, variant, sizes, handleClose }) => {
-  const {addOneSizeVariant} = useProducts()
+  const { addOneSizeVariant } = useProducts();
   const sizesExist = variant.items.map((i) => i.attributes.size);
   const availableSizes = sizes.filter(
     (size) => !sizesExist.some((existing) => existing === size.label)
@@ -33,12 +33,14 @@ const AddSizeModal = ({ productId, variant, sizes, handleClose }) => {
     images: variant.images,
     stock: "",
     product_id: productId,
+    purchase_price: "",
   });
   const {
     control,
     formState: { errors },
     handleSubmit,
     watch,
+    getValues,
     setValue,
   } = useForm({
     defaultValues: DefaultValues(variant),
@@ -71,7 +73,7 @@ const AddSizeModal = ({ productId, variant, sizes, handleClose }) => {
   };
 
   const onSubmit = (e) => {
-    addOneSizeVariant(e, handleClose )
+    addOneSizeVariant(e, handleClose);
   };
 
   return (
@@ -122,17 +124,51 @@ const AddSizeModal = ({ productId, variant, sizes, handleClose }) => {
       </Grid2>
       <Grid2 size={12}>
         <Controller
-          name={`price`}
+          name={"purchase_price"}
           control={control}
           rules={{
             required: "Campo requerido",
+            validate: (value) => {
+              const price = getValues('price');
+              return (
+                value <= price ||
+                "El precio de compra no puede ser mayor que el precio neto"
+              );
+            },
           }}
           render={({ field: textField }) => (
             <TextField
               {...textField}
               fullWidth
               size="small"
-              label={"Precio(MXN)*"}
+              label={"Precio de compra (MXN)*"}
+              autoComplete="off"
+              onChange={textField.onChange}
+              placeholder="Precio de compra"
+              type="number"
+              error={!!errors.purchase_price}
+              helperText={errors.purchase_price?.message}
+            />
+          )}
+        />
+      </Grid2>
+      <Grid2 size={12}>
+        <Controller
+          name={`price`}
+          control={control}
+          rules={{
+            required: "Campo requerido",
+            min: {
+              value: 0,
+              message: "El valor no puede ser menor a $0",
+            },
+          }}
+          render={({ field: textField }) => (
+            <TextField
+              {...textField}
+              fullWidth
+              size="small"
+              label={"Precio neto(MXN)*"}
               autoComplete="off"
               onChange={handlePriceChange}
               placeholder="Precio"

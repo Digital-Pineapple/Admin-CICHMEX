@@ -16,8 +16,10 @@ import MuiAccordion from "@mui/material/Accordion";
 import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import { useAuthStore } from "../../hooks";
-import { ListItemButton, ListItemText } from "@mui/material";
+import { Divider, Grid2, ListItemButton, ListItemText } from "@mui/material";
 import { Link } from "react-router-dom";
+import ImageMain from '../../assets/Images/CHMX/Imagotipo CICHMEX Naranja.png'
+import Image from "mui-image";
 
 const drawerWidth = 240;
 
@@ -87,16 +89,18 @@ export const Navbar = (props) => {
         position="fixed"
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          bgcolor: "primary.contrastText",
-          color: "primary.main",
+          bgcolor: "success.main",
+          color: "primary.contrastText",
         }}
+        
       >
-        <Toolbar
+        <Grid2
           sx={{
             display: "flex",
-            marginX: "5%",
-            justifyContent: "space-between",
+            justifyContent:'start'
+            
           }}
+          container
         >
           <IconButton
             sx={{ display: { xs: "flex", md: "none" }, color: "primary.main" }}
@@ -104,16 +108,28 @@ export const Navbar = (props) => {
           >
             <Menu />
           </IconButton>
+          <Grid2 width={drawerWidth} sx={{display:{xs:'none', md:'flex'}}} alignContent={'center'}  display={'flex'} paddingX={5} >
+          <Link to={'/'}>
+          <Image  src={ImageMain}  alt="image-main" style={{objectFit:'contain'}}  width={'160px'} />
+          </Link>
+          </Grid2>
+          <Divider orientation="vertical" flexItem/>
+          <Grid2 size={{xs:6, md:8, xl:9}} padding={1}>
           <Typography
             variant="h6"
             fontSize={{ xs: "20px", sm: "30px" }}
-            noWrap
-            component="div"
+            fontWeight={'Bold'}
+            
           >
             {user.fullname}
           </Typography>
+          </Grid2>
+          
+          <Grid2 size={{xs:1}} justifyContent={'center'} alignContent={'center'}>   
           <AvatarCustom />
-        </Toolbar>
+          </Grid2>
+        
+        </Grid2>
       </AppBar>
 
       <Drawer
@@ -162,7 +178,7 @@ export const Navbar = (props) => {
               </AccordionSummary>
               <AccordionDetails>
                 {group.subRoutes.map((item, subIndex) => (
-                  <ListItemButton
+                  <ListItemButton 
                     onClick={() => handleNavigateClick(item.path)}
                     key={subIndex}
                   >
