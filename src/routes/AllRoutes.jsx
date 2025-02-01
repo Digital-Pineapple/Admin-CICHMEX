@@ -84,6 +84,9 @@ import AllMySizeGuides from "../pages/SizeDimensions/AllMySizeGuides";
 import EditMySizeGuides from "../pages/SizeDimensions/EditMySizeGuide";
 import ReadyToSend from "../pages/Logistic/ReadyToSend";
 import MainToSend from "../pages/Logistic/PackageToSend/MainToSend";
+import Discounts from "../pages/Discounts/Discounts";
+import CreateDiscount from "../pages/Discounts/CreateDiscount";
+import UpdateDiscount from "../pages/Discounts/UpdateDiscount";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -110,7 +113,7 @@ export const AllRoutes = [
 
   { id: 17, element: <SubCategories /> },
   // { id: 18, element: <CreateSubCategory /> },
-  { id: 19, element: <EditSubCategory /> },
+  // { id: 19, element: <EditSubCategory /> },
 
   { id: 20, element: <TypeUser /> },
   { id: 21, element: <CreateTypeUser /> },
@@ -189,4 +192,7 @@ export const AllRoutes = [
   { id: 78, element: <EditMySizeGuides /> },
   { id: 79, element: <AssignRoute /> },
   { id: 80, element: <MainToSend /> },
+  { id: 120, element: <Discounts /> },
+  { id: 121, element: <CreateDiscount /> },
+  { id: 122, element: <UpdateDiscount /> },
 ];

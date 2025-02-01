@@ -5,8 +5,6 @@ export const themeSuperAdmin = createTheme({
   palette: {
     primary: {
        main:blueGrey[900],
-      //main: brown[900],
-      // main: purple[900],
       light: blueGrey[400],
       dark: blueGrey[900],
       contrastText: '#fff',
@@ -42,6 +40,13 @@ export const themeSuperAdmin = createTheme({
       dark: red[200],
       contrastText: '#fff'
     },
+    customColors:{
+      main: '#004a79', 
+      accent: purple[700],
+      cardBackground: blueGrey[100],
+    },
+    
+
     background:{
       default: blueGrey[50]
     }

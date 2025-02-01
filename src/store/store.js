@@ -23,6 +23,7 @@ import dynamicRoutes from "./reducer/dynamicRoutes";
 import paymentsReducer from "./reducer/paymentsReducer";
 import regionsReducer from "./reducer/regionsReducer";
 import sizeGuideReducer  from "./reducer/sizeGuideReducer";
+import  discountsReducer from "./reducer/discountsReducer";
 
 
 
@@ -32,6 +33,7 @@ const rootReducer = combineReducers({
   users: userReducer,
   allProductOrders: productOrdersReducer,
   dynamicRoutes : dynamicRoutes,
+  discounts: discountsReducer,
   services: servicesReducer,
   categories: categoryReducer,
   typeCars: typeCarReducer,

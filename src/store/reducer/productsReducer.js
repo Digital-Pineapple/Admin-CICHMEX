@@ -139,6 +139,9 @@ export const productsReducer = createSlice({
     },
     stopLoadingUpdate : ( state) =>{
       state.isLoading = false
+    },
+    onClearProducts: (state)=>{
+      state.products = []
     }
   },
 });
@@ -169,7 +172,8 @@ export const {
   onAddNewSizeVariant,
   updateIsMainVariant,
   loadProductsPaginate,
-  onDeleteVariant
+  onDeleteVariant,
+  onClearProducts
 } = productsReducer.actions;
 
 export default productsReducer.reducer;

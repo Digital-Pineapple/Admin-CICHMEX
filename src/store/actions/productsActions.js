@@ -22,6 +22,7 @@ import {
   onStepNewProductUpdate,
   loadProductsPaginate,
   onDeleteVariant,
+  onClearProducts,
 } from "../reducer/productsReducer";
 import {
   headerConfigApplication,
@@ -1592,6 +1593,68 @@ export const startSearchProducts = (value) => {
         }
       );
       dispatch(loadProductsPaginate({products:data.data.products, totalProducts: data.data.total}))
+    } catch (error) {
+      console.log(error);
+      
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
+}
+
+export const startLoadProductsByCategory = (name) => {
+
+  return async (dispatch) => {
+    dispatch(startLoading());
+    dispatch(onClearProducts())
+    try {
+      
+      const { data } = await instanceApi.get(
+        `/product/productsByCategory/search`,
+        {params:{
+          category_id: name
+        }},
+        {
+          headers: {
+            "Content-Type":"application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            
+          },
+          
+        }
+      );
+      
+      dispatch(loadProducts(data.data))
+    } catch (error) {
+      console.log(error);
+      
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
+}
+export const startLoadProductsBySubCategory = (name) => {
+
+  return async (dispatch) => {
+    dispatch(startLoading());
+    dispatch(onClearProducts())
+    try {
+      
+      const { data } = await instanceApi.get(
+        `/product/productsBySubCategory/search`,
+        {params:{
+          subCategory_id: name
+        }},
+        {
+          headers: {
+            "Content-Type":"application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            
+          },
+          
+        }
+      );
+      dispatch(loadProducts(data.data))
     } catch (error) {
       console.log(error);
       
