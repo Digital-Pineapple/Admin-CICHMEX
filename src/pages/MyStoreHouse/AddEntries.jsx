@@ -10,6 +10,8 @@ import {
   FormHelperText,
   MenuItem,
   Grid2,
+  Skeleton,
+  CircularProgress,
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import FormSearch from "../../components/Filters/FormSearch";
@@ -19,7 +21,7 @@ import Swal from "sweetalert2";
 import TableQuantity from "../../components/Tables/TableQuantity";
 
 const AddEntries = () => {
-  const { loadProducts, addMultipleEntries, navigate, loadProduct } =
+  const { loadProducts, addMultipleEntries, navigate, loadProduct, loading } =
     useProducts();
   const { user } = useAuthStore();
   const [product, setProduct] = useState(null);
@@ -180,11 +182,13 @@ const AddEntries = () => {
           <Typography variant="h6" textAlign={"center"} color="initial">
             Introduzca el nombre o código de barras del producto
           </Typography>
-          <FormSearch
+          {loading ? ( <CircularProgress variant="indeterminate" color="secondary"/>):(  <FormSearch
             setSelected={handleSelectedItem}
             allValues={allProducts}
             titleAlert={"Ya se agrego este producto"}
-          />
+           
+          />)}
+        
         </Grid2>
         <Grid2 size={{ xs: 12, md: 5.8 }}>
           <Typography variant="h6" textAlign={"center"} color="initial">
@@ -197,6 +201,7 @@ const AddEntries = () => {
             <Select
               id="variant"
               name="variant"
+              disabled={loading}
               onChange={(e) => {
                 setProduct(e.target.value);
                 setProductVariants([]);
