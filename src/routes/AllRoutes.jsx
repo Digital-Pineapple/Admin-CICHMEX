@@ -197,9 +197,9 @@ export const AllRoutes = [
   { id: 78, element: <EditMySizeGuides /> },
   { id: 79, element: <AssignRoute /> },
   { id: 80, element: <MainToSend /> },
-  { id: 120, element: <Discounts /> },
-  { id: 121, element: <CreateDiscount /> },
-  { id: 122, element: <UpdateDiscount /> },
+  { id: 100, element: <Discounts /> },
+  { id: 101, element: <UpdateDiscount /> },
+  { id: 102, element: <CreateDiscount /> },
   // { id: 80, element: <MainToSend /> },
   // { id: 80, element: <OrdersDeliveryPoint /> },
   
