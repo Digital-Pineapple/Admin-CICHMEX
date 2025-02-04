@@ -19,7 +19,7 @@ import Swal from "sweetalert2";
 import TableQuantity from "../../components/Tables/TableQuantity";
 
 const AddEntries = () => {
-  const { loadProducts, addMultipleEntries, navigate, loadProduct } =
+  const { loadProducts, addMultipleEntries, navigate, loadProduct, loading } =
     useProducts();
   const { user } = useAuthStore();
   const [product, setProduct] = useState(null);
@@ -197,6 +197,7 @@ const AddEntries = () => {
             <Select
               id="variant"
               name="variant"
+              disabled={loading ? true:false}
               onChange={(e) => {
                 setProduct(e.target.value);
                 setProductVariants([]);
