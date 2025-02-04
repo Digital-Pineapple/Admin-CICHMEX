@@ -20,7 +20,7 @@ import {
   TablePagination,
   Tooltip,
   Typography,
-  useTheme,
+  useTheme, Fab,
 } from "@mui/material";
 import { Workbook } from "exceljs";
 import {
@@ -36,6 +36,7 @@ import {
   Close,
   Check,
   Edit,
+  Add,
 } from "@mui/icons-material";
 import { useAuthStore } from "../../hooks";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
@@ -262,18 +263,13 @@ const renderType = (data) => {
         justifyContent={"end"}
         size={12}
       >
-        <Button
-          title="Recargar"
-          variant="contained"
-          endIcon={<Refresh />}
-          onClick={() => loadAllDiscounts()}
-          color="primary"
+        <Fab
+          color="secondary"
+          aria-label="Add-discount"
+          onClick={()=>navigate('/promociones/agregar_descuento')}
         >
-          Recargar
-        </Button>
-        <Button variant="contained" onClick={()=>navigate('/promociones/agregar_descuento')} color="secondary">
-          Crear descuento
-        </Button>
+          <Add />
+        </Fab>
       </Grid2>
       <Grid2 size={12}>
         <DataGrid

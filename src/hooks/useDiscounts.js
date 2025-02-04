@@ -18,7 +18,7 @@ export const useDiscounts = () => {
     const changeActiveDiscount = (id, value)=>dispatch(startLoadChangeActive(id, value))
 
 
-    return { loadAllDiscounts,createDiscount, discounts, discount, loading, loadingDiscount, loadDiscountDetail, updateDiscount, changeActiveDiscount}
+    return { loadAllDiscounts,createDiscount, discounts, discount, loading, loadingDiscount, loadDiscountDetail, updateDiscount, changeActiveDiscount, navigate}
 
 
 }

@@ -32,7 +32,7 @@ import { useDiscounts } from "../../hooks/useDiscounts";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 
 const CreateDiscount = () => {
-  const {loadingDiscount, createDiscount} = useDiscounts()
+  const { loadingDiscount, createDiscount, navigate } = useDiscounts();
   const [valuePromotion, setvaluePromotion] = useState({
     type: "percentage",
     key: Date.now(),
@@ -66,7 +66,7 @@ const CreateDiscount = () => {
       max_cart_amount: null,
       for_all_products: true,
       products: [],
-      is_active: 'active',
+      is_active: "active",
       maxUses: null,
     },
   });
@@ -97,8 +97,8 @@ const CreateDiscount = () => {
       resetField("percent");
       resetField("code");
     }
-    if (typeDiscountRender === 'for_creators') {
-      resetField("code")
+    if (typeDiscountRender === "for_creators") {
+      resetField("code");
     }
   }, [typeDiscountRender]);
 
@@ -218,18 +218,19 @@ const CreateDiscount = () => {
     );
   };
 
-
   const onSubmit = (data) => {
-   if (data.for_all_products === false && data.products.length === 0){
-    return Swal.fire({title:'Seleccione productos', icon:'error', confirmButtonColor:'red'})
-   }
-   else{
-   createDiscount(data)
-    
-   }
+    if (data.for_all_products === false && data.products.length === 0) {
+      return Swal.fire({
+        title: "Seleccione productos",
+        icon: "error",
+        confirmButtonColor: "red",
+      });
+    } else {
+      createDiscount(data);
+    }
   };
 
-  if (loadingDiscount) return <LoadingScreenBlue/>
+  if (loadingDiscount) return <LoadingScreenBlue />;
   return (
     <Grid2 container component={"form"} onSubmit={handleSubmit(onSubmit)}>
       <Grid2
@@ -352,7 +353,7 @@ const CreateDiscount = () => {
                                 disabled={typeDiscountRender === "for_creators"}
                                 onClick={() => {
                                   const newCode = generateRandomCode(10);
-                                  setValue("code", newCode)
+                                  setValue("code", newCode);
                                   setTimeout(() => {
                                     if (inputRef.current) {
                                       inputRef.current.focus();
@@ -504,9 +505,9 @@ const CreateDiscount = () => {
                 control={control}
                 rules={{
                   required: { value: true, message: "Campo requerido*" },
-                  validate: (value, formValues) => 
-                    value > formValues.min_cart_amount || 
-                    "El monto máximo debe ser mayor al mínimo"
+                  validate: (value, formValues) =>
+                    value > formValues.min_cart_amount ||
+                    "El monto máximo debe ser mayor al mínimo",
                 }}
                 render={({ field }) => (
                   <TextField
@@ -676,7 +677,24 @@ const CreateDiscount = () => {
           {renderProductsFilter(forProducts.type)}
         </CardContent>
         <CardActions>
-          <Button variant="text" color="primary" size="small" type="submit">
+          <Button
+            fullWidth
+            variant="contained"
+            color="warning"
+            size="small"
+            onClick={() =>
+              navigate("/promociones/descuentos", { replace: true })
+            }
+          >
+            cancelar
+          </Button>
+          <Button
+            fullWidth
+            variant="contained"
+            color="success"
+            size="small"
+            type="submit"
+          >
             Guardar
           </Button>
         </CardActions>
