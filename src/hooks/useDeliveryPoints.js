@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { activateDeliveryPoint, desactivateDeliveryPoint, getDeliveryPoint, getPoints, handleDeleteDeliveryPoint, loadSucursalRegister, updateDeliveryPoint } from "../store/actions/deliveryPoints";
+import { activateDeliveryPoint, deleteBranchImage, desactivateDeliveryPoint, getDeliveryPoint, getPoints, handleDeleteDeliveryPoint, loadSucursalRegister, updateDeliveryPoint } from "../store/actions/deliveryPoints";
 import { resetDeliveryPoint } from "../store/reducer/deliveryPointsReducer";
 import { useNavigate } from "react-router-dom";
 import { getOrdersByBranch } from "../store/actions/deliveryPointsOrders";
@@ -37,6 +37,10 @@ const useDeliveryPoints = () => {
   const onLoadOrdersByPointDelivery = (id) => {
     dispatch(getOrdersByBranch(id));
   }
+
+  const onDeleteImage = (branch_id, image_id) => {
+    dispatch(deleteBranchImage(branch_id, image_id));
+  }
   
 
   return {
@@ -52,7 +56,8 @@ const useDeliveryPoints = () => {
     onActivateDeliveryPoint,
     onDesactivateDeliveryPoint,
     onLoadOrdersByPointDelivery,
-    orders        
+    orders,
+    onDeleteImage      
   }
 };
 

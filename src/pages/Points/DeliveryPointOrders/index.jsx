@@ -20,37 +20,21 @@ import { Workbook } from "exceljs";
 import DeleteAlertInput from "../../../components/ui/DeleteAlertInput";
 import SwitchButton from "../../../components/Buttons/SwitchButton";
 import useDeliveryPoints from "../../../hooks/useDeliveryPoints";
-import QRScanner from "../../../components/QR/QRScanner";
 import QRScannerV2 from "../../../components/QR/QRScannerV2";
-import { useDispatch } from "react-redux";
-import { setOrdersByDeliveryPoint } from "../../../store/reducer/deliveryPointsReducer";
 
 
 export const DeliveryPointsOrder = () => {
   const { id, name } = useParams();
   const { onLoadOrdersByPointDelivery, orders } = useDeliveryPoints();
-  const navigate = useNavigate();  
-  const [valuesQr, setvaluesQr] = useState(null);  
-  const dispatch = useDispatch();
+  const navigate = useNavigate();    
   const rowsWithIds = orders.map((order, _id) => ({
-    id: _id.toString(), 
+    id: _id.toString(),
     ...order,  
   }));  
 
 
-  
-  useEffect(() => {
-    if (valuesQr) {
-      loadVerifyQR(valuesQr);
-      setvaluesQr(null);
-    }
-  }, [valuesQr]);
-
   useEffect(() => {
     onLoadOrdersByPointDelivery(id);
-    return () => {
-      dispatch(setOrdersByDeliveryPoint([]))
-    }
   }, []);
 
   return (
@@ -66,7 +50,8 @@ export const DeliveryPointsOrder = () => {
           Pedidos {name}
         </Typography>
       </Grid>  
-      <Grid container display={"flex"} alignContent={"center"}>        
+      <Grid container display={"flex"} alignContent={"center"}>
+        {/* <QRScanner /> */}
         <QRScannerV2 />
       </Grid>
       <DataGrid

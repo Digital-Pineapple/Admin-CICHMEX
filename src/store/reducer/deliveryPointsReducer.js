@@ -51,10 +51,13 @@ export const deliveryPointsReducer = createSlice({
     },
     setOrdersByDeliveryPoint: (state, {payload}) => {
       state.orders = payload
+    },
+    deleteDeliveryPointImage: (state, {payload}) => {
+      state.deliveryPoint.images = state.deliveryPoint.images.filter(image=> image._id !== payload)
     }
   }
   })
 
-export const { loadDeliveryPoints, loadDeliveryPoint, onAddNewDeliveryPoint, deleteDeliveryPoint, editDeliveryPoint, resetDeliveryPoint, setLoading, toggleBranch, setOrdersByDeliveryPoint } = deliveryPointsReducer.actions;
+export const { loadDeliveryPoints, loadDeliveryPoint, onAddNewDeliveryPoint, deleteDeliveryPoint, editDeliveryPoint, resetDeliveryPoint, setLoading, toggleBranch, setOrdersByDeliveryPoint, deleteDeliveryPointImage } = deliveryPointsReducer.actions;
 
 export default deliveryPointsReducer.reducer;

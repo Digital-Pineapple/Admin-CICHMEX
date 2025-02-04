@@ -1,6 +1,6 @@
 import { enqueueSnackbar } from "notistack";
 import { instanceApi } from "../../apis/configAxios";
-import { loadDeliveryPoint, loadDeliveryPoints, deleteDeliveryPoint, setLoading, toggleBranch } from "../reducer/deliveryPointsReducer";
+import { loadDeliveryPoint, loadDeliveryPoints, deleteDeliveryPoint, setLoading, toggleBranch, deleteDeliveryPointImage } from "../reducer/deliveryPointsReducer";
 import Swal from "sweetalert2";
 
 export const getPoints = () => {
@@ -34,7 +34,7 @@ export const getDeliveryPoint = (id, callback) => {
 };
 
 
-export const updateDeliveryPoint = ( id, infoBranch, coords, images, schedules, navigate ) => {
+export const updateDeliveryPoint = ( id, infoBranch, coords, schedules , images, navigate ) => {
   const { lat, lng } = coords  
   const { name, description, zipcode: cp, neighborhood, phone, state_id, state, municipality_id, municipality, direction } = infoBranch;
   return async (dispatch) => {    
@@ -225,12 +225,6 @@ export const desactivateDeliveryPoint = (id, name = "") => {
   }   
 }
 
-// {
-//   headers: {
-//     "Content-type": "application/json",
-//     Authorization: `Bearer ${localStorage.getItem("token")}`,
-//   },
-// }
 export const loadVerifyQROrder = ({ order, user, code } ) => {    
   return async (dispatch) => {
     try {        
@@ -279,6 +273,40 @@ export const doneDelivery = (order_id, notes = "El pedido fue entregado") => {
     }
   };
 };
+
+export const deleteBranchImage = (branch_id, image_id) => {
+  return async (dispatch) => {
+    Swal.fire({
+      title: `Quieres eliminar esta imagen`,      
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const body = { image_id: image_id }
+           await instanceApi.delete(`/branch-offices/image/${branch_id}`, body, {
+             headers: {
+               "Authorization": `Bearer ${localStorage.getItem("token")}`
+             }
+           });     
+           await dispatch(deleteDeliveryPointImage(image_id));       
+        } catch (error) {
+          Swal.fire({
+            text: `Hubo un error`,
+            icon: "error",
+            timer: 2000, // Se cierra automáticamente en 3 segundos
+            // timerProgressBar: true, // Muestra una barra de progreso
+          })            
+        }
+      }
+    });
+  
+  }
+}
 
 
 

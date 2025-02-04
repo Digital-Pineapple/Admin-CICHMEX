@@ -186,10 +186,7 @@ function CreateDeliveryPoint() {
             <InputControl
               name={"name"}
               label={"Nombre de la sucursal"}
-              rules={{
-                required: "El nombre es obligatorio",
-                minLength: { value: 5, message: "Mínimo 5 caracteres" },
-              }}
+              rules={{ required: "El nombre es obligatorio" }}
               control={control}
               errors={errors}
             />

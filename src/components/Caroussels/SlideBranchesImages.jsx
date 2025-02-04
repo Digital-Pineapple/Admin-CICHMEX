@@ -26,7 +26,7 @@ export const SlideBranchesImages = ({image, images, altura}) => {
                <SwiperSlide key={index}
                 // style={{width:'100%'}}
                 >
-                <img src={item} 
+                <img src={item.url} 
                      style={{ 
                        height: altura, 
                        width:'100%'

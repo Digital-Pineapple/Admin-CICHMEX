@@ -22,6 +22,7 @@ import useImagesV2 from "../../hooks/useImagesV2";
 import useDeliveryPoints from "../../hooks/useDeliveryPoints";
 import { useParams } from "react-router-dom";
 import { parseScheduleAdapter } from "../../adapters/branch";
+import ImageDeleteCard from "../../components/cards/ImageDeleteCard";
 const styleContainer = {
   width: "100%",
   height: "600px",
@@ -29,11 +30,11 @@ const styleContainer = {
 
 function BranchOfficeEdit() {
   const { id } = useParams();  
-  const { addImage, deleteImage, images } = useImagesV2();
-  const isSmallScreen = useMediaQuery("(max-width:600px)");
-  const dispatch = useDispatch();
+  const { addImage, deleteImage, images, imagesFiles } = useImagesV2();
+  const zipcodeURL = "https://www.correosdemexico.gob.mx/SSLServicios/ConsultaCP/Descarga.aspx";
+  const isSmallScreen = useMediaQuery("(max-width:600px)");  
   const { navigate } = useAuthStore();
-  const { onGetDeliveryPoint, onResetDeliveryPoint } = useDeliveryPoints();
+  const { onGetDeliveryPoint, onResetDeliveryPoint, deliveryPoint, onEditDeliveryPoint, onDeleteImage } = useDeliveryPoints();
   const [loading, setLoading] = useState(false);  
   const { formState: { errors }, handleSubmit, control, watch, setValue, setError, clearErrors } = useForm();
   const { isLoaded } = useLoadScript({
@@ -87,11 +88,11 @@ function BranchOfficeEdit() {
 
   }, []);
 
-  const registerBranchOffice = (data) => {    
+  const editBranchOffice = (data) => {    
     if (!marker.lat && !marker.lng) {
       return;
     } else {
-      dispatch(loadSucursalRegister(data, marker, schedules_f, imagesFiles(), navigate));
+      onEditDeliveryPoint(id, data, marker, schedules_f, imagesFiles());
     }
   };
 
@@ -188,7 +189,7 @@ function BranchOfficeEdit() {
 
   return (
     <Container maxWidth="lg">
-      <form onSubmit={handleSubmit(registerBranchOffice)}>
+      <form onSubmit={handleSubmit(editBranchOffice)}>
         <Typography
           textAlign="center"
           marginY="1rem"
@@ -203,10 +204,7 @@ function BranchOfficeEdit() {
             <InputControl
               name={"name"}
               label={"Nombre de la sucursal"}
-              rules={{
-                required: "El nombre es obligatorio",
-                minLength: { value: 5, message: "Mínimo 5 caracteres" },
-              }}
+              rules={{ required: "El nombre es obligatorio" }}
               control={control}
               errors={errors}
             />
@@ -218,12 +216,8 @@ function BranchOfficeEdit() {
               control={control}
               errors={errors}
               type={"tel"}
-              rules={{
-                required: "El teléfono es obligatorio",
-              }}
-              startAdornment={
-                <InputAdornment position="start">+52</InputAdornment>
-              }
+              rules={{ required: "El teléfono es obligatorio" }}
+              startAdornment={ <InputAdornment position="start">+52</InputAdornment> }
             />
           </Grid>
           <Grid item xs={4}>
@@ -232,11 +226,20 @@ function BranchOfficeEdit() {
               label={"Descripción de la sucursal"}
               control={control}
               errors={errors}
-              multiline
-              // rows={2}
+              multiline              
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={6}>            
+            <br></br>   
+            {
+              deliveryPoint?.images?.length > 0 && deliveryPoint?.images?.map((image, index)=>{
+                return (
+                  <ImageDeleteCard handleDelete={() => onDeleteImage(id, image?._id)} src={image?.url} key={index}/>
+                );
+              })
+            }
+            <br></br>
+            <br></br>            
             <Box flexGrow={1} bgcolor={""}>
               <Typography variant="body2">
                 Agrega imagenes de tu sucursal
@@ -312,10 +315,7 @@ function BranchOfficeEdit() {
                   setInputsByZipcode(value);                  
                 }}
               />
-              <Link
-                sx={{ cursor: "pointer", ml: 2, fontSize: "12px" }}
-                onClick={() => redirectTo("https://www.correosdemexico.gob.mx/SSLServicios/ConsultaCP/Descarga.aspx")}
-              >
+              <Link sx={{ cursor: "pointer", ml: 2, fontSize: "12px" }} onClick={() => redirectTo(zipcodeURL)}>
                 No sé mi código postal
               </Link>
             </Stack>
