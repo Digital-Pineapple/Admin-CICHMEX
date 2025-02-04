@@ -87,6 +87,11 @@ import MainToSend from "../pages/Logistic/PackageToSend/MainToSend";
 import Discounts from "../pages/Discounts/Discounts";
 import CreateDiscount from "../pages/Discounts/CreateDiscount";
 import UpdateDiscount from "../pages/Discounts/UpdateDiscount";
+import CreateDeliveryPoint from "../pages/Points/Create";
+import { PointsList } from "../pages/Points/PointsList";
+import BranchOfficeEdit from "../pages/Points/Edit";
+import BranchOfficeDetail from "../pages/Points/Detail";
+import { DeliveryPointsOrder } from "../pages/Points/DeliveryPointOrders";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -195,4 +200,12 @@ export const AllRoutes = [
   { id: 120, element: <Discounts /> },
   { id: 121, element: <CreateDiscount /> },
   { id: 122, element: <UpdateDiscount /> },
+  // { id: 80, element: <MainToSend /> },
+  // { id: 80, element: <OrdersDeliveryPoint /> },
+  
+  { id: 90, element: <CreateDeliveryPoint /> },
+  { id: 91, element: <BranchOfficeEdit /> },    
+  { id: 92, element: <BranchOfficeDetail />},    
+  {id: 93, element: <DeliveryPointsOrder />},
+  { id: 74, element: <PointsList /> }
 ];

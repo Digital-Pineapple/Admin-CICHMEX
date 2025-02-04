@@ -3,8 +3,21 @@ import Swal from 'sweetalert2';
 
 
 export const instanceApi = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_API_URL, 
 });
+instanceApi.defaults.headers.common["Content-Type"] = "application/json"; 
+instanceApi.interceptors.request.use(
+  async (config) => {        
+      const token = await localStorage.getItem("token");
+      if (token) {
+          config.headers.Authorization = `Bearer ${token}`      
+      }
+      return config;
+  },
+  (error) => {       
+      return Promise.reject(error);
+  }    
+);
 
 instanceApi.interceptors.response.use (
   response => response,
