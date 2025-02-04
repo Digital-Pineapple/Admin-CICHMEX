@@ -288,7 +288,7 @@ export const deleteBranchImage = (branch_id, image_id) => {
       if (result.isConfirmed) {
         try {
           const body = { image_id: image_id }
-           await instanceApi.delete(`/branch-offices/image/${branch_id}`, body, {
+           await instanceApi.put(`/branch-offices/image/${branch_id}`, body, {
              headers: {
                "Authorization": `Bearer ${localStorage.getItem("token")}`
              }
