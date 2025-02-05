@@ -182,13 +182,18 @@ const AddEntries = () => {
           <Typography variant="h6" textAlign={"center"} color="initial">
             Introduzca el nombre o código de barras del producto
           </Typography>
-          {loading ? ( <CircularProgress variant="indeterminate" color="secondary"/>):(  <FormSearch
+          {loading ? (
+            <>
+            <CircularProgress variant="indeterminate" color="secondary" />
+            <Typography>Cargando productos...</Typography>
+            </>
+            ) : (<FormSearch
             setSelected={handleSelectedItem}
             allValues={allProducts}
             titleAlert={"Ya se agrego este producto"}
-           
+
           />)}
-        
+
         </Grid2>
         <Grid2 size={{ xs: 12, md: 5.8 }}>
           <Typography variant="h6" textAlign={"center"} color="initial">
@@ -207,22 +212,22 @@ const AddEntries = () => {
                 setProductVariants([]);
               }}
               sx={{
-               
+
                 border: productVariants.length > 0 ? "2px solid #00897b" : "",
                 borderRadius: "4px",
-                overflowY:"auto"
+                overflowY: "auto"
               }}
             >
               {productVariants?.map((variant) => (
                 <MenuItem
                   sx={{
                     backgroundColor: "success.main",
-                    color:'primary.contrastText',
+                    color: 'primary.contrastText',
 
                     transition: "border-color 0.3s ease-in-out", // Efecto de transición
                     "&:hover": {
                       backgroundColor: "secondary.main",
-                      
+
                     },
                   }}
                   key={variant._id}
