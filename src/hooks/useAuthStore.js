@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
+  startChangePassword,
   startLogin,
   startLogout,
   startRevalidateToken,
@@ -17,6 +18,7 @@ export const useAuthStore = () => {
   const RevalidateToken = async () => dispatch(startRevalidateToken(navigate));
   const LoadPublicRoutes = async ()=>  dispatch(startPublicLinks());
   const loadLogout = async () => dispatch(startLogout(navigate));
+  const changePassword = ( values, handleClose) => dispatch(startChangePassword(values,handleClose))
 
    const componentLinks = (routes) => {
         const routeNotFound = AllRoutes.find((e) => e.id === 1);
@@ -43,7 +45,8 @@ export const useAuthStore = () => {
     LoadPublicRoutes,
     loadLogout,
     componentLinks,
-    loading
+    loading,
+    changePassword
 
   };
 };

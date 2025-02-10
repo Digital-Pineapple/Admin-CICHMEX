@@ -5,22 +5,23 @@ import { setLinks, startLoading, stopLoading } from "../reducer/uiReducer";
 import { createAsyncThunk } from "@reduxjs/toolkit/dist";
 import { AllRoutes } from "../../routes/AllRoutes";
 import { enqueueSnackbar } from "notistack";
+import Swal from "sweetalert2";
 
 export const fetchRoutes = createAsyncThunk('/auth/fetchRoutes', async (token) => {
-  const {data} = await instanceApi.get(`/dynamic-route/links/all`,{
+  const { data } = await instanceApi.get(`/dynamic-route/links/all`, {
     headers: {
       "Content-type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    params:{
-      system:"Admin"
+    params: {
+      system: "Admin"
     }
   });
   return data.data;
 });
 
 export const startLogin = (email, password, captcha, navigate) => {
-  
+
   return async (dispatch) => {
     dispatch(startLoading());
     try {
@@ -29,15 +30,15 @@ export const startLogin = (email, password, captcha, navigate) => {
         password: password,
         captchaToken: captcha,
       });
-      
+
       localStorage.setItem("token", data.data.token);
       dispatch(onLogin(data.data.user));
       await dispatch(fetchRoutes(data.data.token));
       navigate("/principal", { replace: true });
-      
+
     } catch (error) {
-     console.log(error);
-     
+      console.log(error);
+
     } finally {
       dispatch(stopLoading());
     }
@@ -58,9 +59,9 @@ export const startRevalidateToken = (navigate) => {
       await dispatch(fetchRoutes(data.data.token));
       dispatch(onLogin(data.data.user));
     } catch (error) {
-      const errorMessage = 
-        error.response?.data?.message || 
-        (error.response?.data?.errors?.[0]?.message) || 
+      const errorMessage =
+        error.response?.data?.message ||
+        (error.response?.data?.errors?.[0]?.message) ||
         'Ocurrió un error inesperado';
       dispatch(onLogout(errorMessage));
       localStorage.clear();
@@ -69,16 +70,44 @@ export const startRevalidateToken = (navigate) => {
   };
 };
 
- export const startLogout = (navigate) => {
-  return async (dispatch)=>{
+export const startLogout = (navigate) => {
+  return async (dispatch) => {
     dispatch(startLoading());
     try {
       dispatch(onLogout());
       localStorage.clear();
-      navigate('/login',{replace:true})
+      navigate('/login', { replace: true })
     } catch (error) {
-      console.log(error); 
-    }finally{
+      console.log(error);
+    } finally {
+      dispatch(stopLoading());
+    }
+  }
+}
+
+export const startChangePassword = ({ oldPassword, newPassword }, onCloseModal) => {
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      const { data } = await instanceApi.put(
+        "/auth/change/password/admin",
+        {},
+        {
+          params: {
+            password: oldPassword,
+            new_password: newPassword
+          },
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      onCloseModal()
+      Swal.fire({ title: `${data.message}`, icon: 'success', confirmButtonColor: 'green' })
+    } catch (error) {
+      console.log(error);
+    } finally {
       dispatch(stopLoading());
     }
   }

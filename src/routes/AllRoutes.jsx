@@ -95,6 +95,7 @@ import { DeliveryPointsOrder } from "../pages/Points/DeliveryPointOrders";
 import Banners from "../pages/Banners/Banners";
 import CreateSlider from "../pages/Banners/CreateSlider";
 import UpdateSlider from "../pages/Banners/UpdateSlider";
+import MyAccount from "../pages/Settings/MyAccount";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -214,4 +215,5 @@ export const AllRoutes = [
   { id: 110, element: <Banners /> },
   { id: 111, element: <CreateSlider /> },
   { id: 112, element: <UpdateSlider /> },
+  { id: 120, element: <MyAccount /> },
 ];
