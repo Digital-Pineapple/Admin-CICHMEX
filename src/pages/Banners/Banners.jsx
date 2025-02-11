@@ -46,6 +46,7 @@ import DeleteAlert from "../../components/ui/DeleteAlert";
 import EditButton from "../../components/Buttons/EditButton";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import { useAuthStore, useUI } from "../../hooks";
+import DetailSlide from "./DetailSlide";
 
 
 function Pagination({ page, onPageChange, className }) {
@@ -109,11 +110,11 @@ const Banners = () => {
         setOpen({ value: false, image: '' })
     }
 
-    const handleOpenDetail = (data) => {
-        setOpen({ value: true, slide: data })
+    const handleOpenDetail = (data) => {    
+        setOpenDetail({ value: true, slide: data })
     }
     const handleCloseDetail = () => {
-        setOpen({ value: false, slide: '' })
+        setOpenDetail({ value: false, slide: '' })
     }
 
 
@@ -123,34 +124,6 @@ const Banners = () => {
             id: _id.toString(),
             ...item,
         })) || [];
-
-    const exportToExcel = () => {
-        const workbook = new Workbook();
-        const worksheet = workbook.addWorksheet("Categorias");
-
-        // Agregar encabezados de columna
-        const headerRow = worksheet.addRow([
-            "ID",
-            "Nombre de la categoria",
-            "Imagen",
-        ]);
-        headerRow.eachCell((cell) => {
-            cell.font = { bold: true };
-        });
-
-        // Agregar datos de las filas
-        rowsWithIds.forEach((row) => {
-            worksheet.addRow([row._id, row.name]);
-        });
-
-        // Crear un Blob con el archivo Excel y guardarlo
-        workbook.xlsx.writeBuffer().then((buffer) => {
-            const blob = new Blob([buffer], {
-                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            });
-            saveAs(blob, "categorias.xlsx");
-        });
-    };
 
     function CustomToolbar() {
         const apiRef = useGridApiContext();
@@ -216,14 +189,6 @@ const Banners = () => {
                 </Typography>
             </Grid2>
             <Grid2 size={12}>
-                <Button
-                    //   onClick={() => loadCategories()}
-                    variant="contained"
-                    color="primary"
-                >
-                    <RefreshOutlined />
-                    Recargar
-                </Button>
                 <Fab
                     sx={{ right: "-80%" }}
                     onClick={() => navigate('/contenidos/banners/agregar')}
@@ -293,7 +258,7 @@ const Banners = () => {
                                 <IconButton
                                     aria-label="ver detalle"
                                     color="primary"
-                                //   onClick={() => handleOpen(params.row)}
+                                   onClick={() => handleOpenDetail(params.row)}
                                 >
                                     <Visibility />
                                 </IconButton>
@@ -352,7 +317,7 @@ const Banners = () => {
                 aria-describedby="modal-detail-slide"
             >
                 <Box sx={style}>
-                    
+                    <DetailSlide slide={openDetail.slide}/>
                 </Box>
             </Modal>
 
