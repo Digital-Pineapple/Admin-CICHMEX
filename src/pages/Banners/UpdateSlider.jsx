@@ -29,7 +29,7 @@ const UpdateSlider = () => {
     const { id } = useParams()
     const { loadAllDiscounts, discounts } = useDiscounts();
     const [selectedDiscount, setSelectedDiscount] = useState({})
-    const { createOneBanner, loading, navigate, loadOneBanner, banner } = useUI()
+    const { updateOneBanner, loading, navigate, loadOneBanner, banner } = useUI()
 
     const [isDragging, setIsDragging] = useState(false);
     const [fileErrors, setFileErrors] = useState({});
@@ -173,7 +173,7 @@ const UpdateSlider = () => {
         return { 
             is_active: data.is_active || false,
             no_slide: data.no_slide || 0,
-            discount: data.discount._id || "",
+            discount: data.discount?._id || "",
             title: data.title || "",
             description: data.description || "",
             type_event: data.type_event || 'non-click',
@@ -204,9 +204,7 @@ const UpdateSlider = () => {
 
 
     const onSubmit = async (data) => {
-        console.log(data);
-        
-        // createOneBanner(data)
+        updateOneBanner(id, data)
     };
 
     const onChangeDiscount = (data) => {
@@ -452,7 +450,17 @@ const UpdateSlider = () => {
                                                         }}
                                                     >
                                                         <img
-                                                            src={ field.value.startsWith('https') ?  field.value :  URL.createObjectURL(field.value)}
+                                                            src={
+                                                                field.value
+                                                                  ? typeof field.value === 'string'
+                                                                    ? field.value.startsWith('https')
+                                                                      ? field.value
+                                                                      : URL.createObjectURL(field.value)
+                                                                    : URL.createObjectURL(field.value)
+                                                                  : undefined
+                                                              }
+                                                              
+                                                              
                                                             alt="Preview"
                                                             style={{
                                                                 width: "100%",
@@ -542,7 +550,16 @@ const UpdateSlider = () => {
                                                         }}
                                                     >
                                                         <img
-                                                            src={ field.value.startsWith('https') ?  field.value :  URL.createObjectURL(field.value)}
+                                                            src={
+                                                                field.value
+                                                                  ? typeof field.value === 'string'
+                                                                    ? field.value.startsWith('https')
+                                                                      ? field.value
+                                                                      : URL.createObjectURL(field.value)
+                                                                    : URL.createObjectURL(field.value)
+                                                                  : undefined
+                                                              }
+                                                              
                                                             alt="Preview"
                                                             style={{
                                                                 width: "100%",

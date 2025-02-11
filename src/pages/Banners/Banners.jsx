@@ -46,7 +46,6 @@ import DeleteAlert from "../../components/ui/DeleteAlert";
 import EditButton from "../../components/Buttons/EditButton";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import { useAuthStore, useUI } from "../../hooks";
-import Image from "mui-image";
 
 
 function Pagination({ page, onPageChange, className }) {
@@ -98,6 +97,7 @@ const Banners = () => {
     const { user } = useAuthStore()
     const { loadAllBanners, banners, changeActiveBanner, loading, deleteOneBanner } = useUI()
     const [open, setOpen] = useState({ value: false, image: '' })
+    const [openDetail, setOpenDetail] = useState({value: false, slide: ''})
     useEffect(() => {
         loadAllBanners()
     }, [user])
@@ -108,6 +108,14 @@ const Banners = () => {
     const handleClose = () => {
         setOpen({ value: false, image: '' })
     }
+
+    const handleOpenDetail = (data) => {
+        setOpen({ value: true, slide: data })
+    }
+    const handleCloseDetail = () => {
+        setOpen({ value: false, slide: '' })
+    }
+
 
 
     const rowsWithIds = (data) =>
@@ -335,6 +343,16 @@ const Banners = () => {
             >
                 <Box sx={style}>
                     <img src={open.image} width={'100%'} height={'100%'} style={{borderRadius:'10px'}} />
+                </Box>
+            </Modal>
+            <Modal
+                open={openDetail.value}
+                onClose={handleCloseDetail}
+                aria-labelledby="modal-detail-slide"
+                aria-describedby="modal-detail-slide"
+            >
+                <Box sx={style}>
+                    
                 </Box>
             </Modal>
 

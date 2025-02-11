@@ -8,7 +8,7 @@ import ChangePassword from './ChangePassword'
 const MyAccount = () => {
   const { user } = useAuthStore()
   const [openModal, setOpenModal] = useState(false)
-  const { fullname, type_user, email, image_profile } = user
+  const { fullname, type_user, email, profile_image } = user
   const TYPES_USER = {
     'SUPER-ADMIN':  'Super Administrador' ,
     'ADMIN':  'Administrador',
@@ -57,7 +57,7 @@ const MyAccount = () => {
             />
             <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}} >
                 <Avatar  sx={{width:'150px', height:'150px'}}  aria-label="image-profile">
-                  <img src={image_profile} alt="image_profile" />
+                  <img src={profile_image} alt="image_profile" />
                 </Avatar>
               
               <Typography variant="body1" marginTop={2} color="initial">

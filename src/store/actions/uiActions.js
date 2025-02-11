@@ -181,6 +181,49 @@ export const startCreateOneBanner = ({is_active, no_slide, for_discount,discount
     }
   };
 };
+
+export const startUpdateOneBanner = (id,{is_active, no_slide, for_discount,discount,
+  title, description, type_event, image_slide, image_slide_movil
+},navigate) => {
+  return async (dispatch) => {
+    console.log(image_slide, image_slide_movil);
+    
+    dispatch(startLoading())
+    const formData = new FormData();
+    formData.append("is_active", is_active);
+    formData.append("no_slide", no_slide);
+    formData.append("for_discount", for_discount);
+    formData.append("discount", discount);
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("type_event", type_event);
+    if (image_slide instanceof File && image_slide.type.startsWith("image/")) {
+      formData.append("image_slide", image_slide);
+    }
+    if (image_slide_movil instanceof File && image_slide_movil.type.startsWith("image/")) {
+      formData.append("image_slide_movil", image_slide_movil);
+    } 
+    try {
+      const { data } = await instanceApi.put(`/banner/update/ok/${id}`,
+        formData,
+         {
+        headers:{
+          "Content-type": "multipart/form-data",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        }
+      });
+      Swal.fire(`${data.message}`, '', 'success');
+      // dispatch(onAddNewSlide(data.data))
+      navigate('/contenidos/banners',{replace:true})
+    } catch (error) {
+      console.log(error);
+     
+    }finally{
+      dispatch(stopLoading())
+    }
+  };
+};
+
 export const startDeleteBanner = (id) => {
   return async (dispatch) => {
     dispatch(startLoading())
