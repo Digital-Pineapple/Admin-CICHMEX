@@ -25,7 +25,7 @@ export const startLogin = (email, password, captcha, navigate) => {
   return async (dispatch) => {
     dispatch(startLoading());
     try {
-      const { data } = await instanceApi.post("/auth/admin/login", {
+      const { data } = await instanceApi.post("/auth/login", {
         email: email,
         password: password,
         captchaToken: captcha,

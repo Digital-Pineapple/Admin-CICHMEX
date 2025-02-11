@@ -37,6 +37,7 @@ import {
   startLoadAllProducts,
   startLoadProductsByCategory,
   startLoadProductsBySubCategory,
+  startLoadProductsForSearch,
 } from "../store/actions/productsActions";
 import { useNavigate } from "react-router-dom";
 import {
@@ -55,6 +56,7 @@ export const useProducts = () => {
   const { loading, colors } = useSelector((state) => state.ui);
 
   const loadProducts = async () => dispatch(startLoadProducts());
+  const loadAllProductsForSearch = async () => dispatch(startLoadProductsForSearch());
   const loadProductsByCategory = async (name) => dispatch(startLoadProductsByCategory(name))
   const loadProductsBySubCategory = async (name) => dispatch(startLoadProductsBySubCategory(name))
   const loadProductsPaginate = async (page, limit) => dispatch(startLoadAllProducts(page, limit));
@@ -435,6 +437,7 @@ export const useProducts = () => {
     loadProductsBySearch,
     loadProductsPaginate,
     loadProductsByCategory,
-    loadProductsBySubCategory
+    loadProductsBySubCategory,
+    loadAllProductsForSearch
   };
 };

@@ -21,7 +21,7 @@ import Swal from "sweetalert2";
 import TableQuantity from "../../components/Tables/TableQuantity";
 
 const AddEntries = () => {
-  const { loadProducts, addMultipleEntries, navigate, loadProduct, loading } =
+  const { loadAllProductsForSearch, addMultipleEntries, navigate, loadProduct, loading } =
     useProducts();
   const { user } = useAuthStore();
   const [product, setProduct] = useState(null);
@@ -87,7 +87,7 @@ const AddEntries = () => {
   };
 
   useEffect(() => {
-    loadProducts();
+    loadAllProductsForSearch();
   }, [user]);
 
   useEffect(() => {
@@ -125,53 +125,6 @@ const AddEntries = () => {
           Agregar entrada
         </Typography>
       </Grid2>
-
-      {/* <Grid2 item xs={12} display={"flex"} gap={2} justifyContent={"center"}>
-        <Controller
-          control={control}
-          name="user_delivery"
-          rules={{
-            required: { message: "Campo requerido", value: true },
-            pattern: { message: "Ingrese un nombre válido", value: regexName },
-          }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              fullWidth
-              id="user_delivery"
-              name="user_delivery"
-              label="Usuario que entrega el producto"
-              value={field.value}
-              onChange={(e) => field.onChange(e.target.value)}
-              error={!!errors.user_delivery}
-              helperText={errors.user_delivery && errors.user_delivery.message}
-              autoComplete="off"
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="user_received"
-          rules={{
-            required: { message: "Campo requerido", value: true },
-            pattern: { message: "Ingrese un nombre válido", value: regexName },
-          }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              fullWidth
-              id="user_received"
-              name="user_received"
-              label="Usuario que recibe el producto"
-              value={field.value}
-              onChange={(e) => field.onChange(e.target.value)}
-              error={!!errors.user_received}
-              helperText={errors.user_received && errors.user_received.message}
-              autoComplete="off"
-            />
-          )}
-        />
-      </Grid2> */}
       <Grid2
         container
         padding={{ xs: 2, lg: 4 }}
