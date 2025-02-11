@@ -75,15 +75,15 @@ const TableQuantity = ({ values, setValues, type }) => {
     },
     { field:'name' , headerName: "Nombre ", width: 250, editable: false },
     { field: "price", headerName: "Precio", width: 100, editable: false },
-    ...(values.some(row => row.stock !== undefined)
-      ? [{
-          field: 'stock',
-          headerName: "Stock",
-          type: "number",
-          width: 100,
-          editable: false,
-        }]
-      : []),
+    // ...(values.some(row => row.stock !== undefined)
+    //   ? [{
+    //       field: 'stock',
+    //       headerName: "Stock",
+    //       type: "number",
+    //       width: 100,
+    //       editable: false,
+    //     }]
+    //   : []),
     {
       field: "quantity",
       headerName: "Cantidad",

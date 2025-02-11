@@ -59,6 +59,30 @@ export const startLoadProducts = () => {
     }
   };
 };
+export const startLoadProductsForSearch = () => {
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      const { data } = await instanceApi.get(`/product/for_search`, {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      dispatch(loadProducts(data.data));
+    } catch (error) {
+      enqueueSnackbar(        
+        `${error.response.data.message}`,
+        {
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+          variant: "error",
+        }
+      );
+    }finally{
+      dispatch(stopLoading());
+    }
+  };
+};
 export const startLoadAllProducts = (page, limit) => {
   return async (dispatch) => {
     dispatch(startLoading());
