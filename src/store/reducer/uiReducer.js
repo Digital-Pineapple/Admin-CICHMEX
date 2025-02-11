@@ -5,7 +5,9 @@ export const uiReducer = createSlice({
   initialState: {
     loading: false,
     links: [],
-    colors: []
+    colors: [],
+    banners:[],
+    banner: {},
   },
   reducers: {
     startLoading: (state) => {
@@ -19,11 +21,32 @@ export const uiReducer = createSlice({
     },
     onLoadColors: (state,{payload})=>{
       state.colors = payload
-    }
+    },
+    onLoadBanners : (state,{payload})=>{
+      state.banners = payload
+    },
+    onLoadOneBanner : (state, {payload})=>{
+      state.banner = payload
+    },
+    onAddNewSlide( state, { payload}){
+      state.banners.push(payload),
+      state.loading = false
+    },
+    updateActiveBanner(state, {payload}) {
+      state.banners = state.banners.map((banner)=>{
+        if (banner._id === payload._id) {
+          return  payload
+         }
+         return banner
+      })
+    },
+    onDeleteBanner(state, {payload}) {
+      state.banners = state.banners.filter( banner => banner._id !== payload._id)
+    },
    
   },
 })
 
-export const { startLoading, stopLoading, setLinks, colors, onLoadColors } = uiReducer.actions;
+export const { startLoading, stopLoading, setLinks, colors, onLoadColors, onLoadBanners, onLoadOneBanner, updateActiveBanner, onDeleteBanner, onAddNewSlide } = uiReducer.actions;
 
 export default uiReducer.reducer;

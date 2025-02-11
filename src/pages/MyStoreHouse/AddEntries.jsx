@@ -10,6 +10,8 @@ import {
   FormHelperText,
   MenuItem,
   Grid2,
+  Skeleton,
+  CircularProgress,
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import FormSearch from "../../components/Filters/FormSearch";
@@ -19,7 +21,7 @@ import Swal from "sweetalert2";
 import TableQuantity from "../../components/Tables/TableQuantity";
 
 const AddEntries = () => {
-  const { loadProducts, addMultipleEntries, navigate, loadProduct, loading } =
+  const { loadAllProductsForSearch, addMultipleEntries, navigate, loadProduct, loading } =
     useProducts();
   const { user } = useAuthStore();
   const [product, setProduct] = useState(null);
@@ -85,7 +87,7 @@ const AddEntries = () => {
   };
 
   useEffect(() => {
-    loadProducts();
+    loadAllProductsForSearch();
   }, [user]);
 
   useEffect(() => {
@@ -123,53 +125,6 @@ const AddEntries = () => {
           Agregar entrada
         </Typography>
       </Grid2>
-
-      {/* <Grid2 item xs={12} display={"flex"} gap={2} justifyContent={"center"}>
-        <Controller
-          control={control}
-          name="user_delivery"
-          rules={{
-            required: { message: "Campo requerido", value: true },
-            pattern: { message: "Ingrese un nombre válido", value: regexName },
-          }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              fullWidth
-              id="user_delivery"
-              name="user_delivery"
-              label="Usuario que entrega el producto"
-              value={field.value}
-              onChange={(e) => field.onChange(e.target.value)}
-              error={!!errors.user_delivery}
-              helperText={errors.user_delivery && errors.user_delivery.message}
-              autoComplete="off"
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="user_received"
-          rules={{
-            required: { message: "Campo requerido", value: true },
-            pattern: { message: "Ingrese un nombre válido", value: regexName },
-          }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              fullWidth
-              id="user_received"
-              name="user_received"
-              label="Usuario que recibe el producto"
-              value={field.value}
-              onChange={(e) => field.onChange(e.target.value)}
-              error={!!errors.user_received}
-              helperText={errors.user_received && errors.user_received.message}
-              autoComplete="off"
-            />
-          )}
-        />
-      </Grid2> */}
       <Grid2
         container
         padding={{ xs: 2, lg: 4 }}
@@ -180,11 +135,18 @@ const AddEntries = () => {
           <Typography variant="h6" textAlign={"center"} color="initial">
             Introduzca el nombre o código de barras del producto
           </Typography>
-          <FormSearch
+          {loading ? (
+            <>
+            <CircularProgress variant="indeterminate" color="secondary" />
+            <Typography>Cargando productos...</Typography>
+            </>
+            ) : (<FormSearch
             setSelected={handleSelectedItem}
             allValues={allProducts}
             titleAlert={"Ya se agrego este producto"}
-          />
+
+          />)}
+
         </Grid2>
         <Grid2 size={{ xs: 12, md: 5.8 }}>
           <Typography variant="h6" textAlign={"center"} color="initial">
@@ -197,28 +159,28 @@ const AddEntries = () => {
             <Select
               id="variant"
               name="variant"
-              disabled={loading ? true:false}
+              disabled={loading}
               onChange={(e) => {
                 setProduct(e.target.value);
                 setProductVariants([]);
               }}
               sx={{
-               
+
                 border: productVariants.length > 0 ? "2px solid #00897b" : "",
                 borderRadius: "4px",
-                overflowY:"auto"
+                overflowY: "auto"
               }}
             >
               {productVariants?.map((variant) => (
                 <MenuItem
                   sx={{
                     backgroundColor: "success.main",
-                    color:'primary.contrastText',
+                    color: 'primary.contrastText',
 
                     transition: "border-color 0.3s ease-in-out", // Efecto de transición
                     "&:hover": {
                       backgroundColor: "secondary.main",
-                      
+
                     },
                   }}
                   key={variant._id}

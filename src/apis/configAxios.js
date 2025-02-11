@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { enqueueSnackbar } from 'notistack';
 import Swal from 'sweetalert2';
 
 
@@ -37,7 +38,7 @@ instanceApi.interceptors.response.use (
           }
           if (status === 400 || status === 500){
            const errorMessage = error.response.data?.message || error.response.data?.errors?.[0]?.message || errorMessage;
-            Swal.fire({title:`${errorMessage}`, confirmButtonColor:'red', icon:'info', iconColor:'red'})
+           enqueueSnackbar({message:`${errorMessage}`,variant:'error',anchorOrigin:{horizontal:'center', vertical:'top'}})
           }
 
     }

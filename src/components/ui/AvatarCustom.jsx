@@ -12,10 +12,11 @@ import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import { useAuthStore } from '../../hooks';
+import { Person } from '@mui/icons-material';
 
 export default function AvatarCustom() {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const {user, loadLogout} = useAuthStore()
+  const {user, loadLogout, navigate} = useAuthStore()
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -25,6 +26,10 @@ export default function AvatarCustom() {
   };
   const handleLogout = () => {
     loadLogout()
+  }
+  const handleNavigateMyAccount = () => {
+    setAnchorEl(null);
+    navigate(`/mi-cuenta/${user._id}`)
   }
   return (
     <React.Fragment>
@@ -83,12 +88,12 @@ export default function AvatarCustom() {
           <Avatar /> {user?.email}
         </MenuItem>
         <Divider />
-        {/* <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleNavigateMyAccount}>
           <ListItemIcon>
-            <Settings fontSize="small" />
+            <Person fontSize="small" />
           </ListItemIcon>
-          Settings
-        </MenuItem> */}
+          Mi cuenta
+        </MenuItem>
         <MenuItem onClick={()=>handleLogout()}>
           <ListItemIcon >
             <Logout fontSize="small" />

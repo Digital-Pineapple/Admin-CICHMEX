@@ -92,6 +92,10 @@ import { PointsList } from "../pages/Points/PointsList";
 import BranchOfficeEdit from "../pages/Points/Edit";
 import BranchOfficeDetail from "../pages/Points/Detail";
 import { DeliveryPointsOrder } from "../pages/Points/DeliveryPointOrders";
+import Banners from "../pages/Banners/Banners";
+import CreateSlider from "../pages/Banners/CreateSlider";
+import UpdateSlider from "../pages/Banners/UpdateSlider";
+import MyAccount from "../pages/Settings/MyAccount";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -197,16 +201,19 @@ export const AllRoutes = [
   { id: 78, element: <EditMySizeGuides /> },
   { id: 79, element: <AssignRoute /> },
   { id: 80, element: <MainToSend /> },
-
-  { id: 90, element: <CreateDeliveryPoint /> },
-  { id: 91, element: <BranchOfficeEdit /> },
-  { id: 92, element: <BranchOfficeDetail /> },
-  { id: 93, element: <DeliveryPointsOrder /> },
-  { id: 74, element: <PointsList /> },
-
   { id: 100, element: <Discounts /> },
   { id: 101, element: <UpdateDiscount /> },
   { id: 102, element: <CreateDiscount /> },
   // { id: 80, element: <MainToSend /> },
   // { id: 80, element: <OrdersDeliveryPoint /> },
+  
+  { id: 90, element: <CreateDeliveryPoint /> },
+  { id: 91, element: <BranchOfficeEdit /> },    
+  { id: 92, element: <BranchOfficeDetail />},    
+  {id: 93, element: <DeliveryPointsOrder />},
+  { id: 74, element: <PointsList /> },
+  { id: 110, element: <Banners /> },
+  { id: 111, element: <CreateSlider /> },
+  { id: 112, element: <UpdateSlider /> },
+  { id: 120, element: <MyAccount /> },
 ];
