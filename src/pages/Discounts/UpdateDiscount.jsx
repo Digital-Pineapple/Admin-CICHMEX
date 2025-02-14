@@ -627,6 +627,7 @@ const UpdateDiscount = () => {
             <Select
               value={forProducts.type || ''}
               labelId="select-label-products"
+              disabled={typeDiscountRender === 'free_shipping'}
               label="Seleccione la cantidad de productos*"
               required={true}
               onChange={handleChangeSelectProducts}

@@ -37,6 +37,7 @@ const CreateDiscount = () => {
     type: "percentage",
     key: Date.now(),
   });
+  
   const [forProducts, setForProducts] = useState({
     type: "all-products",
     key: Date.now(),
@@ -86,6 +87,8 @@ const CreateDiscount = () => {
   const startDate = watch("start_date");
   const typeDiscountRender = watch("type_discount");
   const unlimited = watch("unlimited");
+
+  
 
   useEffect(() => {
     if (typeDiscountRender === "is_amount") {
@@ -665,6 +668,7 @@ const CreateDiscount = () => {
             </InputLabel>
             <Select
               value={forProducts.type}
+              disabled={typeDiscountRender === 'free_shipping'}
               labelId="select-label-products"
               label="Seleccione la cantidad de productos*"
               required={true}
