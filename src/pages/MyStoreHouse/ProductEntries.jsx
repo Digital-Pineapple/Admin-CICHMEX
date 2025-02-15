@@ -224,6 +224,12 @@ const ProductEntries = () => {
               flex: 1,
               align: "center",
             },
+            {
+              field: "responsible",
+              headerName: "Responsable",
+              flex: 1,
+              align: "center",
+            },
           ]}
           rows={rowsAllInputs}
           pagination

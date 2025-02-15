@@ -20,6 +20,7 @@ import {
   Star,
   ViewModule,
   Visibility,
+  Warning,
 } from "@mui/icons-material";
 import {
   Button,
@@ -270,6 +271,21 @@ const Products = () => {
             headerName: "Subcategoria",
             flex: 1,
             align: "center",
+          },
+          {
+            field: "product_key",
+            headerName: "Clave SAT",
+            flex: 1,
+            align: "center",
+            renderCell: (params)=>[
+              params.row.product_key ? 
+              params.row.product_key : 
+              (
+              <Tooltip title='Falta clave sat'>
+                <Warning color="warning"  />
+              </Tooltip>
+              )
+            ]
           },
 
           {
