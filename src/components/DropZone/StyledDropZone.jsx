@@ -89,7 +89,6 @@ export default function StyledDropzone({ callback, files, onDelete = () => null 
       accept: {
         "image/jpeg": [],
         "image/png": [],
-        "image/jpg": [],
       },
     });
 

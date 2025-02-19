@@ -1,204 +1,375 @@
-import React, { useState } from "react";
-import Titles from "../../components/ui/Titles";
-import Grid from "@mui/material/Grid";
-import {
-  Card,
-  CardActionArea,
-  CardActions,
-  CardContent,
-  CardMedia,
-  FormControl,
-  FormHelperText,
-  FormLabel,
-  Input,
-  MenuItem,
-  Select,
-  TextField,
-  TextareaAutosize,
-} from "@mui/material";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import { useNavigate, useParams } from "react-router-dom";
-import { useEffect } from "react";
-import { useServices } from "../../hooks/useServices";
-import { useFormik } from "formik";
-import { enqueueSnackbar } from "notistack";
-import { useSubCategories } from "../../hooks/useSubCategories";
-import { useSelector } from "react-redux";
-import AddImage from "../../assets/Images/add.png";
+import { useEffect, useState, useCallback } from "react";
+import { MarkerF } from "@react-google-maps/api";
+import { Typography, Grid2, CircularProgress, Button, Stack, Link, Box, InputAdornment, IconButton, FormHelperText, FormControl, Chip, Modal, Fab } from "@mui/material";
+import { Controller, useForm } from "react-hook-form";
+import { useLoadScript } from "@react-google-maps/api";
+import { useAuthStore, useUI } from "../../hooks";
+import useGeocode from "../../hooks/useGeocode";
+import { useDebouncedCallback } from "use-debounce";
+import MapGoogle from "../../components/Google/MapGoogle";
+import { redirectTo } from "../../helpers/redirectLink";
+import { HtmlTooltip } from "../../components/Tooltips/HtmlTooltip";
+import InputControl from "../../components/ui/InputControl";
+import StyledDropzone from "../../components/DropZone/StyledDropZone";
+import useImagesV2 from "../../hooks/useImagesV2";
+import { useStoreHouse } from "../../hooks/useStoreHouse";
+import { useParams } from "react-router-dom";
+import { Close, Delete, NavigateBefore, NavigateNext, OpenInFull, UploadFile, UploadFileRounded } from "@mui/icons-material";
+import { orange } from "@mui/material/colors";
+import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 
-const Edit = () => {
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  bgcolor: "background.paper",
+  border: "1px solid #bbdefb",
+  borderRadius: "15px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  flexDirection: "column",
+  boxShadow: 24,
+  p: 4,
+};
+
+const styleContainer = {
+  width: "100%",
+  height: "600px",
+};
+
+// Componente separado para el tooltip
+const MapTooltip = ({ open, onClose, children }) => (
+  <HtmlTooltip
+    open={open}
+    onClose={onClose}
+    placement="top-end"
+    title={
+      <Typography color="success">
+        <strong>Seleccione la ubicación exacta</strong> <br />
+        Mueva el puntero a la ubicacion del punto de entrega
+      </Typography>
+    }
+    sx={{ fontSize: "60px", zIndex: 2 }}
+  >
+    {children}
+  </HtmlTooltip>
+);
+
+function Edit() {
   const { id } = useParams();
-  const { loadService, service, editService } = useServices();
-  const navigate = useNavigate();
-  const { loadSubCategories } = useSubCategories();
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [previewImage, setPreviewImage] = useState(null);
-  const subCategories = useSelector(
-    (state) => state.subCategories.subCategories
-    );
-    
-    const handleImage = ({ target }) => {
-      setPreviewImage(URL.createObjectURL(target.files[0]));
-      setSelectedFile(target.files[0]);
-    };
+  const [openTooltip, setOpenTooltip] = useState(true);
+  const { navigate } = useAuthStore();
+  const [loading1, setLoading] = useState(false);
+   const [open, setOpen] = useState({ image: null, value: false });
+   const handleOpen = (image) => {
+    setOpen({ image: image, value: true });
+  };
+  
+  const {
+    center,
+    marker,
+    getCenterFromZipCode,
+    getAddressFromCoords,
+    handleSetMarker,
+    handleSetCenter,
+    loadMarker
+  } = useGeocode();
 
+  const { loadUpdateStoreHouse, loadOneStoreHouse, StoreHouseDetail } = useStoreHouse();
+  const {loading} =useUI()
+  const { isLoaded } = useLoadScript({
+    id: "google-map-script",
+    googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
+  });
+
+  const { 
+    formState: { errors }, 
+    handleSubmit, 
+    control, 
+    watch, 
+    setValue,
+    reset 
+  } = useForm();
+
+  // Cargar datos iniciales
   useEffect(() => {
-    loadService(id);
-    loadSubCategories();
+    const loadData = async () => {
+      if (id) {
+        await loadOneStoreHouse(id);
+      }
+    };
+    loadData();
   }, [id]);
 
+  // Actualizar formulario cuando lleguen los datos
   useEffect(() => {
-    formik.setValues({
-      name: service.name,
-      description: service.description,
-      status: service.status,
-      subCategory: service.subCategory,
-      service_image: previewImage,
-    });
-    setPreviewImage(service.service_image);
-  }, [service]);
+    if (StoreHouseDetail?._id) {
+      reset({
+        name: StoreHouseDetail.name || '',
+        phone: StoreHouseDetail.phone_number || "",
+        description: StoreHouseDetail.description || "",
+        zipcode: StoreHouseDetail.location?.cp || "",
+        direction: StoreHouseDetail.location?.direction || "",
+        municipality: StoreHouseDetail.location?.municipality || "",
+        neighborhood: StoreHouseDetail.location?.neighborhood || "",
+        state: StoreHouseDetail.location?.state || "",
+        
+      });
+      handleSetMarker(
+        StoreHouseDetail.location?.lat,
+        StoreHouseDetail.location?.lgt
+      );
+      loadMarker(StoreHouseDetail.location.lat, StoreHouseDetail.location.lgt); 
+    }
+  }, [StoreHouseDetail]);
 
-
-  const formik = useFormik({
-    initialValues: {
-      name: "",
-      description: "",
-      status: true,
-      subCategory: "",
-      service_image: "",
-    },
-    onSubmit: (values) => {
-      try {
-        values.service_image = selectedFile;
-        editService(service._id, values);
-        navigate("/auth/servicios", { replace: true });
-      } catch (error) {
-        return enqueueSnackbar("Error al editar el servicio", {
-          variant: "error",
-          anchorOrigin: {
-            vertical: "top",
-            horizontal: "right",
-          },
-        });
-      }
-    },
-  });
-  const outEdit = () => {
-    navigate("/auth/servicios", { replace: true });
+   function clearAddressInputs() {
+     setValue("municipality", "");
+     setValue("state", "");
+     setValue("neighborhood", "");
+   }
+ 
+   function handleAddressFromCoords(lat, lng) {
+     getAddressFromCoords(lat, lng, (data) =>  {
+       if (data === undefined || data === null) {
+         setLoading(false);
+         return;
+       }
+       clearAddressInputs();
+       const detalles = data?.results;
+       // console.log(detalles);
+       for (let i = 0; i < detalles.length; i++) {
+         var d = detalles[i];
+         switch (d.types[0]) {
+           case "neighborhood":
+             const neighborhood = d.address_components[0].long_name;
+             setValue("neighborhood", neighborhood);
+             break;
+           case "locality":
+             if (!watch("neighborhood")) {
+               const locality = d.address_components[0].long_name;
+               setValue("neighborhood", locality);
+             }
+             break;
+           case "administrative_area_level_3":
+             const municipio = d.address_components[0].long_name;
+             setValue("municipality", municipio);
+             break;
+           case "administrative_area_level_2":
+             const municipality = d.address_components[0].long_name;
+             setValue("municipality", municipality);
+             break;
+           case "administrative_area_level_1":
+             const state = d.address_components[0].long_name;
+             setValue("state", state);
+             break;
+           case "postal_code":
+             const cp = d.address_components[0].long_name;
+             setValue("zipcode", cp);
+             break;
+           case "country":
+             break;
+         }
+       }
+       setLoading(false);
+     }, () => setLoading(false))       
+   }
+ 
+   const debouncedInputsByCoords = useDebouncedCallback((latitud, longitud) => handleAddressFromCoords(latitud, longitud), 1000);
+ 
+   function setInputsByMarker(event) {
+     setLoading(true);
+     const latitud = event.latLng.lat();
+     const longitud = event.latLng.lng();
+     handleSetMarker(latitud, longitud);
+     handleSetCenter(latitud, longitud);
+     debouncedInputsByCoords(latitud, longitud);
+   }
+ 
+   function setInputsByZipcode(zipcode) {
+     if (!(zipcode.length === 5) && isNaN(zipcode)) {
+       return;
+     }
+     setLoading(true);
+     getCenterFromZipCode(zipcode, (data) => {
+       const { lat, lng } = data;
+       if (lat && lng) {
+         handleSetMarker(lat, lng);
+         handleSetCenter(lat, lng);
+         debouncedInputsByCoords(lat, lng);
+       }
+     });
+   }
+  const onSubmit = async (data) => {
+    await loadUpdateStoreHouse(id, data, marker);
   };
+  if (loading) {
+    return <LoadingScreenBlue/>
+  }
 
   return (
-    <Box component="form" onSubmit={formik.handleSubmit} marginX={"10%"}>
-      <Titles name={<h2 align="center">Editar Servicio</h2>} />
-      <Grid
-        color="#F7BFBF"
-        borderRadius={5}
-        mt={3}
-        sx={{ border: 10, p: 5 }}
-        container
-        spacing={4}
+    <Grid2 container spacing={3} component="form" onSubmit={handleSubmit(onSubmit)}>
+      <Grid2
+        marginTop={{ xs: "-30px" }}
+        size={12}
+        minHeight={"100px"}
+        className="Titles"
       >
-        <Grid
-          item
-          sm={8}
-          display={"flex"}
-          flexDirection={"column"}
-          alignItems={"center"}
+        <Typography
+          textAlign={"center"}
+          variant="h1"
+          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-          <Grid item>
-            <Card sx={{ maxWidth: 345 }}>
-              <CardContent>
-                <CardMedia
-                  sx={{ height: 140 }}
-                  image={
-                    previewImage
-                      ? previewImage
-                      : service.service_image || AddImage
-                  }
-                  title={selectedFile ? selectedFile.name : "Selecciona imagen"}
-                />
+          Editar CEDIS { StoreHouseDetail ? StoreHouseDetail.storehouse_key: '' }
+        </Typography>
+      </Grid2>
 
-                <Typography gutterBottom variant="h5" component="div">
-                  {selectedFile
-                    ? selectedFile.name
-                    : previewImage
-                    ? "Cambiar imagen"
-                    : "Elige una imagen"}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <input
-                  type="file"
-                  id="service_image"
-                  name="service_image"
-                  accept="image/png, image/jpeg"
-                  onChange={(e) => handleImage(e)}
-                  
-                />
-              </CardActions>
-            </Card>
-          </Grid>
-          <TextField
-            focused
-            fullWidth
-            id="name"
-            name="name"
-            label="Nombre del servicio"
-            variant="outlined"
-            value={formik.values.name}
-            sx={{ margin: 2 }}
-            onChange={formik.handleChange}
-          />
-          <Typography>Descipcion del servicio</Typography>
-          <TextareaAutosize
-            aria-label="minimum height"
-            id="description"
-            name="description"
-            minRows={6}
-            label="Descripcion"
-            value={formik.values.description}
-            style={{ width: "100%", fontFamily: "BikoBold", marginBottom: 20 }}
-            onChange={formik.handleChange}
-          />
-          <FormControl>
-            <FormLabel>Subcategoria</FormLabel>
-            <Select
-              id="subCategory"
-              name="subCategory"
-              value={formik.values.subCategory}
-              label="Subcategoria"
-              onChange={formik.handleChange}
-            >
-              {subCategories.map((subCategory) => (
-                <MenuItem key={subCategory._id} value={subCategory._id}>
-                  {subCategory.name}
-                </MenuItem>
-              ))}
-            </Select>
-            <FormHelperText>Selecciona una sub-categoria</FormHelperText>
-          </FormControl>
+      <Grid2 size={{sm: 12, md: 4}} >
+        <InputControl
+          name="name"
+          label="Nombre del CEDIS"
+          rules={{ required: "El nombre es obligatorio" }}
+          control={control}
+          errors={errors}
+        />
+      </Grid2>
 
-          <Grid
-            container
-            justifyContent={"center"}
-            justifyItems={"center"}
-            alignItems={"center"}
+      <Grid2 size={{sm: 12, md: 4}} >
+        <InputControl
+          name="phone"
+          label="Teléfono"
+          control={control}
+          errors={errors}
+          type="tel"
+          rules={{ required: "El teléfono es obligatorio" }}
+          InputProps={{ startAdornment: <InputAdornment position="start">+52</InputAdornment> }}
+        />
+      </Grid2>
+
+      <Grid2 size={{sm: 12, md: 4}} >
+        <InputControl
+          name="description"
+          label="Descripción"
+          control={control}
+          errors={errors}
+          multiline
+        />
+      </Grid2>
+
+      <Grid2 size={12} container spacing={3}>
+      <Grid2 size={{sm: 12, md: 6}} >
+          <Typography variant="h6">Dirección</Typography>
+          
+          <InputControl
+                name={"zipcode"}
+                label={"Código Postal"}
+                rules={{
+                  required: "El código postal es obligatorio",
+                }}
+                errors={errors}
+                loading={loading1}
+                disabled={loading1}
+                control={control}
+                fullWidth={false}
+                onChange={(e) => {
+                  const value = e.target.value;                  
+                  setInputsByZipcode(value);                  
+                }}
+              />
+          
+          <Link
+            sx={{ cursor: "pointer", display: 'block', mb: 2 }}
+            onClick={() => redirectTo("https://www.correosdemexico.gob.mx/SSLServicios/ConsultaCP/Descarga.aspx")}
           >
-            <Grid item sx={{ display: "flex", justifyContent: "center" }}>
-              <Button type="submit" variant="contained">
-                Guardar
-              </Button>
-              <Button onClick={outEdit} variant="outlined" color="secondary">
-                Salir
-              </Button>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-    </Box>
+            No sé mi código postal
+          </Link>
+
+          <Grid2 container spacing={2}>
+          <Grid2 size={{sm: 12, md: 6}} >
+              <InputControl
+                name="state"
+                label="Estado"
+                control={control}
+                errors={errors}
+              />
+            </Grid2>
+            
+            <Grid2 size={{sm: 12, md: 6}} >
+              <InputControl
+                name="municipality"
+                label="Municipio"
+                control={control}
+                errors={errors}
+              />
+            </Grid2>
+            
+            <Grid2 size={{sm: 12, md: 6}} >
+              <InputControl
+                name="neighborhood"
+                label="Colonia"
+                control={control}
+                errors={errors}
+              />
+            </Grid2>
+            
+            <Grid2 size={{sm: 12, md: 6}} >
+              <InputControl
+                name="direction"
+                label="Dirección"
+                control={control}
+                errors={errors}
+                rules={{
+                  required: "La dirección es obligatoria",
+                  minLength: {
+                    value: 10,
+                    message: "La dirección debe ser mayor a 10 caractéres",
+                  },
+                }}
+              />
+            </Grid2>
+          </Grid2>
+        </Grid2>
+
+        <Grid2 size={{sm: 12, md: 6}} >
+          {!isLoaded ? (
+            <CircularProgress />
+          ) : (
+            <MapTooltip open={openTooltip} onClose={() => setOpenTooltip(false)}>
+              <Box sx={{ opacity: loading1 ? 0.5 : 1, pointerEvents: loading1 ? "none" : "auto" }}>
+                <MapGoogle
+                  center={center}
+                  styles={styleContainer}
+                  zoom={16}
+                  onGetPosition={setInputsByMarker}
+                  typeCursor="pointer"
+                >
+                  {marker.lat && marker.lng && (
+                    <MarkerF
+                      position={marker}
+                      animation={google.maps.Animation.DROP}
+                    />
+                  )}
+                </MapGoogle>
+              </Box>
+            </MapTooltip>
+          )}
+        </Grid2>
+      </Grid2>
+
+      <Grid2 size={{sm: 12}} display={'flex'} gap={1} >
+       
+          <Button fullWidth variant="contained" color="error" onClick={() => navigate("/CEDIS/todos")}>
+            Cancelar
+          </Button>
+          <Button fullWidth type="submit" color='success' variant="contained">
+            Actualizar
+          </Button>
+       
+      </Grid2>
+    </Grid2>
   );
-};
+}
 
 export default Edit;

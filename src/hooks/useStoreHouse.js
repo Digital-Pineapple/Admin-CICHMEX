@@ -7,8 +7,9 @@ import {
   startReturnStockProduct,
   startLoadOneStoreHouse,
   startLoadStoreHouses,
-  startCreateOneStoreHouse,
   startDeleteStoreHouse,
+  startCreateStoreHouse,
+  startUpdateStoreHouse,
 } from "../store/actions/storehouseActions";
 import { useNavigate } from "react-router-dom";
 
@@ -23,8 +24,12 @@ export const useStoreHouse = () => {
 
   const loadOneStoreHouse = async (id) => dispatch(startLoadOneStoreHouse(id));
 
-  const createStoreHouse = async (id, values) =>
-    dispatch(startCreateOneStoreHouse(values));
+  const loadCreateStoreHouse = (data, marker) => {
+    dispatch(startCreateStoreHouse(data, marker, navigate));
+  };
+  const loadUpdateStoreHouse = (id,data, marker) => {
+    dispatch(startUpdateStoreHouse(id, data, marker, navigate));
+  };
 
   const loadAllStock = async (id) => dispatch(startLoadAllStock(id));
 
@@ -42,23 +47,22 @@ export const useStoreHouse = () => {
   const returnStockProduct = async (id, values) =>
     dispatch(startReturnStockProduct(id, values, navigate));
   const deleteStoreHouse = async (id) => {
-    dispatch(startDeleteStoreHouse(id, navigate));
+    dispatch(startDeleteStoreHouse(id));
   };
 
-
   const rowsStocks = AllStock?.map((item, index) => {
-    const row= {
+    const row = {
       id: index,
-      _id : item._id,
+      _id: item._id,
       product_id: item?.product_id?._id,
       name: item?.product_id?.name,
       price: item?.product_id?.price,
       size: item?.product_id?.size,
       tag: item?.product_id?.tag,
       weight: item?.product_id?.weight,
-      stock :item.stock,
-    } 
-    return row
+      stock: item.stock,
+    };
+    return row;
   });
 
   return {
@@ -73,9 +77,10 @@ export const useStoreHouse = () => {
     StoreHouseDetail,
     loadStoreHouse,
     loadOneStoreHouse,
-    createStoreHouse,
+    loadCreateStoreHouse,
     navigate,
     deleteStoreHouse,
-    rowsStocks
+    rowsStocks,
+    loadUpdateStoreHouse,
   };
 };

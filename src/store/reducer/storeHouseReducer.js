@@ -15,9 +15,15 @@ export const StoreHouseReducer = createSlice({
     loadOneStoreHouse: (state, { type, payload }) => {
       state.StoreHouseDetail = payload;
     },
+    onDeleteStoreHouse: (state, { type, payload }) => {
+      state.StoreHouses = state.StoreHouses.filter(
+        (SH) => SH._id !== payload._id
+      );
+    },
     loadAllStock: (state, { type, payload }) => {
       state.AllStock = payload;
     },
+
     loadDetailProductStock: (state, { type, payload }) => {
       state.OneProductStock = payload;
     },
@@ -49,7 +55,8 @@ export const {
   loadDetailProductStock,
   onAddStockProduct,
   loadAllStoreHouses,
-  loadOneStoreHouse
+  loadOneStoreHouse,
+  onDeleteStoreHouse
 } = StoreHouseReducer.actions;
 
 export default StoreHouseReducer.reducer;

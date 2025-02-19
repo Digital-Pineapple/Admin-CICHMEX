@@ -43,7 +43,6 @@ const Edit = ({handleClose, category}) => {
   };
 
   const onSubmit = (e) => {
-    console.log(e);
     
    if (e.image.filePreview.startsWith('https://')) {
    editCategory(category._id, {name: e.name, category_image: e.image.filePreview}, handleClose)

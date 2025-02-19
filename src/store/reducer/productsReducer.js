@@ -11,6 +11,7 @@ export const productsReducer = createSlice({
     dataProduct:[],
     entries: [],
     outputs: [],
+    allMovements: [],
     isLoading: false,
     productsPaginate :{
       products: [],
@@ -41,6 +42,10 @@ export const productsReducer = createSlice({
     loadProductOutputs: (state, { payload }) => {
       state.outputs = payload;
       state.isLoading = false;
+    },
+    loadAllMovementsProducts: (state, { payload }) => {
+      state.allMovements = payload;
+       state.isLoading = false;
     },
     onAddNewProduct: (state, { payload }) => {
       state.product = payload;
@@ -173,7 +178,8 @@ export const {
   updateIsMainVariant,
   loadProductsPaginate,
   onDeleteVariant,
-  onClearProducts
+  onClearProducts,
+  loadAllMovementsProducts
 } = productsReducer.actions;
 
 export default productsReducer.reducer;

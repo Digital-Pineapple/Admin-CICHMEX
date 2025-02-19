@@ -38,6 +38,7 @@ import {
   startLoadProductsByCategory,
   startLoadProductsBySubCategory,
   startLoadProductsForSearch,
+  startLoadAllMovements,
 } from "../store/actions/productsActions";
 import { useNavigate } from "react-router-dom";
 import {
@@ -51,7 +52,7 @@ export const useProducts = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { products, product, stockProducts, productsPaginate, entries, outputs, dataProduct } =
+  const { products, product, stockProducts, productsPaginate, entries, outputs, dataProduct, allMovements, isLoading } =
     useSelector((state) => state.products);
   const { loading, colors } = useSelector((state) => state.ui);
 
@@ -65,6 +66,7 @@ export const useProducts = () => {
   const loadOutputsProducts = async () => dispatch(startLoadOutputsProduct());
   const loadAllInputs = async () => dispatch(startLoadAllInputs());
   const loadAllOutputs = async () => dispatch(startLoadAllOutputs());
+  const loadAllMovements = async () => dispatch(startLoadAllMovements())
   const loadStockProducts = async () => dispatch(startLoadStockProducts());
   const loadNoStockProducts = async () => dispatch(startLoadNonExistProduct());
   const loadProduct = async (_id) => {
@@ -438,6 +440,9 @@ export const useProducts = () => {
     loadProductsPaginate,
     loadProductsByCategory,
     loadProductsBySubCategory,
-    loadAllProductsForSearch
+    loadAllProductsForSearch,
+    loadAllMovements,
+    allMovements,
+    isLoading
   };
 };

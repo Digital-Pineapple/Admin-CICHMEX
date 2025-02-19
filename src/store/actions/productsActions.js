@@ -23,6 +23,7 @@ import {
   loadProductsPaginate,
   onDeleteVariant,
   onClearProducts,
+  loadAllMovementsProducts,
 } from "../reducer/productsReducer";
 import {
   headerConfigApplication,
@@ -248,6 +249,25 @@ export const startLoadAllOutputs = () => {
           variant: "error",
         }
       );
+    }
+  };
+};
+
+export const startLoadAllMovements = () => {
+  return async (dispatch) => {
+    
+    try {
+      dispatch(startLoadingUpdate())
+      const { data } = await instanceApi.get(`/stock-StoreHouse/all-movements`, {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      
+      dispatch(loadAllMovementsProducts(data.data));
+    } catch (error) {
+     dispatch(stopLoadingUpdate())
     }
   };
 };

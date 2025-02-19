@@ -1,22 +1,23 @@
 import { useEffect } from "react"
 import { useProducts } from "../../hooks/useProducts"
 import { useAuthStore } from "../../hooks"
-import { Button, Grid, Typography } from "@mui/material"
+import { Button, CircularProgress, Grid2, Typography, Box, Tooltip, IconButton } from "@mui/material"
 import { Workbook } from "exceljs"
 import { DataGrid, GridLogicOperator, gridPageCountSelector, GridPagination, GridToolbarContainer, GridToolbarQuickFilter, useGridApiContext, useGridSelector } from "@mui/x-data-grid"
 import { orange } from "@mui/material/colors"
-import { Download } from "@mui/icons-material"
+import { ArrowDownward, ArrowUpward, Download, Visibility } from "@mui/icons-material"
 import AddButton2 from "../../components/Buttons/AddButton2"
 import MuiPagination from "@mui/material/Pagination";
 
 const StockMovements = () => {
-    const{ loadAllInputs, rowsAllInputs, loadAllOutputs, rowsAllOutputs } = useProducts()
+    const{ loadAllMovements, allMovements, isLoading } = useProducts()
     const {user} = useAuthStore()
 
     useEffect(() => {
-     loadAllInputs()
-     loadAllOutputs()
+     loadAllMovements()
     }, [user])
+    
+  
 
     function Pagination({ page, onPageChange, className }) {
       const apiRef = useGridApiContext();
@@ -56,7 +57,7 @@ const StockMovements = () => {
       });
   
       // Agregar datos de las filas
-      rowsAllInputs.forEach((row) => {
+      rowsIds.forEach((row) => {
         worksheet.addRow([
           row._id,
           row.name,
@@ -99,11 +100,11 @@ const StockMovements = () => {
     
     
   return (
-    <Grid container gap={4}>
-       <Grid
-        item
+    <Grid2 container gap={4}>
+       <Grid2
+        size={12}
         marginTop={{ xs: "-30px" }}
-        xs={12}
+       
         minHeight={"100px"}
         className="Titles"
       >
@@ -114,8 +115,8 @@ const StockMovements = () => {
         >
           Movimiento de Stock
         </Typography>
-      </Grid>
-      <Grid item xs={12} lg={6} >
+      </Grid2>
+      <Grid2 size={12} >
         <Typography
           bgcolor={orange[900]}
           variant="h3"
@@ -125,16 +126,43 @@ const StockMovements = () => {
           textAlign={"center"}
           fontSize={"30px"}
         >
-          Entradas
+          Movimentos
         </Typography>
+        {isLoading? (
+          <Box display="flex" width={'100%'} height={'100%'} justifyContent={'center'} alignContent={'center'}>
+            <CircularProgress color="primary"/>
+            <Typography variant="body1" color="initial">Cargando movimientos...</Typography>   
+          </Box>
+        ): (
         <DataGrid
-          sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
+          sx={{ fontSize: "12px" }}
           columns={[
             {
               field: "date",
               headerName: "Fecha de entrada",
               flex: 2,
               align: "center",
+            },
+            {
+              field: "type",
+              headerName: "Tipo",
+              flex: 0.5,
+              align: "center",
+              renderCell: ( params)=>{
+                if (params.row.type === 'input') {
+                  return ( 
+                    <Tooltip title='Alta'>
+                      <ArrowUpward color="success"/>
+                    </Tooltip>
+                  )
+                }else{
+                  return (
+                    <Tooltip title='Baja'>
+                      <ArrowDownward color="warning"/>
+                    </Tooltip>
+                  )
+                }
+              }
             },
             {
               field: "product_name",
@@ -161,12 +189,12 @@ const StockMovements = () => {
             },
             {
               field: "responsible",
-              headerName: "Responsable de entrada",
+              headerName: "Responsable",
               flex: 2,
               align: "center",
             },
           ]}
-          rows={rowsAllInputs}
+          rows={allMovements}
           pagination
           slots={{
             pagination: CustomPagination,
@@ -177,6 +205,7 @@ const StockMovements = () => {
           disableColumnSelector
           disableDensitySelector
           style={{fontFamily:'sans-serif'}}
+          density="compact"
           slotProps={{
             toolbar: {
               showQuickFilter: true,
@@ -192,97 +221,16 @@ const StockMovements = () => {
               sortModel:[{field:'date', sort:'desc'}],
               
             },
-            pagination:{paginationModel:{pageSize:10, page:0}}
+            pagination:{paginationModel:{pageSize:50, page:0}}
           }}
-          pageSizeOptions={[5,10,25]}
+          pageSizeOptions={[50,100]}
         />
-      </Grid>
-      <Grid item xs={12} lg={5} >
-        <Typography
-          bgcolor={orange[900]}
-          variant="h3"
-          color={"#fff"}
-          borderRadius={2}
-          marginY={2}
-          textAlign={"center"}
-          fontSize={"30px"}
-        >
-          Salidas
-        </Typography>
-        <DataGrid
-          sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
-          columns={[
-            {
-              field: "date",
-              headerName: "Fecha de entrada",
-              flex: 2,
-              align: "center",
-            },
-            {
-              field: "product_name",
-              headerName: "Nombre del producto",
-              flex: 2,
-              align: "center",
-            },
-            {
-              field: "quantity",
-              headerName: "Cantidad",
-              flex: 1,
-            },
-            // {
-            //   field: "newQuantity",
-            //   headerName: "Nueva Cantidad",
-            //   flex: 1,
-            //   align: "center",
-            // },
-            {
-              field: "nowStock",
-              headerName: "Existencia ahora",
-              flex: 1,
-              align: "center",
-            },
-            // {
-            //   field: "responsible",
-            //   headerName: "Responsable de entrada",
-            //   flex: 2,
-            //   align: "center",
-            // },
-          ]}
-          rows={rowsAllOutputs}
-          pagination
-          slots={{
-            pagination: CustomPagination,
-            toolbar: CustomToolbar,
-          }}
-          disableColumnFilter
-          disableColumnMenu
-          disableColumnSelector
-          disableDensitySelector
-          style={{fontFamily:'sans-serif'}}
-          slotProps={{
-            toolbar: {
-              showQuickFilter: true,
-              quickFilterProps: { debounceMs: 500 },
-            },
-          }}
-          printOptions={{
-            hideFooter: true,
-            hideToolbar: true,
-          }}
-          initialState={{
-            sorting:{
-              sortModel:[{field:'date', sort:'desc'}],
-              
-            },
-            pagination:{paginationModel:{pageSize:10, page:0}}
-          }}
-          pageSizeOptions={[5,10,25]}
-        />
-      </Grid>
+        )}
+      </Grid2>
 
 
 
-    </Grid>
+    </Grid2>
   )
 }
 

@@ -6,7 +6,6 @@ import {
   DataGrid,
   GridActionsCellItem,
   GridPagination,
-  GridToolbar,
   GridToolbarContainer,
   GridToolbarQuickFilter,
   gridPageCountSelector,
@@ -14,17 +13,45 @@ import {
   useGridSelector,
 } from "@mui/x-data-grid";
 import { useEffect } from "react";
-import { useSelector, useStore } from "react-redux";
-import { useServices } from "../../hooks/useServices";
+import { useUI } from "../../hooks/useUi";
 import MuiPagination from "@mui/material/Pagination";
-import { Download, Edit } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { redirectPages } from '../../helpers';
-import { Button } from "@mui/material";
-import { Workbook } from "exceljs";
-import { useProducts } from "../../hooks/useProducts";
+import { Add, Close, Delete, Download, Edit, Place } from "@mui/icons-material";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CircularProgress,
+  Fab,
+  Grid2,
+  IconButton,
+  Modal,
+  Typography,
+} from "@mui/material";
 import { useStoreHouse } from "../../hooks/useStoreHouse";
-import { replace } from "formik";
+import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
+import { useState } from "react";
+import { HtmlTooltip } from "../../components/Tooltips/HtmlTooltip";
+import { MarkerF, useLoadScript } from "@react-google-maps/api";
+import MapGoogle from "../../components/Google/MapGoogle";
+import { Box } from "@mui/system";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 600,
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 2,
+  borderRadius: "10px",
+};
+
+const styleContainer = {
+  width: "100%",
+  height: "600px",
+};
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -59,10 +86,25 @@ function CustomPagination(props) {
 }
 
 const StoreHouse = () => {
-  const { loadStoreHouse, StoreHouses,navigate, deleteStoreHouse} = useStoreHouse();
+  const { loadStoreHouse, StoreHouses, navigate, deleteStoreHouse } =
+    useStoreHouse();
+  const [open, setOpen] = useState({ value: false, data: {} });
+  const { loading } = useUI();
+  const { isLoaded } = useLoadScript({
+    id: "google-map-script",
+    googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
+  });
+
+  const handleOpen = (info) => {
+    setOpen({ value: true, data: info });
+  };
+  const handleClose = () => {
+    setOpen({ value: false, data: {} });
+  };
+  console.log(open);
 
   useEffect(() => {
-    loadStoreHouse()
+    loadStoreHouse();
   }, []);
 
   const rowsWithIds = StoreHouses.map((item, _id) => ({
@@ -71,87 +113,72 @@ const StoreHouse = () => {
   }));
 
   const createStoreHouse = () => {
-    navigate('/auth/CrearAlmacen')
-  }
-  
-  const exportToExcel = () => {
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Almacenes");
-
-    // Agregar encabezados de columna
-    const headerRow = worksheet.addRow([
-      "ID",
-      "Nombre del almacen",
-      "Numero de telefono",
-    ]);
-    headerRow.eachCell((cell) => {
-      cell.font = { bold: true };
-    });
-
-    // Agregar datos de las filas
-    rowsWithIds.forEach((row) => {
-      worksheet.addRow([row._id, row.name, row.phone_number]);
-    });
-
-    // Crear un Blob con el archivo Excel y guardarlo
-    workbook.xlsx.writeBuffer().then((buffer) => {
-      const blob = new Blob([buffer], {
-        type:
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      saveAs(blob, "almacenes.xlsx");
-    });
+    navigate("/CEDIS/agregar", { replace: true });
   };
 
   function CustomToolbar() {
     const apiRef = useGridApiContext();
-  
-    const handleGoToPage1 = () => apiRef.current.setPage(1);
-  
+
     return (
-      <GridToolbarContainer sx={{justifyContent:'space-between'}}>
-        <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-        <GridToolbarQuickFilter/>
-        <Button
-        variant="text"
-        startIcon={<Download/>}
-        disableElevation
-        sx={{ color: "secondary" }}
-        onClick={exportToExcel}
-      >
-        Descargar Excel
-      </Button>
+      <GridToolbarContainer sx={{ justifyContent: "center" }}>
+        <GridToolbarQuickFilter label="Buscar" placeholder="Buscar" />
       </GridToolbarContainer>
     );
   }
-
+  if (loading) {
+    return <LoadingScreenBlue />;
+  }
 
   return (
-    <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-      <Button
-          variant="contained"
-          disableElevation
-          sx={{ color: "primary", my: 5, p: 2, borderRadius: 5 }}
-          onClick={createStoreHouse}
+    <Grid2 container gap={2}>
+      <Grid2
+        marginTop={{ xs: "-30px" }}
+        size={12}
+        minHeight={"100px"}
+        className="Titles"
+      >
+        <Typography
+          textAlign={"center"}
+          variant="h1"
+          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-          Agregar nuevo almacen
-        </Button>
+          Mis centros de distribución
+        </Typography>
+      </Grid2>
+      <Grid2 size={12} display={"flex"} justifyContent={"end"}>
+        <Fab
+          title="Agregar nuevo almacen"
+          onClick={createStoreHouse}
+          color="primary"
+        >
+          <Add />
+        </Fab>
+      </Grid2>
       <DataGrid
-        sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
+        sx={{ fontSize: "12px" }}
         columns={[
           {
-            field: "_id",
+            field: "storehouse_key",
             hideable: false,
-            headerName: "Id",
-            flex: 1,
+            headerName: "Código",
+            flex: 0.5,
             sortable: "false",
           },
           {
             field: "name",
             hideable: false,
-            headerName: "Nombre del producto",
+            headerName: "Nombre del cedis",
+            flex: 1,
+            sortable: false,
+          },
+          {
+            field: "location",
+            hideable: false,
+            headerName: "Ubicacion",
             flex: 2,
             sortable: false,
+            valueGetter: (value, row) =>
+              `${value.state || ""} - ${value.municipality || ""}- ${value.neighborhood || ""}- ${value.direction || ""}- ${value.cp || ""}`,
           },
           {
             field: "phone_number",
@@ -167,12 +194,27 @@ const StoreHouse = () => {
             sortable: false,
             type: "actions",
             getActions: (params) => [
-            
-              <GridActionsCellItem icon={<Edit />} onClick={()=>redirectPages(navigate,(params.row._id))}  label="Editar Productos de almacen" showInMenu />,            
+              <GridActionsCellItem
+                icon={<Place color="secondary" />}
+                onClick={() => handleOpen(params.row)}
+                label="Ver Ubicación"
+                showInMenu
+              />,
+              <GridActionsCellItem
+                icon={<Edit color="success" />}
+                onClick={() => navigate(`/CEDIS/editar/${params.row._id}`)}
+                label="Editar Cedis"
+                showInMenu
+              />,
+              <GridActionsCellItem
+                icon={<Delete color="error" />}
+                onClick={() => deleteStoreHouse(params.row._id)}
+                label="Eliminar"
+                showInMenu
+              />,
             ],
           },
         ]}
-        
         rows={rowsWithIds}
         pagination
         slots={{
@@ -197,9 +239,56 @@ const StoreHouse = () => {
           hideToolbar: true,
         }}
       />
-    </div>
+      <Modal open={open.value} onClose={handleClose}>
+        <Card sx={style} variant="outlined">
+          <CardHeader
+            action={
+              <IconButton onClick={() => handleClose()} aria-label="Cerrar">
+                <Close />
+              </IconButton>
+            }
+            title={`Cedis: ${open?.data?.name}`}
+          />
+          <CardContent>
+            <Grid2 size={5.7}>
+              {isLoaded ? (
+                open.data.location?.lat &&
+                open.data.location?.lgt && (
+                  <Box>
+                    <MapGoogle
+                      center={{
+                        lat: open.data.location.lat,
+                        lng: open.data.location.lgt,
+                      }}
+                      styles={styleContainer}
+                      zoom={16}
+                      onGetPosition={(e) => {
+                        setInputsByMarker(e);
+                      }}
+                      typeCursor="pointer"
+                      scrollable={false}
+                    >
+                      {open.data.location.lat && open.data.location.lgt && (
+                        <MarkerF
+                          position={{
+                            lat: open.data.location.lat,
+                            lng: open.data.location.lgt,
+                          }}
+                          animation={google.maps.Animation.DROP}
+                        />
+                      )}
+                    </MapGoogle>
+                  </Box>
+                )
+              ) : (
+                <CircularProgress />
+              )}
+            </Grid2>
+          </CardContent>
+        </Card>
+      </Modal>
+    </Grid2>
   );
-}
+};
 
-export default StoreHouse
-
+export default StoreHouse;

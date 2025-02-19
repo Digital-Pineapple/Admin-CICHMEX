@@ -145,7 +145,7 @@ export const AllRoutes = [
 
   { id: 34, element: <ShippingCost /> },
   // { id: 35, element: <CrateShippingCost /> },
-  // { id: 36, element: <EditShippingCost /> },
+   { id: 36, element: <EditStoreHouse /> },
 
   { id: 37, element: <StoreHouse /> },
   { id: 38, element: <CreateStoreHouse /> },

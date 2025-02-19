@@ -9,6 +9,7 @@ import {
   onAddStockProduct,
   loadAllStoreHouses,
   loadOneStoreHouse,
+  onDeleteStoreHouse,
 } from "../reducer/storeHouseReducer";
 import {
   headerConfigApplication,
@@ -16,6 +17,7 @@ import {
 } from "../../apis/headersConfig";
 import { deleteProduct } from "../reducer/productsReducer";
 import Swal from "sweetalert2";
+import { startLoading, stopLoading } from "../reducer/uiReducer";
 
 export const startLoadAllStock = (id) => {
   return async (dispatch) => {
@@ -84,37 +86,69 @@ export const startLoadOneStoreHouse = (id) => {
   };
 };
 
-export const startCreateOneStoreHouse =
-  (values, navigate) => async (dispatch) => {
-    try {
-      const { data, message } = await instanceApi.post(
-        `/storehouse`,
-        { values: values },
-        {
-          headers: {
-            "Content-type": "application/json",
-             "Authorization": `Bearer ${localStorage.getItem("token")}`,
-        },
+export const startCreateStoreHouse = ( branchData, coords, navigate ) => {    
+  const { name, description, phone, state, municipality, direction, neighborhood, zipcode } = branchData;
+  const  { lat, lng } = coords;
+  return async (dispatch) => {
+    dispatch(startLoading())
+    try {  
+      const formData = new FormData();
+      const lgt = lng;      
+      formData.append("name", name);
+      formData.append("description", description);
+      formData.append("location", JSON.stringify({ state, municipality, lat, lgt, direction, neighborhood, cp: zipcode }));
+      formData.append("type", "deliverypoint");      
+      formData.append("phone_number", phone);             
+      const info = await instanceApi.post("/storehouse", formData, {
+        headers: {         
+         "Content-Type": "/multipart/form-data",
         }
-      );
-      enqueueSnackbar("Agregado con éxito", {
+      });
+      enqueueSnackbar(`Registro exitoso: ${info.data?.message}`, {
+        anchorOrigin: { horizontal: "center", vertical: "top" },
         variant: "success",
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "right",
-        },
       });
-      navigate("/auth/Almacenes", { replace: true });
+      navigate("/CEDIS/todos");
     } catch (error) {
-      enqueueSnackbar(`Error: ${error.response.data.message}`, {
-        variant: "error",
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "right",
-        },
-      });
+      console.log(error);
+      
+    }finally{
+    dispatch(stopLoading())
     }
   };
+};
+
+export const startUpdateStoreHouse = ( id, branchData, coords, navigate ) => {    
+  const { name, description, phone, state, municipality, direction, neighborhood, zipcode } = branchData;
+  const  { lat, lng } = coords;
+  return async (dispatch) => {
+    dispatch(startLoading())
+    try {  
+      const formData = new FormData();
+      const lgt = lng;      
+      formData.append("name", name);
+      formData.append("description", description);
+      formData.append("location", JSON.stringify({ state, municipality, lat, lgt, direction, neighborhood, cp: zipcode }));
+      formData.append("type", "deliverypoint");      
+      formData.append("phone_number", phone);            
+      const {data} = await instanceApi.put(`/storehouse/update/${id}`, formData, {
+        headers: {         
+         "Content-Type": "/multipart/form-data",
+        }
+      });
+      enqueueSnackbar(`${data?.message}`, {
+        anchorOrigin: { horizontal: "center", vertical: "top" },
+        variant: "success",
+      });
+      navigate("/CEDIS/todos");
+    } catch (error) {
+      console.log(error);
+      
+    }finally{
+    dispatch(stopLoading())
+    }
+  };
+};
 
 export const startCreateStockProduct =
   (values, navigate) => async (dispatch) => {
@@ -254,9 +288,10 @@ export const startReturnStockProduct = (id, values, navigate) => {
   };
 };
 
-export const startDeleteStoreHouse = (id, navigate) => {
+export const startDeleteStoreHouse = (id) => {
   return async (dispatch) => {
     try {
+      dispatch(startLoading())
       const { data } = await instanceApi.delete(
         `/storehouse/${id}`,
         {
@@ -266,24 +301,24 @@ export const startDeleteStoreHouse = (id, navigate) => {
         },
         }
       );
-
-      enqueueSnackbar("Almacen eliminado", {
+      enqueueSnackbar(`${data.message}`, {
         variant: "success",
         anchorOrigin: {
           vertical: "top",
           horizontal: "right",
         },
       });
-      navigate("/auth/Almacenes", { replace: true });
+      dispatch(onDeleteStoreHouse(data.data))
     } catch (error) {
-      console.log(error);
-      enqueueSnackbar(`Ocurrió un error + ${error}`, {
+      enqueueSnackbar(`${error.data.message}`, {
         variant: "error",
         anchorOrigin: {
           vertical: "top",
           horizontal: "right",
         },
       });
+    }finally{
+      dispatch(stopLoading())
     }
   };
 };
