@@ -96,6 +96,8 @@ import Banners from "../pages/Banners/Banners";
 import CreateSlider from "../pages/Banners/CreateSlider";
 import UpdateSlider from "../pages/Banners/UpdateSlider";
 import MyAccount from "../pages/Settings/MyAccount";
+import InputsByFolio from "../pages/StockStoreHouse/InputsByFolio";
+import AuthorizeInputs from "../pages/StockStoreHouse/AuthorizeInputs";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -216,4 +218,6 @@ export const AllRoutes = [
   { id: 111, element: <CreateSlider /> },
   { id: 112, element: <UpdateSlider /> },
   { id: 120, element: <MyAccount /> },
+  { id: 130, element: <InputsByFolio /> },
+  { id: 131, element: <AuthorizeInputs /> },
 ];

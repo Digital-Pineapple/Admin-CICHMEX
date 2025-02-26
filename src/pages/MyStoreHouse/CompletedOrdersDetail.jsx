@@ -56,7 +56,6 @@ const CompletedOrdersDetail = () => {
     }
     return "Desconocido"; // Valor por defecto
   };
-  console.log(productOrder.supply_detail);
   
 
   const typeDelivery = (value) => {

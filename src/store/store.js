@@ -25,6 +25,7 @@ import regionsReducer from "./reducer/regionsReducer";
 import sizeGuideReducer  from "./reducer/sizeGuideReducer";
 import  discountsReducer from "./reducer/discountsReducer";
 import deliveryPointsReducer  from "./reducer/deliveryPointsReducer";
+import  stockStorehouseReducer  from "./reducer/useStockStoreHouse";
 
 
 
@@ -53,7 +54,9 @@ const rootReducer = combineReducers({
   payments: paymentsReducer,
   regions: regionsReducer,
   sizeGuide : sizeGuideReducer,
-  deliveryPoints: deliveryPointsReducer
+  deliveryPoints: deliveryPointsReducer,
+  stockStorehouse: stockStorehouseReducer,
+
 });
 
 export const store = configureStore({
