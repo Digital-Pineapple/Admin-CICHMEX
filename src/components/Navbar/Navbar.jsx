@@ -20,6 +20,9 @@ import { Divider, Grid2, ListItemButton, ListItemText } from "@mui/material";
 import { Link } from "react-router-dom";
 import ImageMain from '../../assets/Images/CHMX/Imagotipo CICHMEX Naranja.png'
 import Image from "mui-image";
+import BtnIconNotification from "../ui/BtnIconNotification";
+import NotificationsPanel from "../ui/Notifications";
+import { useSelector } from "react-redux";
 
 const drawerWidth = 240;
 
@@ -64,8 +67,10 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 
 export const Navbar = (props) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const { notifications } = useSelector(state => state.notifications);
   const { groupRoutes } = useDynamicRoutes();
   const [expanded, setExpanded] = useState("");
+  const [ showNotiDrawer, setShowNotiDrawer ] = useState(false);
 
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
@@ -84,6 +89,14 @@ export const Navbar = (props) => {
 
   return (
     <Box sx={{ display: "flex" }}>
+      <Drawer 
+        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1}}  
+        open={showNotiDrawer} 
+        anchor="right" 
+        onClose={() => setShowNotiDrawer(false)}
+      >
+        <NotificationsPanel />            
+      </Drawer>   
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -128,7 +141,11 @@ export const Navbar = (props) => {
           <Grid2 size={{xs:1}} justifyContent={'center'} alignContent={'center'}>   
           <AvatarCustom />
           </Grid2>
-        
+          <BtnIconNotification 
+            amount={notifications?.filter(item => !(item?.readed)).length} 
+            onClick={() => setShowNotiDrawer(true)}
+          />
+              
         </Grid2>
       </AppBar>
 

@@ -12,8 +12,39 @@ import  {Login}  from "../pages/Login";
 import { PrivateRoutes } from "./PrivateRoutes";
 import { PublicRoutes } from "./PublicRoutes";
 import Home from "../pages/Home";
+import { useDispatch } from "react-redux";
+import { getNotificationsByUserId } from "../store";
+import io from "socket.io-client";
+import { enqueueSnackbar } from "notistack";
+import { addNotification } from "../store/reducer/notificationsReducer";
 
+const socket = io.connect(import.meta.env.VITE_SOCKET_URL)
 const RoutesContainer = ({ logged, user }) => {
+  const dispatch = useDispatch();  
+
+  useEffect(()=> {  
+    if(logged){
+      socket.on("received_notification", (data)=>{
+        enqueueSnackbar(`${data.message}`,  {
+          autoHideDuration: 2000,
+          anchorOrigin: { horizontal: "right", vertical: "top" },
+          variant: "default",
+        });
+        dispatch(addNotification(data));
+      })          
+    }  
+    // funcion cleanup como desconectarse del socket
+    return () => {
+      socket.disconnect();
+    }
+  },[logged, socket]);
+
+  useEffect(() => {
+    if(logged){
+      dispatch(getNotificationsByUserId())
+    }
+  },[logged]);
+
   const { componentLinks, routes } = useAuthStore();
   const [theme, setTheme] = useState(themeSuperAdmin);
   useEffect(() => {
