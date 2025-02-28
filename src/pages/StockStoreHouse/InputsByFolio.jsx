@@ -33,6 +33,8 @@ import { localDate } from "../../Utils/ConvertIsoDate";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 import { esES } from "@mui/x-data-grid/locales";
+import { FilePdfFilled } from "@ant-design/icons";
+import { printPDFInputsReport } from "../../store/actions/stockStorehouseActions";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -68,7 +70,7 @@ function CustomPagination(props) {
 
 const InputsByFolio = () => {
   const [openModal, setOpenModal] = useState(false);
-  const { loadInputs, inputs, navigate } = useStockStorehouse();
+  const { loadInputs, inputs, navigate, loadPDFReport } = useStockStorehouse();
   const { user } = useAuthStore();
   const { loading } = useUI();
 
@@ -191,6 +193,15 @@ const InputsByFolio = () => {
                 onClick={() => navigate(`autorizar_entradas/${params.row._id}`)}
                 label="Autorizar entrada"
                 showInMenu
+                disabled={params.row.in_storehouse}
+              />,
+              <GridActionsCellItem
+                icon={<FilePdfFilled color="success" />}
+                onClick={() => loadPDFReport(params.row._id)
+                }
+                label="Imprimir reporte"
+                showInMenu
+                disabled={!params.row.in_storehouse}
               />,
             ],
           },

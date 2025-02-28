@@ -213,6 +213,12 @@ const ProductEntries = () => {
               align: "center",
             },
             {
+              field: "quantity_received",
+              headerName: "Cantidad recibida en almacen",
+              flex: 1,
+              align: "center",
+            },
+            {
               field: "newQuantity",
               headerName: "Nueva Cantidad",
               flex: 1,

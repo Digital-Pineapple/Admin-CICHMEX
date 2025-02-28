@@ -4,13 +4,7 @@ import { useParams } from "react-router-dom";
 import {
   Grid2,
   Typography,
-  Grid,
-  Card,
-  CardContent,
-  CardActions,
   Button,
-  CardHeader,
-  Avatar,
   IconButton,
   TextField,
   TableContainer,
@@ -21,22 +15,13 @@ import {
   Paper,
   TableBody,
   Modal,
-  Box,
   Tooltip,
 } from "@mui/material";
-import { EnterOutlined } from "@ant-design/icons";
-import {
-  DataGrid,
-  GridActionsCellItem,
-  GridToolbarContainer,
-  GridToolbarExport,
-} from "@mui/x-data-grid";
-import { Close, ErrorRounded, NoteAdd } from "@mui/icons-material";
-import { esES } from "@mui/x-data-grid/locales";
+import { Close, NoteAdd } from "@mui/icons-material";
 import { Controller, useForm } from "react-hook-form";
-import { current } from "@reduxjs/toolkit";
 import { teal } from "@mui/material/colors";
 import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
+import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 
 const style = {
   position: "absolute",
@@ -52,7 +37,7 @@ const style = {
 };
 
 const AuthorizeInputs = () => {
-  const { loadEntryReport, EntryReport } = useStockStorehouse();
+  const { loadEntryReport, EntryReport, loadAuthorizeEntries, loading } = useStockStorehouse();
   const [openModalForm, setopenModalForm] = useState({
     value: false,
     data: {},
@@ -64,16 +49,15 @@ const AuthorizeInputs = () => {
   useEffect(() => {
     loadEntryReport(folio);
   }, [folio]);
-  console.log(EntryReport, "informacion");
   const responsible = EntryReport.responsible?.[0];
   const { fullname, email, type_user } = responsible || {};
 
   const TYPE_USERS = {
     "SUPER-ADMIN": "Super Administrador",
-    ADMIN: "Administrador",
+    "ADMIN": "Administrador",
     "WAREHOUSE-MANAGER": "Encargado de almacén",
-    WAREHOUSEMAN: "Almacenista",
-    no_data: "Sin información",
+    "WAREHOUSEMAN": "Almacenista",
+    "no_data": "Sin información",
   };
   const defaultTypeUser = "no_data";
   const RenderName = TYPE_USERS[type_user?.role[0]] || defaultTypeUser;
@@ -98,7 +82,7 @@ const AuthorizeInputs = () => {
     setopenModalForm({ value: false, data: {}, missing: 0 });
   };
 
-  const { control, setValue, getValues, reset, handleSubmit, watch } = useForm({
+  const { control, getValues, reset, handleSubmit, watch } = useForm({
     defaultValues: {
       products: [],
     },
@@ -111,17 +95,19 @@ const AuthorizeInputs = () => {
   }, [EntryReport.inputs, reset]);
 
   const onSubmit = (data) => {
-    console.log("Datos enviados:", data);
+    loadAuthorizeEntries(data)
   };
-  const onSubmitModal = (data) => {
-    console.log("Datos enviados:", data);
-  };
+  
 
   const CurrentNotes = (index) => watch(`products.${index}.notes`);
   const paths = [
     {path:'/almacenista/entradas_de_producto',name: 'Entradas de producto'},
     {path:'/almacenista/entradas_de_producto/autorizar_entrada', name: 'Autorizar Entrada'}
   ]
+
+  if (loading) {
+    return <LoadingScreenBlue/>
+  }
 
   return (
     <Grid2 container paddingX={{lg:20}} display={"flex"} gap={2}>
@@ -237,8 +223,9 @@ const AuthorizeInputs = () => {
         <Button
           type="submit"
           variant="contained"
-          color="primary"
-          sx={{ mt: 2 }}
+          size="small"
+          color="success"
+          sx={{ mt: 2, width:150  }}
         >
           Guardar
         </Button>
