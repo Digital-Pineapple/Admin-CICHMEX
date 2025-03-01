@@ -25,6 +25,9 @@ export const notificationsReducer = createSlice({
         state.notificationsLoading = payload
     },
     addNotification: (state, { payload }) =>{ 
+        if(state.notifications.some(notification => notification._id === payload._id)){
+          return;
+        }
         state.notifications.unshift(payload)
     }
   },
