@@ -25,8 +25,7 @@ import regionsReducer from "./reducer/regionsReducer";
 import sizeGuideReducer  from "./reducer/sizeGuideReducer";
 import  discountsReducer from "./reducer/discountsReducer";
 import deliveryPointsReducer  from "./reducer/deliveryPointsReducer";
-
-
+import notificationsReducer from "./reducer/notificationsReducer";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -53,7 +52,8 @@ const rootReducer = combineReducers({
   payments: paymentsReducer,
   regions: regionsReducer,
   sizeGuide : sizeGuideReducer,
-  deliveryPoints: deliveryPointsReducer
+  deliveryPoints: deliveryPointsReducer,
+  notifications: notificationsReducer
 });
 
 export const store = configureStore({

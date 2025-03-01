@@ -233,8 +233,8 @@ function BranchOfficeEdit() {
             <br></br>   
             {
               deliveryPoint?.images?.length > 0 && deliveryPoint?.images?.map((image, index)=>{
-                return (
-                  <ImageDeleteCard handleDelete={() => onDeleteImage(id, image?._id)} src={image?.url} key={index}/>
+                return (                
+                  <ImageDeleteCard handleDelete={() => onDeleteImage(id, image?._id)} src={image?.url} key={image?._id}/>                             
                 );
               })
             }

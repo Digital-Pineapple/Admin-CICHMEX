@@ -6,7 +6,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/icons-material/Menu";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AvatarCustom from "../ui/AvatarCustom";
 import { useDynamicRoutes } from "../../hooks/useDynamicRoutes";
 import MenuDrawer from "../Drawers/MenuDrawer";
@@ -20,6 +20,12 @@ import { Divider, Grid2, ListItemButton, ListItemText } from "@mui/material";
 import { Link } from "react-router-dom";
 import ImageMain from '../../assets/Images/CHMX/Imagotipo CICHMEX Naranja.png'
 import Image from "mui-image";
+import BtnIconNotification from "../ui/BtnIconNotification";
+import NotificationsPanel from "../ui/Notifications";
+import { useSelector } from "react-redux";
+import { enqueueSnackbar } from "notistack";
+import { addNotification } from "../../store/reducer/notificationsReducer";
+import io from "socket.io-client";
 
 const drawerWidth = 240;
 
@@ -62,10 +68,36 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   borderTop: "1px solid rgba(0, 0, 0, .125)",
 }));
 
+
+// const socket = io.connect(import.meta.env.VITE_SOCKET_URL, {
+//   reconnection: true,
+//   forceNew: true 
+// })
 export const Navbar = (props) => {
+  const { logged } = useAuthStore();
+
+  // useEffect(()=> {  
+  //   if(logged){
+  //     socket.on("received_notification", (data)=>{
+  //       enqueueSnackbar(`${data.message}`,  {
+  //         autoHideDuration: 2000,
+  //         anchorOrigin: { horizontal: "right", vertical: "top" },
+  //         variant: "default",
+  //       });
+  //       dispatch(addNotification(data));
+  //     })          
+  //   }  
+  //   // funcion cleanup como desconectarse del socket
+  //   return () => {
+  //     // socket.disconnect();
+  //   }
+  // },[logged]);
+
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const { notifications } = useSelector(state => state.notifications);
   const { groupRoutes } = useDynamicRoutes();
   const [expanded, setExpanded] = useState("");
+  const [ showNotiDrawer, setShowNotiDrawer ] = useState(false);
 
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
@@ -84,6 +116,14 @@ export const Navbar = (props) => {
 
   return (
     <Box sx={{ display: "flex" }}>
+      <Drawer 
+        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1}}  
+        open={showNotiDrawer} 
+        anchor="right" 
+        onClose={() => setShowNotiDrawer(false)}
+      >
+        <NotificationsPanel />            
+      </Drawer>   
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -128,7 +168,11 @@ export const Navbar = (props) => {
           <Grid2 size={{xs:1}} justifyContent={'center'} alignContent={'center'}>   
           <AvatarCustom />
           </Grid2>
-        
+          <BtnIconNotification 
+            amount={notifications?.filter(item => !(item?.readed)).length} 
+            onClick={() => setShowNotiDrawer(true)}
+          />
+              
         </Grid2>
       </AppBar>
 

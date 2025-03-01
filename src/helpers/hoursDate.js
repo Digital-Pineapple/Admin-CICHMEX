@@ -1,4 +1,11 @@
 import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/es"; // Importa el idioma español
+
+// Extender Day.js con el plugin de tiempos relativos
+dayjs.extend(relativeTime);
+dayjs.locale("es");
+
 function convertirCadenaHoraAFecha(cadenaHora) {
     // Dividir la cadena de hora en partes: hora, minutos y periodo (AM o PM)
     const partes = cadenaHora.split(' ');
@@ -35,7 +42,12 @@ function convertirCadenaHoraAFecha(cadenaHora) {
     return `${hours}:${minutes} ${ampm}`;
   };
 
+  const getTimeFromNow = (createdAt) => {
+    return dayjs(createdAt).fromNow();
+  }
+
   export {
     convertirCadenaHoraAFecha,
-    handleHoursChange
+    handleHoursChange,
+    getTimeFromNow
   }
