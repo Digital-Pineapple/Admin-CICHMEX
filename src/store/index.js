@@ -12,6 +12,7 @@ export * from './actions/productsActions'
 export * from './actions/storehouseActions'
 export * from './actions/regionsActions'
 export * from './actions/discountsActions'
+export * from './actions/warehouseActions'
 
 
 

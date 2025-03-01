@@ -4,7 +4,6 @@ import { startLoading, stopLoading } from "../reducer/uiReducer";
 import { onAddNewSizeVariant, updateIsMainVariant, updateVariant, updateVariantsImages } from "../reducer/productsReducer";
 import Swal from "sweetalert2";
 import { green } from "@mui/material/colors";
-import { Button } from "@mui/material";
 
 
 export const startUpdateOneVariant = (id, values, handleClose) => {

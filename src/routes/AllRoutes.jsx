@@ -98,6 +98,7 @@ import UpdateSlider from "../pages/Banners/UpdateSlider";
 import MyAccount from "../pages/Settings/MyAccount";
 import InputsByFolio from "../pages/StockStoreHouse/InputsByFolio";
 import AuthorizeInputs from "../pages/StockStoreHouse/AuthorizeInputs";
+import Zones from "../pages/Warehouse/WarehouseManagement/Zones";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -220,4 +221,5 @@ export const AllRoutes = [
   { id: 120, element: <MyAccount /> },
   { id: 130, element: <InputsByFolio /> },
   { id: 131, element: <AuthorizeInputs /> },
+  { id: 200, element: <Zones/>}
 ];
