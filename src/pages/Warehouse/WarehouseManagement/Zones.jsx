@@ -22,12 +22,11 @@ import {
   FormHelperText,
   Popover,
   MenuList,
-  menuItemClasses,
 } from "@mui/material";
 import { useWarehouse } from "../../../hooks";
 import { useCallback, useEffect, useState } from "react";
-import { Add, Edit, MoreVert } from "@mui/icons-material";
-import { teal } from "@mui/material/colors";
+import { Add, Delete, Edit, MoreVert } from "@mui/icons-material";
+import { grey, teal } from "@mui/material/colors";
 import { Controller, useForm } from "react-hook-form";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -72,6 +71,8 @@ const Zones = () => {
     RenderTypeZone,
     TypesZones,
     loadAddZone,
+    loadUpdateZone,
+    loadDeleteZone,
   } = useWarehouse();
 
   const [open, setOpen] = useState({ value: false, zone: {}, type: "" });
@@ -93,14 +94,12 @@ const Zones = () => {
     reset();
   };
 
-  console.log(open);
-
   const OnSubmit = (data) => {
     if (open.type === "Add") {
       loadAddZone(data, handleClose);
     } else if (open.type === "Update") {
-      console.log("Actualizar zona:", open.zone.id, data);
-      // Aquí debes agregar la función que actualiza la zona
+      const id = open.zone._id;
+      loadUpdateZone(id, data, handleClose);
     }
   };
 
@@ -112,68 +111,63 @@ const Zones = () => {
   const handleClosePopover = useCallback(() => {
     setOpenPopover(null);
   }, []);
-  
+
+  if (loaderZones) {
+    return <Skeleton variant="rounded" width={"100%"} height={"100%"} />;
+  }
 
   return (
-    <Grid2 container paddingX={{ xs: 5, lg: 15 }}>
-      {loaderZones ? (
-        <Skeleton variant="rounded" width={"100%"} height={"100%"} />
-      ) : (
-        <>
-          <Grid2
-            size={12}
-            flexGrow={1}
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
-            padding={1}
-          >
-            <Typography variant="h5">
-              <strong>Zonas</strong>
-            </Typography>
-            <Button
-              variant="contained"
-              size="small"
-              sx={{ textTransform: "capitalize", borderRadius: "10px" }}
-              color="success"
-              onClick={() => handleOpen({}, "Add")}
-            >
-              <Add /> Nueva zona
-            </Button>
-          </Grid2>
+    <Grid2 container>
+      <Grid2
+        size={12}
+        flexGrow={1}
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        padding={1}
+      >
+        <Typography variant="h5">
+          <strong>Zonas</strong>
+        </Typography>
+        <Button
+          variant="contained"
+          size="small"
+          sx={{ textTransform: "capitalize", borderRadius: "10px" }}
+          color="secondary"
+          onClick={() => handleOpen({}, "Add")}
+        >
+          <Add /> Nueva zona
+        </Button>
+      </Grid2>
 
-          <Grid2 size={12}>
-            <TableContainer variant="elevation" component={Paper}>
-              <Table sx={{ minWidth: 700 }} size="small">
-                <TableHead>
-                  <TableRow>
-                    <StyledTableCell>Nombre</StyledTableCell>
-                    <StyledTableCell>Tipo de zona</StyledTableCell>
-                    <StyledTableCell align="right">Opciones</StyledTableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rowsZones.map((row) => (
-                    <StyledTableRow key={row.id || row.name}>
-                      <StyledTableCell component="th" scope="row">
-                        {row.name}
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        {RenderTypeZone(row.type)}
-                      </StyledTableCell>
-                      <StyledTableCell align="right">
-                        <IconButton onClick={(e) => handleOpenPopover(e, row)}>
-                          <MoreVert />
-                        </IconButton>
-                      </StyledTableCell>
-                    </StyledTableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Grid2>
-        </>
-      )}
+      <Grid2 size={12}>
+        <TableContainer variant="elevation" component={Paper}>
+          <Table sx={{ minWidth: 300 }} size="small">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>Nombre</StyledTableCell>
+                <StyledTableCell>Tipo de zona</StyledTableCell>
+                <StyledTableCell align="right">Opciones</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rowsZones.map((row) => (
+                <StyledTableRow key={row.id || row.name}>
+                  <StyledTableCell component="th" scope="row">
+                    {row.name}
+                  </StyledTableCell>
+                  <StyledTableCell>{RenderTypeZone(row.type)}</StyledTableCell>
+                  <StyledTableCell align="right">
+                    <IconButton onClick={(e) => handleOpenPopover(e, row)}>
+                      <MoreVert />
+                    </IconButton>
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Grid2>
 
       <Modal open={open.value} onClose={handleClose}>
         <Grid2
@@ -183,7 +177,7 @@ const Zones = () => {
           onSubmit={handleSubmit(OnSubmit)}
         >
           <Typography marginBottom={3} variant="h6">
-            Agregar nueva zona
+            {open.type === 'Add' ?"Agregar nueva zona": "Editar zona"}
           </Typography>
 
           <Controller
@@ -263,6 +257,14 @@ const Zones = () => {
             }}
           >
             <Edit fontSize="small" color="info" /> Editar
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleClosePopover();
+              loadDeleteZone(open.zone._id);
+            }}
+          >
+            <Delete fontSize="small" color="warning" /> Eliminar
           </MenuItem>
         </MenuList>
       </Popover>
