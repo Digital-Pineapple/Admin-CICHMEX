@@ -14,7 +14,7 @@ import {
 } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import MuiPagination from "@mui/material/Pagination";
-import { Check, Download, Edit } from "@mui/icons-material";
+import { Check, Download, Edit, Mediation } from "@mui/icons-material";
 import {
   Button,
   ButtonGroup,
@@ -68,7 +68,7 @@ function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
-const InputsByFolio = () => {
+const   InputsByFolio = () => {
   const [openModal, setOpenModal] = useState(false);
   const { loadInputs, inputs, navigate, loadPDFReport } = useStockStorehouse();
   const { user } = useAuthStore();
@@ -120,6 +120,15 @@ const InputsByFolio = () => {
       return <Chip color="success" label="Autorizado" />;
     } else if (data === false) {
       return <Chip color="info" label="Pendiente" title="Pendiente" />;
+    } else {
+      return <Chip color="default" label="Sin información" />;
+    }
+  };
+  const RenderChip2 = (data) => {
+    if (data === true) {
+      return <Chip color="success" label="Terminado" />;
+    } else if (data === false) {
+      return <Chip color="error" label="Pendiente" title="Pendiente" />;
     } else {
       return <Chip color="default" label="Sin información" />;
     }
@@ -179,6 +188,13 @@ const InputsByFolio = () => {
             flex: 0.5,
             renderCell: (params) => RenderChip(params.row.in_storehouse), // Ahora sí retorna el JSX
           },
+          {
+            field: "in_section",
+            headerName: "Acomodo",
+            hideable: false,
+            flex: 0.5,
+            renderCell: (params) => RenderChip2(params.row.in_section), // Ahora sí retorna el JSX
+          },
 
           {
             field: "Opciones",
@@ -194,6 +210,13 @@ const InputsByFolio = () => {
                 label="Autorizar entrada"
                 showInMenu
                 disabled={params.row.in_storehouse}
+              />,
+              <GridActionsCellItem
+                icon={<Mediation color="success" />}
+                onClick={() => navigate(`acomodar_producto/${params.row._id}`)}
+                label="Acomodar producto"
+                showInMenu
+                disabled={!(params.row.in_storehouse === true && params.row.in_section === false)}
               />,
               <GridActionsCellItem
                 icon={<FilePdfFilled color="success" />}

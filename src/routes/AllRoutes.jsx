@@ -101,6 +101,7 @@ import AuthorizeInputs from "../pages/StockStoreHouse/AuthorizeInputs";
 import Zones from "../pages/Warehouse/WarehouseManagement/Zones";
 import WarehouseManagement from "../pages/Warehouse/WarehouseManagement/WarehouseManagement";
 import Aisles from "../pages/Warehouse/WarehouseManagement/Aisles";
+import ArrangeProducts from "../pages/StockStoreHouse/ArrangeProducts";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -223,5 +224,6 @@ export const AllRoutes = [
   { id: 120, element: <MyAccount /> },
   { id: 130, element: <InputsByFolio /> },
   { id: 131, element: <AuthorizeInputs /> },
-  { id: 200, element: <WarehouseManagement/>}
+  { id: 200, element: <WarehouseManagement/>},
+  { id: 201, element: <ArrangeProducts/>}
 ];

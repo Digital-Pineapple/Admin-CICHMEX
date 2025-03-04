@@ -29,9 +29,14 @@ export const useStockStorehouse = () => {
         dispatch(startAuthorizeEntries(info, navigate))
         }
 
+        const rows =(data) => data.map((i, index) => ({
+            id: index.toString(),
+            ...i,
+          }));
+
    
 
-    return { inputs, EntryReport, loading, loadInputs, loadEntryReport, navigate, loadAuthorizeEntries, loadPDFReport }
+    return { inputs, EntryReport, loading, loadInputs, loadEntryReport, navigate, loadAuthorizeEntries, loadPDFReport, rows }
 
 
 }

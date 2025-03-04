@@ -99,6 +99,9 @@ export const warehouseReducer = createSlice({
       state.sections.allSections = action.payload;
       state.sections.loader = false;
     },
+    onStopLoaderSection: (state) => {
+      state.sections.loader = false;
+    },
     onDeleteZone: (state, { payload }) => {
       state.zones.allZones = state.zones.allZones.filter(
         (i) => i._id !== payload._id
@@ -140,6 +143,7 @@ export const {
   onLoadSections,
   onStartLoadingSections,
   onUpdateSection,
+  onStopLoaderSection
 } = warehouseReducer.actions;
 
 export default warehouseReducer.reducer;

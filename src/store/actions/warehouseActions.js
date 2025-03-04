@@ -1,6 +1,6 @@
 import Swal from "sweetalert2";
 import { instanceApi } from "../../apis/configAxios";
-import { onAddAisle, onAddSection, onAddZone, onClearErrors, onClearErrorsAisles, onClearErrorsSections, onDeleteAisle, onDeleteSection, onDeleteZone, onErrorAisles, onErrorSections, onErrorZones, onLoadAisles, onLoadSections, onLoadZones, onStartLoadingAisles, onStartLoadingSections, onStartLoadingZones, onUpdateAisle, onUpdateSection, onUpdateZone } from "../reducer/warehouseReducer";
+import { onAddAisle, onAddSection, onAddZone, onClearErrors, onClearErrorsAisles, onClearErrorsSections, onDeleteAisle, onDeleteSection, onDeleteZone, onErrorAisles, onErrorSections, onErrorZones, onLoadAisles, onLoadSections, onLoadZones, onStartLoadingAisles, onStartLoadingSections, onStartLoadingZones, onStopLoaderSection, onUpdateAisle, onUpdateSection, onUpdateZone } from "../reducer/warehouseReducer";
 
 export const startLoadZones = () => async dispatch => {
     dispatch(onStartLoadingZones());
@@ -183,6 +183,39 @@ export const startLoadZones = () => async dispatch => {
     } finally {
       dispatch(onClearErrorsSections());
     }
+  };
+
+  export const startLoadSectionPDF = (id) => {
+    return async (dispatch) => {
+      dispatch(onStartLoadingSections());
+      try {
+        const { data } = await instanceApi.get(`/warehouse/print_section_code/${id}`, {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          responseType: "blob", // Asegura que la respuesta sea tratada como un archivo Blob
+        });
+  
+        // Crear un URL para el Blob
+        const pdfUrl = URL.createObjectURL(
+          new Blob([data], { type: "application/pdf" })
+        );
+  
+        // Abrir el PDF en una nueva pestaña del navegador
+        const pdfWindow = window.open(pdfUrl);
+  
+        // Opcional: Si deseas imprimirlo directamente al abrirlo
+        pdfWindow.onload = () => {
+          pdfWindow.print();
+        };
+        dispatch(onStopLoaderSection())
+      } catch (error) {
+        dispatch(onErrorSections(error.message));
+      } finally {
+        dispatch(onClearErrorsSections());
+      }
+    };
   };
   export const startDeleteZone = (id) => async dispatch => {
     dispatch(onStartLoadingZones());

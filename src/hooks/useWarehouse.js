@@ -8,6 +8,7 @@ import {
   startDeleteSection,
   startDeleteZone,
   startLoadAisles,
+  startLoadSectionPDF,
   startLoadSections,
   startLoadZones,
   startUpdateAisle,
@@ -49,6 +50,7 @@ export const useWarehouse = () => {
   const loadUpdateSection = (id, data, closeModal) =>
     dispatch(startUpdateSection(id, data, closeModal));
   const loadDeleteSection = (id) => dispatch(startDeleteSection(id));
+  const loadSectionPDF = (id) => dispatch(startLoadSectionPDF(id));
 
   const rows = (data) =>
     data.map((i, index) => ({
@@ -95,6 +97,7 @@ export const useWarehouse = () => {
     loaderSections,
     loadDeleteSection,
     loadAddSection,
-    loadUpdateSection
+    loadUpdateSection,
+    loadSectionPDF
   };
 };

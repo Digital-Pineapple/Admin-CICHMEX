@@ -25,9 +25,10 @@ import {
 } from "@mui/material";
 import { useWarehouse } from "../../../hooks";
 import { useCallback, useEffect, useState } from "react";
-import { Add, Delete, Edit, MoreVert } from "@mui/icons-material";
+import { Add, Delete, Edit, MoreVert, QrCode } from "@mui/icons-material";
 import { grey, teal } from "@mui/material/colors";
 import { Controller, useForm } from "react-hook-form";
+import { FilePdfFilled } from "@ant-design/icons";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -72,6 +73,7 @@ const Sections = () => {
     loadDeleteSection,
     loadAddSection,
     loadUpdateSection,
+    loadSectionPDF
   } = useWarehouse();
 
   const [open, setOpen] = useState({ value: false, section: {}, type: "" });
@@ -249,6 +251,14 @@ const Sections = () => {
             flexDirection: "column",
           }}
         >
+           <MenuItem
+            onClick={() => {
+              handleClosePopover();
+              loadSectionPDF(open.section._id);
+            }}
+          >
+            <QrCode fontSize="small" color="warning" /> Código
+          </MenuItem>
           <MenuItem
             onClick={() => {
               handleClosePopover();
@@ -265,6 +275,7 @@ const Sections = () => {
           >
             <Delete fontSize="small" color="warning" /> Eliminar
           </MenuItem>
+         
         </MenuList>
       </Popover>
     </Grid2>
