@@ -8,11 +8,16 @@ export const warehouseReducer = createSlice({
       loader: false,
       errorMessage: "",
     },
-    aisles:{
-      allAisles:[],
+    aisles: {
+      allAisles: [],
       loader: false,
-      errorMessage:''
-    }
+      errorMessage: "",
+    },
+    sections: {
+      allSections: [],
+      loader: false,
+      errorMessage: "",
+    },
   },
   reducers: {
     onStartLoadingZones: (state) => {
@@ -20,6 +25,9 @@ export const warehouseReducer = createSlice({
     },
     onStartLoadingAisles: (state) => {
       state.aisles.loader = true;
+    },
+    onStartLoadingSections: (state) => {
+      state.sections.loader = true;
     },
     onErrorZones: (state, { payload }) => {
       state.zones.loader = false;
@@ -29,21 +37,33 @@ export const warehouseReducer = createSlice({
       state.aisles.loader = false;
       state.aisles.errorMessage = payload;
     },
+    onErrorSections: (state, { payload }) => {
+      state.sections.loader = false;
+      state.sections.errorMessage = payload;
+    },
     onClearErrors: (state) => {
       state.zones.errorMessage = "";
     },
     onClearErrorsAisles: (state) => {
       state.aisles.errorMessage = "";
     },
+    onClearErrorsSections: (state) => {
+      state.sections.errorMessage = "";
+    },
     onAddZone: (state, { payload }) => {
       state.zones.allZones.unshift(payload);
       state.zones.loader = false;
     },
     onAddAisle: (state, { payload }) => {
-      const Zone = state.zones.allZones.find(i => i._id === payload.zone);
-      state.aisles.allAisles.unshift({...payload, zone: Zone});
+      const Zone = state.zones.allZones.find((i) => i._id === payload.zone);
+      state.aisles.allAisles.unshift({ ...payload, zone: Zone });
       state.aisles.loader = false;
-    },       
+    },
+    onAddSection: (state, { payload }) => {
+      const Aisle = state.aisles.allAisles.find((i) => i._id === payload.aisle);
+      state.sections.allSections.unshift({ ...payload, aisle: Aisle });
+      state.sections.loader = false;
+    },
     onUpdateZone: (state, { payload }) => {
       state.zones.allZones = state.zones.allZones.map((i) =>
         i._id === payload._id ? payload : i
@@ -51,11 +71,21 @@ export const warehouseReducer = createSlice({
       state.zones.loader = false;
     },
     onUpdateAisle: (state, { payload }) => {
-      const infoZone = (id) =>state.zones.allZones.find(i=> i._id === id)
+      const infoZone = (id) => state.zones.allZones.find((i) => i._id === id);
       state.aisles.allAisles = state.aisles.allAisles.map((i) =>
-        i._id === payload._id ? {...payload, zone: infoZone(payload.zone),} : i
+        i._id === payload._id ? { ...payload, zone: infoZone(payload.zone) } : i
       );
       state.aisles.loader = false;
+    },
+    onUpdateSection: (state, { payload }) => {
+      const infoAisle = (id) =>
+        state.aisles.allAisles.find((i) => i._id === id);
+      state.sections.allSections = state.sections.allSections.map((i) =>
+        i._id === payload._id
+          ? { ...payload, aisle: infoAisle(payload.aisle) }
+          : i
+      );
+      state.sections.loader = false;
     },
     onLoadZones: (state, action) => {
       state.zones.allZones = action.payload;
@@ -65,6 +95,10 @@ export const warehouseReducer = createSlice({
       state.aisles.allAisles = action.payload;
       state.aisles.loader = false;
     },
+    onLoadSections: (state, action) => {
+      state.sections.allSections = action.payload;
+      state.sections.loader = false;
+    },
     onDeleteZone: (state, { payload }) => {
       state.zones.allZones = state.zones.allZones.filter(
         (i) => i._id !== payload._id
@@ -72,6 +106,11 @@ export const warehouseReducer = createSlice({
     },
     onDeleteAisle: (state, { payload }) => {
       state.aisles.allAisles = state.aisles.allAisles.filter(
+        (i) => i._id !== payload._id
+      );
+    },
+    onDeleteSection: (state, { payload }) => {
+      state.sections.allSections = state.sections.allSections.filter(
         (i) => i._id !== payload._id
       );
     },
@@ -86,15 +125,21 @@ export const {
   onAddZone,
   onUpdateZone,
   onDeleteZone,
-  onAddAisles, 
-  onDeleteAisle, 
+  onAddAisles,
+  onDeleteAisle,
   onLoadAisles,
   onStartLoadingAisles,
   onUpdateAisle,
   onClearErrorsAisles,
   onErrorAisles,
-  onAddAisle
-
+  onAddAisle,
+  onAddSection,
+  onClearErrorsSections,
+  onDeleteSection,
+  onErrorSections,
+  onLoadSections,
+  onStartLoadingSections,
+  onUpdateSection,
 } = warehouseReducer.actions;
 
 export default warehouseReducer.reducer;

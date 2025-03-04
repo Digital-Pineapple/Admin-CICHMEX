@@ -2,12 +2,16 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   startAddAisle,
+  startAddSection,
   startAddZones,
   startDeleteAisle,
+  startDeleteSection,
   startDeleteZone,
   startLoadAisles,
+  startLoadSections,
   startLoadZones,
   startUpdateAisle,
+  startUpdateSection,
   startUpdateZone,
 } from "../store";
 
@@ -15,12 +19,15 @@ export const useWarehouse = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { zones, aisles } = useSelector((state) => state.warehouse);
+  const { zones, aisles, sections } = useSelector((state) => state.warehouse);
   const allZones = zones.allZones;
   const loaderZones = zones.loader;
 
   const allAisles = aisles.allAisles;
   const loaderAisles = aisles.loader;
+
+  const allSections = sections.allSections;
+  const loaderSections = sections.loader;
 
   const loadAllZones = () => dispatch(startLoadZones());
   const loadAddZone = (data, closeModal) =>
@@ -35,6 +42,13 @@ export const useWarehouse = () => {
   const loadUpdateAisle = (id, data, closeModal) =>
     dispatch(startUpdateAisle(id, data, closeModal));
   const loadDeleteAisle = (id) => dispatch(startDeleteAisle(id));
+
+  const loadAllSections = () => dispatch(startLoadSections());
+  const loadAddSection = (data, closeModal) =>
+    dispatch(startAddSection(data, closeModal));
+  const loadUpdateSection = (id, data, closeModal) =>
+    dispatch(startUpdateSection(id, data, closeModal));
+  const loadDeleteSection = (id) => dispatch(startDeleteSection(id));
 
   const rows = (data) =>
     data.map((i, index) => ({
@@ -75,6 +89,12 @@ export const useWarehouse = () => {
     loaderAisles,
     loadAddAisle,
     loadUpdateAisle,
-    loadDeleteAisle
+    loadDeleteAisle,
+    loadAllSections,
+    allSections,
+    loaderSections,
+    loadDeleteSection,
+    loadAddSection,
+    loadUpdateSection
   };
 };

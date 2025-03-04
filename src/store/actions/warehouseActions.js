@@ -1,6 +1,6 @@
 import Swal from "sweetalert2";
 import { instanceApi } from "../../apis/configAxios";
-import { onAddAisle, onAddZone, onClearErrors, onClearErrorsAisles, onDeleteAisle, onDeleteZone, onErrorAisles, onErrorZones, onLoadAisles, onLoadZones, onStartLoadingAisles, onStartLoadingZones, onUpdateAisle, onUpdateZone } from "../reducer/warehouseReducer";
+import { onAddAisle, onAddSection, onAddZone, onClearErrors, onClearErrorsAisles, onClearErrorsSections, onDeleteAisle, onDeleteSection, onDeleteZone, onErrorAisles, onErrorSections, onErrorZones, onLoadAisles, onLoadSections, onLoadZones, onStartLoadingAisles, onStartLoadingSections, onStartLoadingZones, onUpdateAisle, onUpdateSection, onUpdateZone } from "../reducer/warehouseReducer";
 
 export const startLoadZones = () => async dispatch => {
     dispatch(onStartLoadingZones());
@@ -33,6 +33,23 @@ export const startLoadZones = () => async dispatch => {
       dispatch(onErrorAisles(error.message));
     } finally {
       dispatch(onClearErrorsAisles());
+    }
+  };
+
+  export const startLoadSections = () => async dispatch => {
+    dispatch(onStartLoadingSections());
+    try {
+      const { data } = await instanceApi.get(`/warehouse/all_sections`, {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      dispatch(onLoadSections(data.data));
+    } catch (error) {
+      dispatch(onErrorSections(error.message));
+    } finally {
+      dispatch(onClearErrorsSections());
     }
   };
 
@@ -82,6 +99,30 @@ export const startLoadZones = () => async dispatch => {
     }
   };
 
+  export const startAddSection = (values, closeModal) => async dispatch => {
+    dispatch(onStartLoadingSections());
+     const info = {
+       storehouse : '662fe69b9ba1d8b3cfcd3634',
+       ...values
+     }
+     try {
+       const { data } = await instanceApi.post(`/warehouse/add_section`,info, {
+         headers: {
+           "Content-type": "application/json",
+           Authorization: `Bearer ${localStorage.getItem("token")}`,
+         },
+       });
+       dispatch(onAddSection(data.data));
+       closeModal()
+       Swal.fire({title:`${data.message}`, icon:'success', color:'success'})
+     } catch (error) {
+       dispatch(onErrorSections(error.message));
+     } finally {
+       dispatch(onClearErrorsSections());
+     }
+   };
+
+   
   export const startUpdateZone = (id,values, closeModal) => async dispatch => {
     dispatch(onStartLoadingZones());
     try {
@@ -123,6 +164,26 @@ export const startLoadZones = () => async dispatch => {
       dispatch(onClearErrorsAisles());
     }
   };
+  export const startUpdateSection = (id,values, closeModal) => async dispatch => {
+    dispatch(onStartLoadingSections());
+    try {
+      const { data } = await instanceApi.post(`/warehouse/update_section/${id}`,values, {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      Swal.fire({title:`${data.message}`, icon:'success', color:'success'})
+      dispatch(onUpdateSection(data.data));
+      closeModal()
+    } catch (error) {
+      console.log(error);
+      
+      dispatch(onErrorSections(error.message));
+    } finally {
+      dispatch(onClearErrorsSections());
+    }
+  };
   export const startDeleteZone = (id) => async dispatch => {
     dispatch(onStartLoadingZones());
     try {
@@ -162,6 +223,25 @@ export const startLoadZones = () => async dispatch => {
       dispatch(onErrorAisles(error.message));
     } finally {
       dispatch(onClearErrorsAisles());
+    }
+  };
+  export const startDeleteSection = (id) => async dispatch => {
+    dispatch(onStartLoadingSections());
+    try {
+      const { data } = await instanceApi.delete(`/warehouse/delete_section/${id}`, {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      Swal.fire({title:`${data.message}`, icon:'success', color:'success'})
+      dispatch(onDeleteSection(data.data));
+      closeModal()
+    } catch (error) {
+      console.log(error);      
+      dispatch(onErrorSections(error.message));
+    } finally {
+      dispatch(onClearErrorsSections());
     }
   };
   
