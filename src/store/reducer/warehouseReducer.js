@@ -15,11 +15,15 @@ export const warehouseReducer = createSlice({
     },
     sections: {
       allSections: [],
+      section:{},
       loader: false,
       errorMessage: "",
     },
   },
   reducers: {
+    onLoadSection :(state, {payload})=>{
+      state.sections.section = payload;
+    },
     onStartLoadingZones: (state) => {
       state.zones.loader = true;
     },
@@ -121,6 +125,7 @@ export const warehouseReducer = createSlice({
 });
 
 export const {
+  onLoadSection,
   onLoadZones,
   onStartLoadingZones,
   onClearErrors,

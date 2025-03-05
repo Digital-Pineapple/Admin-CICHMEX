@@ -2,15 +2,18 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   startAddAisle,
+  startAddProductToSection,
   startAddSection,
   startAddZones,
   startDeleteAisle,
   startDeleteSection,
   startDeleteZone,
+  startGetSection,
   startLoadAisles,
   startLoadSectionPDF,
   startLoadSections,
   startLoadZones,
+  startSearchProductSection,
   startUpdateAisle,
   startUpdateSection,
   startUpdateZone,
@@ -29,6 +32,7 @@ export const useWarehouse = () => {
 
   const allSections = sections.allSections;
   const loaderSections = sections.loader;
+  const section = sections.section;
 
   const loadAllZones = () => dispatch(startLoadZones());
   const loadAddZone = (data, closeModal) =>
@@ -51,6 +55,9 @@ export const useWarehouse = () => {
     dispatch(startUpdateSection(id, data, closeModal));
   const loadDeleteSection = (id) => dispatch(startDeleteSection(id));
   const loadSectionPDF = (id) => dispatch(startLoadSectionPDF(id));
+  const searchProductSection =(id, handleSearch, product)=> dispatch(startSearchProductSection(id, handleSearch, product))
+  const getSection =(id)=> dispatch(startGetSection(id))
+  const addProductToSection =(data, handleClose, setSection)=> dispatch(startAddProductToSection(data, handleClose, setSection))
 
   const rows = (data) =>
     data.map((i, index) => ({
@@ -98,6 +105,10 @@ export const useWarehouse = () => {
     loadDeleteSection,
     loadAddSection,
     loadUpdateSection,
-    loadSectionPDF
+    loadSectionPDF,
+    searchProductSection,
+    getSection,
+    section,
+    addProductToSection
   };
 };

@@ -45,7 +45,7 @@ const QRScannerV2 = ({ setValueQR }) => {
         color="primary"
         size="large"
       >
-        Escanear QR de pedido
+        Escanear QR 
       </Button>
 
       <Modal

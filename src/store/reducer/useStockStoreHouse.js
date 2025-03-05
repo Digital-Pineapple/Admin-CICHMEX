@@ -13,10 +13,17 @@ export const stockStorehouseReducer = createSlice({
     loadEntryReport: (state, { payload }) => {
       state.EntryReport = payload;
     },
+    onUpdateInput: (state, { payload }) => {
+      if (!state.EntryReport?.inputs) return;
+      state.EntryReport.inputs = state.EntryReport.inputs.map((i) =>
+        i._id === payload._id ? { ...i, ...payload } : i
+      );
+    },
+    
     
   },
 })
 
-export const { loadEntryReport, loadInputs} = stockStorehouseReducer.actions;
+export const { loadEntryReport, loadInputs, onUpdateInput} = stockStorehouseReducer.actions;
 
 export default stockStorehouseReducer.reducer;

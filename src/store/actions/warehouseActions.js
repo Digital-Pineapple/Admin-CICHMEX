@@ -1,6 +1,8 @@
 import Swal from "sweetalert2";
 import { instanceApi } from "../../apis/configAxios";
-import { onAddAisle, onAddSection, onAddZone, onClearErrors, onClearErrorsAisles, onClearErrorsSections, onDeleteAisle, onDeleteSection, onDeleteZone, onErrorAisles, onErrorSections, onErrorZones, onLoadAisles, onLoadSections, onLoadZones, onStartLoadingAisles, onStartLoadingSections, onStartLoadingZones, onStopLoaderSection, onUpdateAisle, onUpdateSection, onUpdateZone } from "../reducer/warehouseReducer";
+import { onAddAisle, onAddSection, onAddZone, onClearErrors, onClearErrorsAisles, onClearErrorsSections, onDeleteAisle, onDeleteSection, onDeleteZone, onErrorAisles, onErrorSections, onErrorZones, onLoadAisles, onLoadSection, onLoadSections, onLoadZones, onStartLoadingAisles, onStartLoadingSections, onStartLoadingZones, onStopLoaderSection, onUpdateAisle, onUpdateSection, onUpdateZone } from "../reducer/warehouseReducer";
+import { startLoading, stopLoading } from "../reducer/uiReducer";
+import { onUpdateInput } from "../reducer/useStockStoreHouse";
 
 export const startLoadZones = () => async dispatch => {
     dispatch(onStartLoadingZones());
@@ -16,6 +18,23 @@ export const startLoadZones = () => async dispatch => {
       dispatch(onErrorZones(error.message));
     } finally {
       dispatch(onClearErrors());
+    }
+  };
+
+  export const startGetSection = (id) => async dispatch => {
+    dispatch(startLoading());
+    try {
+      const { data } = await instanceApi.get(`/warehouse/section/${id}`, {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      dispatch(onLoadSection(data.data));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      dispatch(stopLoading());
     }
   };
 
@@ -217,6 +236,51 @@ export const startLoadZones = () => async dispatch => {
       }
     };
   };
+
+  export const startSearchProductSection = (id, handleSearch, product) => {
+    return async (dispatch) => {
+      dispatch(startLoading());
+      try {
+        const { data } = await instanceApi.get(`/warehouse/search_product_section/${id}`, {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        
+        if (!data.data) {
+          Swal.fire({
+            title: "No se encontró ubicación",
+            text:'Agregar ubicación',
+            showDenyButton: false,
+            showCancelButton: false,
+            confirmButtonText: "Ok",
+          }).then((result) => {
+            if (result.isConfirmed) {
+             handleSearch({value: true, data: product})
+            }
+          });
+        }
+        Swal.fire({
+          title: `El producto se encuentra en la sección: ${data.data.name}`,
+          // text:`Pasillo${data.data.aisle.name}, Zona:${data.data.zone.name}`,
+          showDenyButton: false,
+          showCancelButton: false,
+          confirmButtonText: "Ok",
+        }).then((result) => {
+          if (result.isConfirmed) {
+           console.log(product);
+           
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        
+      } finally {
+        dispatch(stopLoading());
+      }
+    };
+  };
   export const startDeleteZone = (id) => async dispatch => {
     dispatch(onStartLoadingZones());
     try {
@@ -277,4 +341,52 @@ export const startLoadZones = () => async dispatch => {
       dispatch(onClearErrorsSections());
     }
   };
+  export const startAddProductToSection = (values, handleClose, setSection) => {
+    return async (dispatch) => {
+      try {
+        dispatch(startLoading());
+  
+        // Enviar producto a la sección
+        const { data } = await instanceApi.post(
+          `/warehouse/section/add_product`, values,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+  
+        // Obtener información actualizada de la sección
+        const inSection = await instanceApi.patch(`/stock-StoreHouse/input/in_section/${values.input}`);
+        // Actualizar el estado en Redux
+        dispatch(onUpdateInput(inSection.data.data));
+  
+        // Cerrar modal/desactivar vista
+        handleClose({ value: false, data: {} });
+        setSection(null)
+  
+        // Mostrar mensaje de éxito
+        Swal.fire({
+          title: `${data.message}`,
+          text: `${inSection.data.message}`,
+          icon: 'success',
+        });
+  
+      } catch (error) {
+        console.error("Error al agregar el producto:", error);
+  
+        // Manejo de errores con SweetAlert
+        Swal.fire({
+          title: "Error",
+          text: error.response?.data?.message || "Hubo un problema en la solicitud",
+          icon: "error",
+        });
+  
+      } finally {
+        dispatch(stopLoading());
+      }
+    };
+  };
+  
   

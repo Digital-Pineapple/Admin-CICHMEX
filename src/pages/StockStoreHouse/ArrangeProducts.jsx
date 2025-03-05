@@ -16,14 +16,23 @@ import {
   TableBody,
   Modal,
   Tooltip,
+  Card,
+  CardContent,
+  CardActions,
 } from "@mui/material";
-import { Close, NoteAdd, Search } from "@mui/icons-material";
+import { Close, NoteAdd, QrCode2Outlined, Search } from "@mui/icons-material";
 import { Controller, useForm } from "react-hook-form";
 import { teal } from "@mui/material/colors";
 import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
-import { convertirCadenaHoraAFecha, handleHoursChange } from "../../helpers/hoursDate";
+import {
+  convertirCadenaHoraAFecha,
+  handleHoursChange,
+} from "../../helpers/hoursDate";
 import { localDate } from "../../Utils/ConvertIsoDate";
+import { useWarehouse } from "../../hooks";
+import QRScanner from "../../components/QR/QRScanner";
+import QRScannerV2 from "../../components/QR/QRScannerV2";
 
 const style = {
   position: "absolute",
@@ -34,13 +43,20 @@ const style = {
   bgcolor: "background.paper",
   borderRadius: "15px",
   boxShadow: 15,
-  gap:1,
+  gap: 1,
   p: 5,
 };
 
 const ArrangeProducts = () => {
   const { loadEntryReport, EntryReport, loading } = useStockStorehouse();
+  const [section1, setSection] = useState(null);
+  const { searchProductSection, getSection, section, addProductToSection } = useWarehouse();
   const [openModal, setopenModal] = useState({
+    value: false,
+    data: {},
+    index: null,
+  });
+  const [openModalSection, setopenModalSection] = useState({
     value: false,
     data: {},
     index: null,
@@ -55,22 +71,26 @@ const ArrangeProducts = () => {
 
   const userReceived = EntryReport.user_received?.[0];
 
-
   const TYPE_USERS = {
     "SUPER-ADMIN": "Super Administrador",
-    "ADMIN": "Administrador",
+    ADMIN: "Administrador",
     "WAREHOUSE-MANAGER": "Encargado de almacén",
-    "WAREHOUSEMAN": "Almacenista",
-    "no_data": "Sin información",
+    WAREHOUSEMAN: "Almacenista",
+    no_data: "Sin información",
   };
   const defaultTypeUser = "no_data";
   const RenderName = TYPE_USERS[type_user?.role[0]] || defaultTypeUser;
-  const RenderName_r = TYPE_USERS[userReceived?.type_user?.role[0]] || defaultTypeUser;
+  const RenderName_r =
+    TYPE_USERS[userReceived?.type_user?.role[0]] || defaultTypeUser;
 
-  const rows = EntryReport.inputs?.map((i, index) => ({
-    id: index.toString(),
-    ...i,
-  }));
+  useEffect(() => {
+    function findSection() {
+      getSection(section1);
+    }
+    if (section1) {
+      findSection();
+    }
+  }, [section1]);
 
   const handleOpen = (data, index) => {
     setopenModal({
@@ -82,17 +102,74 @@ const ArrangeProducts = () => {
   const handleClose = () => {
     setopenModal({ value: false, data: {} });
   };
+  const handleSaveProductToSection = ()=>{
+    const product = openModalSection.data.product_detail
+    const quantity = openModalSection.data.quantity_received
+    const section = section1
+    const data = {product:{_id: product._id, product_id: product.product_id ? product.product_id : null}, quantity, section, input: openModalSection.data._id}
+     addProductToSection(data, setopenModalSection, setSection)
+    
+  }
+  const handleCloseSection = () => {
+    setopenModalSection({ value: false, data: {} });
+  };
   const paths = [
-    {path:'/almacenista/entradas_de_producto',name: 'Entradas de producto'},
-    {path:'/almacenista/entradas_de_producto/acomodar_producto', name: 'Acomodar producto'}
-  ]
+    { path: "/almacenista/entradas_de_producto", name: "Entradas de producto" },
+    {
+      path: "/almacenista/entradas_de_producto/acomodar_producto",
+      name: "Acomodar producto",
+    },
+  ];
 
   if (loading) {
-    return <LoadingScreenBlue/>
+    return <LoadingScreenBlue />;
+  }
+
+  const renderSection = (section)=>{
+    if (section.length > 0) {
+      return(
+      <Typography>
+      <strong>Sección:</strong>
+      <br />
+      {section[0].name} <br />
+      <strong>Pasillo:</strong>
+      <br />
+      {section[0]?.aisle?.name} <br />
+      <strong>Zona:</strong>
+      <br />
+      {section[0].zone?.name} <br />
+    </Typography>
+      )
+    }
+    else{
+      return ('')
+    }
+  }
+  const renderProduct = (product)=>{
+    if (Object.keys(product).length >0) {
+      return(
+        <>
+         <Typography fontSize={14}>
+      <strong>Cantidad de producto: {product.quantity_received}</strong><br />
+    </Typography>
+      <Typography>
+      <strong>Nombre del Poducto:</strong>
+      <br />
+      {product.product_detail.name} <br />
+      <strong>Código:</strong>
+      <br />
+      {product.product_detail.tag} <br />
+    </Typography>
+        </>
+      )
+    }
+    else{
+      return ('')
+    }
   }
 
   return (
-    <Grid2 container paddingX={{lg:20}} display={"flex"} gap={2}>
+    <Grid2 container paddingX={{ lg: 20 }} display={"flex"} gap={2}>
       <Grid2
         size={12}
         paddingRight={15}
@@ -101,15 +178,16 @@ const ArrangeProducts = () => {
         alignItems={"center"}
         justifyContent={"space-between"}
       >
-        <Typography variant="h4"><strong>Acomodo de poducto</strong></Typography>
+        <Typography variant="h4">
+          <strong>Acomodo de poducto</strong>
+        </Typography>
 
         <Typography variant="h5">
           <strong>Folio:</strong> {EntryReport._id} <br />
         </Typography>
       </Grid2>
       <Grid2 size={12}>
-        <BreadcrumbCustom paths={paths}/>
-        
+        <BreadcrumbCustom paths={paths} />
       </Grid2>
 
       <Grid2
@@ -126,7 +204,8 @@ const ArrangeProducts = () => {
           <strong>Correo:</strong>
           {email} <br />
           <strong>Tipo de usuario:</strong>
-          {RenderName}<br />
+          {RenderName}
+          <br />
           <strong>Fecha de creación:</strong>
           {localDate(EntryReport?.createdAt?.[0])}
         </Typography>
@@ -147,7 +226,7 @@ const ArrangeProducts = () => {
           {userReceived?.email} <br />
           <strong>Tipo de usuario:</strong>
           {RenderName_r} <br />
-          <strong>Fecha de recepción:</strong> 
+          <strong>Fecha de recepción:</strong>
           {localDate(EntryReport?.date_received?.[0])}
         </Typography>
       </Grid2>
@@ -170,19 +249,23 @@ const ArrangeProducts = () => {
                   <TableCell>{product.product_detail?.tag}</TableCell>
                   <TableCell>{product.product_detail?.name}</TableCell>
                   <TableCell>{product.product_detail?.quantity}</TableCell>
+                  <TableCell>{product.quantity_received}</TableCell>
                   <TableCell>
-                    {product.quantity_received}
-                  </TableCell>
-                  <TableCell>
-                    <Tooltip title=''>
-                    <IconButton
-                      onClick={() => console.log(product.product_detail)}
-                      color="error"
-                      size="small"
-                      variant="container"
-                    >
-                      <Search/>
-                    </IconButton>
+                    <Tooltip title="">
+                      <IconButton
+                        onClick={() =>
+                          searchProductSection(
+                            product.product_detail._id,
+                            setopenModalSection,
+                            product
+                          )
+                        }
+                        color="error"
+                        size="small"
+                        variant="container"
+                      >
+                        <Search />
+                      </IconButton>
                     </Tooltip>
                   </TableCell>
                 </TableRow>
@@ -195,7 +278,7 @@ const ArrangeProducts = () => {
           variant="contained"
           size="small"
           color="success"
-          sx={{ mt: 2, width:150  }}
+          sx={{ mt: 2, width: 150 }}
         >
           Guardar
         </Button>
@@ -219,7 +302,7 @@ const ArrangeProducts = () => {
           <Typography variant="h6" component="h2">
             Indica la razon de este faltante
           </Typography>
-         
+
           <Button
             variant="contained"
             onClick={() => handleClose()}
@@ -230,8 +313,40 @@ const ArrangeProducts = () => {
           </Button>
         </Grid2>
       </Modal>
+      <Modal open={openModalSection.value} onClose={handleCloseSection}>
+        <Grid2 container sx={style}>
+          <IconButton
+            disableRipple
+            aria-label="Cerrar"
+            onClick={() => handleCloseSection()}
+            sx={{ position: "absolute", transform: "translate(790%, -90%)" }}
+          >
+            <Close />
+          </IconButton>
+          <QRScannerV2 setValueQR={setSection} />
+          <Card variant="outlined">
+            <CardContent>
+             {renderProduct(openModalSection.data)}
+            </CardContent>
+          </Card>
+          <Card variant="outlined">
+            <CardContent>
+             {renderSection(section )}
+            </CardContent>
+          </Card>
+
+          <Button
+            variant="contained"
+            onClick={() => handleSaveProductToSection()}
+            fullWidth
+            color="success"
+          >
+            Asignar ubicación
+          </Button>
+        </Grid2>
+      </Modal>
     </Grid2>
   );
 };
 
-export default ArrangeProducts
+export default ArrangeProducts;

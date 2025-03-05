@@ -54,8 +54,6 @@ export const startLoadEntryReport = (folio) => {
 };
 
 export const startAuthorizeEntries = (entries, navigate) => {
-  console.log(entries);
-  
   return async (dispatch) => {
     try {
       dispatch(startLoading())
@@ -117,4 +115,6 @@ export const printPDFInputsReport = (folio) => {
     }
   };
 };
+
+
 
