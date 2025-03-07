@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   DataGrid,
   GridPagination,
@@ -7,9 +7,21 @@ import {
   gridPageCountSelector,
   useGridApiContext,
   useGridSelector,
+  
 } from "@mui/x-data-grid";
 import MuiPagination from "@mui/material/Pagination";
-import { Button, Chip, Grid, Grid2, IconButton, Tooltip, Typography } from "@mui/material";
+import {
+  Button,
+  Chip,
+  Grid,
+  Grid2,
+  IconButton,
+  Tooltip,
+  Typography,
+  Card,
+  CardContent,
+  CardActions,
+} from "@mui/material";
 import { Workbook } from "exceljs";
 import {
   ExpandLess as ExpandLessIcon,
@@ -34,6 +46,11 @@ import CustomNoRows from "../../components/Tables/CustomNoRows";
 import dayjs from "dayjs";
 import SuccessButton from "../../components/Buttons/SuccessButton";
 import { usePayments } from "../../hooks/usePayments";
+import useDateFormatter from "../../hooks/useFormattedDate";
+import { esES } from "@mui/x-data-grid/locales";
+import { date } from "yup";
+import ModalDetailSale from "./ModalDetailSale";
+
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -107,18 +124,8 @@ function CustomToolbar() {
   };
 
   return (
-    <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
-      <Button onClick={handleGoToPage1}>Regresar a la página 1</Button>
+    <GridToolbarContainer sx={{ justifyContent: "center" }}>
       <GridToolbarQuickFilter placeholder="Buscar" variant="outlined" />
-      <Button
-        variant="text"
-        startIcon={<DownloadIcon />}
-        disableElevation
-        sx={{ color: "secondary" }}
-        onClick={exportToExcel}
-      >
-        Descargar Excel
-      </Button>
     </GridToolbarContainer>
   );
 }
@@ -127,6 +134,14 @@ const AllSales = () => {
   const { loadProductOrders, navigate, productOrders, loading } =
     useProductOrder();
   const { user } = useAuthStore();
+  const { getMonthName } = useDateFormatter();
+  const [open, setOpen] = useState(sale)
+  const handleOpen = ()=>{
+    setOpen(true)
+  }
+  const handleClose = () =>{
+    setOpen(false)
+  }
 
   useEffect(() => {
     loadProductOrders();
@@ -148,38 +163,21 @@ const AllSales = () => {
     };
   });
 
-  
 
   const renderIcon = (values) => {
-    
-    if (values.row.payment_status) {
       return (
         <>
-        <IconButton
-          sx={{ display: {} }}
-          aria-label="Ver detalle"
-          color="primary"
-          title="Ver detalle"
-          onClick={() => navigate(`/contaduria/venta-detalle/${values.row._id}`)}
-        >
-          <Visibility />
-        </IconButton> 
-        
+          <IconButton
+            sx={{ display: {} }}
+            aria-label="Ver detalle"
+            color="primary"
+            title="Ver detalle"
+            onClick={handleOpen()}
+          >
+            <Visibility />
+          </IconButton>
         </>
       );
-    } else  {
-      return (
-        <IconButton
-        sx={{ display: {} }}
-        aria-label="Ver detalle"
-        color="primary"
-        title="Ver detalle"
-        disabled
-      >
-        <Visibility />
-      </IconButton> 
-      );
-    }
   };
 
   const renderChip = (values) => {
@@ -192,10 +190,11 @@ const AllSales = () => {
           label="Liquidada"
           variant="filled"
           color="success"
+          size="small"
         />
       );
     }
-  
+
     if (payment_status === "pending" && !!download_ticket) {
       return (
         <Chip
@@ -203,10 +202,11 @@ const AllSales = () => {
           label="Pendiente MP"
           variant="filled"
           color="primary"
+          size='small'
         />
       );
     }
-  
+
     if (payment?.verification?.payment_vouchers) {
       return (
         <Chip
@@ -214,10 +214,12 @@ const AllSales = () => {
           label="Pendiente con ticket"
           variant="filled"
           color="secondary"
+          size="small"
+
         />
       );
     }
-  
+
     if (payment_status === "rejected") {
       return (
         <Chip
@@ -225,10 +227,11 @@ const AllSales = () => {
           label="Pago rechazado"
           variant="filled"
           color="warning"
+           size="small"
         />
       );
     }
-  
+
     if (payment_status === "cancelled") {
       return (
         <Chip
@@ -236,10 +239,11 @@ const AllSales = () => {
           label="Pago cancelado o rechazado"
           variant="filled"
           color="warning"
+           size="small"
         />
       );
     }
-  
+
     if (payment_status === "approved") {
       return (
         <Chip
@@ -247,10 +251,11 @@ const AllSales = () => {
           label="Liquidada"
           variant="filled"
           color="success"
+           size="small"
         />
       );
     }
-  
+
     // Default case
     return (
       <Chip
@@ -258,56 +263,69 @@ const AllSales = () => {
         label="Pendiente sin ticket"
         variant="filled"
         color="info"
+         size="small"
       />
     );
   };
-  
 
   if (loading) {
     return <LoadingScreenBlue />;
   }
 
   return (
-    <Grid2 container>
-         <Grid2
-        marginTop={{ xs: "-30px" }}
+    <Grid2 container paddingX={10}>
+      <Grid2
         size={12}
-        minHeight={"100px"}
-        className="Titles"
+        paddingRight={15}
+        flexGrow={1}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        marginBottom={2}
       >
-        <Typography
-          textAlign={"center"}
-          variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
-        >
-         Todas mis ventas
+        <Typography variant="h4">
+          <strong>Ordenes</strong>
         </Typography>
       </Grid2>
-      <Grid2 marginY={1} display={'flex'} alignContent={'center'} justifyContent={'end'} size={12}>
-        <Button  title="Recargar" variant="contained" endIcon={<Refresh/>} onClick={()=>loadProductOrders()} color="primary">
-         Recargar
-        </Button>
-      </Grid2>
-      <Grid2  size={12}>
+
+      <Grid2 size={12}>
         <DataGrid
-          sx={{ fontSize: "14px", fontFamily: "sans-serif" }}
+          sx={{
+            fontSize: "12px",
+            fontFamily: "sans-serif",
+            borderRadius: "20px",
+            bgcolor: "#fff",
+            border: "1px solid rgb(209, 205, 205)", // Borde exterior naranja
+            "& .MuiDataGrid-cell": {
+              borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno claro
+            },
+          }}
           columns={[
             {
               field: "date",
-              headerName: "Fecha de compra",
-              flex: 1,
+              headerName: "Fecha",
+              flex: 0.5,
               align: "center",
+              renderCell: (params) => {
+                const [day, month, year] = params.row.date.split("/");
+                return (
+                  <Typography variant="h6" fontSize={14} color="initial">
+                    {day} <br />
+                    {getMonthName(params.row.date)}
+                  </Typography>
+                );
+              },
             },
             {
               field: "order_id",
-              headerName: "Id de pedido",
+              headerName: "Código",
               flex: 1,
               align: "center",
             },
             {
               field: "payment",
               headerName: "Estatus",
-              flex: 1,
+              flex: 1.5,
               sortable: false,
               renderCell: (params) => [renderChip(params)],
             },
@@ -346,7 +364,7 @@ const AllSales = () => {
             },
           ]}
           rows={rowsWithIds}
-          autoHeight
+          localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           pagination
           slots={{
             pagination: CustomPagination,
@@ -360,10 +378,17 @@ const AllSales = () => {
           disableColumnMenu
           disableColumnSelector
           disableDensitySelector
+          
           slotProps={{
             toolbar: {
               showQuickFilter: true,
               quickFilterProps: { debounceMs: 500 },
+            },
+          }}
+
+          initialState={{
+            pagination: {
+              paginationModel: { pageSize: 10, page: 0 },
             },
           }}
           printOptions={{
@@ -372,6 +397,7 @@ const AllSales = () => {
           }}
         />
       </Grid2>
+      <ModalDetailSale open={open} handleClose={handleClose} />
     </Grid2>
   );
 };
