@@ -277,4 +277,6 @@
   *::-webkit-scrollbar-track {
     background-color: #f1f1f1; /* Fondo del track */
   }
-  
+  .swal2-container {
+    z-index: 9999 !important;
+  }

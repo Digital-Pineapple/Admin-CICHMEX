@@ -1,6 +1,6 @@
 import Swal from "sweetalert2";
 import { instanceApi } from "../../apis/configAxios";
-import { onAddAisle, onAddSection, onAddZone, onClearErrors, onClearErrorsAisles, onClearErrorsSections, onDeleteAisle, onDeleteSection, onDeleteZone, onErrorAisles, onErrorSections, onErrorZones, onLoadAisles, onLoadSection, onLoadSections, onLoadZones, onStartLoadingAisles, onStartLoadingSections, onStartLoadingZones, onStopLoaderSection, onUpdateAisle, onUpdateSection, onUpdateZone } from "../reducer/warehouseReducer";
+import { onAddAisle, onAddSection, onAddZone, onClearErrors, onClearErrorsAisles, onClearErrorsSections, onClearSection, onDeleteAisle, onDeleteSection, onDeleteZone, onErrorAisles, onErrorSections, onErrorZones, onLoadAisles, onLoadSection, onLoadSections, onLoadZones, onStartLoadingAisles, onStartLoadingSections, onStartLoadingZones, onStopLoaderSection, onUpdateAisle, onUpdateSection, onUpdateZone } from "../reducer/warehouseReducer";
 import { startLoading, stopLoading } from "../reducer/uiReducer";
 import { onUpdateInput } from "../reducer/useStockStoreHouse";
 
@@ -237,7 +237,7 @@ export const startLoadZones = () => async dispatch => {
     };
   };
 
-  export const startSearchProductSection = (id, handleSearch, product) => {
+  export const startSearchProductSection = (id, handleSearch, product, handleSection) => {
     return async (dispatch) => {
       dispatch(startLoading());
       try {
@@ -269,8 +269,7 @@ export const startLoadZones = () => async dispatch => {
           confirmButtonText: "Ok",
         }).then((result) => {
           if (result.isConfirmed) {
-           console.log(product);
-           
+           handleSection({value: true,data: product, section: data.data})
           }
         });
       } catch (error) {
@@ -281,6 +280,41 @@ export const startLoadZones = () => async dispatch => {
       }
     };
   };
+
+  export const startUpdateStock = (values, handleClose, setSection, clearValuate) => async dispatch => {
+    dispatch(startLoading());
+    try {
+      const { data } = await instanceApi.patch(`/warehouse/section/update_stock`,values, {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+       // Obtener información actualizada de la sección
+       const inSection = await instanceApi.patch(`/stock-StoreHouse/input/in_section/${values.input}`);
+       // Actualizar el estado en Redux
+       dispatch(onUpdateInput(inSection.data.data));
+ 
+       // Cerrar modal/desactivar vista
+       handleClose({ value: false, data: {} , section:{}});
+       setSection(null)
+       clearValuate(null)
+       dispatch(onClearSection())
+ 
+       // Mostrar mensaje de éxito
+       Swal.fire({
+         title: `${data.message}`,
+         text: `${inSection.data.message}`,
+         icon: 'success',
+       });
+    } catch (error) {
+      console.log(error);      
+      
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
+
   export const startDeleteZone = (id) => async dispatch => {
     dispatch(onStartLoadingZones());
     try {
@@ -341,7 +375,7 @@ export const startLoadZones = () => async dispatch => {
       dispatch(onClearErrorsSections());
     }
   };
-  export const startAddProductToSection = (values, handleClose, setSection) => {
+  export const startAddProductToSection = (values, handleClose, setSection, clearValuate) => {
     return async (dispatch) => {
       try {
         dispatch(startLoading());
@@ -363,10 +397,9 @@ export const startLoadZones = () => async dispatch => {
         dispatch(onUpdateInput(inSection.data.data));
   
         // Cerrar modal/desactivar vista
-        handleClose({ value: false, data: {} });
+        handleClose({ value: false, data: {}, section:{} });
         setSection(null)
-  
-        // Mostrar mensaje de éxito
+        clearValuate(null)
         Swal.fire({
           title: `${data.message}`,
           text: `${inSection.data.message}`,
@@ -382,7 +415,7 @@ export const startLoadZones = () => async dispatch => {
           text: error.response?.data?.message || "Hubo un problema en la solicitud",
           icon: "error",
         });
-  
+        dispatch(onClearSection())
       } finally {
         dispatch(stopLoading());
       }

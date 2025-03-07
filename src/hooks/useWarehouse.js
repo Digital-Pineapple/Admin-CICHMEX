@@ -16,6 +16,7 @@ import {
   startSearchProductSection,
   startUpdateAisle,
   startUpdateSection,
+  startUpdateStock,
   startUpdateZone,
 } from "../store";
 
@@ -55,9 +56,10 @@ export const useWarehouse = () => {
     dispatch(startUpdateSection(id, data, closeModal));
   const loadDeleteSection = (id) => dispatch(startDeleteSection(id));
   const loadSectionPDF = (id) => dispatch(startLoadSectionPDF(id));
-  const searchProductSection =(id, handleSearch, product)=> dispatch(startSearchProductSection(id, handleSearch, product))
+  const searchProductSection =(id, handleSearch, product, handleSection)=> dispatch(startSearchProductSection(id, handleSearch, product, handleSection))
   const getSection =(id)=> dispatch(startGetSection(id))
-  const addProductToSection =(data, handleClose, setSection)=> dispatch(startAddProductToSection(data, handleClose, setSection))
+  const addProductToSection =(data, handleClose, setSection, clearValuate)=> dispatch(startAddProductToSection(data, handleClose, setSection, clearValuate))
+  const updateStock =(data, handleClose, setSection, clearValuate)=> dispatch(startUpdateStock(data, handleClose, setSection, clearValuate))
 
   const rows = (data) =>
     data.map((i, index) => ({
@@ -109,6 +111,8 @@ export const useWarehouse = () => {
     searchProductSection,
     getSection,
     section,
-    addProductToSection
+    addProductToSection,
+    updateStock,
+    navigate
   };
 };
