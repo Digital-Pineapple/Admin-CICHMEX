@@ -29,6 +29,7 @@ import  stockStorehouseReducer  from "./reducer/useStockStoreHouse";
 import  warehouseReducer  from "./reducer/warehouseReducer";
 
 
+import notificationsReducer from "./reducer/notificationsReducer";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -59,6 +60,7 @@ const rootReducer = combineReducers({
   stockStorehouse: stockStorehouseReducer,
   warehouse: warehouseReducer, 
 
+  notifications: notificationsReducer
 });
 
 export const store = configureStore({

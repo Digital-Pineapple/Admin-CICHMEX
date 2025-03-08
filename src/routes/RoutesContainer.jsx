@@ -12,8 +12,21 @@ import  {Login}  from "../pages/Login";
 import { PrivateRoutes } from "./PrivateRoutes";
 import { PublicRoutes } from "./PublicRoutes";
 import Home from "../pages/Home";
+import { useDispatch } from "react-redux";
+import { getNotificationsByUserId } from "../store";
+import io from "socket.io-client";
+import { enqueueSnackbar } from "notistack";
+import { addNotification } from "../store/reducer/notificationsReducer";
 
 const RoutesContainer = ({ logged, user }) => {
+  const dispatch = useDispatch();  
+  
+  useEffect(() => {
+    if(logged){
+      dispatch(getNotificationsByUserId())
+    }
+  },[logged]);
+
   const { componentLinks, routes } = useAuthStore();
   const [theme, setTheme] = useState(themeSuperAdmin);
   useEffect(() => {
