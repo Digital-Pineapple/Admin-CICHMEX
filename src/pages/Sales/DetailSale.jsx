@@ -15,11 +15,17 @@ import {
   Modal,
   Fab,
   IconButton,
+  Grid,
+  Avatar,
+  Tooltip,
 } from "@mui/material";
 import {
   Close,
+  CreditCard,
   FileDownload,
+  FormatListBulleted,
   OpenInFull,
+  PriceCheck,
   Refresh,
   Search,
 } from "@mui/icons-material";
@@ -30,6 +36,11 @@ import ZoomImage from "../../components/cards/ZoomImage";
 import RejectedButton from "../../components/Buttons/RejectedButton";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
+import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
+import TableDetail from "./TablesDetail/TableDetail";
+import TableProductList from "./TablesDetail/TableProductList";
+import { grey } from "@mui/material/colors";
+import { grid, height, width } from "@mui/system";
 
 const style = {
   position: "absolute",
@@ -44,8 +55,8 @@ const style = {
   justifyContent: "center",
   flexDirection: "column",
   boxShadow: 24,
-  maxWidth: "700px",
-  maxHeigth: "700px",
+  width:'800px',
+  height:'800px',
   p: 4,
 };
 
@@ -63,10 +74,10 @@ const DetailSale = () => {
   } = useProductOrder();
   const [open, setOpen] = useState({ images: [], value: false });
   const [openImageTicket, setOpenImageTicket] = useState({
-    selected:{},
+    selected: {},
     value: false,
   });
-  
+
   const callBackPO = useCallback(() => loadProductOrder(id), [id]);
   useEffect(() => {
     callBackPO();
@@ -97,7 +108,8 @@ const DetailSale = () => {
     setOpenImageTicket({ value: true, selected: item });
   };
   const handleClose = () => setOpen({ value: false, images: [] });
-  const handleCloseImageTicket = () => setOpenImageTicket({ value: false, item: {} });
+  const handleCloseImageTicket = () =>
+    setOpenImageTicket({ value: false, item: {} });
 
   const printPDF = (id) => {
     loadPrintPDFOrder(id);
@@ -106,22 +118,26 @@ const DetailSale = () => {
   if (loading) {
     return <LoadingScreenBlue />;
   }
-
+  const paths = [
+    { path: `/contaduria/verificar-ventas`, name: "Verificar ventas" },
+    { path: `/contaduria/venta-detalle/${id}`, name: "Verificar venta" },
+  ];
   return (
-    <Grid2 container gap={2}>
+    <Grid2 container paddingX={10} >
       <Grid2
-        marginTop={{ xs: "-30px" }}
         size={12}
-        minHeight={"100px"}
-        className="Titles"
+        paddingRight={15}
+        flexGrow={1}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
       >
-        <Typography
-          textAlign={"center"}
-          variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
-        >
-          Venta:{productOrder?.order_id}
+        <Typography variant="h4">
+          <strong>Autorizar venta</strong>
         </Typography>
+      </Grid2>
+      <Grid2 size={12}>
+        <BreadcrumbCustom paths={paths} />
       </Grid2>
 
       <Grid2 size={12} display={"flex"} justifyContent={"space-around"}>
@@ -130,21 +146,13 @@ const DetailSale = () => {
             variant="contained"
             color="primary"
             startIcon={<FileDownload />}
-            onClick={()=>printPDF(id)}
+            onClick={() => printPDF(id)}
           >
             Descargar pdf
           </Button>
         ) : (
           ""
         )}
-        <Button
-          endIcon={<Refresh />}
-          onClick={() => loadProductOrder(id)}
-          variant="contained"
-          color="primary"
-        >
-          Recarga
-        </Button>
 
         {productOrder.download_ticket ? (
           <Button
@@ -158,156 +166,87 @@ const DetailSale = () => {
           </Button>
         ) : null}
       </Grid2>
+
       <Grid2
-        size={{ xs: 12, md: 5 }}
         sx={{
-          bgcolor: (theme) => {
-            if (productOrder.payment_status === "approved")
-              return theme.palette.success.main;
-            if (productOrder.payment_status === "rejected")
-              return theme.palette.warning.main;
-            return theme.palette.text.disabled; // Use theme's GrayText equivalent
-          },
-          color: (theme) => {
-            if (productOrder.payment_status === "approved")
-              return theme.palette.success.contrastText;
-            if (productOrder.payment_status === "rejected")
-              return theme.palette.warning.contrastText;
-            return theme.palette.primary.contrastText; // Use theme's GrayText equivalent
-          },
-          display: "flex",
-          flexDirection: "row",
-          borderRadius: "10px",
+          display: "grid",
+          gridTemplateColumns: {sm:"1fr",lg:"repeat(5, 1fr)"},
+          gridTemplateRows:{sm:" repeat(3, 1fr)" ,lg:"repeat(4, 1fr)"} ,
+          gridColumnGap: {sm:"10px", lg:"20px"} ,
+          gridRowGap:{sm:"10px",lg:"0px"} ,
         }}
-        padding={2}
       >
-        <Card variant="elevation">
-          <CardHeader title="Información" />
+         <Grid2 sx={{gridArea:{ sm:" 1 / 1 / 2 / 2", lg:"1 / 1 / 3 / 4"}}}>
+        <Card variant="outlined" sx={{ borderRadius: "25px" }}>
+          <CardHeader
+            avatar={
+              <CreditCard
+                sx={{
+                  width: "50px",
+                  height: "50px",
+                  bgcolor: grey[100],
+                  borderRadius: "50%",
+                  padding: "10px",
+                }}
+              />
+            }
+            title={
+              <Typography>
+                <strong>Información</strong>
+              </Typography>
+            }
+          />
+
           <CardContent>
-            <strong>Cliente: </strong> <br />
-            <Typography variant="body1" fontSize={"12px"} color="initial">
-              Nombre: {productOrder?.user_id?.fullname} <br />
-              Correo: {productOrder?.user_id?.email}
-            </Typography>
-            <br />
-            <strong>Direccion de envío:</strong>
-            <br />
-            {productOrder.branch ? (
-              <Typography variant="body1" fontSize={"12px"} color="initial">
-                Sucursal:{productOrder.branch?.name},<br />
-                Estado:{productOrder.branch.location?.state},<br />
-                Municipio:{productOrder.branch.location?.municipality},<br />
-                Localidad:{productOrder.branch.location?.neighborhood}, <br />
-                Dirección:{productOrder.branch.location?.direction},<br />
-                Codigo Postal:{productOrder.branch.location?.cp}
-                <br />
-                Telefono : {productOrder.branch.phone_number}
-              </Typography>
-            ) : (
-              <Typography variant="body1" color="initial">
-                Estado:{productOrder.deliveryLocation?.state},<br />
-                Municipio:{productOrder.deliveryLocation?.municipality},<br />
-                Localidad:{productOrder.deliveryLocation?.neighborhood}, <br />
-                Calle: {productOrder.deliveryLocation?.street},<br />
-                Numero Ext:{productOrder.deliveryLocation?.numExt}, <br />
-                Codigo Postal:{productOrder.deliveryLocation?.zipcode}, <br />
-              </Typography>
-            )}
+            <TableDetail
+              date={productOrder?.createdAt}
+              location={productOrder?.deliveryLocation}
+              user={productOrder?.user_id}
+              status={productOrder?.payment_status}
+              typeDelivery={productOrder?.typeDelivery}
+            />
           </CardContent>
         </Card>
-        <CardContent>
-          <Typography variant="body1" fontWeight={"Bold"} color="inherit">
-            {statusPayment(productOrder.payment_status)}
-          </Typography>
-          <Typography variant="body1">
-            <strong>Descuento:</strong>
-            {productOrder?.discount}% <br />
-            <strong>Costo de envio:</strong>${productOrder?.shipping_cost}{" "}
-            <br />
-            <strong>Subtotal:</strong>${productOrder?.subTotal} <br />
-            <strong>Total:</strong>${productOrder?.total} <br />
-          </Typography>
-        </CardContent>
       </Grid2>
 
-      <Grid2 height={"100%"} size={{ xs: 12, md: 6 }}>
-        {productOrder ? (
-          <>
-            <Typography
-              variant="h3"
-              fontSize={"18px"}
-              textAlign={"center"}
-              color="inherit"
-            >
-              Lista de productos
-            </Typography>
-            <DataGrid
-              hideFooterSelectedRowCount={true}
-              columns={[
-                {
-                  field: "images",
-                  headerName: "imagen",
-                  flex: 1,
-                  align: "center",
-                  renderCell: (params) => (
-                    <Box
-                      component={"span"}
-                      alignContent={"center"}
-                      onClick={() => handleOpen(params.row.images)}
-                      width={"100%"}
-                      height={"100%"}
-                      display={"flex"}
-                      padding={0.5}
-                      justifyContent={"center"}
-                    >
-                      <img
-                        src={params.row.image}
-                        alt={params.row.name}
-                        style={{ objectFit: "contain" }}
-                      />
-                      <Search />
-                    </Box>
-                  ),
-                },
-                {
-                  field: "name",
-                  headerName: "Nombre del producto",
-                  flex: 1,
-                  align: "center",
-                },
-                {
-                  field: "price",
-                  headerName: "Precio",
-                  flex: 1,
-                  align: "center",
-                },
-                {
-                  field: "quantity",
-                  headerName: "Cantidad",
-                  flex: 1,
-                  align: "center",
-                },
-                {
-                  field: "subTotal",
-                  headerName: "SubTotal",
-                  flex: 1,
-                  align: "center",
-                },
-              ]}
-              rows={rowsProducts() ? rowsProducts() : ""}
+      <Grid2 sx={{ gridArea: {sm:"2 / 1 / 3 / 2", lg:"3 / 1 / 5 / 4"}}}>
+        <Card variant="elevation" sx={{ borderRadius: "25px" }}>
+          <CardHeader
+            avatar={
+              <FormatListBulleted
+                sx={{
+                  width: "50px",
+                  height: "50px",
+                  bgcolor: grey[100],
+                  borderRadius: "50%",
+                  padding: "10px",
+                }}
+              />
+            }
+            title={
+              <Typography>
+                <strong>Lista de productos</strong>
+              </Typography>
+            }
+          />
+          <CardContent>
+            <TableProductList
+              products={productOrder.products}
+              discount={productOrder.dicount}
+              shippingCost={productOrder.shipping_cost}
+              handleOpen={handleOpen}
             />
-          </>
-        ) : (
-          <Skeleton variant="rectangular" />
-        )}
+          </CardContent>
+        </Card>
       </Grid2>
 
-      <Grid2 size={12} justifyContent={"center"} display={'flex'} gap={1}>
+      <Grid2 sx={{gridArea: { sm:"3 / 1 / 4 / 2", lg: "1 / 4 / 5 / 6"}}} 
+      justifyContent={"center"} display={"flex"} gap={1}>
         {productOrder?.payment?.verification?.payment_vouchers
           ? productOrder?.payment.verification.payment_vouchers.map(
               (item, index) => {
                 return (
-                  <Grid2 key={index} size={{ xs: 12, lg: 2.9 }}>
+                  <Grid2 key={index} width={'100%'} height={'100%'}>
                     <Card
                       key={index}
                       variant="outlined"
@@ -318,7 +257,7 @@ const DetailSale = () => {
                             return theme.palette.success.main;
                           if (item.status === "rejected")
                             return theme.palette.warning.main;
-                          return theme.palette.text.disabled; // Use theme's GrayText equivalent
+                          return theme.palette.primary.contrastText; // Use theme's GrayText equivalent
                         },
                         color: (theme) => {
                           if (item.status === "approved")
@@ -327,39 +266,63 @@ const DetailSale = () => {
                             return theme.palette.warning.contrastText;
                           return theme.palette.text.primary; // Use theme's GrayText equivalent
                         },
-                        height: "100%",
+                        borderRadius: "25px",
                       }}
                     >
-                      <CardHeader subheader={`Referencia: No.${item.reference}`} action={
-                         <IconButton
-                        color="primary"
-                        sx={{bgcolor:'#fff'}}
-                         size="small"
-                         aria-label="Open-Modal-Image-Ticket"
-                         onClick={() => handleOpenImageTicket(item)}
-                       >
-                         <OpenInFull fontSize="15px" />
-                       </IconButton>
-                      } />
+                      <CardHeader
+                        avatar={
+                          <PriceCheck
+                            sx={{
+                              width: "50px",
+                              height: "50px",
+                              bgcolor: grey[100],
+                              borderRadius: "50%",
+                              padding: "10px",
+                            }}
+                          />
+                        }
+                        title={
+                          <Typography>
+                            <strong>Revisión de pago</strong>
+                          </Typography>
+                        }
+                        action={
+                          <Tooltip title={'Ver'}>
+
+                          <IconButton
+                            color="primary"
+                            sx={{ bgcolor: "#fff" , width:'50px', height:'50px'}}
+                            size="small"
+                            aria-label="Open-Modal-Image-Ticket"
+                            onClick={() => handleOpenImageTicket(item)}
+                          >
+                            <OpenInFull />
+                          </IconButton>
+                          </Tooltip>
+                        }
+                      />
                       <Typography
                         variant="body1"
-                        fontSize={"18px"}
+                        fontSize={"25px"}
                         textAlign={"center"}
+                        fontWeight={"Bold"}
                       >
-                        {" "}
-                        Monto: ${item?.amount}
+                        Monto:{`$ ${productOrder.total.toFixed(2)}`}
                       </Typography>
                       <CardContent
-                        sx={{ display: "flex", position:'relative', justifyContent: "center" }}
+                        sx={{
+                          display: "flex",
+                          position: "relative",
+                          justifyContent: "center",
+                        }}
                       >
                         <img
                           src={item.url}
-                          width={"150px"}
-                          height={"100px"}
-                          style={{ objectFit: "cover", borderRadius:'10px' }}
+                          width={"250px"}
+                          height={"250px"}
+                          style={{ objectFit: "contain", borderRadius: "10px" }}
                           alt="Imagen de la referencia"
                         />
-                       
                       </CardContent>
                       <Typography
                         variant="body1"
@@ -410,6 +373,10 @@ const DetailSale = () => {
             )
           : ""}
       </Grid2>
+      </Grid2>
+
+     
+
       <Modal
         open={open.value}
         onClose={handleClose}
@@ -462,11 +429,14 @@ const DetailSale = () => {
           >
             <Close />
           </Fab>
-          <img style={{width:'100%', height:'100%', objectFit:'cover' }} src={openImageTicket?.selected?.url}></img>
-          <Typography variant="body1" color="initial">
-            <strong>Monto: </strong> $ {openImageTicket?.selected?.amount} <br />
+          <img
+            style={{ width: "100%", height: "100%", objectFit: "contain" }}
+            src={openImageTicket?.selected?.url}
+          ></img>
+          <Typography variant="h6"  color="initial">
+            <strong>Monto: </strong> $ {openImageTicket?.selected?.amount}{" "}
+            <br />
             <strong>Referencia: </strong> {openImageTicket?.selected?.reference}
-
           </Typography>
         </Box>
       </Modal>

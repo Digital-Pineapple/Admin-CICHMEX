@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 import { useState } from "react";
 import { Grid2, Grow, IconButton, Grid } from "@mui/material";
 import { Close } from "@mui/icons-material";
-import TableDetail from "./TablesDetail/TableUser";
+import TableDetail from "./TablesDetail/TableDetail";
 import TableProductList from "./TablesDetail/TableProductList";
 import { maxHeight } from "@mui/system";
 

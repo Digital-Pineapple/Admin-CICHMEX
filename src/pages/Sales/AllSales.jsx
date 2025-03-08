@@ -50,6 +50,7 @@ import useDateFormatter from "../../hooks/useFormattedDate";
 import { esES } from "@mui/x-data-grid/locales";
 import { date } from "yup";
 import ModalDetailSale from "./ModalDetailSale";
+import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 
 
 function Pagination({ page, onPageChange, className }) {
@@ -88,40 +89,6 @@ function CustomPagination(props) {
 function CustomToolbar() {
   const apiRef = useGridApiContext();
 
-  const handleGoToPage1 = () => apiRef.current.setPage(1);
-  const exportToExcel = () => {
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Pedidos");
-
-    // Agregar encabezados de columna
-    const headerRow = worksheet.addRow([
-      "Cantidad de productos",
-      "Tipo de envio",
-      "Id de Pedido",
-      "Fecha de solicitud",
-    ]);
-    headerRow.eachCell((cell) => {
-      cell.font = { bold: true };
-    });
-
-    // Agregar datos de las filas
-    rowsWithIds.forEach((row) => {
-      worksheet.addRow([
-        row.quantityProduct,
-        row.typeDelivery,
-        row.order_id,
-        row.createdAt,
-      ]);
-    });
-
-    // Crear un Blob con el archivo Excel y guardarlo
-    workbook.xlsx.writeBuffer().then((buffer) => {
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      saveAs(blob, "Pedidos.xlsx");
-    });
-  };
 
   return (
     <GridToolbarContainer sx={{ justifyContent: "center" }}>
@@ -275,6 +242,11 @@ const AllSales = () => {
     return <LoadingScreenBlue />;
   }
 
+  const paths = [
+    { path: `/contaduria/Todas mis ventas`, name: "Todas mis ventas" },
+
+  ];
+
   return (
     <Grid2 container paddingX={10}>
       <Grid2
@@ -287,9 +259,12 @@ const AllSales = () => {
         marginBottom={2}
       >
         <Typography variant="h4">
-          <strong>Ordenes</strong>
+          <strong>Todas mis ventas</strong>
         </Typography>
       </Grid2>
+       <Grid2 size={12}>
+              <BreadcrumbCustom paths={paths} />
+            </Grid2>
 
       <Grid2 size={12}>
         <DataGrid
@@ -310,7 +285,7 @@ const AllSales = () => {
               flex: 0.5,
               align: "center",
               renderCell: (params) => {
-                const [day, month, year] = params.row.date.split("/");
+                const [day] = params.row.date.split("/");
                 return (
                   <Typography variant="h6" fontSize={14} color="initial">
                     {day} <br />

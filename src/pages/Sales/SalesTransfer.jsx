@@ -9,7 +9,7 @@ import {
   useGridSelector,
 } from "@mui/x-data-grid";
 import MuiPagination from "@mui/material/Pagination";
-import { Button, Chip, Grid, IconButton, Tooltip } from "@mui/material";
+import { Button, Chip, Grid2, IconButton, Tooltip } from "@mui/material";
 import { Workbook } from "exceljs";
 import {
   ExpandLess as ExpandLessIcon,
@@ -23,6 +23,8 @@ import {
   Looks,
   Visibility,
   Verified,
+  ConfirmationNumber,
+  Check,
 } from "@mui/icons-material";
 import Swal from "sweetalert2";
 import { useProductOrder } from "../../hooks/useProductOrder";
@@ -32,6 +34,8 @@ import CustomNoRows from "../../components/Tables/CustomNoRows";
 import dayjs from "dayjs";
 import SuccessButton from "../../components/Buttons/SuccessButton";
 import { usePayments } from "../../hooks/usePayments";
+import { orange, purple } from "@mui/material/colors";
+import { esES } from "@mui/x-data-grid/locales";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -69,54 +73,10 @@ function CustomPagination(props) {
 function CustomToolbar() {
   const apiRef = useGridApiContext();
 
-  const handleGoToPage1 = () => apiRef.current.setPage(1);
-  const exportToExcel = () => {
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Pedidos");
-
-    // Agregar encabezados de columna
-    const headerRow = worksheet.addRow([
-      "Cantidad de productos",
-      "Tipo de envio",
-      "Id de Pedido",
-      "Fecha de solicitud",
-    ]);
-    headerRow.eachCell((cell) => {
-      cell.font = { bold: true };
-    });
-
-    // Agregar datos de las filas
-    rowsWithIds.forEach((row) => {
-      worksheet.addRow([
-        row.quantityProduct,
-        row.typeDelivery,
-        row.order_id,
-        row.createdAt,
-      ]);
-    });
-
-    // Crear un Blob con el archivo Excel y guardarlo
-    workbook.xlsx.writeBuffer().then((buffer) => {
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      saveAs(blob, "Pedidos.xlsx");
-    });
-  };
 
   return (
-    <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
-      <Button onClick={handleGoToPage1}>Regresar a la página 1</Button>
-      <GridToolbarQuickFilter />
-      <Button
-        variant="text"
-        startIcon={<DownloadIcon />}
-        disableElevation
-        sx={{ color: "secondary" }}
-        onClick={exportToExcel}
-      >
-        Descargar Excel
-      </Button>
+    <GridToolbarContainer sx={{ justifyContent: "center" }}>
+      <GridToolbarQuickFilter placeholder="Buscar" variant="outlined"  />
     </GridToolbarContainer>
   );
 }
@@ -155,13 +115,13 @@ const SalesTransfer = () => {
       return (
         <>
         <IconButton
-          sx={{ display: {} }}
-          aria-label="Ver detalle"
-          color="primary"
-          title="Ver detalle"
+          sx={{ borderRadius:'2px' }}
+          aria-label="Autorizar"
+          color="success"
+          title="Autorizar"
           onClick={() => navigate(`/contaduria/venta-detalle/${values.row._id}`)}
         >
-          <Visibility />
+          <Check />
         </IconButton> 
         
         </>
@@ -182,15 +142,13 @@ const SalesTransfer = () => {
   };
 
   const renderChip = (values) => {
-    console.log();
-    
     if (!!values.row.payment.verification?.payment_vouchers) {
       return (
         <>
           <Chip
-            icon={<Paid />}
+            icon={<ConfirmationNumber />}
             label="Con ticket"
-            variant="filled"
+            variant="outlined"
             color="info"
           />
         </>
@@ -201,8 +159,8 @@ const SalesTransfer = () => {
           <Chip
             icon={<Paid />}
             label="Sin ticket"
-            variant="filled"
-            color="warning"
+            variant="outlined"
+            color={"secondary"}
           />
         </>
       );
@@ -214,15 +172,25 @@ const SalesTransfer = () => {
   }
 
   return (
-    <Grid container>
-      <Grid mb={2} item xs={12}>
+    <Grid2 container>
+      <Grid2 size={12} display={'flex'} padding={2} justifyContent={'flex-end'}>
         <Button variant="contained" onClick={()=>loadValidateExpiredPayments()} color="primary">
           Limpiar pagos expirados
         </Button>
-      </Grid>
-      <Grid item xs={12}>
+      </Grid2>
+      <Grid2 size={12}>
         <DataGrid
-          sx={{ fontSize: "14px", fontFamily: "sans-serif" }}
+         localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+          sx={{
+            fontSize: "12px",
+            fontFamily: "sans-serif",
+            borderRadius: "20px",
+            bgcolor: "#fff",
+            border: "1px solid rgb(209, 205, 205)", // Borde exterior naranja
+            "& .MuiDataGrid-cell": {
+              borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno claro
+            },
+          }}
           columns={[
             {
               field: "date",
@@ -289,6 +257,11 @@ const SalesTransfer = () => {
             noRowsOverlay: CustomNoRows,
           }}
           disableColumnFilter
+          initialState={{
+            pagination: {
+              paginationModel: { pageSize: 10, page: 0 },
+            },
+          }}
           disableColumnMenu
           disableColumnSelector
           disableDensitySelector
@@ -303,8 +276,8 @@ const SalesTransfer = () => {
             hideToolbar: true,
           }}
         />
-      </Grid>
-    </Grid>
+      </Grid2>
+    </Grid2>
   );
 };
 

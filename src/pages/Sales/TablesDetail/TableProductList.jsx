@@ -8,7 +8,7 @@ import Paper from "@mui/material/Paper";
 import { Typography } from "@mui/material";
 import noImage from '../../../assets/Images/CHMX/Imagotipo Cuadrado CHMX.png'
 
-const TableProductList = ({ products, shippingCost, discount }) => {
+const TableProductList = ({ products, shippingCost, discount, handleOpen }) => {
   if (!products) return null; // Evita errores si no hay usuario
 
   const subTotal = products.reduce(
@@ -61,7 +61,7 @@ const TableProductList = ({ products, shippingCost, discount }) => {
                       : product.item.images[0]?.url ?
                       product.item.images[0]?.url : noImage
                   }
-                  alt="Imagen clickeable"
+                  alt={index}
                   style={{
                     cursor: "pointer",
                     width: "70px",
@@ -69,7 +69,7 @@ const TableProductList = ({ products, shippingCost, discount }) => {
                     objectFit: "cover",
                     borderRadius: "10px",
                   }}
-                  onClick={() => console.log("click imagen")}
+                  onClick={()=>handleOpen(product.variant ? product.variant.images : product.item.images)}
                 />
                 <Typography
                   sx={{
