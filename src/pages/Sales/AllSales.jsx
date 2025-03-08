@@ -135,12 +135,15 @@ const AllSales = () => {
     useProductOrder();
   const { user } = useAuthStore();
   const { getMonthName } = useDateFormatter();
-  const [open, setOpen] = useState(sale)
-  const handleOpen = ()=>{
+  const [open, setOpen] = useState(false)
+  const [sale, setSale] = useState(null)
+  const handleOpen = (data)=>{
     setOpen(true)
+    setSale(data)
   }
   const handleClose = () =>{
     setOpen(false)
+    setSale(null)
   }
 
   useEffect(() => {
@@ -172,7 +175,7 @@ const AllSales = () => {
             aria-label="Ver detalle"
             color="primary"
             title="Ver detalle"
-            onClick={handleOpen()}
+            onClick={()=>handleOpen(values)}
           >
             <Visibility />
           </IconButton>
@@ -360,7 +363,7 @@ const AllSales = () => {
               flex: 1,
               sortable: false,
               type: "actions",
-              getActions: (params) => [renderIcon(params)],
+              getActions: (params) => [renderIcon(params.row)],
             },
           ]}
           rows={rowsWithIds}
@@ -397,7 +400,7 @@ const AllSales = () => {
           }}
         />
       </Grid2>
-      <ModalDetailSale open={open} handleClose={handleClose} />
+      <ModalDetailSale open={open} handleClose={handleClose} sale={sale} />
     </Grid2>
   );
 };
