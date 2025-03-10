@@ -123,6 +123,9 @@ export const warehouseReducer = createSlice({
     },
     onClearSection : (state)=>{
       state.sections.section = {}
+    },
+    onLoadOneSection : (state,{payload})=>{
+      state.sections.section = {payload}
     }
   },
 });
@@ -152,7 +155,8 @@ export const {
   onStartLoadingSections,
   onUpdateSection,
   onStopLoaderSection,
-  onClearSection
+  onClearSection,
+  onLoadOneSection
 } = warehouseReducer.actions;
 
 export default warehouseReducer.reducer;

@@ -13,6 +13,7 @@ import {
   startLoadSectionPDF,
   startLoadSections,
   startLoadZones,
+  startSearchProductFill,
   startSearchProductSection,
   startUpdateAisle,
   startUpdateSection,
@@ -61,6 +62,8 @@ export const useWarehouse = () => {
   const addProductToSection =(data, handleClose, setSection, clearValuate)=> dispatch(startAddProductToSection(data, handleClose, setSection, clearValuate))
   const updateStock =(data, handleClose, setSection, clearValuate)=> dispatch(startUpdateStock(data, handleClose, setSection, clearValuate))
 
+  const searchProductFill = ({id, handleOpen, product})=>dispatch(startSearchProductFill({id, handleOpen, product}))
+  
   const rows = (data) =>
     data.map((i, index) => ({
       id: index.toString(),
@@ -113,6 +116,7 @@ export const useWarehouse = () => {
     section,
     addProductToSection,
     updateStock,
-    navigate
+    navigate,
+    searchProductFill
   };
 };

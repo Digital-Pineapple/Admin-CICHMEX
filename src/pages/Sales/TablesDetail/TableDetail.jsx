@@ -42,14 +42,14 @@ const TableDetail = ({ user, location, typeDelivery, status, date }) => {
             </TableRow>
             <TableRow>
               <TableCell sx={{color:'gray'}} >Dirección</TableCell>
-              <TableCell>{`${location?.street ? location?.street : location.direction},
-             ${location.numext ? location.numext : ""},
-             ${location.numint ? location.numint : ""},
-             ${location.neighborhood},
-             ${location.municipality},
-              ${location.state},
-              ${location.country ? location.country : ""},
-              ${location.zipcode ? location.zipcode : location.cp},
+              <TableCell>{`${location?.street ? location?.street : location?.direction},
+             ${location?.numext ? location?.numext : ""},
+             ${location?.numint ? location?.numint : ""},
+             ${location?.neighborhood},
+             ${location?.municipality},
+              ${location?.state},
+              ${location?.country ? location?.country : ""},
+              ${location?.zipcode ? location?.zipcode : location?.cp},
              `}</TableCell>
             </TableRow>
             <TableRow>

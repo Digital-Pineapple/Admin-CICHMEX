@@ -1,6 +1,6 @@
 import Swal from "sweetalert2";
 import { instanceApi } from "../../apis/configAxios";
-import { onAddAisle, onAddSection, onAddZone, onClearErrors, onClearErrorsAisles, onClearErrorsSections, onClearSection, onDeleteAisle, onDeleteSection, onDeleteZone, onErrorAisles, onErrorSections, onErrorZones, onLoadAisles, onLoadSection, onLoadSections, onLoadZones, onStartLoadingAisles, onStartLoadingSections, onStartLoadingZones, onStopLoaderSection, onUpdateAisle, onUpdateSection, onUpdateZone } from "../reducer/warehouseReducer";
+import { onAddAisle, onAddSection, onAddZone, onClearErrors, onClearErrorsAisles, onClearErrorsSections, onClearSection, onDeleteAisle, onDeleteSection, onDeleteZone, onErrorAisles, onErrorSections, onErrorZones, onLoadAisles, onLoadOneSection, onLoadSection, onLoadSections, onLoadZones, onStartLoadingAisles, onStartLoadingSections, onStartLoadingZones, onStopLoaderSection, onUpdateAisle, onUpdateSection, onUpdateZone } from "../reducer/warehouseReducer";
 import { startLoading, stopLoading } from "../reducer/uiReducer";
 import { onUpdateInput } from "../reducer/useStockStoreHouse";
 
@@ -280,6 +280,57 @@ export const startLoadZones = () => async dispatch => {
       }
     };
   };
+
+  export const startSearchProductFill = ({id, handleOpen, product}) => {
+    return async (dispatch) => {
+      dispatch(startLoading());
+  
+      try {
+        const { data } = await instanceApi.get(`/warehouse/search_product_section/${id}`, {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+  
+        if (!data?.data) {
+          Swal.fire({
+            title: "No se encontró ubicación",
+            text: 'Agrega una ubicación de este producto',
+            confirmButtonText: "Ok",
+          });
+          return; // Sale de la función si no hay datos válidos
+        }
+  
+        const sectionData = data.data;
+        
+        Swal.fire({
+          title: `El producto se encuentra en la sección: ${sectionData.name}`,
+          text: `Pasillo: ${sectionData.aisle?.name || "No especificado"}`,
+          confirmButtonText: "Ok",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            console.log(handleOpen,'funcion');
+            
+          handleOpen({value:true, data:product, section: data.data})
+          }
+        });
+  
+      } catch (error) {
+        console.error('Error al buscar la ubicación del producto:', error);
+        Swal.fire({
+          title: "Error",
+          text: "Hubo un problema al intentar obtener la ubicación del producto.",
+          icon: "error",
+          confirmButtonText: "Ok",
+        });
+      } finally {
+        dispatch(stopLoading());
+      }
+    };
+  };
+  
+
 
   export const startUpdateStock = (values, handleClose, setSection, clearValuate) => async dispatch => {
     dispatch(startLoading());

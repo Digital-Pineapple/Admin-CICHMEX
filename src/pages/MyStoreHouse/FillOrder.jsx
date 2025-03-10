@@ -7,6 +7,7 @@ import {
   Box,
   Modal,
   Fab,
+  Grid2,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -19,6 +20,10 @@ import { ArrowBack, Close, Search } from "@mui/icons-material";
 import CustomNoRows from "../../components/Tables/CustomNoRows";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
+import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
+import TableDetail from "../Sales/TablesDetail/TableDetail";
+import TableProductList from "../Sales/TablesDetail/TableProductList";
+import TableFillProducts from "../../components/Tables/TableFillProducts";
 
 const style = {
   position: "absolute",
@@ -124,41 +129,33 @@ const FillOrder = () => {
   if (loading) {
     return <LoadingScreenBlue />;
   }
+  const paths = [
+    { path: `/almacenista/mis-ventas`, name: "Pedidos" },
+    { path: `/almacenista/surtir-venta`, name: "Surtir pedido" },
+  ];
+
+  console.log(productOrder);
+
   return (
-    <Grid container>
-      <Grid
-        item
-        marginTop={{ xs: "-30px" }}
-        xs={12}
-        minHeight={"100px"}
-        className="Titles"
+    <Grid2 container paddingX={10} display={"flex"} gap={2}>
+      <Grid2
+        size={12}
+        paddingRight={15}
+        flexGrow={1}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        marginBottom={2}
       >
-        <Typography
-          textAlign={"center"}
-          variant="h2"
-          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
-        >
-          Surtir orden: {productOrder?.order_id}
+        <Typography variant="h4">
+          <strong>Surtir pedido</strong>
         </Typography>
-      </Grid>
-      <Grid container alignContent={"center"}>
-        <Grid
-          item
-          gap={2}
-          display={"flex"}
-          justifyContent={"space-between"}
-          padding={2}
-          xs={12}
-        >
-          <Button
-            variant="contained"
-            size="small"
-            startIcon={<ArrowBack />}
-            onClick={() => navigate(`/almacenista/mis-ventas`)}
-            color="primary"
-          >
-            Regresar
-          </Button>
+      </Grid2>
+      <Grid2 size={12}>
+        <BreadcrumbCustom paths={paths} />
+      </Grid2>
+      <Grid2 container alignContent={"center"}>
+        <Grid2 display={"flex"} size={12} justifyContent={"center"}>
           <Button
             variant="contained"
             fullWidth
@@ -168,118 +165,29 @@ const FillOrder = () => {
           >
             Imprimir PDF
           </Button>
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          lg={4}
-          alignContent={"center"}
-          justifyContent={"center"}
-          display={"flex"}
-          padding={2}
-        >
-          <QRCodeSVG
-            width={"200px"}
-            height={"200px"}
-            value={productOrder?.order_id}
+        </Grid2>
+        <Grid2 size={12}>
+          <TableDetail
+            user={productOrder?.user_id}
+            typeDelivery={productOrder?.typeDelivery}
+            status={productOrder?.payment_status}
+            date={localDate(productOrder?.createdAt)}
+            location={
+              productOrder?.branch
+                ? productOrder.branch.location
+                : productOrder?.deliveryLocation
+            }
           />
-        </Grid>
-        <Grid item xs={12} lg={6} padding={2}>
-          <Typography variant="body1" color="inherit">
-            <strong>Cliente:</strong> {productOrder.user_id?.fullname} <br />
-            <strong>Fecha de compra:</strong>
-            {localDate(productOrder.createdAt)} <br />
-            <strong>Estado de pago:</strong>
-            {status(productOrder.payment_status)} <br />
-            <strong>Tipo de envio:</strong>
-            {typeDelivery(productOrder)} <br />
-            <strong> Dirección:</strong>
-            <br />
-            {deliveryLocation(productOrder).map((line, index) => (
-              <span key={index}>
-                {line}
-                <br />
-              </span>
-            ))}
-          </Typography>
-        </Grid>
+        </Grid2>
+        <Grid2>
+          <TableFillProducts
+            products={productOrder?.products}
+            shippingCost={productOrder?.shipping_cost}
+            discount={productOrder?.discount}
+          />
+        </Grid2>
 
         <Grid item xs={12}>
-          {rows ? (
-            <Grid container display={"flex"} flexDirection={"column"}>
-              <Typography variant="body1" textAlign={"center"} color="inherit">
-                <strong>
-                  <i>Lista de productos</i>{" "}
-                </strong>
-              </Typography>
-              <DataGrid
-                sx={{
-                  "& .theme--hedaer": {
-                    backgroundColor: "black",
-                    color: "white",
-                    textAlign: "center",
-                  },
-                }}
-                onRowSelectionModelChange={(value) => {
-                  setRowSelection(value);
-                  activeButton(value.length);
-                }}
-                rowSelectionModel={rowSelection}
-                hideFooterSelectedRowCount={true}
-                slots={{
-                  noRowsOverlay: CustomNoRows,
-                }}
-                autoHeight
-                columns={[
-                  {
-                    field: "image",
-                    headerName: "Imagen",
-                    headerClassName: "theme--hedaer",
-                    flex: 1,
-                    align: "center",
-                    headerAlign: "center",
-                    renderCell: (params) => (
-                      <Box
-                        component={"span"}
-                        alignContent={"center"}
-                        onClick={() => handleOpen(params.row.images)}
-                        width={"100%"}
-                        height={"100%"}
-                        display={"flex"}
-                        padding={0.5}
-                        justifyContent={"center"}
-                      >
-                        <img
-                          src={params.row.image}
-                          alt={params.row.name}
-                          style={{ objectFit: "contain" }}
-                        />
-                        <Search />
-                      </Box>
-                    ),
-                  },
-                  {
-                    field: "name",
-                    headerName: "Nombre del producto",
-                    headerClassName: "theme--hedaer",
-                    flex: 1,
-                    align: "center",
-                  },
-                  {
-                    field: "quantity",
-                    headerName: "Cantidad de producto",
-                    headerClassName: "theme--hedaer",
-                    flex: 1,
-                    align: "center",
-                  },
-                ]}
-                rows={rows}
-              />
-            </Grid>
-          ) : (
-            <Skeleton variant="rectangular" />
-          )}
-
           <Button
             style={{ marginTop: 10 }}
             variant="outlined"
@@ -290,7 +198,7 @@ const FillOrder = () => {
             Completar surtido
           </Button>
         </Grid>
-      </Grid>
+      </Grid2>
       <Modal
         open={open.value}
         onClose={handleClose}
@@ -322,7 +230,7 @@ const FillOrder = () => {
           </Swiper>
         </Box>
       </Modal>
-    </Grid>
+    </Grid2>
   );
 };
 

@@ -15,35 +15,35 @@ const App = () => {
   const dispatch = useDispatch();
   const [socket, setSocket] = useState(null);
 
-  useEffect(() => {
-    if (logged) {
-      const newSocket = io.connect(import.meta.env.VITE_SOCKET_URL);
-      newSocket.emit("register", user?._id);
-      setSocket(newSocket);
+  // useEffect(() => {
+  //   if (logged) {
+  //     const newSocket = io.connect(import.meta.env.VITE_SOCKET_URL);
+  //     newSocket.emit("register", user?._id);
+  //     setSocket(newSocket);
 
-      const handleReceiveEvent = (data) => {
-        // console.log(data, "xd");
-        enqueueSnackbar(`${data.message}`, {
-          autoHideDuration: 2000,
-          anchorOrigin: { horizontal: "right", vertical: "top" },
-          variant: "default",
-        });
-        dispatch(addNotification(data));
-      };
+  //     const handleReceiveEvent = (data) => {
+  //       // console.log(data, "xd");
+  //       enqueueSnackbar(`${data.message}`, {
+  //         autoHideDuration: 2000,
+  //         anchorOrigin: { horizontal: "right", vertical: "top" },
+  //         variant: "default",
+  //       });
+  //       dispatch(addNotification(data));
+  //     };
 
-      newSocket.on("received_notification", handleReceiveEvent);
+  //     newSocket.on("received_notification", handleReceiveEvent);
 
-      return () => {
-        newSocket.off("received_notification", handleReceiveEvent);
-        newSocket.disconnect();
-      };
-    } else {
-      if (socket) {
-        socket.disconnect();
-        setSocket(null);
-      }
-    }
-  }, [logged]);
+  //     return () => {
+  //       newSocket.off("received_notification", handleReceiveEvent);
+  //       newSocket.disconnect();
+  //     };
+  //   } else {
+  //     if (socket) {
+  //       socket.disconnect();
+  //       setSocket(null);
+  //     }
+  //   }
+  // }, [logged]);
 
   
  

@@ -7,7 +7,6 @@ import {
   gridPageCountSelector,
   useGridApiContext,
   useGridSelector,
-  
 } from "@mui/x-data-grid";
 import MuiPagination from "@mui/material/Pagination";
 import {
@@ -52,7 +51,6 @@ import { date } from "yup";
 import ModalDetailSale from "./ModalDetailSale";
 import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 
-
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -89,7 +87,6 @@ function CustomPagination(props) {
 function CustomToolbar() {
   const apiRef = useGridApiContext();
 
-
   return (
     <GridToolbarContainer sx={{ justifyContent: "center" }}>
       <GridToolbarQuickFilter placeholder="Buscar" variant="outlined" />
@@ -102,16 +99,16 @@ const AllSales = () => {
     useProductOrder();
   const { user } = useAuthStore();
   const { getMonthName } = useDateFormatter();
-  const [open, setOpen] = useState(false)
-  const [sale, setSale] = useState(null)
-  const handleOpen = (data)=>{
-    setOpen(true)
-    setSale(data)
-  }
-  const handleClose = () =>{
-    setOpen(false)
-    setSale(null)
-  }
+  const [open, setOpen] = useState(false);
+  const [sale, setSale] = useState(null);
+  const handleOpen = (data) => {
+    setOpen(true);
+    setSale(data);
+  };
+  const handleClose = () => {
+    setOpen(false);
+    setSale(null);
+  };
 
   useEffect(() => {
     loadProductOrders();
@@ -133,21 +130,20 @@ const AllSales = () => {
     };
   });
 
-
   const renderIcon = (values) => {
-      return (
-        <>
-          <IconButton
-            sx={{ display: {} }}
-            aria-label="Ver detalle"
-            color="primary"
-            title="Ver detalle"
-            onClick={()=>handleOpen(values)}
-          >
-            <Visibility />
-          </IconButton>
-        </>
-      );
+    return (
+      <>
+        <IconButton
+          sx={{ display: {} }}
+          aria-label="Ver detalle"
+          color="primary"
+          title="Ver detalle"
+          onClick={() => handleOpen(values)}
+        >
+          <Visibility />
+        </IconButton>
+      </>
+    );
   };
 
   const renderChip = (values) => {
@@ -172,7 +168,7 @@ const AllSales = () => {
           label="Pendiente MP"
           variant="filled"
           color="primary"
-          size='small'
+          size="small"
         />
       );
     }
@@ -185,7 +181,6 @@ const AllSales = () => {
           variant="filled"
           color="secondary"
           size="small"
-
         />
       );
     }
@@ -197,7 +192,7 @@ const AllSales = () => {
           label="Pago rechazado"
           variant="filled"
           color="warning"
-           size="small"
+          size="small"
         />
       );
     }
@@ -209,7 +204,7 @@ const AllSales = () => {
           label="Pago cancelado o rechazado"
           variant="filled"
           color="warning"
-           size="small"
+          size="small"
         />
       );
     }
@@ -221,7 +216,7 @@ const AllSales = () => {
           label="Liquidada"
           variant="filled"
           color="success"
-           size="small"
+          size="small"
         />
       );
     }
@@ -233,7 +228,7 @@ const AllSales = () => {
         label="Pendiente sin ticket"
         variant="filled"
         color="info"
-         size="small"
+        size="small"
       />
     );
   };
@@ -244,7 +239,6 @@ const AllSales = () => {
 
   const paths = [
     { path: `/contaduria/Todas mis ventas`, name: "Todas mis ventas" },
-
   ];
 
   return (
@@ -262,9 +256,9 @@ const AllSales = () => {
           <strong>Todas mis ventas</strong>
         </Typography>
       </Grid2>
-       <Grid2 size={12}>
-              <BreadcrumbCustom paths={paths} />
-            </Grid2>
+      <Grid2 size={12}>
+        <BreadcrumbCustom paths={paths} />
+      </Grid2>
 
       <Grid2 size={12}>
         <DataGrid
@@ -356,14 +350,12 @@ const AllSales = () => {
           disableColumnMenu
           disableColumnSelector
           disableDensitySelector
-          
           slotProps={{
             toolbar: {
               showQuickFilter: true,
               quickFilterProps: { debounceMs: 500 },
             },
           }}
-
           initialState={{
             pagination: {
               paginationModel: { pageSize: 10, page: 0 },

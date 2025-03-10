@@ -25,6 +25,7 @@ import {
   Verified,
   ConfirmationNumber,
   Check,
+  MoreHoriz,
 } from "@mui/icons-material";
 import Swal from "sweetalert2";
 import { useProductOrder } from "../../hooks/useProductOrder";
@@ -133,9 +134,9 @@ const SalesTransfer = () => {
         aria-label="Ver detalle"
         color="primary"
         title="Ver detalle"
-        disabled
+        onClick={() => navigate(`/contaduria/venta-detalle/${values.row._id}`)}
       >
-        <Visibility />
+        <MoreHoriz />
       </IconButton> 
       );
     }

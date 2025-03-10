@@ -9,27 +9,21 @@ import {
   useGridSelector,
 } from "@mui/x-data-grid";
 import MuiPagination from "@mui/material/Pagination";
-import {
-  Button,
-  Grid,
-  IconButton,
-  Tooltip,
-} from "@mui/material";
-import { Workbook } from "exceljs";
+import { Button, Grid2 } from "@mui/material";
 import {
   ExpandLess as ExpandLessIcon,
   ExpandMore as ExpandMoreIcon,
   Sort as SortIcon,
-  Download as DownloadIcon,
-  ScheduleSend as ScheduleSendIcon,
-  ThumbUpAlt as ThumbUpAltIcon,
+  Download ,
+  ScheduleSend ,
+  ThumbUpAlt 
 } from "@mui/icons-material";
-import Swal from "sweetalert2";
 import { useProductOrder } from "../../hooks/useProductOrder";
 import { useAuthStore } from "../../hooks";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import CustomNoRows from "../../components/Tables/CustomNoRows";
-import {localDate} from "../../Utils/ConvertIsoDate"
+import { localDate } from "../../Utils/ConvertIsoDate";
+import { esES } from "@mui/x-data-grid/locales";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -65,79 +59,24 @@ function CustomPagination(props) {
 }
 
 function CustomToolbar() {
-  const apiRef = useGridApiContext();
-
-  const handleGoToPage1 = () => apiRef.current.setPage(1);
-  const exportToExcel = () => {
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Pedidos");
-
-    // Agregar encabezados de columna
-    const headerRow = worksheet.addRow([
-      "Cantidad de productos",
-      "Tipo de envio",
-      "Id de Pedido",
-      "Fecha de solicitud"
-    ]);
-    headerRow.eachCell((cell) => {
-      cell.font = { bold: true };
-    });
-
-    // Agregar datos de las filas
-    rowsWithIds.forEach((row) => {
-      worksheet.addRow([
-        row.quantityProduct,
-        row.typeDelivery,
-        row.order_id,
-        row.createdAt
-      ]);
-    });
-
-    // Crear un Blob con el archivo Excel y guardarlo
-    workbook.xlsx.writeBuffer().then((buffer) => {
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      saveAs(blob, "Pedidos.xlsx");
-    });
-  };
-
   return (
-    <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
-      <Button onClick={handleGoToPage1}>Regresar a la página 1</Button>
-      <GridToolbarQuickFilter />
-      <Button
-        variant="text"
-        startIcon={<DownloadIcon />}
-        disableElevation
-        sx={{ color: "secondary" }}
-        onClick={exportToExcel}
-      >
-        Descargar Excel
-      </Button>
+    <GridToolbarContainer sx={{ justifyContent: "center" }}>
+      <GridToolbarQuickFilter placeholder="Buscar" variant="outlined" />
     </GridToolbarContainer>
   );
 }
 
 const PaidProductOrders = () => {
-  const {
-    loadProductOrdersPaid,
-    navigate,
-    productOrders,
-    loading
-  } = useProductOrder();
+  const { loadProductOrdersPaid, navigate, productOrders, loading } =
+    useProductOrder();
   const { user } = useAuthStore();
 
   useEffect(() => {
     loadProductOrdersPaid();
   }, [user]);
- 
-  
-
-  
 
   const rowsWithIds = productOrders.map((item, index) => {
-    const date = localDate(item.createdAt)
+    const date = localDate(item.createdAt);
     const quantities = item.products.map((i) => i.quantity);
     const suma = quantities.reduce((valorAnterior, valorActual) => {
       return valorAnterior + valorActual;
@@ -147,143 +86,104 @@ const PaidProductOrders = () => {
     return {
       quantityProduct: suma,
       typeDelivery: TD,
-      date : date,
+      date: date,
       id: index.toString(),
       ...item,
     };
   });
-
-  const paymentValuate = (row) => {
-    if (row.payment_status !== 'approved') {
-      Swal.fire('Pendiente de pago', '', 'error');
-    } else {
-      navigate(`/almacenista/surtir-venta/${row._id}`);
-    }
-  };
-
-  const renderIcon = (values) => {
-    if (!values.row.storeHouseStatus) {
-      return (
-        <Tooltip title="Surtir orden">
-          <Button
-            aria-label="Surtir"
-            color="success"
-            onClick={() => paymentValuate(values.row)}
-            variant="outlined"
-          >
-            Surtir
-          </Button>
-        </Tooltip>
-      );
-    } else if (!values.row.route_status) {
-      return (
-        <Tooltip title="Asignar Ruta">
-          <Button
-            aria-label="Asignar Ruta"
-            color="info"
-            variant="outlined"
-            onClick={() => navigate(`/auth/asignar-ruta/${values.row._id}`)}
-          >
-            Ruta
-          </Button>
-        </Tooltip>
-      );
-    } else if (!values.row.deliveryStatus) {
-      return (
-        <Tooltip title="En envío">
-          <IconButton
-            aria-label="En envío"
-            color="secondary"
-          >
-            <ScheduleSendIcon />
-          </IconButton>
-        </Tooltip>
-      );
-    } else {
-      return (
-        <Tooltip title="Pedido entregado">
-          <IconButton
-            aria-label="Pedido entregado"
-            color="primary"
-          >
-            <ThumbUpAltIcon />
-          </IconButton>
-        </Tooltip>
-      );
-    }
-  };
 
   if (loading) {
     return <LoadingScreenBlue />;
   }
 
   return (
-    <Grid container gap={1}>
-      <Grid item xs={12}>
-        <DataGrid
-          sx={{ fontSize: "14px", fontFamily: "sans-serif" }}
-          columns={[
-            {
-              field: "date",
-              headerName: "Fecha de solicitud",
-              flex: 1,
-              align: "center",
+    <Grid2 container gap={1}>
+      <DataGrid
+        sx={{
+          fontSize: "12px",
+          fontFamily: "sans-serif",
+          borderRadius: "20px",
+          bgcolor: "#fff",
+          border: "1px solid rgb(209, 205, 205)", // Borde exterior naranja
+          "& .MuiDataGrid-cell": {
+            borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno claro
+          },
+        }}
+        columns={[
+          {
+            field: "date",
+            headerName: "Fecha de solicitud",
+            flex: 1,
+            align: "center",
+          },
+          {
+            field: "order_id",
+            headerName: "Id de pedido",
+            flex: 1,
+            align: "center",
+          },
+          {
+            field: "typeDelivery",
+            headerName: "Tipo de envío",
+            flex: 1,
+            sortable: false,
+            renderCell: (params) => {
+              if (params.row.typeDelivery === "homedelivery") {
+                return <span>Envío a domicilio</span>;
+              } else {
+                return <span>Punto de entrega</span>;
+              }
             },
-            {
-              field: "order_id",
-              headerName: "Id de pedido",
-              flex: 1,
-              align: "center",
-            },
-            {
-              field: "typeDelivery",
-              headerName: "Tipo de envio",
-              flex: 1,
-              sortable: false,
-            },
-            {
-              field: "Opciones",
-              headerName: "Opciones",
-              align: "center",
-              flex: 1,
-              sortable: false,
-              type: "actions",
-              renderCell: (params) => (
-                
-                <Button  size="small" variant="contained"  onClick={()=>navigate(`/almacenista/surtir-venta/${params.row._id}`)} >
-                  Surtir
-                </Button>
-              ) 
-            },
-          ]}
-          rows={rowsWithIds}
-          autoHeight
-          pagination
-          slots={{
-            pagination: CustomPagination,
-            toolbar: CustomToolbar,
-            columnSortedDescendingIcon: SortedDescendingIcon,
-            columnSortedAscendingIcon: SortedAscendingIcon,
-            columnUnsortedIcon: UnsortedIcon,
-            noRowsOverlay: CustomNoRows,
-          }}
-          disableColumnFilter
-          disableColumnMenu
-          disableColumnSelector
-          disableDensitySelector
-          slotProps={{
-            toolbar: {
-              showQuickFilter: true,
-              quickFilterProps: { debounceMs: 500 },
-            },
-          }}
-          printOptions={{
-            hideFooter: true,
-            hideToolbar: true,
-          }}
-        />
-      </Grid>
-    </Grid>
+          },
+
+          {
+            field: "Opciones",
+            headerName: "Opciones",
+            align: "center",
+            flex: 1,
+            sortable: false,
+            type: "actions",
+            renderCell: (params) => (
+              <Button
+                size="small"
+                variant="contained"
+                onClick={() =>
+                  navigate(`/almacenista/surtir-venta/${params.row._id}`)
+                }
+              >
+                Surtir
+              </Button>
+            ),
+          },
+        ]}
+        rows={rowsWithIds}
+        autoHeight
+        pagination
+        slots={{
+          pagination: CustomPagination,
+          toolbar: CustomToolbar,
+          columnSortedDescendingIcon: SortedDescendingIcon,
+          columnSortedAscendingIcon: SortedAscendingIcon,
+          columnUnsortedIcon: UnsortedIcon,
+          noRowsOverlay: CustomNoRows,
+        }}
+        disableColumnFilter
+        disableColumnMenu
+        disableColumnSelector
+        disableDensitySelector
+        localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+        slotProps={{
+          toolbar: {
+            showQuickFilter: true,
+            quickFilterProps: { debounceMs: 500 },
+          },
+        }}
+        printOptions={{
+          hideFooter: true,
+          hideToolbar: true,
+        }}
+      />
+    </Grid2>
   );
 };
 
