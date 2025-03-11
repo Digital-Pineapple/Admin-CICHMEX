@@ -19,6 +19,7 @@ import {
   startUpdateSection,
   startUpdateStock,
   startUpdateZone,
+  startSupplyProduct
 } from "../store";
 
 export const useWarehouse = () => {
@@ -62,8 +63,14 @@ export const useWarehouse = () => {
   const addProductToSection =(data, handleClose, setSection, clearValuate)=> dispatch(startAddProductToSection(data, handleClose, setSection, clearValuate))
   const updateStock =(data, handleClose, setSection, clearValuate)=> dispatch(startUpdateStock(data, handleClose, setSection, clearValuate))
 
-  const searchProductFill = ({id, handleOpen, product})=>dispatch(startSearchProductFill({id, handleOpen, product}))
-  
+  const searchProductFill =  async({id, product, setOpenModal}) => {
+ const result = await dispatch(startSearchProductFill(id));
+ setOpenModal({value: true, data: product, section: result})
+ 
+};
+
+const supplyProduct = (id, values, handleCloseModal)=>dispatch(startSupplyProduct(id, values, handleCloseModal))
+
   const rows = (data) =>
     data.map((i, index) => ({
       id: index.toString(),
@@ -117,6 +124,7 @@ export const useWarehouse = () => {
     addProductToSection,
     updateStock,
     navigate,
-    searchProductFill
+    searchProductFill,
+    supplyProduct
   };
 };

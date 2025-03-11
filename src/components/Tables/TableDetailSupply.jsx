@@ -1,19 +1,46 @@
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+import { Check, Search } from "@mui/icons-material";
 import {
   Button,
+  Chip,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   Typography,
 } from "@mui/material";
-import noImage from "../../assets/Images/CHMX/Imagotipo Cuadrado CHMX.png";
-import { Search } from "@mui/icons-material";
+import { localDate } from "../../Utils/ConvertIsoDate";
+import { purple } from "@mui/material/colors";
 
-const TableFillProducts = ({ products, handleOpen, handleSearch}) => {
-  if (!products) return null; // Evita errores si no hay usuario
+const TableDetailSupply = ({ supply_detail, products }) => {
+  if (!supply_detail) {
+    return null;
+  }
+  const combinedArray = supply_detail.map((item1) => {
+    let matchingItem; // Definimos la variable antes del condicional
+
+    if (item1.type === "variant_product") {
+      matchingItem = products.find(
+        (item2) => item1.product_id === item2.variant._id
+      );
+    } else {
+      matchingItem = products.find(
+        (item2) => item1.product_id === item2.item._id
+      );
+    }
+
+    if (matchingItem) {
+      return {
+        ...item1,
+        ...matchingItem,
+      };
+    }
+
+    // Si no hay coincidencia, retornamos el objeto original
+    return item1;
+  });
 
   return (
     <TableContainer
@@ -31,19 +58,21 @@ const TableFillProducts = ({ products, handleOpen, handleSearch}) => {
             <TableCell sx={{ color: "rgba(97, 96, 96, 0.75)" }}>
               Cantidad
             </TableCell>
-            <TableCell sx={{ color: "rgba(97, 96, 96, 0.75)" }}>P.U.</TableCell>
             <TableCell sx={{ color: "rgba(97, 96, 96, 0.75)" }}>
-              Monto
+              Fecha
             </TableCell>
             <TableCell sx={{ color: "rgba(97, 96, 96, 0.75)" }}>
-              Acciones
+              Responsable
+            </TableCell>
+            <TableCell sx={{ color: "rgba(97, 96, 96, 0.75)" }}>
+              Estado
             </TableCell>
           </TableRow>
         </TableHead>
 
         {/* Cuerpo de la tabla */}
         <TableBody>
-          {products.map((product, index) => (
+          {combinedArray.map((product, index) => (
             <TableRow key={product._id || index}>
               <TableCell
                 sx={{
@@ -52,7 +81,7 @@ const TableFillProducts = ({ products, handleOpen, handleSearch}) => {
                   maxWidth: "250px",
                 }}
               >
-                <img
+                {/* <img
                   src={
                     product.variant
                       ? product.variant.images[0]?.url
@@ -75,7 +104,7 @@ const TableFillProducts = ({ products, handleOpen, handleSearch}) => {
                         : product.item.images
                     )
                   }
-                />
+                /> */}
                 <Typography
                   sx={{
                     p: 1,
@@ -92,37 +121,27 @@ const TableFillProducts = ({ products, handleOpen, handleSearch}) => {
                 </Typography>
               </TableCell>
               <TableCell>{product.quantity}</TableCell>
+              <TableCell>{localDate(product.date)}</TableCell>
+              <TableCell>{product.user.fullname}</TableCell>
               <TableCell>
-                $
-                {product.variant?.price
-                  ? product.variant.price.toFixed(2)
-                  : product.item?.price?.toFixed(2) || "0.00"}
-              </TableCell>
-              <TableCell>
-                $
-                {product.variant?.price
-                  ? (product.variant.price * product.quantity).toFixed(2)
-                  : (product.item?.price * product.quantity).toFixed(2) ||
-                    "0.00"}
-              </TableCell>
-              <TableCell>
-                <Button
-                  onClick={() =>
-                    handleSearch(product)
-                  }
-                  startIcon={<Search />}
-                >
-                  Buscar
-                </Button>
+                {product.status ? (
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    icon={<Check />}
+                    label={"surtido"}
+                    color="success"
+                  />
+                ) : (
+                  <Chip label={"pendiente"} color={purple[400]} />
+                )}
               </TableCell>
             </TableRow>
           ))}
-
-         
         </TableBody>
       </Table>
     </TableContainer>
   );
 };
 
-export default TableFillProducts;
+export default TableDetailSupply;

@@ -3,6 +3,7 @@ import { instanceApi } from "../../apis/configAxios";
 import { onAddAisle, onAddSection, onAddZone, onClearErrors, onClearErrorsAisles, onClearErrorsSections, onClearSection, onDeleteAisle, onDeleteSection, onDeleteZone, onErrorAisles, onErrorSections, onErrorZones, onLoadAisles, onLoadOneSection, onLoadSection, onLoadSections, onLoadZones, onStartLoadingAisles, onStartLoadingSections, onStartLoadingZones, onStopLoaderSection, onUpdateAisle, onUpdateSection, onUpdateZone } from "../reducer/warehouseReducer";
 import { startLoading, stopLoading } from "../reducer/uiReducer";
 import { onUpdateInput } from "../reducer/useStockStoreHouse";
+import { loadProductOrder, onUpdatePOSupply } from "../reducer/productOrdersReducer";
 
 export const startLoadZones = () => async dispatch => {
     dispatch(onStartLoadingZones());
@@ -281,7 +282,7 @@ export const startLoadZones = () => async dispatch => {
     };
   };
 
-  export const startSearchProductFill = ({id, handleOpen, product}) => {
+  export const startSearchProductFill = (id) => {
     return async (dispatch) => {
       dispatch(startLoading());
   
@@ -303,19 +304,12 @@ export const startLoadZones = () => async dispatch => {
         }
   
         const sectionData = data.data;
-        
         Swal.fire({
           title: `El producto se encuentra en la sección: ${sectionData.name}`,
           text: `Pasillo: ${sectionData.aisle?.name || "No especificado"}`,
           confirmButtonText: "Ok",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            console.log(handleOpen,'funcion');
-            
-          handleOpen({value:true, data:product, section: data.data})
-          }
-        });
-  
+        })
+        return sectionData
       } catch (error) {
         console.error('Error al buscar la ubicación del producto:', error);
         Swal.fire({
@@ -365,6 +359,63 @@ export const startLoadZones = () => async dispatch => {
       dispatch(stopLoading());
     }
   };
+
+  export const startSupplyProduct = (id, values, handleCloseModal) => async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      // Corregido el nombre del campo 'productStock' en 'valuesFill'
+      const valuesFill = {
+        productStock: values.productStock,
+        ...values
+      };
+  
+      // Petición para llenar el producto en la orden
+      const { data } = await instanceApi.post(`/product-order/fill_one_product/${id}`, valuesFill, {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+  
+      // Datos para actualizar el stock
+      const stockData = { 
+        product: {
+          _id: values.product_id,
+          product_id: values.productStock,
+          type: values.type
+        },
+        section: values.section,
+        quantity: -values.quantity
+      };
+  
+      // Petición para actualizar el stock de la sección
+      const updateStock = await instanceApi.patch(`/warehouse/section/update_stock`, stockData, {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      Swal.fire({
+        title: data.message,
+        text: updateStock.data.message,
+        icon: 'success',
+      });
+  
+      handleCloseModal();
+      dispatch(onUpdatePOSupply(data.data));  // Actualizar el estado global con la nueva data
+    } catch (error) {
+      console.error('Error al realizar el suministro del producto:', error);
+      Swal.fire({
+        title: "Error",
+        text: error.response?.data?.message || "Hubo un problema al realizar el suministro del producto.",
+        icon: 'error',
+      });
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
+  
 
   export const startDeleteZone = (id) => async dispatch => {
     dispatch(onStartLoadingZones());

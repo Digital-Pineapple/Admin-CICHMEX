@@ -19,6 +19,9 @@ export const productOrdersReducer = createSlice({
     loadProductOrder: (state, { payload }) => {
       state.productOrder = payload;
     },
+    onUpdatePOSupply: (state, { payload }) => {
+      state.productOrder.supply_detail = payload.supply_detail;
+    },
     onAddNewProductOrder: (state, { payload }) => {
       state.productOrder = payload;
     },
@@ -57,7 +60,8 @@ export const {
   loadProductOrders,
   onAddNewProductOrder,
   startLoader,
-  updateOneProductOrder
+  updateOneProductOrder,
+  onUpdatePOSupply
 } = productOrdersReducer.actions;
 
 export default productOrdersReducer.reducer;

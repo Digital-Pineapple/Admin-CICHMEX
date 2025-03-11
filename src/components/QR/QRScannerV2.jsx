@@ -16,7 +16,6 @@ const QRScannerV2 = ({ setValueQR, label = "Escanear QR" }) => {
   
     try {
       const parsedResult = JSON.parse(result[0].rawValue);
-      console.log("QR escaneado:", parsedResult); // 🔍 Verificar el valor recibido
       setValueQR(parsedResult); // Enviar el valor al padre
       setIsOpen(false); // Cerrar modal
     } catch (error) {

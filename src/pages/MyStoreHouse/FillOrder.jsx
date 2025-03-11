@@ -1,29 +1,31 @@
 import {
   Grid,
-  Skeleton,
   Button,
   Typography,
-  Avatar,
   Box,
   Modal,
   Fab,
   Grid2,
+  IconButton,
+  Card,
+  CardContent,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useProductOrder } from "../../hooks/useProductOrder";
-import { DataGrid } from "@mui/x-data-grid";
-import { QRCodeSVG } from "qrcode.react";
 import { localDate } from "../../Utils/ConvertIsoDate";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
-import { ArrowBack, Close, Search } from "@mui/icons-material";
-import CustomNoRows from "../../components/Tables/CustomNoRows";
+import { Close } from "@mui/icons-material";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 import TableDetail from "../Sales/TablesDetail/TableDetail";
-import TableProductList from "../Sales/TablesDetail/TableProductList";
 import TableFillProducts from "../../components/Tables/TableFillProducts";
+import { useWarehouse } from "../../hooks";
+import QRScannerV2 from "../../components/QR/QRScannerV2";
+import Swal from "sweetalert2";
+import TableDetailSupply from "../../components/Tables/TableDetailSupply";
+import { FilePdfFilled } from "@ant-design/icons";
 
 const style = {
   position: "absolute",
@@ -45,79 +47,48 @@ const style = {
 
 const FillOrder = () => {
   const { id } = useParams();
-  const {
-    loadProductOrder,
-    productOrder,
-    rowsProducts,
-    completeProductOrder,
-    loadPrintPDFOrder,
-    loading,
-    navigate,
-  } = useProductOrder();
-  const [rowSelection, setRowSelection] = useState([]);
-  const [activeButton1, setActiveButton] = useState(false);
+  const { loadProductOrder, productOrder, loadPrintPDFOrder, loading } =
+    useProductOrder();
+  const { searchProductFill, supplyProduct } = useWarehouse();
+
   const [open, setOpen] = useState({ images: [], value: false });
+  const [validation, setValidation] = useState(false);
+  const [valuate, setValuate] = useState(null);
+  const [openModal, setOpenModal] = useState({
+    value: false,
+    data: {},
+    section: {},
+  });
+
   useEffect(() => {
     loadProductOrder(id);
   }, [id]);
 
-  const rows = rowsProducts();
-  function activeButton(i) {
-    const a1 = rows.length;
-    if (a1 === i) {
-      setActiveButton(true);
+  useEffect(() => {
+    if (valuate) {
+      if (openModal.section && openModal.section._id === valuate) {
+        setValidation(true);
+      } else {
+        Swal.fire({ title: "No coincide con sección", icon: "error" });
+      }
     }
-    if (a1 !== i) {
-      setActiveButton(false);
-    }
-  }
+  }, [valuate, openModal.section]);
 
-  const completeOrder = () => {
-    completeProductOrder(id);
+  const handleSave = () => {
+    const product = openModal.data;
+    const data = {
+      product_id: product.variant ? product.variant._id : product.item._id,
+      productStock: product.variant ? product.variant.product_id : null,
+      status: true,
+      section: openModal.section._id,
+      quantity: product.quantity,
+      type: product.variant ? "variant_product" : "unique_product",
+    };
+    supplyProduct(id, data, handleCloseModal);
   };
+
   const printPDF = (id) => {
     loadPrintPDFOrder(id);
-  };
-  const status = (value) => {
-    if (value === "approved") {
-      return "Aprobado";
-    } else if (value === "pending") {
-      return "Pendiente";
-    } else if (value === "rejected") {
-      return "Rechazado";
-    }
-    return "Desconocido"; // Valor por defecto
-  };
-
-  const typeDelivery = (value) => {
-    return value.deliveryLocation ? "Entrega a domicilio" : "Punto de entrega";
-  };
-  const deliveryLocation = (data) => {
-    if (data.deliveryLocation) {
-      return [
-        `Código Postal: ${data.deliveryLocation?.cp}`,
-        `Estado: ${data.deliveryLocation?.state}`,
-        `Municipio: ${data.deliveryLocation?.municipality}`,
-        `Dirección: ${data.deliveryLocation?.direction}`,
-        `Referencia: ${
-          data.deliveryLocation?.reference
-            ? data.deliveryLocation.reference
-            : "Sin información"
-        }`,
-        `Destinatario: ${
-          data.deliveryLocation?.receiver
-            ? data.deliveryLocation.receiver
-            : "Sin información"
-        }`,
-      ];
-    } else {
-      return [
-        `Código Postal: ${data.branch?.location?.cp}`,
-        `Estado: ${data.branch?.location?.state}`,
-        `Municipio: ${data.branch?.location?.municipality}`,
-        `Dirección: ${data.branch?.location?.direction}`,
-      ];
-    }
   };
 
   const handleOpen = (images) => {
@@ -126,15 +97,95 @@ const FillOrder = () => {
   };
   const handleClose = () => setOpen({ value: false, images: [] });
 
-  if (loading) {
-    return <LoadingScreenBlue />;
-  }
+  const handleSearch = (product) => {
+    const product_id = product.variant ? product.variant._id : product.item._id;
+    searchProductFill({ id: product_id, product: product, setOpenModal });
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal({ data: {}, section: {}, value: false });
+    setValidation(false);
+    setValuate(null);
+  };
+
+  const RenderButtonAsign = (disabled) => (
+    <Button
+      variant="contained"
+      onClick={handleSave}
+      fullWidth
+      color="success"
+      disabled={!disabled}
+    >
+      Completar surtido
+    </Button>
+  );
+  const renderSection = (sectionData) => {
+    if (Array.isArray(sectionData) && sectionData.length > 0) {
+      const sec = sectionData[0];
+      return (
+        <Typography>
+          <strong>Sección:</strong>
+          <br />
+          {sec?.name || "N/A"} <br />
+          <strong>Pasillo:</strong>
+          <br />
+          {sec?.aisle?.name || "N/A"} <br />
+          <strong>Zona:</strong>
+          <br />
+          {sec?.zone?.name || "N/A"} <br />
+        </Typography>
+      );
+    } else if (sectionData && typeof sectionData === "object") {
+      return (
+        <Typography>
+          <strong>Sección:</strong>
+          <br />
+          {sectionData?.name || "N/A"} <br />
+          <strong>Pasillo:</strong>
+          <br />
+          {sectionData?.aisle?.name || "N/A"} <br />
+        </Typography>
+      );
+    }
+    return null;
+  };
+  const renderProduct = (product) => {
+    if (Object.keys(product).length > 0) {
+      return (
+        <>
+          <Typography fontSize={14}>
+            <strong>Cantidad de producto: {product.quantity}</strong>
+            <br />
+          </Typography>
+          <Typography>
+            <strong>Nombre del Producto:</strong>
+            <br />
+            {`${product.item.name} - ${
+              product.variant ? product.variant.attributes.color : ""
+            } - ${product.variant ? product.variant.attributes.size : ""}`}{" "}
+            <br />
+            <strong>Código:</strong>
+            <br />
+            {product.variant ? product.variant.tag : product.item.tag} <br />
+          </Typography>
+        </>
+      );
+    }
+    return "";
+  };
+
+  const lp = productOrder.products;
+  const values = productOrder.supply_detail?.map((i) => i.status);
+  const isValid = () => lp?.length === values?.length && values?.every(Boolean);
+
   const paths = [
     { path: `/almacenista/mis-ventas`, name: "Pedidos" },
     { path: `/almacenista/surtir-venta`, name: "Surtir pedido" },
   ];
 
-  console.log(productOrder);
+  if (loading) {
+    return <LoadingScreenBlue />;
+  }
 
   return (
     <Grid2 container paddingX={10} display={"flex"} gap={2}>
@@ -154,19 +205,19 @@ const FillOrder = () => {
       <Grid2 size={12}>
         <BreadcrumbCustom paths={paths} />
       </Grid2>
-      <Grid2 container alignContent={"center"}>
-        <Grid2 display={"flex"} size={12} justifyContent={"center"}>
-          <Button
-            variant="contained"
-            fullWidth
-            size="small"
-            onClick={() => printPDF(id)}
-            color="success"
-          >
-            Imprimir PDF
-          </Button>
-        </Grid2>
-        <Grid2 size={12}>
+      <Grid2
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "repeat(5, 1fr)",
+          gridTemplateRows: "repeat(6, 1fr)",
+          gridColumnGap: "10px",
+          gridRowGap: "10px",
+        }}
+      >
+        <Grid2 gridArea={"1 / 4 / 7 / 6"} >
+          <Typography paddingY={2} paddingX={2} variant="body1" color="initial">
+            <strong>Información general</strong>
+          </Typography>
           <TableDetail
             user={productOrder?.user_id}
             typeDelivery={productOrder?.typeDelivery}
@@ -178,27 +229,43 @@ const FillOrder = () => {
                 : productOrder?.deliveryLocation
             }
           />
+           <Button
+            variant="outlined"
+            fullWidth
+            size="small"
+            startIcon={<FilePdfFilled/>}
+            onClick={() => printPDF(id)}
+            color="success"
+            sx={{marginY:2}}
+          >
+            Imprimir PDF
+          </Button>
+          {RenderButtonAsign(isValid())}
         </Grid2>
-        <Grid2>
+
+        <Grid2 gridArea={"1 / 1 / 4 / 4"}>
+          <Typography paddingY={2} paddingX={2} variant="body1" color="initial">
+            <strong>Lista de productos</strong>
+          </Typography>
           <TableFillProducts
             products={productOrder?.products}
-            shippingCost={productOrder?.shipping_cost}
-            discount={productOrder?.discount}
+            handleOpen={handleOpen}
+            handleSearch={handleSearch}
           />
         </Grid2>
 
-        <Grid item xs={12}>
-          <Button
-            style={{ marginTop: 10 }}
-            variant="outlined"
-            fullWidth
-            onClick={() => completeOrder()}
-            color="success"
-          >
-            Completar surtido
-          </Button>
-        </Grid>
+        <Grid2 gridArea={"4 / 1 / 7 / 4"}>
+          <Typography paddingY={2} paddingX={2} variant="body1" color="initial">
+            <strong>Detalle de surtido</strong>
+          </Typography>
+          <TableDetailSupply
+            supply_detail={productOrder.supply_detail}
+            products={productOrder.products}
+          />
+         
+        </Grid2>
       </Grid2>
+
       <Modal
         open={open.value}
         onClose={handleClose}
@@ -229,6 +296,30 @@ const FillOrder = () => {
             })}
           </Swiper>
         </Box>
+      </Modal>
+
+      <Modal open={openModal.value} onClose={handleClose}>
+        <Grid2 container sx={style}>
+          <IconButton
+            disableRipple
+            aria-label="Cerrar"
+            onClick={handleCloseModal}
+            sx={{
+              position: "absolute",
+              transform: "translate(790%, -90%)",
+            }}
+          >
+            <Close />
+          </IconButton>
+          <QRScannerV2 label="Escanear QR de sección" setValueQR={setValuate} />
+          <Card variant="outlined">
+            <CardContent>{renderProduct(openModal.data)}</CardContent>
+          </Card>
+          <Card variant="outlined">
+            <CardContent>{renderSection(openModal.section)}</CardContent>
+          </Card>
+          {RenderButtonAsign(validation)}
+        </Grid2>
       </Modal>
     </Grid2>
   );
