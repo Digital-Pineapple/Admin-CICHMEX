@@ -11,7 +11,7 @@ import {
 import MuiPagination from "@mui/material/Pagination";
 import {
   Button,
-  Grid,
+  Grid2,
   IconButton,
   Tooltip,
 } from "@mui/material";
@@ -31,6 +31,7 @@ import { useAuthStore } from "../../hooks";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import CustomNoRows from "../../components/Tables/CustomNoRows";
 import {localDate} from "../../Utils/ConvertIsoDate"
+import { esES } from "@mui/x-data-grid/locales";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -104,18 +105,10 @@ function CustomToolbar() {
   };
 
   return (
-    <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
-      <Button onClick={handleGoToPage1}>Regresar a la página 1</Button>
-      <GridToolbarQuickFilter />
-      <Button
-        variant="text"
-        startIcon={<DownloadIcon />}
-        disableElevation
-        sx={{ color: "secondary" }}
-        onClick={exportToExcel}
-      >
-        Descargar Excel
-      </Button>
+    <GridToolbarContainer sx={{ justifyContent: "center" }}>
+     
+       <GridToolbarQuickFilter placeholder="Buscar" variant="outlined" />
+  
     </GridToolbarContainer>
   );
 }
@@ -154,23 +147,24 @@ const CompletedOrders = () => {
     };
   });
 
-  const paymentValuate = (row) => {
-    if (row.payment_status !== 'approved') {
-      Swal.fire('Pendiente de pago', '', 'error');
-    } else {
-      navigate(`/almacenista/surtir-venta/${row._id}`);
-    }
-  };
-
   if (loading) {
     return <LoadingScreenBlue />;
   }
 
   return (
-    <Grid container gap={1}>
-      <Grid item xs={12}>
+    <Grid2 container gap={1}>
+      <Grid2 size={12}>
         <DataGrid
-          sx={{ fontSize: "14px", fontFamily: "sans-serif" }}
+          sx={{
+            fontSize: "12px",
+            fontFamily: "sans-serif",
+            borderRadius: "20px",
+            bgcolor: "#fff",
+            border: "1px solid rgb(209, 205, 205)", // Borde exterior naranja
+            "& .MuiDataGrid-cell": {
+              borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno claro
+            },
+          }}
           columns={[
             {
               field: "date",
@@ -198,10 +192,11 @@ const CompletedOrders = () => {
               sortable: false,
               type: "actions",
               renderCell: (params) => (
-                
-                <IconButton color="primary"  onClick={()=>navigate(`/almacenista/detalle-de-pedido/${params.row._id}`)} >
+                <Tooltip title='Ver detalle'>
+                <IconButton color="primary"  onClick={()=>navigate(`/almacenista/surtir-venta/${params.row._id}`)} >
                   <Visibility/>
                 </IconButton>
+                </Tooltip>
               ) 
             },
           ]}
@@ -225,6 +220,7 @@ const CompletedOrders = () => {
           disableColumnMenu
           disableColumnSelector
           disableDensitySelector
+           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           slotProps={{
             toolbar: {
               showQuickFilter: true,
@@ -236,8 +232,8 @@ const CompletedOrders = () => {
             hideToolbar: true,
           }}
         />
-      </Grid>
-    </Grid>
+      </Grid2>
+    </Grid2>
   );
 };
 

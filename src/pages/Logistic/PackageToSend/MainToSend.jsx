@@ -91,39 +91,22 @@ const MainToSend = () => {
   if (loading) return <LoadingScreenBlue />;
 
   return (
-    <Grid2 container gap={2} width={'100%'}>   
-     <Grid2
-        marginTop={{ xs: "-30px" }}
+    <Grid2 container paddingX={{ xs: 0, lg: 10 }} display={"flex"} gap={2}>   
+    <Grid2
         size={12}
-        minHeight={"100px"}
-        className="Titles"
+        paddingRight={15}
+        flexGrow={1}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        marginBottom={2}
       >
-        <Typography
-          textAlign={"center"}
-          variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
-        >
-          Pedidos para envío
+        <Typography variant="h4" sx={{fontSize:{xs:"16px", lg:"30px"}}}>
+          <strong>Asignar envío</strong>
         </Typography>
       </Grid2>
-      <Grid2
-        display={"flex"}
-        justifyContent={"end"}
-        rowSpacing={2}
-        size={12}
-      >
-        <Button
-          size="small"
-          startIcon={<Refresh />}
-          variant="contained"
-          color="primary"
-          onClick={CallBackAllPO}
-        >
-          Recargar
-        </Button>
-      </Grid2>
-    <Box sx={{  bgcolor: 'background.paper', width:'100%' }}>
-    <AppBar position="static">
+    
+    <AppBar position="static" sx={{ borderRadius: "10px", bgcolor:'#fff', color:'#000', fontWeight:'Bold' }}>
         <Tabs
           value={value}
           onChange={handleChange}
@@ -143,7 +126,6 @@ const MainToSend = () => {
       </TabPanel>
       <TabPanel value={value} index={1} dir={theme.direction}>
       <ReadyToSend rows={getCurrentTabData()} type={1} /> 
-     
       </TabPanel>
       <TabPanel value={value} index={2} dir={theme.direction}>
       <ReadyToSend rows={getCurrentTabData()} type={2} /> 
@@ -152,8 +134,6 @@ const MainToSend = () => {
       <ReadyToSend rows={getCurrentTabData()} type={3} /> 
      
       </TabPanel>
-
-    </Box>
     </Grid2>
   );
 }

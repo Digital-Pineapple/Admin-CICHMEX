@@ -15,9 +15,11 @@ import { useEffect, useState } from "react";
 import MuiPagination from "@mui/material/Pagination";
 import {
   Close,
+  Cottage,
   Download,
   Edit,
   LocalShipping,
+  Place,
   Refresh,
   Visibility,
 } from "@mui/icons-material";
@@ -31,17 +33,14 @@ import {
   Chip,
   Fab,
 } from "@mui/material";
-import { Workbook } from "exceljs";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
-import { useAuthStore } from "../../hooks";
-import { useProductOrder } from "../../hooks/useProductOrder";
 import { localDate } from "../../Utils/ConvertIsoDate";
 import Grid from "@mui/material/Grid2";
 import AssignRoute from "../MyStoreHouse/ AssignRoute";
-import { bgcolor, borderRadius } from "@mui/system";
-import { blue, green, grey } from "@mui/material/colors";
+import { blue, green, grey, pink } from "@mui/material/colors";
 import { useUsers } from "../../hooks/useUsers";
 import DetailAssignRoute from "../MyStoreHouse/DetailAssignRoute";
+import { esES } from "@mui/x-data-grid/locales";
 
 const style = {
   position: "absolute",
@@ -92,9 +91,15 @@ const ReadyToSend = ({rows = [], loading = false, type = 0}) => {
   const [openDetail, setOpenDetail] = useState({value: false, selectedPO:{}});
   const {loadCarrierDrivers, CarrierDrivers} = useUsers()
 
-  const handleOpen = (data) =>{    
+  const handleOpen = (data) =>{ 
+       
     loadCarrierDrivers()
-      setOpenModal({ value: true, selectedPO: { data } })
+    if (data.typeDelivery === 'homedelivery') {
+      setOpenModal({ value: true, selectedPO: { data }, updateGuide: true })
+      
+    }else{
+      setOpenModal({ value: true, selectedPO: { data }, updateUser: true})
+    }
   }
 
   const handleOpenDetail = (data) =>{
@@ -116,60 +121,14 @@ const ReadyToSend = ({rows = [], loading = false, type = 0}) => {
 
   const handleCloseDetail = () => setOpenDetail({ value: false, selectedPO: {} });
 
-  const exportToExcel = () => {
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Productos");
-
-    // Agregar encabezados de columna
-    const headerRow = worksheet.addRow([
-      "Nombre del producto",
-      "Descripción",
-      "Precio",
-      "Tamaño",
-      "Código",
-    ]);
-    headerRow.eachCell((cell) => {
-      cell.font = { bold: true };
-    });
-
-    // Agregar datos de las filas
-    rows.forEach((row) => {
-      worksheet.addRow([
-        row.name,
-        row.description,
-        row.price,
-        row.size,
-        row.tag,
-      ]);
-    });
-
-    // Crear un Blob con el archivo Excel y guardarlo
-    workbook.xlsx.writeBuffer().then((buffer) => {
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      saveAs(blob, "productos.xlsx");
-    });
-  };
+ 
 
   function CustomToolbar() {
     const apiRef = useGridApiContext();
 
-    const handleGoToPage1 = () => apiRef.current.setPage(1);
-
     return (
-      <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
-        <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-        <GridToolbarQuickFilter placeholder="Buscar" />
-        <Button
-          variant="text"
-          startIcon={<Download />}
-          disableElevation
-          sx={{ color: "secondary" }}
-          onClick={exportToExcel}
-        >
-          Descargar Excel
-        </Button>
+      <GridToolbarContainer sx={{ justifyContent: "center" }}>
+         <GridToolbarQuickFilter placeholder="Buscar" variant="outlined" />
       </GridToolbarContainer>
     );
   }
@@ -262,11 +221,20 @@ const ReadyToSend = ({rows = [], loading = false, type = 0}) => {
     }
   }
 
-
   return (
     <Grid container gap={2} maxWidth={"85vw"}>
       <DataGrid
-        sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
+        sx={{
+          fontSize: "12px",
+          fontFamily: "sans-serif",
+          borderRadius: "20px",
+          bgcolor: "#fff",
+          border: "1px solid rgb(209, 205, 205)", // Borde exterior naranja
+          "& .MuiDataGrid-cell": {
+            borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno claro
+          },
+        }}
+         localeText={esES.components.MuiDataGrid.defaultProps.localeText}
         columns={[
           {
             field: "date",
@@ -278,7 +246,7 @@ const ReadyToSend = ({rows = [], loading = false, type = 0}) => {
             field: "order_id",
             hideable: false,
             headerName: "Folio",
-            flex: 1,
+            flex: 0.5,
             sortable: false,
           },
           {
@@ -286,6 +254,7 @@ const ReadyToSend = ({rows = [], loading = false, type = 0}) => {
             headerName: "Fecha de empaque",
             flex: 1,
             align: "center",
+            renderCell: (params)=> localDate( params.row.supply_detail[0].date)
           },
           {
             field: "route_detail",
@@ -295,6 +264,16 @@ const ReadyToSend = ({rows = [], loading = false, type = 0}) => {
             align: "center",
             renderCell:(params)=>
               renderChip(params.row)
+            
+          },
+          {
+            field: "typeDelivery",
+            headerName: "Tipo de envío",
+            flex: 0.5,
+            align: "center",
+            renderCell:(params)=> params.row.typeDelivery ==='homedelivery'?
+            <Tooltip title='Domicilio'><Cottage sx={{ color: pink[800] }} /></Tooltip> : 
+            <Tooltip title='Punto de entrega'><Place color="secondary" /></Tooltip> 
             
           },
           {
@@ -369,14 +348,13 @@ const ReadyToSend = ({rows = [], loading = false, type = 0}) => {
         
       >
         <Box sx={{...style}}>
-        <Fab
-        color="secondary"
+        <Button
         onClick={()=>handleCloseDetail()}
-        sx={{position:'absolute', top:4, right:4}}
+        sx={{position:'absolute', top:20, right:10}}
         
       >
         <Close />
-      </Fab>
+      </Button>
         <DetailAssignRoute productOrder={openDetail.selectedPO} carrierDrivers={CarrierDrivers} />
         </Box>
       </Modal>

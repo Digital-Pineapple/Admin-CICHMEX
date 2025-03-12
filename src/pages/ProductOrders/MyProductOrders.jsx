@@ -37,7 +37,7 @@ export default function FullWidthTabs() {
   const paths = [{ path: `/almacenista/mis-ventas`, name: "Pedidos" }];
 
   return (
-    <Grid2 container paddingX={10} display={"flex"} gap={2}>
+    <Grid2 container paddingX={{xs:0, lg:10}} display={"flex"} gap={2}>
       <Grid2
         size={12}
         paddingRight={15}

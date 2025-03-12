@@ -47,7 +47,6 @@ const DetailAssignRoute = ({ productOrder, carrierDrivers = [] }) => {
       </>
     );
   };
-
   return (
     <Grid2
       container
@@ -57,13 +56,10 @@ const DetailAssignRoute = ({ productOrder, carrierDrivers = [] }) => {
       gap={2}
     >
       <Grid2
-        marginTop={{ xs: "-30px" }}
         size={12}
         minHeight={"70px"}
-        className="Titles"
       >
         <Typography
-          textAlign={"center"}
           variant="h2"
           fontSize={{ xs: "15px", sm: "20px", lg: "30px" }}
         >
@@ -77,6 +73,11 @@ const DetailAssignRoute = ({ productOrder, carrierDrivers = [] }) => {
           <CardContent>
             <Typography fontSize={"14px"}>
               Fecha de empaque: <strong>{info?.supply_date}</strong>
+            </Typography>
+            <Typography fontSize={"14px"}>
+              <strong>Cliente:</strong><br />
+              Nombre: <strong>{info.user_id ? info.user_id.fullname:''}</strong> <br />
+              Correo: <strong>{info.user_id ? info.user_id.email:''}</strong>  
             </Typography>
           </CardContent>
         </Card>

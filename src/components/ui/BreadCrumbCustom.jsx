@@ -4,7 +4,7 @@ import { Link as RouterLink } from "react-router-dom";
 
 function BreadcrumbCustom({ paths = [] }) {
   return (
-    <Breadcrumbs sx={{fontSize:12, marginY:2}} separator={<ArrowRight color="secondary"/>} aria-label="breadcrumb">
+    <Breadcrumbs sx={{fontSize:{xs:"8px", lg:"14px"}, marginY:{xs:0, lg:2}}} separator={<ArrowRight color="secondary"/>} aria-label="breadcrumb">
       <RouterLink to="/" style={{ textDecoration: "none", color: "inherit" }}>
         Principal
       </RouterLink>
@@ -13,7 +13,7 @@ function BreadcrumbCustom({ paths = [] }) {
         const to = value.path;
 
         return last ? (
-          <Typography key={to} sx={{ color: "success.main" }}>
+          <Typography  sx={{fontSize:{xs:"8px", lg:"14px"}, color: "success.main"}} key={to} >
             <strong>{value.name}</strong>
           </Typography>
         ) : (

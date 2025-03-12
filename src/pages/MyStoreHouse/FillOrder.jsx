@@ -47,8 +47,13 @@ const style = {
 
 const FillOrder = () => {
   const { id } = useParams();
-  const { loadProductOrder, productOrder, loadPrintPDFOrder, loading } =
-    useProductOrder();
+  const {
+    loadProductOrder,
+    productOrder,
+    loadPrintPDFOrder,
+    loading,
+    completeProductOrder,
+  } = useProductOrder();
   const { searchProductFill, supplyProduct } = useWarehouse();
 
   const [open, setOpen] = useState({ images: [], value: false });
@@ -86,6 +91,9 @@ const FillOrder = () => {
     };
     supplyProduct(id, data, handleCloseModal);
   };
+  const completeSupply = () => {
+    completeProductOrder(id);
+  };
 
   const printPDF = (id) => {
     loadPrintPDFOrder(id);
@@ -117,6 +125,17 @@ const FillOrder = () => {
       disabled={!disabled}
     >
       Completar surtido
+    </Button>
+  );
+  const RenderButtonAsignTotal = (disabled) => (
+    <Button
+      variant="contained"
+      onClick={completeSupply}
+      fullWidth
+      color="success"
+      disabled={!disabled}
+    >
+      Terminar surtido
     </Button>
   );
   const renderSection = (sectionData) => {
@@ -188,7 +207,7 @@ const FillOrder = () => {
   }
 
   return (
-    <Grid2 container paddingX={10} display={"flex"} gap={2}>
+    <Grid2 container paddingX={{ xs: 0, lg: 10 }} display={"flex"} gap={2}>
       <Grid2
         size={12}
         paddingRight={15}
@@ -198,8 +217,10 @@ const FillOrder = () => {
         justifyContent={"space-between"}
         marginBottom={2}
       >
-        <Typography variant="h4">
+        <Typography variant="h4" sx={{fontSize:{xs:"16px", lg:"25px"}}}>
           <strong>Surtir pedido</strong>
+          <br />
+          {productOrder.order_id ? productOrder.order_id : ""}
         </Typography>
       </Grid2>
       <Grid2 size={12}>
@@ -208,14 +229,21 @@ const FillOrder = () => {
       <Grid2
         sx={{
           display: "grid",
-          gridTemplateColumns: "repeat(5, 1fr)",
-          gridTemplateRows: "repeat(6, 1fr)",
+          gridTemplateColumns: { xs: "1fr", lg: "repeat(5, 1fr)" },
+          gridTemplateRows: { xs: "auto, auto, auto", lg: "repeat(6, 1fr)" },
           gridColumnGap: "10px",
           gridRowGap: "10px",
         }}
       >
-        <Grid2 gridArea={"1 / 4 / 7 / 6"} >
-          <Typography paddingY={2} paddingX={2} variant="body1" color="initial">
+        <Grid2
+        size={{xs:12}}
+        gridArea={{ xs: "3 / 1 / 4 / 6", lg: "1 / 4 / 7 / 6" }}>
+          <Typography
+            paddingY={{ xs: 0, lg: 2 }}
+            paddingX={{ xs: 0, lg: 2 }}
+            variant="body1"
+            color="initial"
+          >
             <strong>Información general</strong>
           </Typography>
           <TableDetail
@@ -229,21 +257,21 @@ const FillOrder = () => {
                 : productOrder?.deliveryLocation
             }
           />
-           <Button
+          <Button
             variant="outlined"
             fullWidth
             size="small"
-            startIcon={<FilePdfFilled/>}
+            startIcon={<FilePdfFilled />}
             onClick={() => printPDF(id)}
             color="success"
-            sx={{marginY:2}}
+            sx={{ marginY: 2 }}
           >
             Imprimir PDF
           </Button>
-          {RenderButtonAsign(isValid())}
+          {RenderButtonAsignTotal(isValid())}
         </Grid2>
 
-        <Grid2 gridArea={"1 / 1 / 4 / 4"}>
+        <Grid2 gridArea={{ xs: "2 / 1 / 3 / 6", lg: "1 / 1 / 4 / 4" }}>
           <Typography paddingY={2} paddingX={2} variant="body1" color="initial">
             <strong>Lista de productos</strong>
           </Typography>
@@ -254,15 +282,19 @@ const FillOrder = () => {
           />
         </Grid2>
 
-        <Grid2 gridArea={"4 / 1 / 7 / 4"}>
-          <Typography paddingY={2} paddingX={2} variant="body1" color="initial">
+        <Grid2 gridArea={{ xs: "1 / 1 / 2 / 6", lg: "4 / 1 / 7 / 4" }}>
+          <Typography
+            paddingY={{ xs: 0, lg: 2 }}
+            paddingX={2}
+            variant="body1"
+            color="initial"
+          >
             <strong>Detalle de surtido</strong>
           </Typography>
           <TableDetailSupply
             supply_detail={productOrder.supply_detail}
             products={productOrder.products}
           />
-         
         </Grid2>
       </Grid2>
 

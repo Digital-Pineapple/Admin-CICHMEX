@@ -113,7 +113,7 @@ const TableDetailSupply = ({ supply_detail, products }) => {
                     fontSize: "12px",
                   }}
                 >
-                  {`${product.item.name} - ${
+                  {`${product.item?.name} - ${
                     product.variant ? product.variant.attributes.color : ""
                   } - ${
                     product.variant ? product.variant.attributes.size : ""
