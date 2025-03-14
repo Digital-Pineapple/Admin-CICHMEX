@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Scanner } from "@yudiel/react-qr-scanner";
-import { Button, Grid, Modal, Box } from "@mui/material";
+import { Button, Grid, Modal, Box, Typography } from "@mui/material";
 import Swal from "sweetalert2";
 import QrCodeIcon from "@mui/icons-material/QrCode";
 
-const QRScannerV2 = ({ setValueQR, label = "Escanear QR" }) => {
+const QRScannerV2 = ({ setValueQR, label = "Escanear QR", title = '' }) => {
   const [openModal, setOpenModal] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -32,6 +32,7 @@ const QRScannerV2 = ({ setValueQR, label = "Escanear QR" }) => {
       onClick={() => setIsOpen(true)} // Abrir el modal y forzar actualización
       color="primary"
       size="large"
+      fullWidth
     >
       {label}
     </Button>
@@ -51,7 +52,9 @@ const QRScannerV2 = ({ setValueQR, label = "Escanear QR" }) => {
             p: 4,
             width: 500,
             height: 560,
+            borderRadius:'15px'
           }}>
+            <Typography textAlign={'center'} variant="h5" color="initial">{title}</Typography>
         <Button
           variant="contained"
           onClick={() => setIsOpen(false)}

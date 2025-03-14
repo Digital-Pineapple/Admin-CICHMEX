@@ -81,30 +81,6 @@ const TableDetailSupply = ({ supply_detail, products }) => {
                   maxWidth: "250px",
                 }}
               >
-                {/* <img
-                  src={
-                    product.variant
-                      ? product.variant.images[0]?.url
-                      : product.item.images[0]?.url
-                        ? product.item.images[0]?.url
-                        : noImage
-                  }
-                  alt={index}
-                  style={{
-                    cursor: "pointer",
-                    width: "70px",
-                    height: "70px",
-                    objectFit: "cover",
-                    borderRadius: "10px",
-                  }}
-                  onClick={() =>
-                    handleOpen(
-                      product.variant
-                        ? product.variant.images
-                        : product.item.images
-                    )
-                  }
-                /> */}
                 <Typography
                   sx={{
                     p: 1,

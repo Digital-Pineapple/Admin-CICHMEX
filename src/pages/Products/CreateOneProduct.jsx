@@ -47,6 +47,7 @@ import WordsInput from "../../components/inputs/WordsInput";
 import * as Yup from "yup";
 import useVideos from "../../hooks/useVideos";
 import { Link } from "react-router-dom";
+import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -243,362 +244,360 @@ const CreateOneProduct = () => {
     });
   };
 
+  const paths = [
+    { path: `/mi-almacen/productos`, name: "Todos mis productos" },
+    { path: `/mi-almacen/producto/agregar`, name: "Crear producto único" },
+  ];
   return (
     <Grid2
       component="form"
       onSubmit={formik.handleSubmit}
       display={"flex"}
       container
-      gap={2}
+      paddingX={{ xs: 0, lg: 10 }}
+      gap={1}
     >
       <Grid2
-        marginTop={{ xs: "-30px" }}
         size={12}
-        minHeight={"100px"}
-        className="Titles"
+        paddingRight={15}
+        flexGrow={1}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        marginBottom={2}
       >
-        <Typography
-          textAlign={"center"}
-          variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
-        >
-          Registar nuevo producto
+        <Typography variant="h4" sx={{ fontSize: { xs: "16px", lg: "25px" } }}>
+          <strong>Crear producto único</strong>
         </Typography>
       </Grid2>
+      <Grid2 size={12} display={"flex"} justifyContent={"space-between"}>
+        <BreadcrumbCustom paths={paths} />
+        <Grid2 />
+      </Grid2>
       <Grid2
-        size={{ xs: 12, lg: 3 }}
-        sx={{
-          gridColumn: "span 2",
-          gridRow: "span 4",
-        }}
+        display={"grid"}
+        gridTemplateColumns={"repeat(3,1fr)"}
+        gridTemplateRows={"repeat(2, 1fr)"}
+        sx={{gridColumnGap:"10px", gridTemplateRows: { xs: "auto auto auto auto", lg: "repeat(6, auto)" },}}
       >
-        <Card variant="outlined">
-          <CardHeader title="Detalles" />
-          <CardContent
-            sx={{ display: "flex", gap: 2, flexDirection: "column" }}
-          >
-            <TextField
-              size="small"
-              fullWidth
-              id="name"
-              name="name"
-              label="Nombre del producto "
-              variant="outlined"
-              value={formik.values.name}
-              onChange={formik.handleChange}
-              error={Boolean(formik.errors.name)} // Añade el atributo error
-              helperText={formik.errors.name} // Muestra el mensaje de error
-            />
-            <TextField
-              fullWidth
-              size="small"
-              id="brand"
-              name="brand"
-              label="Marca"
-              variant="outlined"
-              value={formik.values.brand}
-              onChange={formik.handleChange}
-              error={Boolean(formik.errors.brand)} // Añade el atributo error
-              helperText={formik.errors.brand} // Muestra el mensaje de error
-            />
-            <TextField
-              fullWidth
-              size="small"
-              id="tag"
-              name="tag"
-              label="Código"
-              variant="outlined"
-              value={formik.values.tag}
-              onChange={formik.handleChange}
-              onKeyDown={handleKeyDown}
-              error={Boolean(formik.errors.tag)} // Añade el atributo error
-              helperText={formik.errors.tag} // Muestra el mensaje de error
-            />
-            <FormControl fullWidth>
-              <FormLabel>Categoría</FormLabel>
-              <Select
-                id="category"
-                name="category"
+        <Grid2 gridArea={"1 / 1 / 3 / 2"}>
+          <Card variant="outlined" sx={{borderRadius:'20px'}}>
+            <CardHeader title="Detalles" />
+            <CardContent
+              sx={{ display: "flex", gap: 2, flexDirection: "column" }}
+            >
+              <TextField
                 size="small"
-                value={formik.values.category}
-                label="Categoria"
-                onChange={(e) => {
-                  formik.setFieldValue("subCategory", "");
-                  formik.handleChange(e);
-                  loadSubCategoriesByCategory(e.target.value);
-                }}
-                error={Boolean(formik.errors.category)} // Añade el atributo error
-              >
-                {categories.map((category) => (
-                  <MenuItem key={category._id} value={category._id}>
-                    {category.name}
-                  </MenuItem>
-                ))}
-              </Select>
-              <FormHelperText>Selecciona una categoria</FormHelperText>
-            </FormControl>
-            <FormControl fullWidth>
-              <FormLabel>Subcategoria</FormLabel>
-              <Select
-                id="subCategory"
-                name="subCategory"
-                size="small"
-                value={formik.values.subCategory}
-                label="Subcategoria"
+                fullWidth
+                id="name"
+                name="name"
+                label="Nombre del producto "
+                variant="outlined"
+                value={formik.values.name}
                 onChange={formik.handleChange}
-                error={Boolean(formik.errors.subCategory)} // Añade el atributo error
-              >
-                {formik.values.category &&
-                  subCategoriesByCategory.map((subCategory) => (
-                    <MenuItem key={subCategory._id} value={subCategory._id}>
-                      {subCategory.name}
+                error={Boolean(formik.errors.name)} // Añade el atributo error
+                helperText={formik.errors.name} // Muestra el mensaje de error
+              />
+              <TextField
+                fullWidth
+                size="small"
+                id="brand"
+                name="brand"
+                label="Marca"
+                variant="outlined"
+                value={formik.values.brand}
+                onChange={formik.handleChange}
+                error={Boolean(formik.errors.brand)} // Añade el atributo error
+                helperText={formik.errors.brand} // Muestra el mensaje de error
+              />
+              <TextField
+                fullWidth
+                size="small"
+                id="tag"
+                name="tag"
+                label="Código"
+                variant="outlined"
+                value={formik.values.tag}
+                onChange={formik.handleChange}
+                onKeyDown={handleKeyDown}
+                error={Boolean(formik.errors.tag)} // Añade el atributo error
+                helperText={formik.errors.tag} // Muestra el mensaje de error
+              />
+              <FormControl fullWidth>
+                <FormLabel>Categoría</FormLabel>
+                <Select
+                  id="category"
+                  name="category"
+                  size="small"
+                  value={formik.values.category}
+                  label="Categoria"
+                  onChange={(e) => {
+                    formik.setFieldValue("subCategory", "");
+                    formik.handleChange(e);
+                    loadSubCategoriesByCategory(e.target.value);
+                  }}
+                  error={Boolean(formik.errors.category)} // Añade el atributo error
+                >
+                  {categories.map((category) => (
+                    <MenuItem key={category._id} value={category._id}>
+                      {category.name}
                     </MenuItem>
                   ))}
-              </Select>
-              <FormHelperText>Selecciona una sub-categoria</FormHelperText>
-            </FormControl>
+                </Select>
+                <FormHelperText>Selecciona una categoria</FormHelperText>
+              </FormControl>
+              <FormControl fullWidth>
+                <FormLabel>Subcategoria</FormLabel>
+                <Select
+                  id="subCategory"
+                  name="subCategory"
+                  size="small"
+                  value={formik.values.subCategory}
+                  label="Subcategoria"
+                  onChange={formik.handleChange}
+                  error={Boolean(formik.errors.subCategory)} // Añade el atributo error
+                >
+                  {formik.values.category &&
+                    subCategoriesByCategory.map((subCategory) => (
+                      <MenuItem key={subCategory._id} value={subCategory._id}>
+                        {subCategory.name}
+                      </MenuItem>
+                    ))}
+                </Select>
+                <FormHelperText>Selecciona una sub-categoria</FormHelperText>
+              </FormControl>
 
-            <TextAreaInput
-              aria-label="Descripcion"
-              placeholder="Descripción"
-              id="description"
-              name="description"
-              minRows={2}
-              maxRows={4}
-              value={formik.values.description}
-              style={{ width: "100%", marginBottom: 20 }}
-              onChange={formik.handleChange}
-              error={
-                formik.touched.description && Boolean(formik.errors.description)
-              }
-              helperText={
-                formik.touched.description && formik.errors.description
-              }
-            />
-
-            <TextAreaInput
-              aria-label="Descripcion corta"
-              id="shortDescription"
-              name="shortDescription"
-              minRows={1}
-              maxRows={2}
-              value={formik.values.shortDescription}
-              style={{ width: "100%", marginBottom: 20 }}
-              onChange={formik.handleChange}
-              placeholder="Descripción corta"
-              // error={Boolean(formik.errors.shortDescription)} // Añade el atributo error
-            />
-          </CardContent>
-        </Card>
-      </Grid2>
-      <Grid2
-        size={{ xs: 12, lg: 2 }}
-        sx={{
-          gridColumn: "span 2",
-          gridRow: "span 1",
-        }}
-      >
-        <Card variant="outlined">
-          <CardHeader title="Dimensiones" />
-          <CardContent
-            sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-          >
-            <TextField
-              fullWidth
-              size="small"
-              id="dimensions"
-              name="dimensions"
-              label="Ancho,Largo,Alto"
-              variant="outlined"
-              type="text"
-              value={formik.values.dimensions}
-              onChange={formik.handleChange}
-              error={Boolean(formik.errors.dimensions)} // Añade el atributo error
-              helperText={formik.errors.dimensions} // Muestra el mensaje de error
-            />
-            <TextField
-              fullWidth
-              size="small"
-              id="weight"
-              name="weight"
-              label="Peso"
-              type="number"
-              variant="outlined"
-              value={formik.values.weight}
-              onChange={formik.handleChange}
-              error={Boolean(formik.errors.weight)} // Añade el atributo error
-              helperText={formik.errors.weight} // Muestra el mensaje de error
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">gr</InputAdornment>
-                ),
-              }}
-            />
-          </CardContent>
-        </Card>
-      </Grid2>
-      <Grid2
-        size={{ xs: 12, lg: 3 }}
-        sx={{
-          gridColumn: "span 2",
-          gridRow: "span 4",
-        }}
-      >
-        <Card variant="outlined">
-          <CardHeader title="Precio y facturación" />
-          <CardContent
-            sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-          >
-            <TextField
-              fullWidth
-              id="purchase_price"
-              name="purchase_price"
-              type="number"
-              label="Precio de compra"
-              variant="outlined"
-              value={formik.values.purchase_price}
-              onChange={formik.handleChange}
-              error={Boolean(formik.errors.purchase_price)} // Añade el atributo error
-              helperText={formik.errors.purchase_price} // Muestra el mensaje de error
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <AttachMoney />
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <TextField
-              fullWidth
-              id="price"
-              name="price"
-              type="number"
-              label="Precio neto"
-              variant="outlined"
-              value={formik.values.price}
-              onChange={handleInputChange}
-              error={Boolean(formik.errors.price)} // Añade el atributo error
-              helperText={formik.errors.price} // Muestra el mensaje de error
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <AttachMoney />
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <TextField
-              fullWidth
-              id="porcentDiscount"
-              name="porcentDiscount"
-              type="number"
-              label="Descuento"
-              variant="outlined"
-              value={formik.values.porcentDiscount}
-              onChange={handleInputChange}
-              error={Boolean(formik.errors.porcentDiscount)} // Añade el atributo error
-              helperText={formik.errors.porcentDiscount}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">%</InputAdornment>
-                ),
-              }}
-            />
-            <TextField
-              fullWidth
-              id="discountPrice"
-              name="discountPrice"
-              type="number"
-              label="Precio con descuento"
-              variant="outlined"
-              value={formik.values.discountPrice}
-              error={Boolean(formik.errors.discountPrice)} // Añade el atributo error
-              helperText={formik.errors.discountPrice}
-              onChange={handleInputChange}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <AttachMoney />
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <TextField
-              fullWidth
-              id="product_key"
-              name="product_key"
-              type="number"
-              label="Clave SAT"
-              variant="outlined"
-              value={formik.values.product_key}
-              onChange={formik.handleChange}
-              error={Boolean(formik.errors.product_key)} // Añade el atributo error
-              helperText={formik.errors.product_key}
-            />
-            <Link to={'https://www.sat.gob.mx/consultas/53693/catalogo-de-productos-y-servicios'} target="_blank" rel="noopener noreferrer" >
-            Buscar código
-          </Link>
-          </CardContent>
-        </Card>
-      </Grid2>
-      <Grid2
-        size={{ xs: 12, lg: 3 }}
-        sx={{
-          gridColumn: "span 2",
-          gridRow: "span 3",
-        }}
-      >
-        <Card variant="outlined">
-          <CardHeader title="Optimización para motores de búsqueda" />
-          <CardContent
-            sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-          >
-            <TextAreaInput
-              aria-label="Descripcion optimizada"
-              id="seoDescription"
-              name="seoDescription"
-              minRows={1}
-              maxRows={2}
-              value={formik.values.seoDescription}
-              style={{ width: "100%", marginBottom: 20 }}
-              onChange={formik.handleChange}
-              placeholder="Descripción optimizada"
-            />
-            <FormControl fullWidth>
-              <TextField
-                id="seoKeywords"
-                name="seoKeywordsInput"
-                label="Palabras Clave"
-                onKeyPress={handleKeyPress}
-                placeholder="Añade una palabra clave y presiona Enter"
+              <TextAreaInput
+                aria-label="Descripcion"
+                placeholder="Descripción"
+                id="description"
+                name="description"
+                minRows={2}
+                maxRows={4}
+                value={formik.values.description}
+                style={{ width: "100%", marginBottom: 20 }}
+                onChange={formik.handleChange}
+                error={
+                  formik.touched.description &&
+                  Boolean(formik.errors.description)
+                }
+                helperText={
+                  formik.touched.description && formik.errors.description
+                }
               />
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 2 }}>
-                {formik.values.seoKeywords.map((chip, index) => (
-                  <Chip
-                    key={index}
-                    label={chip}
-                    onDelete={handleDelete(chip)}
-                  />
-                ))}
-              </Box>
-              {formik.touched.seoKeywords &&
-                Boolean(formik.errors.seoKeywords) && (
-                  <FormHelperText error>
-                    {formik.errors.seoKeywords}
-                  </FormHelperText>
-                )}
-            </FormControl>
-          </CardContent>
-        </Card>
+
+              <TextAreaInput
+                aria-label="Descripcion corta"
+                id="shortDescription"
+                name="shortDescription"
+                minRows={1}
+                maxRows={2}
+                value={formik.values.shortDescription}
+                style={{ width: "100%", marginBottom: 20 }}
+                onChange={formik.handleChange}
+                placeholder="Descripción corta"
+                // error={Boolean(formik.errors.shortDescription)} // Añade el atributo error
+              />
+            </CardContent>
+          </Card>
+        </Grid2>
+        <Grid2 gridArea={"1 / 3 / 3 / 4"}>
+          <Card variant="outlined" sx={{borderRadius:'20px'}}>
+            <CardHeader title="Precio y facturación" />
+            <CardContent
+              sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+            >
+              <TextField
+                fullWidth
+                id="purchase_price"
+                name="purchase_price"
+                type="number"
+                label="Precio de compra"
+                variant="outlined"
+                value={formik.values.purchase_price}
+                onChange={formik.handleChange}
+                error={Boolean(formik.errors.purchase_price)} // Añade el atributo error
+                helperText={formik.errors.purchase_price} // Muestra el mensaje de error
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <AttachMoney />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <TextField
+                fullWidth
+                id="price"
+                name="price"
+                type="number"
+                label="Precio neto"
+                variant="outlined"
+                value={formik.values.price}
+                onChange={handleInputChange}
+                error={Boolean(formik.errors.price)} // Añade el atributo error
+                helperText={formik.errors.price} // Muestra el mensaje de error
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <AttachMoney />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <TextField
+                fullWidth
+                id="porcentDiscount"
+                name="porcentDiscount"
+                type="number"
+                label="Descuento"
+                variant="outlined"
+                value={formik.values.porcentDiscount}
+                onChange={handleInputChange}
+                error={Boolean(formik.errors.porcentDiscount)} // Añade el atributo error
+                helperText={formik.errors.porcentDiscount}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="start">%</InputAdornment>
+                  ),
+                }}
+              />
+              <TextField
+                fullWidth
+                id="discountPrice"
+                name="discountPrice"
+                type="number"
+                label="Precio con descuento"
+                variant="outlined"
+                value={formik.values.discountPrice}
+                error={Boolean(formik.errors.discountPrice)} // Añade el atributo error
+                helperText={formik.errors.discountPrice}
+                onChange={handleInputChange}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <AttachMoney />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <TextField
+                fullWidth
+                id="product_key"
+                name="product_key"
+                type="number"
+                label="Clave SAT"
+                variant="outlined"
+                value={formik.values.product_key}
+                onChange={formik.handleChange}
+                error={Boolean(formik.errors.product_key)} // Añade el atributo error
+                helperText={formik.errors.product_key}
+              />
+              <Link
+                to={
+                  "https://www.sat.gob.mx/consultas/53693/catalogo-de-productos-y-servicios"
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Buscar código
+              </Link>
+            </CardContent>
+          </Card>
+        </Grid2>
+        <Grid2 gridArea={"1 / 2 / 2 / 3"}>
+          <Card variant="outlined" sx={{borderRadius:'20px'}}>
+            <CardHeader title="Dimensiones" />
+            <CardContent
+              sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+            >
+              <TextField
+                fullWidth
+                size="small"
+                id="dimensions"
+                name="dimensions"
+                label="Ancho,Largo,Alto"
+                variant="outlined"
+                type="text"
+                value={formik.values.dimensions}
+                onChange={formik.handleChange}
+                error={Boolean(formik.errors.dimensions)} // Añade el atributo error
+                helperText={formik.errors.dimensions} // Muestra el mensaje de error
+              />
+              <TextField
+                fullWidth
+                size="small"
+                id="weight"
+                name="weight"
+                label="Peso"
+                type="number"
+                variant="outlined"
+                value={formik.values.weight}
+                onChange={formik.handleChange}
+                error={Boolean(formik.errors.weight)} // Añade el atributo error
+                helperText={formik.errors.weight} // Muestra el mensaje de error
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="start">gr</InputAdornment>
+                  ),
+                }}
+              />
+            </CardContent>
+          </Card>
+        </Grid2>
+        <Grid2 gridArea={"2 / 2 / 3 / 3"}>
+          <Card variant="outlined" sx={{borderRadius:'20px'}}>
+            <CardHeader title="Optimización para motores de búsqueda" />
+            <CardContent
+              sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+            >
+              <TextAreaInput
+                aria-label="Descripcion optimizada"
+                id="seoDescription"
+                name="seoDescription"
+                minRows={1}
+                maxRows={2}
+                value={formik.values.seoDescription}
+                style={{ width: "100%", marginBottom: 20 }}
+                onChange={formik.handleChange}
+                placeholder="Descripción optimizada"
+              />
+              <FormControl fullWidth>
+                <TextField
+                  id="seoKeywords"
+                  name="seoKeywordsInput"
+                  label="Palabras Clave"
+                  onKeyPress={handleKeyPress}
+                  placeholder="Añade una palabra clave y presiona Enter"
+                />
+                <Box
+                  sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 2 }}
+                >
+                  {formik.values.seoKeywords.map((chip, index) => (
+                    <Chip
+                      key={index}
+                      label={chip}
+                      onDelete={handleDelete(chip)}
+                    />
+                  ))}
+                </Box>
+                {formik.touched.seoKeywords &&
+                  Boolean(formik.errors.seoKeywords) && (
+                    <FormHelperText error>
+                      {formik.errors.seoKeywords}
+                    </FormHelperText>
+                  )}
+              </FormControl>
+            </CardContent>
+          </Card>
+        </Grid2>
       </Grid2>
+
       <Grid2
         size={12}
-        sx={{
-          gridColumn: "span 6",
-          gridRow: "span 3",
-        }}
+
       >
-        <Card variant="outlined">
+        <Card variant="outlined" sx={{borderRadius:'20px'}}>
           <CardContent>
             <CardHeader title="Multimedia" />
 
@@ -703,21 +702,18 @@ const CreateOneProduct = () => {
         </Card>
       </Grid2>
 
-      <Grid2 size={12} display={'flex'} gap={2}>
-        
-          <Button
+      <Grid2 size={12} display={"flex"} gap={2}>
+        <Button
           fullWidth
-            onClick={() => navigate("/mi-almacen/productos", { replace: true })}
-            variant="contained"
-            color="warning"
-          >
-            Salir
-          </Button>
-          <Button fullWidth type="submit" variant="contained" color="success">
-            Crear
-          </Button>
-          
-        
+          onClick={() => navigate("/mi-almacen/productos", { replace: true })}
+          variant="outlined"
+          color="warning"
+        >
+          Salir
+        </Button>
+        <Button fullWidth type="submit" variant="contained" color="success">
+          Crear
+        </Button>
       </Grid2>
     </Grid2>
   );

@@ -336,11 +336,11 @@ const ArrangeProducts = () => {
           >
             <Close />
           </IconButton>
-          <QRScannerV2 label="Escanear QR de sección" setValueQR={setValuate} />
-          <Card variant="outlined">
+          <QRScannerV2 label="Escanear QR de sección" title="Escanea el QR de la sección"  setValueQR={setValuate} />
+          <Card variant="outlined" sx={{width:'100%'}}>
             <CardContent>{renderProduct(openModal.data)}</CardContent>
           </Card>
-          <Card variant="outlined">
+          <Card variant="outlined" sx={{width:'100%'}} >
             <CardContent>{renderSection(openModal.section)}</CardContent>
           </Card>
           {RenderButtonAsign(validation)}
@@ -357,11 +357,11 @@ const ArrangeProducts = () => {
           >
             <Close />
           </IconButton>
-          <QRScannerV2 setValueQR={setSection} />
-          <Card variant="outlined">
+          <QRScannerV2 setValueQR={setSection} title="Escanea el QR de la sección" />
+          <Card variant="outlined" sx={{width:'100%'}} >
             <CardContent>{renderProduct(openModalSection.data)}</CardContent>
           </Card>
-          <Card variant="outlined">
+          <Card variant="outlined" sx={{width:'100%'}} >
             <CardContent>{renderSection(section)}</CardContent>
           </Card>
           <Button variant="contained" onClick={handleSaveProductToSection} fullWidth color="success">

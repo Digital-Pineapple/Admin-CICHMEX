@@ -7,8 +7,9 @@ import {
   verifyUser,
 } from "../reducer/userReducer";
 import { enqueueSnackbar } from "notistack";
-import { loadCarrierDriver, loadCarrierDrivers, deleteCarrierDriver as DeleteCarrierDriver, loadAllOptimizedRoutes } from "../reducer";
+import { loadCarrierDriver, loadCarrierDrivers, deleteCarrierDriver as DeleteCarrierDriver, loadAllOptimizedRoutes, onLoadAllWarehouseman, onLoadOneWarehouseman } from "../reducer";
 import { startLoading, stopLoading } from "../reducer/uiReducer";
+import Swal from "sweetalert2";
 
 
 export const getUsers = () => {
@@ -50,6 +51,52 @@ export const getCarrierDrivers = () => {
         },
       });
       
+    }
+  };
+};
+
+export const getAllWarehouseman = () => {
+  return async (dispatch) => {
+    dispatch(startLoading())
+    try {
+      const { data } = await instanceApi.get(
+        "/user/warehouseman/all",
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      dispatch(onLoadAllWarehouseman(data.data));
+    } catch (error) {
+     console.log(error); 
+    } finally{
+      dispatch(stopLoading())
+    }
+  };
+};
+
+export const startCreateWarehouseman = (values, navigate) => {
+  return async (dispatch) => {
+    dispatch(startLoading())
+    try {
+      const { data } = await instanceApi.post(
+        "/user/warehouseman",{values: values},
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      Swal.fire({title:`${data.message}`, icon:'success'})
+      navigate(`/usuarios/almacenistas`,{replace:true})
+    } catch (error) {
+     console.log(error);
+     
+    } finally{
+      dispatch(stopLoading())
     }
   };
 };
@@ -107,7 +154,7 @@ export const getOneUser = (id) => async (dispatch) => {
 export const startOneCarrierDriver = (id) => async (dispatch) => {
   dispatch(startLoading())
   try {
-    const { data } = await instanceApi.get(`/user/carrier-driver/${id}`, {
+    const { data } = await instanceApi.get(`/user/allInfo/${id}`, {
       headers: {
         "Content-type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -122,6 +169,41 @@ export const startOneCarrierDriver = (id) => async (dispatch) => {
         anchorOrigin: { horizontal: "right", vertical: "top" },
       }
     );
+  }finally{
+    dispatch(stopLoading())
+  }
+};
+
+export const startOneWarehouseman = (id) => async (dispatch) => {
+  dispatch(startLoading())
+  try {
+    const { data } = await instanceApi.get(`/user/allInfo/${id}`, {
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    dispatch(onLoadOneWarehouseman(data.data));
+  } catch (error) {
+    console.log(error);
+  }finally{
+    dispatch(stopLoading())
+  }
+};
+
+export const startUpdateWarehouseman = (id, values,navigate) => async (dispatch) => {
+  dispatch(startLoading())
+  try {
+    const { data } = await instanceApi.put(`/user/warehouseman/update/${id}`,{values:values}, {
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    Swal.fire({title:`${data.message}`, icon:'success'})
+    navigate(`/usuarios/almacenistas`,{replace:true})
+  } catch (error) {
+    console.log(error);
   }finally{
     dispatch(stopLoading())
   }

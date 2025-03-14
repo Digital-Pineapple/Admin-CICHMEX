@@ -1,28 +1,28 @@
-import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import { useEffect } from "react";
-import { Button, Fab, Grid2, Skeleton, Typography } from "@mui/material";
-import { useTypeUser } from "../../hooks/useTypeUser";
-import { useAuthStore } from "../../hooks";
-import { useUsers } from "../../hooks/useUsers";
-import { Add, Delete, Edit } from "@mui/icons-material";
-import DeleteAlert from "../../components/ui/DeleteAlert";
-import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
-import EditButton from "../../components/Buttons/EditButton";
-import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
+import { useAuthStore } from "../../../hooks";
+import { useUsers } from "../../../hooks/useUsers";
+import LoadingScreenBlue from "../../../components/ui/LoadingScreenBlue";
+import { Fab, Grid2, Skeleton, Typography } from "@mui/material";
+import BreadcrumbCustom from "../../../components/ui/BreadCrumbCustom";
+import { Add } from "@mui/icons-material";
+import { DataGrid } from "@mui/x-data-grid";
 import { esES } from "@mui/x-data-grid/locales";
+import DeleteAlert from "../../../components/ui/DeleteAlert";
+import EditButton from "../../../components/Buttons/EditButton";
 
-const CarrierDrivers = () => {
+const Warehouseman = () => {
   const {
-    rowsCarrierDrivers,
     deleteOneCD,
-    loadCarrierDrivers,
+    loadAllWarehouseman,
+    allWarehouseman,
+    rows,
     navigate,
     loading,
   } = useUsers();
   const { user } = useAuthStore();
 
   useEffect(() => {
-    loadCarrierDrivers();
+    loadAllWarehouseman();
   }, [user]);
 
   const Delete = (value) => {
@@ -32,8 +32,9 @@ const CarrierDrivers = () => {
     return <LoadingScreenBlue />;
   }
   const paths = [
-    { path: `/usuarios/transportistas`, name: "Transportistas" },
+    { path: `/usuarios/almacenistas`, name: "Mis almacenistas" },
   ];
+  
 
   return (
     <Grid2 container paddingX={10}>
@@ -47,7 +48,7 @@ const CarrierDrivers = () => {
         marginBottom={2}
       >
         <Typography variant="h4">
-          <strong>Transportistas</strong>
+          <strong>Mis almacenistas</strong>
         </Typography>
       </Grid2>
       <Grid2 size={12} display={"flex"}margin={2} justifyContent={"space-between"}>
@@ -55,17 +56,17 @@ const CarrierDrivers = () => {
 
         <Fab
           onClick={() =>
-            navigate("/usuarios/agregar-transportista", { replace: true })
+            navigate("/usuarios/almacenistas/crear", { replace: true })
           }
           color="secondary"
-          aria-label="Alta de transportista"
-          title="Alta de transportista"
+          aria-label="Crear almacenista"
+          title="Crear almacenista"
         >
           <Add />
         </Fab>
       </Grid2>
       <Grid2 size={12}>
-        {rowsCarrierDrivers ? (
+        {allWarehouseman ? (
           <DataGrid
             sx={{
               fontSize: "12px",
@@ -107,16 +108,15 @@ const CarrierDrivers = () => {
                   />,
                   <EditButton
                     title={`Desea editar ${params.row.fullname}?`}
-                    callbackToEdit={() =>
-                      navigate(
-                        `/usuarios/transportistas/editar/${params.row._id}`
-                      )
+                    callbackToEdit={() =>{
+                        console.log(params.row._id),
+                      navigate( `/almacenistas/editar/${params.row._id}`,{replace:true} )}
                     }
                   />,
                 ],
               },
             ]}
-            rows={rowsCarrierDrivers}
+            rows={rows(allWarehouseman)}
             slotProps={{
               toolbar: {
                 showQuickFilter: true,
@@ -145,4 +145,5 @@ const CarrierDrivers = () => {
   );
 };
 
-export default CarrierDrivers;
+
+export default Warehouseman

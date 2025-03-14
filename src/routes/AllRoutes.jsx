@@ -102,6 +102,9 @@ import Zones from "../pages/Warehouse/WarehouseManagement/Zones";
 import WarehouseManagement from "../pages/Warehouse/WarehouseManagement/WarehouseManagement";
 import Aisles from "../pages/Warehouse/WarehouseManagement/Aisles";
 import ArrangeProducts from "../pages/StockStoreHouse/ArrangeProducts";
+import Warehouseman from "../pages/Warehouse/Warehouseman/Warehouseman";
+import CreateWarehouseman from "../pages/Warehouse/Warehouseman/Create";
+import EditWarehouseman from "../pages/Warehouse/Warehouseman/Edit";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -194,14 +197,18 @@ export const AllRoutes = [
   { id: 64, element: <CreateRegion /> },
   { id: 65, element: <Regions /> },
   { id: 66, element: <EditRegion /> },
+
   { id: 67, element: <EditCarrierDriver /> },
+
   { id: 68, element: <ReadyToDelivery /> },
   { id: 69, element: <Principal /> },
   { id: 70, element: <AllSales /> },
   { id: 71, element: <CompletedOrdersDetail /> },
   { id: 72, element: <AddVideo /> },
   { id: 73, element: <EditWithVariants /> },
+
   { id: 75, element: <CreateOneProduct /> },
+  
   { id: 76, element: <TableGuides /> },
   { id: 77, element: <AllMySizeGuides /> },
   { id: 78, element: <EditMySizeGuides /> },
@@ -224,6 +231,11 @@ export const AllRoutes = [
   { id: 120, element: <MyAccount /> },
   { id: 130, element: <InputsByFolio /> },
   { id: 131, element: <AuthorizeInputs /> },
+
+  {id: 140, element: <Warehouseman/>},
+  { id: 141, element: <CreateWarehouseman/> },
+  { id: 94, element: <EditWarehouseman/> },
+ 
   { id: 200, element: <WarehouseManagement/>},
   { id: 201, element: <ArrangeProducts/>}
 ];

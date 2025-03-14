@@ -1,6 +1,6 @@
 import { useFormik } from "formik";
 import {
-  Grid,
+  Grid2,
   Button,
   Typography,
   TextField,
@@ -29,6 +29,7 @@ import { useTheme } from "@mui/material/styles";
 import * as Yup from "yup";
 import { useDynamicRoutes } from "../../hooks/useDynamicRoutes";
 import { enqueueSnackbar } from "notistack";
+import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -90,188 +91,204 @@ const AddDynamicRoute = () => {
   if (loading) {
     return <LoadingScreenBlue />;
   }
+  const paths = [
+    { path: `/url`, name: "Todas mis url's" },
+    { path: `/url/agregar`, name: "Crear url" },
+  ];
 
   return (
-    <Grid
+    <Grid2
       component="form"
       onSubmit={formik.handleSubmit}
       display="flex"
       container
       gap={2}
+      paddingX={{ xs: 0, md: 10 }}
     >
-      <Grid
-        item
-        marginTop={{ xs: "-30px" }}
-        xs={12}
-        minHeight="100px"
-        className="Titles"
+      <Grid2
+        size={12}
+        paddingRight={15}
+        flexGrow={1}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        marginBottom={2}
       >
-        <Typography
-          textAlign="center"
-          variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
-        >
-          Registar nueva ruta
+        <Typography variant="h4">
+          <strong>Crear url</strong>
         </Typography>
-      </Grid>
-      <Grid
-        item
-        xs={12}
+      </Grid2>
+      <Grid2
+        size={12}
+        display={"flex"}
+        margin={2}
+        justifyContent={"space-between"}
+      >
+        <BreadcrumbCustom paths={paths} />
+      </Grid2>
+      <Grid2
+        container
         sx={{
-          gridColumn: "span 2",
-          gridRow: "span 4",
+          borderRadius: "20px",
+          bgcolor: "#fff",
+          padding: { xs: 4 },
+          display: "flex",
+          gap: 2,
         }}
       >
-        <Card variant="outlined">
-          <CardHeader title="Detalles" />
-          <CardContent
-            sx={{ display: "flex", gap: 2, flexDirection: "column" }}
-          >
-            <TextField
-              size="small"
-              fullWidth
-              id="name"
-              name="name"
-              label="Titulo de la ruta"
-              variant="outlined"
-              value={formik.values.name}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.name && Boolean(formik.errors.name)}
-              helperText={formik.touched.name && formik.errors.name}
-            />
-            <TextField
-              fullWidth
-              size="small"
-              id="path"
-              name="path"
-              label="Ruta"
-              variant="outlined"
-              value={formik.values.path}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.path && Boolean(formik.errors.path)}
-              helperText={formik.touched.path && formik.errors.path}
-            />
-            <TextField
-              fullWidth
-              size="small"
-              id="component"
-              name="component"
-              label="Componente"
-              variant="outlined"
-              value={formik.values.component}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={
-                formik.touched.component && Boolean(formik.errors.component)
-              }
-              helperText={formik.touched.component && formik.errors.component}
-            />
-            <FormGroup>
-              <InputLabel>¿La ruta es privada?</InputLabel>
-              <RadioGroup
-                id="authRequired"
-                name="authRequired"
-                value={formik.values.authRequired ? "true" : "false"}
-                onChange={(e) => {
-                  const booleanValue = e.target.value === "true";
-                  formik.setFieldValue("authRequired", booleanValue);
-                }}
-              >
-                <FormControlLabel value="true" control={<Radio />} label="Sí" />
-                <FormControlLabel
-                  value="false"
-                  control={<Radio />}
-                  label="No"
-                />
-              </RadioGroup>
-            </FormGroup>
-            <FormGroup>
-              <InputLabel>Sistema</InputLabel>
-              <RadioGroup
-                id="system"
-                name="system"
-                value={formik.values.system} // Asume que formik.values.system es una cadena
-                onChange={(e) => {
-                  formik.setFieldValue("system", e.target.value); // Actualiza el valor de "system" en Formik
-                }}
-              >
-                <FormControlLabel
-                  value="Admin"
-                  control={<Radio />}
-                  label="Administrador"
-                />
-                <FormControlLabel
-                  value="Cichmex"
-                  control={<Radio />}
-                  label="Cichmex"
-                />
-                <FormControlLabel
-                  value="Carwash"
-                  control={<Radio />}
-                  label="Carwash"
-                />
-              </RadioGroup>
-            </FormGroup>
-
-            <FormControl
-              sx={{ m: 1, width: 300 }}
-              error={
-                formik.touched.rolesAllowed &&
-                Boolean(formik.errors.rolesAllowed)
-              }
+        <Grid2 size={{ xs: 12, lg: 4 }}>
+          <TextField
+            size="small"
+            fullWidth
+            id="name"
+            name="name"
+            label="Titulo de la ruta"
+            variant="outlined"
+            value={formik.values.name}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.name && Boolean(formik.errors.name)}
+            helperText={formik.touched.name && formik.errors.name}
+          />
+          <TextField
+            fullWidth
+            size="small"
+            id="path"
+            name="path"
+            label="Ruta"
+            variant="outlined"
+            value={formik.values.path}
+            onChange={formik.handleChange}
+            sx={{ marginY: 2 }}
+            onBlur={formik.handleBlur}
+            error={formik.touched.path && Boolean(formik.errors.path)}
+            helperText={formik.touched.path && formik.errors.path}
+          />
+          <TextField
+            fullWidth
+            size="small"
+            id="component"
+            name="component"
+            label="Componente"
+            variant="outlined"
+            value={formik.values.component}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.component && Boolean(formik.errors.component)}
+            helperText={formik.touched.component && formik.errors.component}
+          />
+        </Grid2>
+        <Grid2
+          size={{ xs: 12, lg: 4 }}
+          display={"flex"}
+          justifyContent={"center"}
+        >
+          <FormGroup>
+            <InputLabel>¿La ruta es privada?</InputLabel>
+            <RadioGroup
+              id="authRequired"
+              name="authRequired"
+              value={formik.values.authRequired ? "true" : "false"}
+              onChange={(e) => {
+                const booleanValue = e.target.value === "true";
+                formik.setFieldValue("authRequired", booleanValue);
+              }}
             >
-              <InputLabel id="roles-label">Roles Permitidos</InputLabel>
-              <Select
-                labelId="roles-label"
-                id="roles-multiple-chip"
-                multiple
-                value={formik.values.rolesAllowed}
-                onChange={(event) =>
-                  formik.setFieldValue(
-                    "rolesAllowed",
-                    typeof event.target.value === "string"
-                      ? event.target.value.split(",")
-                      : event.target.value
-                  )
-                }
-                input={
-                  <OutlinedInput
-                    id="select-multiple-chip"
-                    label="Roles Permitidos"
-                  />
-                }
-                renderValue={(selected) => (
-                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                    {selected.map((value) => (
-                      <Chip key={value} label={value} />
-                    ))}
-                  </Box>
-                )}
-                MenuProps={MenuProps}
-              >
-                {roles.map((name) => (
-                  <MenuItem
-                    key={name}
-                    value={name}
-                    style={getStyles(name, formik.values.rolesAllowed, theme)}
-                  >
-                    {name}
-                  </MenuItem>
-                ))}
-              </Select>
-              {formik.touched.rolesAllowed && formik.errors.rolesAllowed ? (
-                <FormHelperText>{formik.errors.rolesAllowed}</FormHelperText>
-              ) : null}
-            </FormControl>
-          </CardContent>
-        </Card>
-      </Grid>
+              <FormControlLabel value="true" control={<Radio />} label="Sí" />
+              <FormControlLabel value="false" control={<Radio />} label="No" />
+            </RadioGroup>
+          </FormGroup>
+        </Grid2>
+        <Grid2
+          size={{ xs: 12, md: 3.6 }}
+          display={"flex"}
+          justifyContent={"center"}
+        >
+          <FormGroup>
+            <InputLabel>Sistema</InputLabel>
+            <RadioGroup
+              id="system"
+              name="system"
+              value={formik.values.system} // Asume que formik.values.system es una cadena
+              onChange={(e) => {
+                formik.setFieldValue("system", e.target.value); // Actualiza el valor de "system" en Formik
+              }}
+            >
+              <FormControlLabel
+                value="Admin"
+                control={<Radio />}
+                label="Administrador"
+              />
+              <FormControlLabel
+                value="Cichmex"
+                control={<Radio />}
+                label="Cichmex"
+              />
+              <FormControlLabel
+                value="Carwash"
+                control={<Radio />}
+                label="Carwash"
+              />
+            </RadioGroup>
+          </FormGroup>
+        </Grid2>
 
-      <Grid item xs={12} display={"flex"} gap={2} justifyContent={"center"}>
+        <Grid2 size={12}>
+          <FormControl
+            sx={{ m: 1, width: 300 }}
+            error={
+              formik.touched.rolesAllowed && Boolean(formik.errors.rolesAllowed)
+            }
+          >
+            <InputLabel id="roles-label">Roles Permitidos</InputLabel>
+            <Select
+              labelId="roles-label"
+              id="roles-multiple-chip"
+              multiple
+              value={formik.values.rolesAllowed}
+              onChange={(event) =>
+                formik.setFieldValue(
+                  "rolesAllowed",
+                  typeof event.target.value === "string"
+                    ? event.target.value.split(",")
+                    : event.target.value
+                )
+              }
+              input={
+                <OutlinedInput
+                  id="select-multiple-chip"
+                  label="Roles Permitidos"
+                />
+              }
+              renderValue={(selected) => (
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                  {selected.map((value) => (
+                    <Chip key={value} label={value} />
+                  ))}
+                </Box>
+              )}
+              MenuProps={MenuProps}
+            >
+              {roles.map((name) => (
+                <MenuItem
+                  key={name}
+                  value={name}
+                  style={getStyles(name, formik.values.rolesAllowed, theme)}
+                >
+                  {name}
+                </MenuItem>
+              ))}
+            </Select>
+            {formik.touched.rolesAllowed && formik.errors.rolesAllowed ? (
+              <FormHelperText>{formik.errors.rolesAllowed}</FormHelperText>
+            ) : null}
+          </FormControl>
+        </Grid2>
+      </Grid2>
+
+      <Grid2 size={12} display={"flex"} gap={2} justifyContent={"center"}>
         <Button
-          onClick={() => navigate("/auth/Productos", { replace: true })}
+          onClick={() => navigate("/url", { replace: true })}
           variant="contained"
           color="warning"
           fullWidth
@@ -281,8 +298,8 @@ const AddDynamicRoute = () => {
         <Button fullWidth type="submit" variant="contained" color="success">
           Crear
         </Button>
-      </Grid>
-    </Grid>
+      </Grid2>
+    </Grid2>
   );
 };
 

@@ -38,6 +38,8 @@ import { useProducts } from "../../hooks/useProducts";
 import DeleteAlert from "../../components/ui/DeleteAlert";
 import { useAuthStore } from "../../hooks";
 import ProductDetailModal from "../../components/Modals/ProductDetailModal";
+import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
+import { esES } from "@mui/x-data-grid/locales";
 
 const Products = () => {
   const { user } = useAuthStore();
@@ -90,56 +92,6 @@ const Products = () => {
   }
   
 
-  const exportToExcel = () => {
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Productos");
-
-    // Agregar encabezados de columna
-    const headerRow = worksheet.addRow([
-      "Nombre del producto",
-      "Descripción",
-      "Precio",
-      "Tamaño",
-      "Código",
-    ]);
-    headerRow.eachCell((cell) => {
-      cell.font = { bold: true };
-    });
-
-    // Agregar datos de las filas
-    rowsProducts.forEach((row) => {
-      worksheet.addRow([
-        row.name,
-        row.description,
-        row.price,
-        row.size,
-        row.tag,
-      ]);
-    });
-
-    // Crear un Blob con el archivo Excel y guardarlo
-    workbook.xlsx.writeBuffer().then((buffer) => {
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      saveAs(blob, "productos.xlsx");
-    });
-  };
-
-  function CustomToolbar() {
-
-    const apiRef = useGridApiContext();
-
-    const handleGoToPage1 = () => apiRef.current.setPage(0);
-
-    return (
-      <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
-            <Button variant="text" sx={{fontStyle:'oblique'}} onClick={()=> handleGoToPage1()} color="primary">
-              Regresar a pagina 1
-            </Button>
-      </GridToolbarContainer>
-    );
-  }
 
   // if (loading) return <LoadingScreenBlue />;
 
@@ -161,32 +113,29 @@ const Products = () => {
     }
   };
 
+  const paths = [
+    { path: `/mi-almacen/productos`, name: "Todos mis productos" },
+  ];
+
   return (
-    <Grid2 container gap={2} maxWidth={"85vw"}>
+    <Grid2 container paddingX={{ xs: 0, lg: 10 }} gap={1} >
       <Grid2
-        marginTop={{ xs: "-30px" }}
         size={12}
-        minHeight={"100px"}
-        className="Titles"
+        paddingRight={15}
+        flexGrow={1}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        marginBottom={2}
       >
-        <Typography
-          textAlign={"center"}
-          variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
-        >
-          Productos
+        <Typography variant="h4" sx={{ fontSize: { xs: "16px", lg: "25px" } }}>
+          <strong>Todos mis productos</strong>
         </Typography>
       </Grid2>
+      <Grid2 size={12} display={"flex"} justifyContent={"space-between"}>
+        <BreadcrumbCustom paths={paths} />
+      </Grid2>
       <Grid2 display={"flex"} justifyContent={"end"} rowSpacing={2} size={12}>
-        <Button
-          size="small"
-          startIcon={<Refresh />}
-          variant="contained"
-          color="primary"
-          onClick={() => setPaginationModel({page:0, pageSize:20})}
-        >
-          Recargar
-        </Button>
         <Button
           size="small"
           startIcon={<ViewModule />}
@@ -206,6 +155,7 @@ const Products = () => {
         >
           Agregar sin variantes
         </Button>
+        
       </Grid2>
       <TextField
         size='small'
@@ -238,8 +188,18 @@ const Products = () => {
       />
     
       <DataGrid
-        sx={{ fontSize: "15px", fontFamily: "sans-serif" }}
         density="compact"
+         sx={{
+                    fontSize: "12px",
+                    fontFamily: "sans-serif",
+                    borderRadius: "20px",
+                    bgcolor: "#fff",
+                    border: "1px solid rgb(209, 205, 205)", // Borde exterior naranja
+                    "& .MuiDataGrid-cell": {
+                      borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno claro
+                    },
+                  }}
+                  localeText={esES.components.MuiDataGrid.defaultProps.localeText}
         columns={[
           // {
           //   field: "tag",
@@ -323,9 +283,7 @@ const Products = () => {
           },
         ]}
         rows={rows}
-        slots={{
-          toolbar: CustomToolbar
-        }}
+        
         pagination
         paginationMode="server"
         rowCount={productsPaginate.totalProducts}

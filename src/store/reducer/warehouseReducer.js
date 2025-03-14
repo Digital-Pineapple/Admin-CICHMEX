@@ -19,6 +19,10 @@ export const warehouseReducer = createSlice({
       loader: false,
       errorMessage: "",
     },
+    warehouseman:{
+      all:[],
+      one:{}
+    }
   },
   reducers: {
     onLoadSection :(state, {payload})=>{
@@ -32,6 +36,12 @@ export const warehouseReducer = createSlice({
     },
     onStartLoadingSections: (state) => {
       state.sections.loader = true;
+    },
+    onLoadAllWarehouseman: (state,{ payload })=>{
+      state.warehouseman.all = payload
+    },
+    onLoadOneWarehouseman: (state,{ payload })=>{
+      state.warehouseman.one = payload
     },
     onErrorZones: (state, { payload }) => {
       state.zones.loader = false;
@@ -156,7 +166,9 @@ export const {
   onUpdateSection,
   onStopLoaderSection,
   onClearSection,
-  onLoadOneSection
+  onLoadOneSection,
+  onLoadAllWarehouseman,
+  onLoadOneWarehouseman
 } = warehouseReducer.actions;
 
 export default warehouseReducer.reducer;

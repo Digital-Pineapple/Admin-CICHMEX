@@ -13,13 +13,7 @@ import {
 import { useEffect, useState } from "react";
 import MuiPagination from "@mui/material/Pagination";
 import { Add, Download, Refresh } from "@mui/icons-material";
-import {
-  Button,
-  Fab,
-  Grid,
-  Grid2,
-  Typography,
-} from "@mui/material";
+import { Button, Fab, Grid, Grid2, Typography } from "@mui/material";
 import { Workbook } from "exceljs";
 import { useProducts } from "../../hooks/useProducts";
 import AddButton2 from "../../components/Buttons/AddButton2";
@@ -28,6 +22,8 @@ import { useAuthStore } from "../../hooks";
 import EntriesOutputsModal from "../../components/Modals/EntriesOutputsModal";
 import CustomNoRows from "../../components/Tables/CustomNoRows";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
+import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
+import { esES } from "@mui/x-data-grid/locales";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -62,29 +58,24 @@ function CustomPagination(props) {
 }
 
 const ProductEntries = () => {
-  const {
-    loadAllInputs,
-    rowsAllInputs,
-  } = useProducts();
-  const {loading} =useAuthStore()
+  const { loadAllInputs, rowsAllInputs } = useProducts();
+  const { loading } = useAuthStore();
   const { user, navigate } = useAuthStore();
   const [open, setOpen] = useState(false);
-  const [details, setDetails] = useState('')
+  const [details, setDetails] = useState("");
 
   const handleClickOpen = (detail) => {
     setOpen(true);
-    setDetails(detail)
+    setDetails(detail);
   };
 
   const handleClose = () => {
     setOpen(false);
   };
 
-
   useEffect(() => {
-    loadAllInputs()
+    loadAllInputs();
   }, [user]);
-
 
   const exportToExcel = () => {
     const workbook = new Workbook();
@@ -128,66 +119,66 @@ const ProductEntries = () => {
     const handleGoToPage1 = () => apiRef.current.setPage(1);
 
     return (
-      <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
-        <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-        <GridToolbarQuickFilter placeholder="Buscar" />
-        <Button
-          variant="text"
-          startIcon={<Download />}
-          disableElevation
-          sx={{ color: "secondary" }}
-          onClick={exportToExcel}
-        >
-          Descargar Excel
-        </Button>
+      <GridToolbarContainer sx={{ justifyContent: "center" }}>
+        <GridToolbarQuickFilter placeholder="Buscar" variant="outlined" />
       </GridToolbarContainer>
     );
   }
 
   if (loading) {
-    return (
-      <LoadingScreenBlue/>
-    )
+    return <LoadingScreenBlue />;
   }
-  
-  
+
+  const paths = [
+    { path: `/mi-almacen/productos/entradas`, name: "Todas mis entradas" },
+  ];
 
   return (
-    <Grid2 container gap={1} >
+    <Grid2 container paddingX={{ xs: 0, lg: 10 }} gap={1}>
       <Grid2
-        marginTop={{ xs: "-30px" }}
         size={12}
-        minHeight={"100px"}
-        className="Titles"
-        
+        paddingRight={15}
+        flexGrow={1}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        marginBottom={2}
       >
-        <Typography
-          textAlign={"center"}
-          variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
-        >
-          Entradas de producto
+        <Typography variant="h4" sx={{ fontSize: { xs: "16px", lg: "25px" } }}>
+          <strong>Todas mis entradas de producto</strong>
         </Typography>
       </Grid2>
-      <Grid2  size={12} >
-        <Button variant="contained" size="small" onClick={()=>loadAllInputs()} color="primary">
-          <Refresh/> Recargar
-        </Button>
-      <Fab sx={{right:'-80%'}} onClick={()=>navigate('/mi-almacen/agregar-entrada')} color="secondary" aria-label="Agregar entrada" title="Agragar entradas" >
-  <Add />
-</Fab>
+      <Grid2 size={12} display={"flex"} justifyContent={"space-between"}>
+        <BreadcrumbCustom paths={paths} />
+        <Fab
+          onClick={() => navigate("/mi-almacen/agregar-entrada")}
+          color="secondary"
+          aria-label="Agregar entrada"
+          title="Agragar entradas"
+        >
+          <Add />
+        </Fab>
       </Grid2>
-      <Grid2 size={12} >
+      <Grid2 size={12}>
         <DataGrid
-          sx={{ fontSize: "12px", fontFamily: "sans-serif" }}
-          columns={
-            [
-              {
-                field: "folio",
-                headerName: "Folio",
-                align: "center",
-                flex: 1,
-              },
+          sx={{
+            fontSize: "12px",
+            fontFamily: "sans-serif",
+            borderRadius: "20px",
+            bgcolor: "#fff",
+            border: "1px solid rgb(209, 205, 205)", // Borde exterior naranja
+            "& .MuiDataGrid-cell": {
+              borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno claro
+            },
+          }}
+          localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+          columns={[
+            {
+              field: "folio",
+              headerName: "Folio",
+              align: "center",
+              flex: 1,
+            },
             {
               field: "date",
               headerName: "Fecha",
@@ -204,7 +195,7 @@ const ProductEntries = () => {
               field: "product_name",
               headerName: "Nombre del prodcto",
               flex: 1,
-              align:'center'
+              align: "center",
             },
             {
               field: "quantity",
@@ -264,20 +255,23 @@ const ProductEntries = () => {
             hideToolbar: true,
           }}
           initialState={{
-            pagination:{
-              paginationModel:{pageSize:10}
+            pagination: {
+              paginationModel: { pageSize: 10 },
             },
-            sorting:{
+            sorting: {
               sortModel: [{ field: "date", sort: "desc" }],
-            }
+            },
           }}
-          style={{fontFamily:'sans-serif', fontSize:'15px'}}
+          style={{ fontFamily: "sans-serif", fontSize: "15px" }}
         />
       </Grid2>
-      <EntriesOutputsModal open={open} handleClose={handleClose} details={details}  />
+      <EntriesOutputsModal
+        open={open}
+        handleClose={handleClose}
+        details={details}
+      />
     </Grid2>
   );
 };
 
-
-export default ProductEntries
+export default ProductEntries;

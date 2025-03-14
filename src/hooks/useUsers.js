@@ -4,11 +4,15 @@ import {
   deleteCarrierDriver,
   deleteOneUser,
   editOneUser,
+  getAllWarehouseman,
   getCarrierDrivers,
   getOneUser,
   getUsers,
+  startCreateWarehouseman,
   startLoadOptimizedRoutes,
   startOneCarrierDriver,
+  startOneWarehouseman,
+  startUpdateWarehouseman,
   updateOneCarrier,
   verifyOneUser,
 } from "../store/actions/userActions";
@@ -19,13 +23,25 @@ export const useUsers = () => {
   const dispatch = useDispatch();
 
   const { user, users } = useSelector((state) => state.users);
-  const { CarrierDrivers, CarrierDriver, loading, optimizedRoutes } = useSelector(
+  const { CarrierDrivers, CarrierDriver, optimizedRoutes } = useSelector(
     (state) => state.carrierDriver
   );
+  const { warehouseman } = useSelector(
+    (state) => state.warehouse
+  );
+
+  const { loading } = useSelector(
+    (state) => state.ui
+  );
+
+  const allWarehouseman = warehouseman.all
+  const oneWarehouseman = warehouseman.one
 
   const loadUsers = async () => await dispatch(getUsers());
 
   const loadCarrierDrivers = () => dispatch(getCarrierDrivers());
+  const loadAllWarehouseman = () => dispatch(getAllWarehouseman());
+
   const loadOneCarrieDriver = (id) => dispatch(startOneCarrierDriver(id));
 
   const loadUser = async (user_id) => await dispatch(getOneUser(user_id));
@@ -43,7 +59,22 @@ export const useUsers = () => {
     await dispatch(editOneUser(user_id, values, navigate));
   const updateCarrier = async (id, values) =>
     await dispatch(updateOneCarrier(id, values, navigate));
+
+  const createWarehouseman = async (values) =>
+    await dispatch(startCreateWarehouseman(values, navigate));
+
+  const loadWarehouseman = async (id) =>
+    await dispatch(startOneWarehouseman(id))
+
+  const loadUpdateWarehouseman = async (id, values) =>
+    await dispatch(startUpdateWarehouseman(id, values, navigate))
+
+
   const rowsCarrierDrivers = CarrierDrivers?.map((i, _id) => ({
+    id: _id.toString(),
+    ...i,
+  }));
+  const rows = (data) => data?.map((i, _id) => ({
     id: _id.toString(),
     ...i,
   }));
@@ -69,6 +100,13 @@ export const useUsers = () => {
     CarrierDrivers,
     updateCarrier,
     loadOptimizedRoutes,
-    optimizedRoutes
+    optimizedRoutes,
+    loadAllWarehouseman,
+    rows,
+    allWarehouseman,
+    createWarehouseman,
+    loadWarehouseman,
+    oneWarehouseman,
+    loadUpdateWarehouseman
   };
 };

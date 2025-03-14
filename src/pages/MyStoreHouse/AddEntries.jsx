@@ -19,6 +19,7 @@ import { useAuthStore, useProducts } from "../../hooks";
 import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 import TableQuantity from "../../components/Tables/TableQuantity";
+import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 
 const AddEntries = () => {
   const { loadAllProductsForSearch, addMultipleEntries, navigate, loadProduct, loading } =
@@ -101,6 +102,12 @@ const AddEntries = () => {
     ...item,
   }));
 
+  const paths = [
+    { path: `/mi-almacen/productos/entradas`, name: "Todas mis entradas" },
+    { path: `/mi-almacen/agregar-entrada`, name: "Crear entrada de producto" },
+  ];
+
+
   return (
     <Grid2
       component={"form"}
@@ -110,20 +117,23 @@ const AddEntries = () => {
       }}
       container
       gap={2}
+      paddingX={{xs:0, lg:10}}
     >
-      <Grid2
-        marginTop={{ xs: "-30px" }}
+     <Grid2
         size={12}
-        minHeight={"100px"}
-        className="Titles"
+        paddingRight={15}
+        flexGrow={1}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        marginBottom={2}
       >
-        <Typography
-          textAlign={"center"}
-          variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
-        >
-          Agregar entrada
+        <Typography variant="h4" sx={{fontSize:{xs:"16px", lg:"25px"}}}>
+          <strong>Crear entrada de producto</strong>
         </Typography>
+      </Grid2>
+      <Grid2 size={12}>
+        <BreadcrumbCustom paths={paths} />
       </Grid2>
       <Grid2
         container

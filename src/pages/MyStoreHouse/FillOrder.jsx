@@ -26,6 +26,7 @@ import QRScannerV2 from "../../components/QR/QRScannerV2";
 import Swal from "sweetalert2";
 import TableDetailSupply from "../../components/Tables/TableDetailSupply";
 import { FilePdfFilled } from "@ant-design/icons";
+import { spacing } from "@mui/system";
 
 const style = {
   position: "absolute",
@@ -33,7 +34,6 @@ const style = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   bgcolor: "background.paper",
-  border: "1px solid #bbdefb",
   borderRadius: "15px",
   display: "flex",
   alignItems: "center",
@@ -42,7 +42,8 @@ const style = {
   boxShadow: 24,
   maxWidth: "90%",
   maxHeigth: "90%",
-  p: 4,
+  rowGap:1,
+  p: 6,
 };
 
 const FillOrder = () => {
@@ -172,8 +173,8 @@ const FillOrder = () => {
     if (Object.keys(product).length > 0) {
       return (
         <>
-          <Typography fontSize={14}>
-            <strong>Cantidad de producto: {product.quantity}</strong>
+          <Typography fontSize={25}>
+           Cantidad de producto:  <strong>{product.quantity} </strong>
             <br />
           </Typography>
           <Typography>
@@ -205,6 +206,7 @@ const FillOrder = () => {
   if (loading) {
     return <LoadingScreenBlue />;
   }
+  
 
   return (
     <Grid2 container paddingX={{ xs: 0, lg: 10 }} display={"flex"} gap={2}>
@@ -333,23 +335,24 @@ const FillOrder = () => {
       <Modal open={openModal.value} onClose={handleClose}>
         <Grid2 container sx={style}>
           <IconButton
-            disableRipple
             aria-label="Cerrar"
             onClick={handleCloseModal}
             sx={{
               position: "absolute",
-              transform: "translate(790%, -90%)",
+              right:'10px',
+              top:'10px',
+              color:'red'
             }}
           >
             <Close />
           </IconButton>
-          <QRScannerV2 label="Escanear QR de sección" setValueQR={setValuate} />
           <Card variant="outlined">
             <CardContent>{renderProduct(openModal.data)}</CardContent>
           </Card>
-          <Card variant="outlined">
+          <Card variant="outlined" sx={{width:'100%'}}>
             <CardContent>{renderSection(openModal.section)}</CardContent>
           </Card>
+          <QRScannerV2 title="Escanea el Qr de la sección" label="Escanear QR de sección" setValueQR={setValuate} />
           {RenderButtonAsign(validation)}
         </Grid2>
       </Modal>

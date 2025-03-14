@@ -17,6 +17,7 @@ import {
   Button,
   Fab,
   Grid,
+  Grid2,
   Typography,
 } from "@mui/material";
 import { Workbook } from "exceljs";
@@ -26,6 +27,8 @@ import { orange } from "@mui/material/colors";
 import { useAuthStore } from "../../hooks";
 import EntriesOutputsModal from "../../components/Modals/EntriesOutputsModal";
 import CustomNoRows from "../../components/Tables/CustomNoRows";
+import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
+import { esES } from "@mui/x-data-grid/locales";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -125,57 +128,65 @@ const ProductOutputs = () => {
     const handleGoToPage1 = () => apiRef.current.setPage(1);
 
     return (
-      <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
-        <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-        <GridToolbarQuickFilter />
-        <Button
-          variant="text"
-          startIcon={<Download />}
-          disableElevation
-          sx={{ color: "secondary" }}
-          onClick={exportToExcel}
-        >
-          Descargar Excel
-        </Button>
+      <GridToolbarContainer sx={{ justifyContent: "center" }}>
+       
+       <GridToolbarQuickFilter placeholder="Buscar" variant="outlined" />
+       
       </GridToolbarContainer>
     );
   }
 
   
-  
+  const paths = [
+    { path: `/mi-almacen/productos/salidas`, name: "Todas mis salidas" },
+  ];
 
   return (
-    <Grid container gap={1} >
-      <Grid
-        item
-        marginTop={{ xs: "-30px" }}
-        xs={12}
-        minHeight={"100px"}
-        className="Titles"
-        
+    <Grid2 container paddingX={{ xs: 0, lg: 10 }} gap={1} >
+      <Grid2
+        size={12}
+        paddingRight={15}
+        flexGrow={1}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        marginBottom={2}
       >
-        <Typography
-          textAlign={"center"}
-          variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
-        >
-          Salidas de producto
+        <Typography variant="h4" sx={{ fontSize: { xs: "16px", lg: "25px" } }}>
+          <strong>Todas mis salidas de producto</strong>
         </Typography>
-      </Grid>
-      <Grid item xs={12} >
-      <Fab sx={{right:'-80%'}} onClick={()=>navigate('/mi-almacen/salida-productos')} color="secondary" aria-label="Agregar entrada" title="Agragar entradas" >
-  <Add />
-</Fab>
-      </Grid>
-      <Grid item xs={12} >
+      </Grid2>
+      <Grid2 size={12} display={"flex"} justifyContent={"space-between"}>
+        <BreadcrumbCustom paths={paths} />
+        <Fab
+          onClick={() => navigate("/mi-almacen/salida-productos")}
+          color="secondary"
+          aria-label="Agregar entrada"
+          title="Agragar entradas"
+        >
+          <Add />
+        </Fab>
+      </Grid2>
+      <Grid2 size={12} >
         <DataGrid
-          sx={{ fontSize: "12px", fontFamily: "sans-serif" }}
+          sx={{
+                      fontSize: "12px",
+                      fontFamily: "sans-serif",
+                      borderRadius: "20px",
+                      bgcolor: "#fff",
+                      border: "1px solid rgb(209, 205, 205)", // Borde exterior naranja
+                      "& .MuiDataGrid-cell": {
+                        borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno claro
+                      },
+                    }}
+                    localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           columns={
             [
               {
                 field: "folio",
                 headerName: "Folio",
                 align: "center",
+                renderCell : (params)=> params.row.folio? params.row.folio: 'Venta'
               },
             {
               field: "date",
@@ -262,9 +273,9 @@ const ProductOutputs = () => {
           }}
           style={{fontFamily:'sans-serif', fontSize:'15px'}}
         />
-      </Grid>
+      </Grid2>
       <EntriesOutputsModal open={open} handleClose={handleClose} details={details}  />
-    </Grid>
+    </Grid2>
   );
 };
 

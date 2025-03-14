@@ -14,6 +14,7 @@ import {
 import React, { useEffect } from "react";
 import renderStatus from "./RenderStatus";
 const TableDetail = ({ user, location, typeDelivery, status, date }) => {
+  
   if (!user) return null;
   return (
     <Grid2 size={12}>

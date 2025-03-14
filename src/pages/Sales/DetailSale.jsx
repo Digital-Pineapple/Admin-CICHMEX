@@ -200,7 +200,11 @@ const DetailSale = () => {
           <CardContent>
             <TableDetail
               date={productOrder?.createdAt}
-              location={productOrder?.deliveryLocation}
+              location={
+                productOrder?.branch
+                  ? productOrder.branch.location
+                  : productOrder?.deliveryLocation
+              }
               user={productOrder?.user_id}
               status={productOrder?.payment_status}
               typeDelivery={productOrder?.typeDelivery}

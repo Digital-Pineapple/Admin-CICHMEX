@@ -16,6 +16,7 @@ import { useAuthStore, useProducts } from "../../hooks";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import TableQuantity from "../../components/Tables/TableQuantity";
+import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 
 const AddOutputs = () => {
   const { loadStockProducts, addMultipleOutputs, navigate } = useProducts();
@@ -69,6 +70,11 @@ const AddOutputs = () => {
     ...item,
   }));
 
+  const paths = [
+    { path: `/mi-almacen/productos/salidas`, name: "Todas mis salidas" },
+    { path: `/mi-almacen/salida-productos`, name: "Crear salida" },
+  ];
+
   return (
     <Grid2
       component={"form"}
@@ -76,22 +82,24 @@ const AddOutputs = () => {
         e.preventDefault(); // Previene el envío por defecto
         handleSubmit(onSubmit)(); // Llama a tu función de envío
       }}
-      container
-      gap={2}
+      container paddingX={{ xs: 0, lg: 10 }} gap={1}
     >
       <Grid2
-        marginTop={{ xs: "-30px" }}
         size={12}
-        minHeight={"100px"}
-        className="Titles"
+        paddingRight={15}
+        flexGrow={1}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        marginBottom={2}
       >
-        <Typography
-          textAlign={"center"}
-          variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
-        >
-          Agregar salida
+        <Typography variant="h4" sx={{ fontSize: { xs: "16px", lg: "25px" } }}>
+          <strong>Crear salida de producto</strong>
         </Typography>
+      </Grid2>
+      <Grid2 size={12} display={"flex"} justifyContent={"space-between"}>
+        <BreadcrumbCustom paths={paths} />
+        
       </Grid2>
 
       <Grid2 container gap={2} paddingX={10} justifyContent={"center"}>
