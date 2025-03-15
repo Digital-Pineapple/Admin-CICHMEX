@@ -35,6 +35,8 @@ import { HtmlTooltip } from "../../components/Tooltips/HtmlTooltip";
 import { MarkerF, useLoadScript } from "@react-google-maps/api";
 import MapGoogle from "../../components/Google/MapGoogle";
 import { Box } from "@mui/system";
+import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
+import { esES } from "@mui/x-data-grid/locales";
 
 const style = {
   position: "absolute",
@@ -120,8 +122,8 @@ const StoreHouse = () => {
     const apiRef = useGridApiContext();
 
     return (
-      <GridToolbarContainer sx={{ justifyContent: "center" }}>
-        <GridToolbarQuickFilter label="Buscar" placeholder="Buscar" />
+      <GridToolbarContainer sx={{ justifyContent: "center", m:1 }}>
+        <GridToolbarQuickFilter label="Buscar" variant="outlined" />
       </GridToolbarContainer>
     );
   }
@@ -129,33 +131,50 @@ const StoreHouse = () => {
     return <LoadingScreenBlue />;
   }
 
+  const paths = [
+    { path: "/CEDIS/todos", name: "Centros de Distribución Logística" },
+  ];
+
+
   return (
-    <Grid2 container gap={2}>
-      <Grid2
-        marginTop={{ xs: "-30px" }}
+    <Grid2 container paddingX={{xs:0, sm:10}}>
+       <Grid2
         size={12}
-        minHeight={"100px"}
-        className="Titles"
+        paddingRight={15}
+        flexGrow={1}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        marginBottom={2}
       >
-        <Typography
-          textAlign={"center"}
-          variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
-        >
-          Mis centros de distribución
+        <Typography variant="h4">
+          <strong>Centros de Distribución Logística</strong>
         </Typography>
       </Grid2>
-      <Grid2 size={12} display={"flex"} justifyContent={"end"}>
+      <Grid2 size={12} display={"flex"}margin={2} justifyContent={"space-between"}>
+        <BreadcrumbCustom paths={paths} />
+
         <Fab
-          title="Agregar nuevo almacen"
           onClick={createStoreHouse}
-          color="primary"
+          color="secondary"
+          aria-label="Crear Cedis"
+          title="Crear Cedis"
         >
           <Add />
         </Fab>
       </Grid2>
       <DataGrid
-        sx={{ fontSize: "12px" }}
+        sx={{
+                      fontSize: "12px",
+                      fontFamily: "sans-serif",
+                      borderRadius: "20px",
+                      bgcolor: "#fff",
+                      border: "1px solid rgb(209, 205, 205)", // Borde exterior naranja
+                      "& .MuiDataGrid-cell": {
+                        borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno claro
+                      },
+                    }}
+                    localeText={esES.components.MuiDataGrid.defaultProps.localeText}
         columns={[
           {
             field: "storehouse_key",

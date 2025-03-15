@@ -49,7 +49,7 @@ const CreateWarehouseman = () => {
   const { createWarehouseman, loading } = useUsers();
 
   const createOneCarrier = (values) => {
-    createWarehouseman(values);
+     createWarehouseman(values);
   };
 
   const watchField = watch("employee_detail.store_house", false);
@@ -119,6 +119,7 @@ const CreateWarehouseman = () => {
               <TextField
                 variant="outlined"
                 fullWidth
+                autoComplete="off"
                 size="small"
                 label="Nombre completo"
                 helperText={
@@ -147,6 +148,7 @@ const CreateWarehouseman = () => {
                 variant="outlined"
                 fullWidth
                 size="small"
+                autoComplete="off"
                 label="Correo"
                 helperText={
                   fieldState.error ? <b>{fieldState.error.message}</b> : ""
@@ -175,6 +177,7 @@ const CreateWarehouseman = () => {
               <TextField
                 variant="outlined"
                 label="Contraseña"
+                autoComplete="off"
                 fullWidth
                 size="small"
                 helperText={
@@ -203,6 +206,7 @@ const CreateWarehouseman = () => {
                 size="small"
                 fullWidth
                 forceCallingCode
+                autoComplete="off"
                 disableDropdown
                 helperText={
                   fieldState.invalid
@@ -210,7 +214,7 @@ const CreateWarehouseman = () => {
                     : fieldState.error?.message
                 }
                 error={fieldState.invalid}
-                onChangeCapture={(e) => setPhone(e.target.value)}
+                onChange={field.onChange}
               />
             )}
           />
@@ -231,6 +235,7 @@ const CreateWarehouseman = () => {
                 label="Salario"
                 type="number"
                 size="small"
+                 autoComplete="off"
                 helperText={
                   fieldState.error ? <b>{fieldState.error.message}</b> : ""
                 }
@@ -262,6 +267,7 @@ const CreateWarehouseman = () => {
                 fullWidth
                 type="number"
                 size="small"
+                 autoComplete="off"
                 helperText={
                   fieldState.error ? <b>{fieldState.error.message}</b> : ""
                 }
@@ -289,6 +295,7 @@ const CreateWarehouseman = () => {
                 label="Almacen"
                 fullWidth
                 size="small"
+                 autoComplete="off"
                 helperText={
                   fieldState.error ? <b>{fieldState.error.message}</b> : ""
                 }
@@ -323,13 +330,7 @@ const CreateWarehouseman = () => {
           )}
         </Grid2>
 
-        <Grid2
-          container
-          size={12}
-          gap={1}
-          display={"flex"}
-          justifyContent={"center"}
-        >
+        <Grid2 size={12} gap={1} >
           <Controller
             name="type"
             control={control}
@@ -337,10 +338,10 @@ const CreateWarehouseman = () => {
               required: { value: true, message: "Valor requerido" },
             }}
             render={({ field, fieldState }) => (
-              <FormControl error={fieldState.invalid} fullWidth size="small">
-                <Select {...field} variant="outlined">
+              <FormControl error={fieldState.invalid} size="small" sx={{width:'100%'}} >
+                <Select {...field} variant="outlined" >
                   {TypesUser?.map((item, index) => (
-                    <MenuItem>
+                    <MenuItem key={index} value={item.value}>
                       {item.name}
                     </MenuItem>
                   ))}

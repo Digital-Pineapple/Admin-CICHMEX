@@ -157,6 +157,7 @@ export const AllRoutes = [
    { id: 36, element: <EditStoreHouse /> },
 
   { id: 37, element: <StoreHouse /> },
+  
   { id: 38, element: <CreateStoreHouse /> },
   { id: 39, element: <StockProductsSH /> },
   { id: 40, element: <AddProductsToSH /> },

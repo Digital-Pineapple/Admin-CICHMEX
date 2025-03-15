@@ -249,7 +249,7 @@ const ArrangeProducts = () => {
         <BreadcrumbCustom paths={paths} />
       </Grid2>
 
-      <Grid2 bgcolor="#fff" sx={{ boxShadow: "0px 0px 4px -1px #7a7a7a" }} padding={2} borderRadius="15px" size={3}>
+      <Grid2 bgcolor="#fff" sx={{ boxShadow: "0px 0px 4px -1px #7a7a7a" }} padding={2} borderRadius="15px" size={{xs:12,lg:6}}>
         <Typography variant="body2" color="initial">
           <strong>Responsable de entrada</strong>
           <br />
@@ -261,7 +261,7 @@ const ArrangeProducts = () => {
         </Typography>
       </Grid2>
 
-      <Grid2 bgcolor="#fff" sx={{ boxShadow: "0px 0px 4px -1px #7a7a7a" }} padding={2} size={3} borderRadius="15px">
+      <Grid2 bgcolor="#fff" sx={{ boxShadow: "0px 0px 4px -1px #7a7a7a" }} padding={2} size={{xs:12, lg:5.7}} borderRadius="15px">
         <Typography variant="body2" color="initial">
           <strong>Responsable de entrada en almacén</strong>
           <br />

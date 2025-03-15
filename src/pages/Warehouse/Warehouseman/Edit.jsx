@@ -91,7 +91,7 @@ const EditWarehouseman = () => {
         marginBottom={2}
       >
         <Typography variant="h4">
-          <strong>Crear almacenista</strong>
+          <strong>Editar almacenista</strong>
         </Typography>
       </Grid2>
       <Grid2 size={12}>

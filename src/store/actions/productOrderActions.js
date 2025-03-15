@@ -42,13 +42,12 @@ export const startLoadProductOrdersPaid = () => {
   return async (dispatch) => {
     dispatch(startLoading());
     try {
-      const { data } = await instanceApi.get(`/product-order/paid`, {
+      const { data } = await instanceApi.get(`/product-order/paid/all`, {
         headers: {
           "Content-type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-
       dispatch(loadProductOrders(data.data));
       dispatch(stopLoading());
     } catch (error) {

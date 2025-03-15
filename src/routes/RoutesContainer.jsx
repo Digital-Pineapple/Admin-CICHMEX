@@ -5,6 +5,7 @@ import {
   themeAdminCichmexLight,
   themeCarrierCichmex,
   themeSuperAdmin,
+  themeWarehousemanCichmex,
 } from "../theme";
 import { ThemeProvider } from "@mui/material";
 import { Navbar } from "../components";
@@ -49,6 +50,8 @@ const RoutesContainer = ({ logged, user }) => {
     ['SUPER-ADMIN']: themeSuperAdmin,
     ['ADMIN']: themeAdminCichmexLight,
     ['CARRIER-DRIVER'] :themeCarrierCichmex,
+    ['WAREHOUSEMAN'] :themeCarrierCichmex,
+    ['WAREHOUSE-MANAGER'] :themeWarehousemanCichmex,
   }
   const themeDefault = themeSuperAdmin
 

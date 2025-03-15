@@ -10,8 +10,6 @@ import MapGoogle from "../../components/Google/MapGoogle";
 import { redirectTo } from "../../helpers/redirectLink";
 import { HtmlTooltip } from "../../components/Tooltips/HtmlTooltip";
 import InputControl from "../../components/ui/InputControl";
-import StyledDropzone from "../../components/DropZone/StyledDropZone";
-import useImagesV2 from "../../hooks/useImagesV2";
 import { useStoreHouse } from "../../hooks/useStoreHouse";
 const styleContainer = {
   width: "100%",

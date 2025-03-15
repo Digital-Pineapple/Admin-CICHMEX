@@ -279,3 +279,48 @@ export const themeCarrierCichmex = createTheme({
     fontFamily: 'sans-serif',
   },
 });
+
+export const themeWarehousemanCichmex = createTheme({
+  mode: 'dark',  // Cambié a 'dark'
+  palette: {
+    primary: {
+      main: "#C70039",
+      light: teal[200],
+      dark: teal[900],
+      contrastText: '#fff',
+    },
+    secondary: {
+      main: "#900C3F",
+      light: orange[500],
+      dark: orange[400],
+      contrastText: "#fff",
+    },
+    info: {
+      main: yellow[700],
+      light: yellow[600],
+      dark: yellow[400],
+      contrastText: '#fff'
+    },
+    success: {
+      main: teal[900],
+      light: lime[700],
+      dark: green[200],
+      contrastText: '#fff'
+    },
+    warning: {
+      main: deepOrange[900],
+      light: deepOrange[500],
+      dark: deepOrange[200],
+      contrastText: '#fff'
+    },
+    error: {
+      main: red[600],
+      light: red[900],
+      dark: red['A400'],
+      contrastText: '#fff'
+    }
+  },
+  typography: {
+    fontFamily: 'sans-serif',
+  },
+});
