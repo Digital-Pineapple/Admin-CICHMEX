@@ -22,7 +22,7 @@ const mapStyles = [
 // Estilos del contenedor del mapa (tamaño)
 const mapContainerStyle = {
   width: '100%', // Ancho del contenedor del mapa
-  height: '600px', // Alto del contenedor del mapa
+  height: '450px', // Alto del contenedor del mapa
 };
 
 const API_KEY = import.meta.env.VITE_REACT_APP_MAP_KEY;

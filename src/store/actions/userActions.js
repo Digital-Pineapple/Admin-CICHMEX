@@ -7,7 +7,7 @@ import {
   verifyUser,
 } from "../reducer/userReducer";
 import { enqueueSnackbar } from "notistack";
-import { loadCarrierDriver, loadCarrierDrivers, deleteCarrierDriver as DeleteCarrierDriver, loadAllOptimizedRoutes, onLoadAllWarehouseman, onLoadOneWarehouseman } from "../reducer";
+import { loadCarrierDriver, loadCarrierDrivers, deleteCarrierDriver as DeleteCarrierDriver, loadAllOptimizedRoutes, onLoadAllWarehouseman, onLoadOneWarehouseman, loadStartRoutes } from "../reducer";
 import { startLoading, stopLoading } from "../reducer/uiReducer";
 import Swal from "sweetalert2";
 
@@ -54,6 +54,42 @@ export const getCarrierDrivers = () => {
     }
   };
 };
+
+export const startLoadMyRoutes = (routes) => {
+  return async (dispatch) => {
+    try {
+      dispatch(startLoading())
+      const { data } = await instanceApi.put(
+        "/product-order/start_routes",routes,
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      dispatch(loadStartRoutes());
+      Swal.fire({title:`${data.message}`, icon:'success'})
+      
+    } catch (error) {
+      console.log(error);
+      
+      enqueueSnackbar(`${error.response.data.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center",
+        },
+      });
+      
+    }finally{
+      dispatch(stopLoading())
+    }
+  };
+};
+
+
+
 
 export const getAllWarehouseman = () => {
   return async (dispatch) => {

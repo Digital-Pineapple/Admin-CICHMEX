@@ -69,6 +69,7 @@ const FillOrder = () => {
   useEffect(() => {
     loadProductOrder(id);
   }, [id]);
+  
 
   useEffect(() => {
     if (valuate) {

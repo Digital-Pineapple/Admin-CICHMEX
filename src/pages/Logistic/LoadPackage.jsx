@@ -12,21 +12,18 @@ import {
 } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import MuiPagination from "@mui/material/Pagination";
-import {
-  Button,
-  Grid,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Button, Grid2, Tooltip, Typography } from "@mui/material";
 import { Workbook } from "exceljs";
 import { useProductOrder } from "../../hooks/useProductOrder";
-import { saveAs } from "file-saver"; 
+import { saveAs } from "file-saver";
 import Download from "@mui/icons-material/Download";
 import Swal from "sweetalert2";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import LoadPackageModal from "../../components/Modals/LoadPackageModal";
 import { useAuthStore } from "../../hooks";
 import { localDate } from "../../Utils/ConvertIsoDate";
+import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
+import { esES } from "@mui/x-data-grid/locales";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -62,33 +59,40 @@ function CustomPagination(props) {
 }
 
 const LoadPackage = () => {
-  const { loadAssignedPO, navigate, productOrders, loading } = useProductOrder();
-  const {user} = useAuthStore()
+  const { loadAssignedPO, navigate, productOrders, loading } =
+    useProductOrder();
+  const { user } = useAuthStore();
 
   useEffect(() => {
     loadAssignedPO();
   }, [user]);
 
-  const [openModal, setOpenModal] = useState(false)
-  const [valuePO, setValuePO] = useState(null) 
-  console.log(valuePO);
-  
-  
-  const handleOpen = (values)=>{
-    setValuePO(values)
-    setOpenModal(true)
-  }
-  const handleClose = ()=>{
-    setValuePO(null)
-    setOpenModal(false)
-  }
+  const [openModal, setOpenModal] = useState(false);
+  const [valuePO, setValuePO] = useState(null);
+
+  const handleOpen = (values) => {
+    console.log(values,'data ok ');
+    
+    setValuePO(values);
+    setOpenModal(true);
+  };
+  const handleClose = () => {
+    setValuePO(null);
+    setOpenModal(false);
+  };
 
   const rowsWithIds = productOrders?.map((item, index) => {
     const quantities = item.products.map((i) => i.quantity);
-    const suma = quantities.reduce((valorAnterior, valorActual) => valorAnterior + valorActual, 0);
-    const date = localDate(item.createdAt)
+    const suma = quantities.reduce(
+      (valorAnterior, valorActual) => valorAnterior + valorActual,
+      0
+    );
+    const date = localDate(item.createdAt);
     const TD = item.branch ? "En Punto de entrega" : "A domicilio";
-    const statusRoute = item?.route_detail?.route_status === 'assigned'? 'Asignado' : 'No asignado';
+    const statusRoute =
+      item?.route_detail?.route_status === "assigned"
+        ? "Asignado"
+        : "No asignado";
 
     return {
       quantityProduct: suma,
@@ -100,38 +104,6 @@ const LoadPackage = () => {
     };
   });
 
-  const exportToExcel = () => {
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Stock de productos");
-
-    const headerRow = worksheet.addRow([
-      "Cantidad de productos",
-      "Tipo de envío",
-      "Existencias",
-      "Precio",
-      "Tamaño",
-    ]);
-    headerRow.eachCell((cell) => {
-      cell.font = { bold: true };
-    });
-
-    rowsWithIds.forEach((row) => {
-      worksheet.addRow([
-        row.quantityProduct,
-        row.typeDelivery,
-        row.existences, // Ensure this field exists
-        row.price,
-        row.size,
-      ]);
-    });
-
-    workbook.xlsx.writeBuffer().then((buffer) => {
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      saveAs(blob, "Pedidos.xlsx");
-    });
-  };
 
   function CustomToolbar() {
     const apiRef = useGridApiContext();
@@ -139,42 +111,55 @@ const LoadPackage = () => {
     const handleGoToPage1 = () => apiRef.current.setPage(1);
 
     return (
-      <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
-        <Button onClick={handleGoToPage1}>Regresa a la página 1</Button>
-        <GridToolbarQuickFilter />
-        <Button
-          variant="text"
-          startIcon={<Download />}
-          disableElevation
-          sx={{ color: "secondary.main" }} // Correct usage of the secondary color
-          onClick={exportToExcel}
-        >
-          Descargar Excel
-        </Button>
+      <GridToolbarContainer sx={{ justifyContent: "center" }}>
+      
+        <GridToolbarQuickFilter variant="outlined" />
+        
       </GridToolbarContainer>
     );
   }
-
- 
 
   if (loading) {
     return <LoadingScreenBlue />;
   }
 
+  const paths = [
+    {
+      path: "/transportista/cargar-paquete",
+      name: "Paquetes listos para cargar",
+    },
+  ];
+
   return (
-    <Grid container style={{ marginLeft: "10%", height: "70%", width: "85%" }}>
-      <Grid item marginTop={{ xs: "-30px" }} xs={12} minHeight={"100px"} className="Titles">
-        <Typography
-          textAlign={"center"}
-          variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
-        >
-          Paquetes listos para cargar
+    <Grid2 container paddingX={{ lg: 10 }} display="flex" gap={2}>
+      <Grid2
+        size={12}
+        paddingRight={15}
+        flexGrow={1}
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+      >
+        <Typography variant="h4">
+          <strong>Paquetes listos para cargar</strong>
         </Typography>
-      </Grid>
-      <Grid item xs={12} marginY={2}>
+      </Grid2>
+      <Grid2 size={12}>
+        <BreadcrumbCustom paths={paths} />
+      </Grid2>
+      <Grid2 size={12}>
         <DataGrid
-          sx={{ fontSize: "20px", fontFamily: "sans-serif" }}
+          sx={{
+            fontSize: "12px",
+            fontFamily: "sans-serif",
+            borderRadius: "20px",
+            bgcolor: "#fff",
+            border: "1px solid rgb(209, 205, 205)", // Borde exterior naranja
+            "& .MuiDataGrid-cell": {
+              borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno claro
+            },
+          }}
+          localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           columns={[
             {
               field: "date",
@@ -203,9 +188,13 @@ const LoadPackage = () => {
               sortable: false,
               type: "actions",
               getActions: (params) => [
-                <Button onClick={()=>handleOpen(params.row)} variant="text" color="primary">
+                <Button
+                  onClick={() => handleOpen(params.row)}
+                  variant="text"
+                  color="primary"
+                >
                   Cargar Paquete
-                </Button>
+                </Button>,
               ],
             },
           ]}
@@ -233,13 +222,13 @@ const LoadPackage = () => {
             hideToolbar: true,
           }}
         />
-      </Grid>
+      </Grid2>
       <LoadPackageModal
-      openModal={openModal}
-      handleClose={handleClose}
-      productOrder={valuePO}
+        openModal={openModal}
+        handleClose={handleClose}
+        productOrder={valuePO}
       />
-    </Grid>
+    </Grid2>
   );
 };
 

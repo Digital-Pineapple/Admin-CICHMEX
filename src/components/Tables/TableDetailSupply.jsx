@@ -18,12 +18,13 @@ const TableDetailSupply = ({ supply_detail, products }) => {
   if (!supply_detail) {
     return null;
   }
+  
   const combinedArray = supply_detail.map((item1) => {
     let matchingItem; // Definimos la variable antes del condicional
 
     if (item1.type === "variant_product") {
       matchingItem = products.find(
-        (item2) => item1.product_id === item2.variant._id
+        (item2) => item1.product_id === item2?.variant?._id
       );
     } else {
       matchingItem = products.find(

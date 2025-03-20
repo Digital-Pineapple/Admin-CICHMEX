@@ -5,6 +5,7 @@ import {
   editProductOrder,
   loadProductOrder,
   loadProductOrders,
+  loadReadyToDelivery,
   loadReadyToPoint,
   startLoadResume,
   updateOneProductOrder,
@@ -14,6 +15,7 @@ import { headerConfigApplication } from "../../apis/headersConfig";
 import Swal from "sweetalert2";
 import { startLoading, stopLoading } from "../reducer/uiReducer";
 import { green } from "@mui/material/colors";
+import { loadAllOptimizedRoutes } from "../reducer";
 
 export const startLoadProductOrders = () => {
   return async (dispatch) => {
@@ -286,7 +288,7 @@ export const startLoadVerifyPackage = (
         anchorOrigin: { horizontal: "center", vertical: "top" },
         variant: "success",
       });
-      navigate("/transportista/cargar", { replace: true });
+      dispatch(deleteProductOrder(data.data._id))
     } catch (error) {
       const errorMessage =
         error.response?.data?.message 
@@ -409,6 +411,33 @@ export const startLoadReadyToPoint = () => {
         }
       );
       dispatch(stopLoading());
+    }
+  };
+};
+export const startLoadReadyToDelivery = () => {
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      const { data } = await instanceApi.get(
+        `/product-order/ready_to_delivery`,
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
+      );
+      dispatch(loadReadyToDelivery(data.data));
+    } catch (error) {
+      enqueueSnackbar(
+        `${error.response.data.message}`,
+        {
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+          variant: "error",
+        }
+      );
+    }finally{
+      dispatch(stopLoading())
     }
   };
 };
@@ -691,4 +720,63 @@ export const startLoadPendingTransfer = () => {
     }
   };
 };
+
+export const startLoadRoutesDelivery = (myCoords) => {
+  
+  return async (dispatch) => {
+    dispatch(startLoading())
+    try {
+      const { data } = await instanceApi.get(
+        `/product-order/optimation_to_delivery`,
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+           params:{
+            coords: myCoords
+          }
+        }
+      );
+      const {info, waypoints, totalDistance, totalDuration} = data.data
+      
+      
+      const routeData = {
+        origin: info.routes[0].legs[0].start_location,
+        destination: info.routes[0].legs[0].end_location,
+        steps: info.routes[0].legs[0].steps.map((step) => ({
+          polyline: step.polyline.points,
+          instructions: step.html_instructions,
+        })),
+        overviewPolyline: info.routes[0].overview_polyline.points,
+        waypoints: waypoints,
+        totalDistance,
+        totalDuration,
+        points: info.routes[0].legs
+
+      };
+      dispatch(loadAllOptimizedRoutes(routeData))
+      enqueueSnackbar(`${data.message}`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+      
+    } catch (error) {
+      enqueueSnackbar(`${error.response.data.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    }finally{
+      dispatch(stopLoading())
+    }
+
+  };
+};
+
 

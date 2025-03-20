@@ -1,4 +1,3 @@
-import { Navigate } from "react-router-dom";
 import { Login } from "../pages/Login";
 import Users from "../pages/Usuarios/Users";
 import Services from "../pages/Services/Services";
@@ -6,14 +5,10 @@ import EditUser from "../pages/Usuarios/Edit";
 import EditServices from "../pages/Services/Edit";
 import TypeCar from "../pages/TypeCar/TypeCar";
 import Categories from "../pages/Category/Categories";
-import EditCategory from "../pages/Category/Edit";
-import CreateCategory from "../pages/Category/Create";
 import CreateTypeCar from "../pages/TypeCar/Create";
 import EditTypeCar from "../pages/TypeCar/Edit";
 import CreateServices from "../pages/Services/Create";
 import SubCategories from "../pages/SubCategory/SubCategories";
-import CreateSubCategory from "../pages/SubCategory/Create";
-import EditSubCategory from "../pages/SubCategory/Edit";
 import Commissions from "../pages/Commission/Commissions";
 import CreateCommission from "../pages/Commission/Create";
 import EditCommission from "../pages/Commission/Edit";
@@ -34,7 +29,6 @@ import EditStoreHouse from "../pages/StoreHouse/Edit";
 import StockProductsSH from "../pages/StoreHouse/StockProductsSH";
 import AddProductsToSH from "../pages/StoreHouse/AddProductsToSH";
 import { MyStoreHouse } from "../pages/MyStoreHouse/MyStoreHouse";
-import MyStockProducts from "../pages/MyStoreHouse/MyStockProducts";
 import MyProductOrders from "../pages/ProductOrders/MyProductOrders";
 import Principal from "../pages/Principal";
 import FillOrder from "../pages/MyStoreHouse/FillOrder";
@@ -44,8 +38,6 @@ import CreateTypeUser from "../pages/TypeUser/Create";
 import CarrierDrivers from "../pages/CarrierDriver/CarrierDrivers";
 import CreateCarrier from "../pages/CarrierDriver/Create";
 import ShippingCost from "../pages/ShippingCost/ShippingCost";
-import EditShippingCost from "../pages/ShippingCost/Edit";
-import CrateShippingCost from "../pages/ShippingCost/Create";
 import ProductEntries from "../pages/MyStoreHouse/ProductEntries";
 import ProductOutputs from "../pages/MyStoreHouse/ProductOutputs";
 import PaidProductOrders from "../pages/ProductOrders/PaidProductOrders";
@@ -53,7 +45,6 @@ import ShippingDeliveryPoint from "../pages/Logistic/ShippingDeliveryPoint";
 import ShippingDelivery from "../pages/Logistic/ShippingDelivery";
 import LoadPackage from "../pages/Logistic/LoadPackage";
 import VerifyPackage from "../pages/Logistic/VerifyPackage";
-import PackagesSent from "../pages/Logistic/PackagesSent";
 import DeliverPackage from "../pages/Logistic/DeliverPackage";
 import StockMovements from "../pages/MyStoreHouse/StockMovements";
 import AddEntries from "../pages/MyStoreHouse/AddEntries";
@@ -74,15 +65,12 @@ import ReadyToDelivery from "../pages/Logistic/ReadyToDelivery";
 import AllSales from "../pages/Sales/AllSales";
 import CompletedOrdersDetail from "../pages/MyStoreHouse/CompletedOrdersDetail";
 import AddVideo from "../pages/Products/AddVideo";
-import DimensionsGuide from "../pages/Products/StepNewProduct/DimensionsGuide";
 import TableGuides from "../pages/SizeDimensions/TableGuides";
-import DescriptionsAndVideo from "../pages/Products/StepNewProduct/DescriptionsAndVideo";
 import EditWithVariants from "../pages/Products/EditWithVariants";
 import CreateWithVariants from "../pages/Products/CreateWithVariants";
 import CreateOneProduct from "../pages/Products/CreateOneProduct";
 import AllMySizeGuides from "../pages/SizeDimensions/AllMySizeGuides";
 import EditMySizeGuides from "../pages/SizeDimensions/EditMySizeGuide";
-import ReadyToSend from "../pages/Logistic/ReadyToSend";
 import MainToSend from "../pages/Logistic/PackageToSend/MainToSend";
 import Discounts from "../pages/Discounts/Discounts";
 import CreateDiscount from "../pages/Discounts/CreateDiscount";
@@ -98,13 +86,12 @@ import UpdateSlider from "../pages/Banners/UpdateSlider";
 import MyAccount from "../pages/Settings/MyAccount";
 import InputsByFolio from "../pages/StockStoreHouse/InputsByFolio";
 import AuthorizeInputs from "../pages/StockStoreHouse/AuthorizeInputs";
-import Zones from "../pages/Warehouse/WarehouseManagement/Zones";
 import WarehouseManagement from "../pages/Warehouse/WarehouseManagement/WarehouseManagement";
-import Aisles from "../pages/Warehouse/WarehouseManagement/Aisles";
 import ArrangeProducts from "../pages/StockStoreHouse/ArrangeProducts";
 import Warehouseman from "../pages/Warehouse/Warehouseman/Warehouseman";
 import CreateWarehouseman from "../pages/Warehouse/Warehouseman/Create";
 import EditWarehouseman from "../pages/Warehouse/Warehouseman/Edit";
+import PackagesReady from "../pages/Logistic/DeliveryToPoint/PackagesReady";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -126,12 +113,8 @@ export const AllRoutes = [
   { id: 13, element: <EditTypeCar /> },
 
   { id: 14, element: <Categories /> },
-  // { id: 15, element: <CreateCategory /> },
-  // { id: 16, element: <EditCategory /> },
 
   { id: 17, element: <SubCategories /> },
-  // { id: 18, element: <CreateSubCategory /> },
-  // { id: 19, element: <EditSubCategory /> },
 
   { id: 20, element: <TypeUser /> },
   { id: 21, element: <CreateTypeUser /> },
@@ -153,7 +136,7 @@ export const AllRoutes = [
   { id: 33, element: <EditProduct /> },
 
   { id: 34, element: <ShippingCost /> },
-  // { id: 35, element: <CrateShippingCost /> },
+
    { id: 36, element: <EditStoreHouse /> },
 
   { id: 37, element: <StoreHouse /> },
@@ -177,7 +160,6 @@ export const AllRoutes = [
   { id: 50, element: <LoadPackage /> },
   { id: 51, element: <VerifyPackage /> },
 
-  { id: 52, element: <PackagesSent /> },
   { id: 53, element: <DeliverPackage /> },
 
   { id: 54, element: <AssignRoute /> },
@@ -207,6 +189,7 @@ export const AllRoutes = [
   { id: 71, element: <CompletedOrdersDetail /> },
   { id: 72, element: <AddVideo /> },
   { id: 73, element: <EditWithVariants /> },
+  { id: 74, element: <PointsList /> },
 
   { id: 75, element: <CreateOneProduct /> },
   
@@ -215,17 +198,15 @@ export const AllRoutes = [
   { id: 78, element: <EditMySizeGuides /> },
   { id: 79, element: <AssignRoute /> },
   { id: 80, element: <MainToSend /> },
+  { id: 81, element: <PackagesReady/>},
   { id: 100, element: <Discounts /> },
   { id: 101, element: <UpdateDiscount /> },
   { id: 102, element: <CreateDiscount /> },
-  // { id: 80, element: <MainToSend /> },
-  // { id: 80, element: <OrdersDeliveryPoint /> },
   
   { id: 90, element: <CreateDeliveryPoint /> },
   { id: 91, element: <BranchOfficeEdit /> },    
   { id: 92, element: <BranchOfficeDetail />},    
   {id: 93, element: <DeliveryPointsOrder />},
-  { id: 74, element: <PointsList /> },
   { id: 110, element: <Banners /> },
   { id: 111, element: <CreateSlider /> },
   { id: 112, element: <UpdateSlider /> },

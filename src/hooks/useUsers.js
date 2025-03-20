@@ -9,6 +9,7 @@ import {
   getOneUser,
   getUsers,
   startCreateWarehouseman,
+  startLoadMyRoutes,
   startLoadOptimizedRoutes,
   startOneCarrierDriver,
   startOneWarehouseman,
@@ -23,7 +24,7 @@ export const useUsers = () => {
   const dispatch = useDispatch();
 
   const { user, users } = useSelector((state) => state.users);
-  const { CarrierDrivers, CarrierDriver, optimizedRoutes } = useSelector(
+  const { CarrierDrivers, CarrierDriver, optimizedRoutes, inRoute } = useSelector(
     (state) => state.carrierDriver
   );
   const { warehouseman } = useSelector(
@@ -80,6 +81,9 @@ export const useUsers = () => {
   }));
 
   const loadOptimizedRoutes = async (myCoords)=>{ dispatch(startLoadOptimizedRoutes(myCoords))}
+  const loadStartMyRoutes = async (routes)=>{
+     dispatch(startLoadMyRoutes({routes: routes}))
+  }
   
   return {
     user,
@@ -107,6 +111,7 @@ export const useUsers = () => {
     createWarehouseman,
     loadWarehouseman,
     oneWarehouseman,
-    loadUpdateWarehouseman
+    loadUpdateWarehouseman,
+    loadStartMyRoutes
   };
 };

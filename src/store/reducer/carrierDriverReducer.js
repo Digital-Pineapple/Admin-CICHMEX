@@ -6,7 +6,8 @@ export const CarrierDriverReducer = createSlice({
     CarrierDrivers: [],
     CarrierDriver: {},
     loading: false,
-    optimizedRoutes: {}
+    optimizedRoutes: {},
+    inRoute: false
 
   },
   reducers: {
@@ -25,6 +26,12 @@ export const CarrierDriverReducer = createSlice({
       state.CarrierDrivers = state.CarrierDrivers.filter(
         (i) => i._id !== payload._id
       );
+    },
+    loadStartRoutes: (state)=>{
+      state.inRoute = true
+    },
+    loadStopRoutes: (state)=>{
+      state.inRoute = false
     },
     editcarrierDriver: (state, { payload }) => {
       state.CarrierDrivers = state.CarrierDrivers.map((i) => {
@@ -49,6 +56,8 @@ export const {
   loadCarrierDriver,
   loadCarrierDrivers,
   loadAllOptimizedRoutes,
+  loadStartRoutes,
+  loadStopRoutes
 } = CarrierDriverReducer.actions;
 
 export default CarrierDriverReducer.reducer;

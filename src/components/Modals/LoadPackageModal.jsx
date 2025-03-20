@@ -47,6 +47,8 @@ const LoadPackageModal = ({ openModal, handleClose, productOrder }) => {
     }
   }, [valueQr, productOrder]);
 
+
+
   const styleCard = (v) => {
     if (v === productOrder.order_id) {
       setSCard({ border: "10px solid", borderColor: "success.light" });
@@ -134,7 +136,7 @@ const LoadPackageModal = ({ openModal, handleClose, productOrder }) => {
 
                 <Typography>
                   Responsable de empaque:{" "}
-                  {productOrder?.supply_detail?.user?.fullname}
+                  {productOrder?.supply_detail[0]?.user?.fullname}
                 </Typography>
                 <Typography>Fecha de empaque: {date}</Typography>
 
@@ -151,13 +153,13 @@ const LoadPackageModal = ({ openModal, handleClose, productOrder }) => {
                     <h2>Sucursal de Entrega:</h2>
 
                     <Typography>
-                      <strong> Nombre de la sucursal:</strong>{" "}
-                      {productOrder?.branch?.name}
-                      Estado: {productOrder?.branch?.location?.state}
-                      Municipio: {productOrder?.branch?.location?.municipality}
-                      Localidad: {productOrder?.branch?.location?.neighborhood}
-                      Dirección: {productOrder?.branch?.location?.direction}
-                      CP: {productOrder?.branch?.location?.cp}
+                      Nombre de la sucursal:{" "} <strong> {productOrder?.branch?.name}</strong> <br />
+                     
+                      Estado: <strong>{productOrder?.branch?.location?.state}</strong> <br />
+                      Municipio: <strong>{productOrder?.branch?.location?.municipality}</strong> <br />
+                      Localidad: <strong> {productOrder?.branch?.location?.neighborhood}</strong> <br />
+                      Dirección: <strong>{productOrder?.branch?.location?.direction}</strong> <br />
+                      CP:  <strong>{productOrder?.branch?.location?.cp}</strong> 
                     </Typography>
                   </>
                 ) : (

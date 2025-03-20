@@ -17,24 +17,20 @@ import {
   Button,
   Grid2,
   Modal,
-  Tooltip,
-  Typography, IconButton,
+  Typography,
+  IconButton,
 } from "@mui/material";
-import { Workbook } from "exceljs";
 import { useProductOrder } from "../../hooks/useProductOrder";
-import { saveAs } from "file-saver"; 
-import Download from "@mui/icons-material/Download";
-import Swal from "sweetalert2";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
-import LoadPackageModal from "../../components/Modals/LoadPackageModal";
-import MapReadyToPoint from "../../components/Google/MapReadyToPoint";
 import { useUsers } from "../../hooks/useUsers";
 import MapRouteOptimized from "../../components/Google/MapRouteOptimized";
 import { localDate } from "../../Utils/ConvertIsoDate";
-import { Close, Handshake, Visibility } from "@mui/icons-material";
+import { Close, Route, Visibility } from "@mui/icons-material";
 import MapGoogleMarker from "../../components/Google/MapGoogleMarker";
 import CustomNoRows from "../../components/Tables/CustomNoRows";
 import { useAuthStore } from "../../hooks";
+import { esES } from "@mui/x-data-grid/locales";
+import TableBranchDetail from "../../components/Tables/TableBranchDetail";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -70,171 +66,159 @@ function CustomPagination(props) {
 }
 
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: 800,
-  bgcolor: 'background.paper',
-  borderRadius:'20px',
+  bgcolor: "background.paper",
+  borderRadius: "20px",
   boxShadow: 24,
   p: 4,
+  maxHeight: 500,
+  overflow: "auto",
 };
 
 const ReadyToDelivery = () => {
-  const { loading, readyToPoint, loadReadyToPoint, navigate } = useProductOrder();
-  const {user} =useAuthStore()
-  const {loadOptimizedRoutes,optimizedRoutes} = useUsers()
-  const [detail, setDetail] = useState(null)
+  const { loading, readyToPoint, loadReadyToPoint, navigate } =
+    useProductOrder();
+  const { user } = useAuthStore();
+  const { loadOptimizedRoutes, optimizedRoutes, loadStartMyRoutes } = useUsers();
+  const [detail, setDetail] = useState(null);
   const [open, setOpen] = useState(false);
-  const [myPosition, setMyPosition] = useState({lat:'', lng:''});
+  const [myPosition, setMyPosition] = useState({ lat: "", lng: "" });
   const handleOpen = (values) => {
-    const location = values.deliveryLocation || values.branch?.location
-    const coords = {lat: location.lat, lng: location.lgt}
-    setOpen(true) , setDetail({...values, coords, location})};
-  const handleClose = () => {setOpen(false), setDetail(null)};
-
+    const location = values.deliveryLocation || values.branch?.location;
+    const coords = { lat: location.lat, lng: location.lgt };
+    setOpen(true), setDetail({ ...values, coords, location });
+  };
+  const handleClose = () => {
+    setOpen(false), setDetail(null);
+  };
   useEffect(() => {
     loadReadyToPoint();
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const { latitude, longitude } = position.coords;
-        setMyPosition({lat: latitude, lng:longitude})
-        loadOptimizedRoutes({lat: latitude, lgt: longitude})
-      }, (error) => {
-        console.error('Error obteniendo la ubicación:', error);
-      });
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setMyPosition({ lat: latitude, lng: longitude });
+          loadOptimizedRoutes({ lat: latitude, lgt: longitude });
+        },
+        (error) => {
+          console.error("Error obteniendo la ubicación:", error);
+        }
+      );
     } else {
       console.log("La geolocalización no es soportada por este navegador.");
     }
   }, [user]);
-  
-  
-   
 
   const rowsWithIds = readyToPoint?.map((item, index) => {
     const quantities = item.products.map((i) => i.quantity);
-    const suma = quantities.reduce((valorAnterior, valorActual) => valorAnterior + valorActual, 0);
+    const suma = quantities.reduce(
+      (valorAnterior, valorActual) => valorAnterior + valorActual,
+      0
+    );
 
     const TD = item.branch ? "En Punto de entrega" : "A domicilio";
-    const statusRoute = item?.route_detail?.route_status || 'No asignado';
+    const statusRoute = item?.route_detail?.route_status || "No asignado";
 
     return {
       quantityProduct: suma,
       typeDelivery: TD,
       id: index.toString(),
-      status_route: statusRoute === 'assigned' ? 'Cargado':'No cargado',
-      date : localDate(item.createdAt),
+      status_route: statusRoute === "assigned" ? "Cargado" : "No cargado",
+      date: localDate(item.createdAt),
       ...item,
     };
   });
 
-  const exportToExcel = () => {
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Stock de productos");
-
-    const headerRow = worksheet.addRow([
-      "Cantidad de productos",
-      "Tipo de envío",
-      "Existencias",
-      "Precio",
-      "Tamaño",
-    ]);
-    headerRow.eachCell((cell) => {
-      cell.font = { bold: true };
-    });
-
-    rowsWithIds.forEach((row) => {
-      worksheet.addRow([
-        row.quantityProduct,
-        row.typeDelivery,
-        row.existences, // Ensure this field exists
-        row.price,
-        row.size,
-      ]);
-    });
-
-    workbook.xlsx.writeBuffer().then((buffer) => {
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      saveAs(blob, "Pedidos.xlsx");
-    });
-  };
+  const handleStartRoutes = ()=>{
+    loadStartMyRoutes(readyToPoint)    
+  }
 
   function CustomToolbar() {
-    const apiRef = useGridApiContext();
-
-    const handleGoToPage1 = () => apiRef.current.setPage(1);
 
     return (
-      <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
-          <Button size="small" variant="contained" color="primary" onClick={()=>rechargeRoutes()}>
-            Recargar rutas
-          </Button>
-        <GridToolbarQuickFilter />
-        <Button
-          variant="text"
-          startIcon={<Download />}
-          disableElevation
-          sx={{ color: "secondary.main" }} // Correct usage of the secondary color
-          onClick={exportToExcel}
-        >
-          Descargar Excel
-        </Button>
+      <GridToolbarContainer sx={{ justifyContent: "space-evenly" }}>
+        <GridToolbarQuickFilter variant="outlined" />
       </GridToolbarContainer>
     );
   }
-
- 
 
   if (loading) {
     return <LoadingScreenBlue />;
   }
 
-  const rechargeRoutes = () =>{
+  const rechargeRoutes = () => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const { latitude, longitude } = position.coords;
-        loadOptimizedRoutes({lat: latitude, lgt: longitude})
-      }, (error) => {
-        console.error('Error obteniendo la ubicación:', error);
-      });
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          loadOptimizedRoutes({ lat: latitude, lgt: longitude });
+        },
+        (error) => {
+          console.error("Error obteniendo la ubicación:", error);
+        }
+      );
     } else {
       console.log("La geolocalización no es soportada por este navegador.");
     }
-  }
-  
-
+  };
 
   return (
-    <Grid2 size={12} width={'100%'} >
-      <Grid2 marginTop={{ xs: "-30px" }} size={12} minHeight={"100px"} className="Titles">
-        <Typography
-          textAlign={"center"}
-          variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
-        >
-          Paquetes listos para entregar
+    <Grid2 container paddingX={{ xs: 0, lg: 10 }} display={"flex"} gap={2}>
+      <Grid2
+        size={12}
+        paddingRight={15}
+        flexGrow={1}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        marginBottom={2}
+      >
+        <Typography variant="h4" sx={{ fontSize: { xs: "16px", lg: "25px" } }}>
+          <strong>Planeación de ruta</strong>
         </Typography>
+      </Grid2>
+
+      {optimizedRoutes ? (
+        <Grid2 container sx={{ alignItems:'center', padding:4}} width={'100%'} display={'flex'} gap={2}>
+       <Grid2 size={{xs:12, lg:4.7}}>
+          <Typography variant="h5" color="initial">
+            Distancia aprox: <strong>{optimizedRoutes.totalDistance}</strong> <br />
+            Tiempo aprox: <strong>{optimizedRoutes.totalDuration}</strong>
+          </Typography>
+          <Button variant="contained" onClick={handleStartRoutes} startIcon={<Route/>} fullWidth>
+          Comenzar viaje
+          </Button>
+
+        </Grid2>
+        <Grid2 size={{xs:12, lg:7}} >
+          <MapRouteOptimized
+            optimizedRoutes={optimizedRoutes}
+            myPosition={myPosition}
+          />
+        </Grid2>
        
-      </Grid2>
-      {
-        optimizedRoutes ? (
-      <Grid2  size={12} padding={2} >
-      <MapRouteOptimized optimizedRoutes={optimizedRoutes} myPosition={myPosition} />
-      <Typography variant="h5" color="initial">
-        Distancia aprox: <strong>{optimizedRoutes.totalDistance}</strong> ,{" "}
-        Tiempo aprox: <strong>{optimizedRoutes.totalDuration}</strong>
-      </Typography>
-      </Grid2>
-        ): ''
-      }
-     
-      <Grid2 size={12} >
-      
+        </Grid2>
+      ) : (
+        ""
+      )}
+
+      <Grid2 size={12}>
         <DataGrid
-          sx={{ fontSize: "12px", fontFamily: "sans-serif" }}
+          sx={{
+            fontSize: "12px",
+            fontFamily: "sans-serif",
+            borderRadius: "20px",
+            bgcolor: "#fff",
+            border: "1px solid rgb(209, 205, 205)", // Borde exterior naranja
+            "& .MuiDataGrid-cell": {
+              borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno claro
+            },
+          }}
+          localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           columns={[
             {
               field: "date",
@@ -264,19 +248,27 @@ const ReadyToDelivery = () => {
               type: "actions",
               getActions: (params) => [
                 <Button
-                startIcon={<Visibility/>}
-                sx={{textTransform:'capitalize'}}
-                size="small"
-                onClick={()=>handleOpen(params.row)} variant="text" color="primary">
+                  startIcon={<Visibility />}
+                  sx={{ textTransform: "capitalize" }}
+                  size="small"
+                  onClick={() => handleOpen(params.row)}
+                  variant="text"
+                  color="primary"
+                >
                   Ver Detalles
                 </Button>,
-                 <Button
-                 startIcon={<Handshake/>}
-                 sx={{textTransform:'capitalize'}}
-                 size="small"
-                 onClick={()=>navigate(`/transportista/entregar/${params.row._id}`)} variant="text" color="success">
-                   Entregar
-                 </Button>
+                // <Button
+                //   startIcon={<Handshake />}
+                //   sx={{ textTransform: "capitalize" }}
+                //   size="small"
+                //   onClick={() =>
+                //     navigate(`/transportista/entregar/${params.row._id}`)
+                //   }
+                //   variant="text"
+                //   color="success"
+                // >
+                //   Entregar
+                // </Button>,
               ],
             },
           ]}
@@ -289,7 +281,7 @@ const ReadyToDelivery = () => {
             columnSortedDescendingIcon: SortedDescendingIcon,
             columnSortedAscendingIcon: SortedAscendingIcon,
             columnUnsortedIcon: UnsortedIcon,
-            noRowsOverlay: CustomNoRows
+            noRowsOverlay: CustomNoRows,
           }}
           disableColumnFilter
           density="compact"
@@ -309,33 +301,28 @@ const ReadyToDelivery = () => {
         />
       </Grid2>
 
-      <Modal
-        open={open}
-        onClose={handleClose}
-      >
+      <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
-          <IconButton sx={{left:`calc(95%)`}} aria-label="Cerrar" onClick={()=>handleClose()}>
-            <Close/>
+          <IconButton
+            sx={{ left: `calc(95%)` , top:-20 }}
+            aria-label="Cerrar"
+            onClick={() => handleClose()}
+          >
+            <Close />
           </IconButton>
-           <MapGoogleMarker center={detail?.coords} zoom={16}/> 
-           <Typography textAlign={'center'} variant="body2" color="initial">
-            Id de orden: <strong>{detail?.order_id}</strong><br />
-           <strong>Direccion:</strong>  <br />
-            Municipio: {detail?.location.municipality} <br />
-            Localidad: {detail?.location.neighborhood} <br />
-            Calle:{detail?.location.street} <br />
-            Numero: { detail?.location.numext } <br />
-            CP: { detail?.location.zipcode}
+          <Grid2 container display={'flex'} gap={2} >
 
-           </Typography>
+          <Grid2 size={{xs: 12 , lg:6}}>
+            <TableBranchDetail branch={detail?.branch} />
+          </Grid2>
+          <Grid2 size={{xs:12, lg:5.7}}>
+            <MapGoogleMarker center={detail?.coords} zoom={16} />
+          </Grid2>
+          </Grid2>
         </Box>
       </Modal>
-      
-     
-      
-      
     </Grid2>
   );
 };
 
-export default ReadyToDelivery
+export default ReadyToDelivery;

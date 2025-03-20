@@ -46,7 +46,6 @@ const ArrangeProducts = () => {
   const { loadEntryReport, EntryReport, loading } = useStockStorehouse();
   const { searchProductSection, getSection, section, addProductToSection, updateStock, navigate } = useWarehouse();
   const { folio } = useParams();
-
   const [section1, setSection] = useState(null);
   const [validation, setValidation] = useState(false);
   const [valuate, setValuate] = useState(null);
