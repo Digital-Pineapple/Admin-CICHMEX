@@ -129,7 +129,12 @@ const FillOrder = () => {
       Completar surtido
     </Button>
   );
-  const RenderButtonAsignTotal = (disabled) => (
+  
+  const RenderButtonAsignTotal = (disabled) => {
+    if (productOrder.storeHouseStatus) {
+      return null
+    }return(
+
     <Button
       variant="contained"
       onClick={completeSupply}
@@ -139,7 +144,8 @@ const FillOrder = () => {
     >
       Terminar surtido
     </Button>
-  );
+    )
+}
   const renderSection = (sectionData) => {
     if (Array.isArray(sectionData) && sectionData.length > 0) {
       const sec = sectionData[0];

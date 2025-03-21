@@ -71,7 +71,6 @@ const LoadPackage = () => {
   const [valuePO, setValuePO] = useState(null);
 
   const handleOpen = (values) => {
-    console.log(values,'data ok ');
     
     setValuePO(values);
     setOpenModal(true);

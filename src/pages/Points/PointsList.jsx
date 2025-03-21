@@ -13,7 +13,7 @@ import {
 } from "@mui/x-data-grid";
 import EditButton from "../../components/Buttons/EditButton";
 import MuiPagination from "@mui/material/Pagination";
-import { Add, Download, Visibility } from "@mui/icons-material";
+import { Add, Download, Looks, Visibility } from "@mui/icons-material";
 import SortIcon from "@mui/icons-material/Sort";
 import { Workbook } from "exceljs";
 import DeleteAlertInput from "../../components/ui/DeleteAlertInput";
@@ -110,9 +110,11 @@ export const PointsList = () => {
             sortable: false,
             type: "actions",
             getActions: (params) => [    
-              <Button onClick={() => navigate(`/puntos-entrega/${params.row._id}/ordenes/${params.row.name}`)} variant="contained" sx={{marginRight: 2}}>
-                Ver pedidos
-              </Button>,
+              <Tooltip title={'Ver pedidos'}>
+              <IconButton  onClick={() => navigate(`/puntos-entrega/${params.row._id}/ordenes/${params.row.name}`)} >
+               <Looks/>
+              </IconButton>
+              </Tooltip>,
               <Tooltip title="Ver Detalle">
                 <IconButton
                   aria-label="ver detalle"

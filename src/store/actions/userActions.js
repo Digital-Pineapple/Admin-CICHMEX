@@ -70,6 +70,7 @@ export const startLoadMyRoutes = (routes) => {
       );
       dispatch(loadStartRoutes());
       Swal.fire({title:`${data.message}`, icon:'success'})
+      navigate(`/transportista/entregar`,{replace:true})
       
     } catch (error) {
       console.log(error);

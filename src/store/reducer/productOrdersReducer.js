@@ -30,7 +30,10 @@ export const productOrdersReducer = createSlice({
       state.productOrder = payload;
     },
     deleteProductOrder: (state, { payload }) => {
-      state.productOrder = state.productOrders.filter((i) => i._id !== payload);
+      state.productOrders = state.productOrders.filter((i) => i._id !== payload);
+    },
+    deleteProductOrderDelivery: (state, { payload }) => {
+      state.productOrder = state.readyToDelivery.filter((i) => i._id !== payload);
     },
     startLoadResume: (state, { payload }) => {
       state.resumeOrders = payload;

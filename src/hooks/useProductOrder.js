@@ -65,9 +65,9 @@ export const useProductOrder = () => {
 
   const loadProductOrder = async (id) => dispatch(LoadOneProductOrder(id));
 
-  const loadVerifyQR = async (values) => dispatch(StartLoadVerifyQr(values));
+  const loadVerifyQR = async (values, callbackClose) => dispatch(StartLoadVerifyQr(values, callbackClose));
 
-  const loadVerifyQRtoPoint = async (values) => dispatch(StartLoadVerifyToPoint(values));
+  const loadVerifyQRtoPoint = async (values, callbackCloseModal) => dispatch(StartLoadVerifyToPoint(values, callbackCloseModal));
 
   const loadResumeProductOrder = async () => dispatch(StartLoadResumeSales());
 

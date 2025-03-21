@@ -16,6 +16,7 @@ import Swal from "sweetalert2";
 import { startLoading, stopLoading } from "../reducer/uiReducer";
 import { green } from "@mui/material/colors";
 import { loadAllOptimizedRoutes } from "../reducer";
+import { onDeleteOrder, onUpdateOrders } from "../reducer/deliveryPointsReducer";
 
 export const startLoadProductOrders = () => {
   return async (dispatch) => {
@@ -288,6 +289,7 @@ export const startLoadVerifyPackage = (
         anchorOrigin: { horizontal: "center", vertical: "top" },
         variant: "success",
       });
+      
       dispatch(deleteProductOrder(data.data._id))
     } catch (error) {
       const errorMessage =
@@ -467,9 +469,10 @@ export const StartLoadResumeSales = () => {
     dispatch(stopLoading());
   };
 };
-export const StartLoadVerifyQr = ({ order, user, code }) => {
+export const StartLoadVerifyQr = ({ order, user, code }, callbackClose) => {
   return async (dispatch) => {
     try {
+      dispatch(startLoading())
       const response = await instanceApi.post(
         `/product-order/start-verifyQr`,
         { order_id: order, user_id: user, v_code: code },
@@ -479,8 +482,11 @@ export const StartLoadVerifyQr = ({ order, user, code }) => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
-      );
+      );  
       const id = response.data.data._id;
+      
+      dispatch(onUpdateOrders(response.data.data))
+      callbackClose()
       Swal.fire({
         title: `Entrega de pedido${response.data.data.order_id}`,
         text: "Observaciones",
@@ -503,6 +509,7 @@ export const StartLoadVerifyQr = ({ order, user, code }) => {
                 },
               }
             );
+            dispatch(onDeleteOrder(data.data))
           } catch (error) {
             Swal.showValidationMessage(`
                   Request failed: ${error}
@@ -510,29 +517,26 @@ export const StartLoadVerifyQr = ({ order, user, code }) => {
           }
         },
         allowOutsideClick: () => !Swal.isLoading(),
-      }).then((result) => {
-        if (result.isConfirmed) {
-          console.log(result.isConfirmed);
-          Swal.fire({
-            title: `Se entrego el pedido con éxito`,
-          });
-        }
-      });
+      })
     } catch (error) {
+      
       enqueueSnackbar(`${error.response.data.message}`, {
         anchorOrigin: { horizontal: "center", vertical: "top" },
         variant: "error",
       });
+    }finally{
+      dispatch(stopLoading())
     }
   };
 };
 
-export const StartLoadVerifyToPoint = ({ order, user, code, branch_id }) => {
+export const StartLoadVerifyToPoint = (values, callbackCloseModal) => {
   return async (dispatch) => {
     try {
-      const response = await instanceApi.post(
+      dispatch(startLoading())
+      const { data } = await instanceApi.put(
         `/product-order/verifyQrToPoint`,
-        { order_id: order, user_id: user, v_code: code, branch_id: branch_id },
+        values,
         {
           headers: {
             "Content-type": "application/json",
@@ -541,24 +545,22 @@ export const StartLoadVerifyToPoint = ({ order, user, code, branch_id }) => {
         }
       );
       Swal.fire({
-        title: `Entrega de pedido${response.data.data.order_id}`,
+        title: `Se recibió paquete: ${data.data.order_id}`,
         text: "Se validó codigo correctamente",
         showCancelButton: false,
-        confirmButtonText: "Terminar entrega",
-        showLoaderOnConfirm: true,
-        allowOutsideClick: () => !Swal.isLoading(),
-      }).then((result) => {
-        if (result.isConfirmed) {
-          Swal.fire({
-            title: `Se entrego el pedido con éxito`,
-          });
-        }
-      });
+        confirmButtonText: "Ok",
+      })
+      
+      dispatch(onUpdateOrders(data.data))
+      dispatch(callbackCloseModal())
+
     } catch (error) {
       enqueueSnackbar(`${error.response.data.message}`, {
         anchorOrigin: { horizontal: "center", vertical: "top" },
         variant: "error",
       });
+    }finally {
+      dispatch(stopLoading())
     }
   };
 };

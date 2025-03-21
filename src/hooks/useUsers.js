@@ -82,7 +82,7 @@ export const useUsers = () => {
 
   const loadOptimizedRoutes = async (myCoords)=>{ dispatch(startLoadOptimizedRoutes(myCoords))}
   const loadStartMyRoutes = async (routes)=>{
-     dispatch(startLoadMyRoutes({routes: routes}))
+     dispatch(startLoadMyRoutes({routes: routes}, navigate))
   }
   
   return {
