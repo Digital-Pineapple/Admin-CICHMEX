@@ -16,7 +16,7 @@ import Swal from "sweetalert2";
 import { startLoading, stopLoading } from "../reducer/uiReducer";
 import { green } from "@mui/material/colors";
 import { loadAllOptimizedRoutes } from "../reducer";
-import { onDeleteOrder, onUpdateOrders } from "../reducer/deliveryPointsReducer";
+import { onDeleteOrder, onUpdateOrders, setOrdersByDeliveryPoint } from "../reducer/deliveryPointsReducer";
 
 export const startLoadProductOrders = () => {
   return async (dispatch) => {
@@ -767,6 +767,41 @@ export const startLoadRoutesDelivery = (myCoords) => {
       });
       
     } catch (error) {
+      enqueueSnackbar(`${error.response.data.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    }finally{
+      dispatch(stopLoading())
+    }
+
+  };
+};
+
+export const startLoadPackagesDelivered = (id) => {
+  
+  return async (dispatch) => {
+    dispatch(startLoading())
+    try {
+      const { data } = await instanceApi.get(
+        `/product-order/delivered_by_branch/${id}`,
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      console.log(data.data,'informacino recibida');
+      
+      dispatch(setOrdersByDeliveryPoint(data.data))
+      
+    } catch (error) {
+      console.log(error,'error');
+      
       enqueueSnackbar(`${error.response.data.message}`, {
         variant: "error",
         anchorOrigin: {

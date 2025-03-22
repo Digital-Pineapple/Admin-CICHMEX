@@ -4,6 +4,7 @@ import { activateDeliveryPoint, deleteBranchImage, desactivateDeliveryPoint, get
 import { resetDeliveryPoint } from "../store/reducer/deliveryPointsReducer";
 import { useNavigate } from "react-router-dom";
 import { getOrdersByBranch } from "../store/actions/deliveryPointsOrders";
+import { startLoadPackagesDelivered } from "../store/actions/productOrderActions";
 
 const useDeliveryPoints = () => {
   const { deliveryPoints , deliveryPoint, loading, orders } = useSelector((state) => state.deliveryPoints);
@@ -41,6 +42,10 @@ const useDeliveryPoints = () => {
   const onDeleteImage = (branch_id, image_id) => {
     dispatch(deleteBranchImage(branch_id, image_id));
   }
+
+  const loadPackagesDelivered = (id)=>{
+    dispatch(startLoadPackagesDelivered(id))
+  }
   
 
   return {
@@ -57,7 +62,8 @@ const useDeliveryPoints = () => {
     onDesactivateDeliveryPoint,
     onLoadOrdersByPointDelivery,
     orders,
-    onDeleteImage      
+    onDeleteImage,
+    loadPackagesDelivered      
   }
 };
 

@@ -92,6 +92,7 @@ import Warehouseman from "../pages/Warehouse/Warehouseman/Warehouseman";
 import CreateWarehouseman from "../pages/Warehouse/Warehouseman/Create";
 import EditWarehouseman from "../pages/Warehouse/Warehouseman/Edit";
 import PackagesReady from "../pages/Logistic/DeliveryToPoint/PackagesReady";
+import PackagesDelivered from "../pages/Points/DeliveryPointOrders/PackagesDelivered";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -137,10 +138,10 @@ export const AllRoutes = [
 
   { id: 34, element: <ShippingCost /> },
 
-   { id: 36, element: <EditStoreHouse /> },
+  { id: 36, element: <EditStoreHouse /> },
 
   { id: 37, element: <StoreHouse /> },
-  
+
   { id: 38, element: <CreateStoreHouse /> },
   { id: 39, element: <StockProductsSH /> },
   { id: 40, element: <AddProductsToSH /> },
@@ -170,7 +171,7 @@ export const AllRoutes = [
   { id: 57, element: <CreateCarrier /> },
 
   { id: 58, element: <VerifySales /> },
-   { id: 59, element: <DetailSale /> },
+  { id: 59, element: <DetailSale /> },
 
   { id: 60, element: <DynamicRoutes /> },
   { id: 61, element: <AddDynamicRoute /> },
@@ -192,32 +193,35 @@ export const AllRoutes = [
   { id: 74, element: <PointsList /> },
 
   { id: 75, element: <CreateOneProduct /> },
-  
+
   { id: 76, element: <TableGuides /> },
   { id: 77, element: <AllMySizeGuides /> },
   { id: 78, element: <EditMySizeGuides /> },
   { id: 79, element: <AssignRoute /> },
   { id: 80, element: <MainToSend /> },
-  { id: 81, element: <PackagesReady/>},
+  { id: 81, element: <PackagesReady /> },
+  
+  { id: 90, element: <CreateDeliveryPoint /> },
+  { id: 91, element: <BranchOfficeEdit /> },
+  { id: 92, element: <BranchOfficeDetail /> },
+  { id: 93, element: <DeliveryPointsOrder /> },
+  { id: 94, element: <PackagesDelivered /> },
+
   { id: 100, element: <Discounts /> },
   { id: 101, element: <UpdateDiscount /> },
   { id: 102, element: <CreateDiscount /> },
-  
-  { id: 90, element: <CreateDeliveryPoint /> },
-  { id: 91, element: <BranchOfficeEdit /> },    
-  { id: 92, element: <BranchOfficeDetail />},    
-  {id: 93, element: <DeliveryPointsOrder />},
   { id: 110, element: <Banners /> },
+  
   { id: 111, element: <CreateSlider /> },
   { id: 112, element: <UpdateSlider /> },
   { id: 120, element: <MyAccount /> },
   { id: 130, element: <InputsByFolio /> },
   { id: 131, element: <AuthorizeInputs /> },
 
-  {id: 140, element: <Warehouseman/>},
-  { id: 141, element: <CreateWarehouseman/> },
-  { id: 94, element: <EditWarehouseman/> },
- 
-  { id: 200, element: <WarehouseManagement/>},
-  { id: 201, element: <ArrangeProducts/>}
+  { id: 140, element: <Warehouseman /> },
+  { id: 141, element: <CreateWarehouseman /> },
+  { id: 94, element: <EditWarehouseman /> },
+
+  { id: 200, element: <WarehouseManagement /> },
+  { id: 201, element: <ArrangeProducts /> },
 ];
