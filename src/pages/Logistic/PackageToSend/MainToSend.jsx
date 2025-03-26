@@ -10,6 +10,7 @@ import ReadyToSend from '../ReadyToSend';
 import { useTheme } from '@mui/material/styles';
 import { localDate } from '../../../Utils/ConvertIsoDate';
 import LoadingScreenBlue from '../../../components/ui/LoadingScreenBlue';
+import { useMediaQuery } from '@mui/system';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -76,6 +77,8 @@ const MainToSend = () => {
   useEffect(() => {
       CallBackAllPO()
     }, [CallBackAllPO]);
+    const isXs = useMediaQuery('(max-width:600px)');
+    
 
 
 
@@ -112,7 +115,7 @@ const MainToSend = () => {
           onChange={handleChange}
           indicatorColor="secondary"
           textColor="inherit"
-          variant="fullWidth"
+          variant={isXs ? "scrollable" : "fullWidth"}
           aria-label="full width tabs example"
         >
           <Tab label="Todos"  />

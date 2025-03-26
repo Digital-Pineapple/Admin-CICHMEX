@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import {
   DataGrid,
   GridPagination,
@@ -9,21 +8,21 @@ import {
   useGridSelector,
 } from "@mui/x-data-grid";
 import MuiPagination from "@mui/material/Pagination";
-import { Button, Grid2 } from "@mui/material";
+import { Button, IconButton, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material";
 import {
   ExpandLess as ExpandLessIcon,
   ExpandMore as ExpandMoreIcon,
   Sort as SortIcon,
-  Download ,
-  ScheduleSend ,
-  ThumbUpAlt 
+  TransferWithinAStation,
 } from "@mui/icons-material";
 import { useProductOrder } from "../../hooks/useProductOrder";
 import { useAuthStore } from "../../hooks";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import CustomNoRows from "../../components/Tables/CustomNoRows";
-import { localDate } from "../../Utils/ConvertIsoDate";
+import { localDate, localDateTable } from "../../Utils/ConvertIsoDate";
 import { esES } from "@mui/x-data-grid/locales";
+import { useEffect, useState } from "react";
+import useDateFormatter from "../../hooks/useFormattedDate";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -67,13 +66,25 @@ function CustomToolbar() {
 }
 
 const PaidProductOrders = () => {
-  const { loadProductOrdersPaid, navigate, productOrders, loading } =
-    useProductOrder();
+  const isXs = useMediaQuery('(max-width:600px)');
+
+  const { loadProductOrdersPaid, navigate, productOrders, loading } = useProductOrder();
   const { user } = useAuthStore();
+
+  const [columnVisibilityModel, setColumnVisibilityModel] = useState({
+    typeDelivery: !isXs,
+  });
 
   useEffect(() => {
     loadProductOrdersPaid();
   }, [user]);
+
+  useEffect(() => {
+    setColumnVisibilityModel((prevModel) => ({
+      ...prevModel,
+      typeDelivery: !isXs,
+    }));
+  }, [isXs]);
 
   const rowsWithIds = productOrders.map((item, index) => {
     const date = localDate(item.createdAt);
@@ -96,94 +107,108 @@ const PaidProductOrders = () => {
     return <LoadingScreenBlue />;
   }
 
-  return (
-    <Grid2 container gap={1}>
-      <DataGrid
-        sx={{
-          fontSize: "12px",
-          fontFamily: "sans-serif",
-          borderRadius: "20px",
-          bgcolor: "#fff",
-          border: "1px solid rgb(209, 205, 205)", // Borde exterior naranja
-          "& .MuiDataGrid-cell": {
-            borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno claro
-          },
-        }}
-        columns={[
-          {
-            field: "date",
-            headerName: "Fecha de solicitud",
-            flex: 1,
-            align: "center",
-          },
-          {
-            field: "order_id",
-            headerName: "Id de pedido",
-            flex: 1,
-            align: "center",
-          },
-          {
-            field: "typeDelivery",
-            headerName: "Tipo de envío",
-            flex: 1,
-            sortable: false,
-            renderCell: (params) => {
-              if (params.row.typeDelivery === "homedelivery") {
-                return <span>Envío a domicilio</span>;
-              } else {
-                return <span>Punto de entrega</span>;
-              }
-            },
-          },
+  const columns = [
+    {
+      field: "date",
+      headerName: "Fecha",
+      flex: 0.5,
+      align: "center",
+      renderCell: (params) => {
+        const date = localDateTable(params.row.createdAt)
+        const day = date.split("/")[0]
+        const month = date.split("/")[1]
+        return (
+          <Typography variant="h6" fontSize={14} color="initial">
+            {day} <br />
+            {month}
+          </Typography>
+        );
+      },
+    },
+    {
+      field: "order_id",
+      headerName: "Id de pedido",
+      flex: 1,
+      align: "center",
+    },
+    {
+      field: "typeDelivery",
+      headerName: "Tipo de envío",
+      flex: 1,
+      sortable: false,
+      renderCell: (params) => (
+        <span>
+          {params.row.typeDelivery === "A domicilio"
+            ? "Envío a domicilio"
+            : "Punto de entrega"}
+        </span>
+      ),
+    },
+    {
+      field: "Opciones",
+      headerName: "Opciones",
+      align: "center",
+      flex: 1,
+      sortable: false,
+      type: "actions",
+      renderCell: (params) => (
+        <IconButton
+          size="small"
+          variant="contained"
+          onClick={() =>
+            navigate(`/almacenista/surtir-venta/${params.row._id}`)
+          }
+        >
+          <Tooltip title="Surtir pedido" arrow>
+          <TransferWithinAStation color="success"/>
+          </Tooltip>
+        </IconButton>
+      ),
+    },
+  ];
 
-          {
-            field: "Opciones",
-            headerName: "Opciones",
-            align: "center",
-            flex: 1,
-            sortable: false,
-            type: "actions",
-            renderCell: (params) => (
-              <Button
-                size="small"
-                variant="contained"
-                onClick={() =>
-                  navigate(`/almacenista/surtir-venta/${params.row._id}`)
-                }
-              >
-                Surtir
-              </Button>
-            ),
-          },
-        ]}
-        rows={rowsWithIds}
-        autoHeight
-        pagination
-        slots={{
-          pagination: CustomPagination,
-          toolbar: CustomToolbar,
-          columnSortedDescendingIcon: SortedDescendingIcon,
-          columnSortedAscendingIcon: SortedAscendingIcon,
-          columnUnsortedIcon: UnsortedIcon,
-          noRowsOverlay: CustomNoRows,
-        }}
-        disableColumnFilter
-        disableColumnMenu
-        disableColumnSelector
-        disableDensitySelector
-        localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-        slotProps={{
-          toolbar: {
-            showQuickFilter: true,
-            quickFilterProps: { debounceMs: 500 },
-          },
-        }}
-        printOptions={{
-          hideFooter: true,
-          hideToolbar: true,
-        }}
-      />
-    </Grid2>
+  return (
+    <DataGrid
+      sx={{
+        fontSize: "12px",
+        fontFamily: "sans-serif",
+        borderRadius: { xs: '5px', md: '20px' },
+        bgcolor: "#fff",
+        border: "1px solid rgb(209, 205, 205)",
+        "& .MuiDataGrid-cell": {
+          borderBottom: "1px solid rgb(230, 223, 223)",
+        },
+      }}
+      rows={rowsWithIds}
+      columns={columns}
+      autoHeight
+      pagination
+      columnVisibilityModel={columnVisibilityModel}
+      onColumnVisibilityModelChange={setColumnVisibilityModel}
+      slots={{
+        pagination: CustomPagination,
+        toolbar: CustomToolbar,
+        columnSortedDescendingIcon: SortedDescendingIcon,
+        columnSortedAscendingIcon: SortedAscendingIcon,
+        columnUnsortedIcon: UnsortedIcon,
+        noRowsOverlay: CustomNoRows,
+      }}
+      disableColumnFilter
+      disableColumnMenu
+      disableColumnSelector
+      disableDensitySelector
+      localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+      slotProps={{
+        toolbar: {
+          showQuickFilter: true,
+          quickFilterProps: { debounceMs: 500 },
+        },
+      }}
+      printOptions={{
+        hideFooter: true,
+        hideToolbar: true,
+      }}
+    />
   );
 };
 

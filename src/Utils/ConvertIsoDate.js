@@ -20,3 +20,6 @@ dayjs.tz.setDefault('America/Mexico_City');
 // Convertir la fecha a formato local y formatearla
 export const localDate = (date) => 
   dayjs(date).tz(dayjs.tz.guess()).format('dddd, D [de] MMMM [de] YYYY h:mm A');
+
+export const localDateTable = (date) => 
+  dayjs(date).tz(dayjs.tz.guess()).format('D/MMMM');

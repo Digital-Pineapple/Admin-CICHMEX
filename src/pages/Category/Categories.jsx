@@ -44,6 +44,8 @@ import CategoryModal from "../../components/Modals/CategoryModal";
 import CreateCategory from "./Create";
 import EditCategory from "./Edit";
 import { Box } from "@mui/system";
+import { esES } from "@mui/x-data-grid/locales";
+import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -98,7 +100,10 @@ const Categories = () => {
 
   const [open, setOpen] = useState({ value: false, category: null });
   const [openCreate, setOpenCreate] = useState(false);
-  const [openUpdate, setOpenUpdate] = useState({value: false, category:null});
+  const [openUpdate, setOpenUpdate] = useState({
+    value: false,
+    category: null,
+  });
 
   const handleOpen = (data) => {
     setOpen({ value: true, category: data });
@@ -115,11 +120,11 @@ const Categories = () => {
   };
 
   const handleOpenUpdate = (data) => {
-    setOpenUpdate({value:true, category: data});
+    setOpenUpdate({ value: true, category: data });
   };
   const handleCloseUpdate = (e, reason) => {
     if (reason !== "backdropClick") {
-      setOpenUpdate({value: false, category: null})
+      setOpenUpdate({ value: false, category: null });
     }
   };
 
@@ -163,9 +168,8 @@ const Categories = () => {
     const handleGoToPage1 = () => apiRef.current.setPage(1);
 
     return (
-      <GridToolbarContainer sx={{ justifyContent: "space-between", paddingX:5 }}>
-        <GridToolbarQuickFilter placeholder="Buscar" />
-        <Button variant="text" onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
+      <GridToolbarContainer sx={{ justifyContent: "center", paddingX: 5 }}>
+        <GridToolbarQuickFilter variant="outlined" />
       </GridToolbarContainer>
     );
   }
@@ -173,33 +177,28 @@ const Categories = () => {
     return <LoadingScreenBlue />;
   }
 
+  const paths = [{ path: `/mi-almacen/categorías`, name: "Categorías" }];
+
   return (
-    <Grid2 container maxWidth={"85vw"} gap={2}>
+    <Grid2 paddingX={{ xs: 0, lg: 10 }} gap={2}>
       <Grid2
-        marginTop={{ xs: "-30px" }}
         size={12}
-        className="Titles"
-        minHeight={"80px"}
+        paddingRight={15}
+        flexGrow={1}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        marginBottom={2}
       >
-        <Typography
-          textAlign={"center"}
-          variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
-        >
-          Categorías
+        <Typography variant="h4">
+          <strong>Categorias</strong>
         </Typography>
       </Grid2>
-      <Grid2 size={12}>
-        <Button
-          onClick={() => loadCategories()}
-          variant="contained"
-          color="primary"
-        >
-          <RefreshOutlined />
-          Recargar
-        </Button>
+
+      <Grid2 size={12} m={2} display={"flex"} justifyContent={"space-between"}>
+        <BreadcrumbCustom paths={paths} />
+
         <Fab
-          sx={{ right: "-80%" }}
           onClick={() => handleOpenCreate()}
           color="secondary"
           aria-label="Agregar categoría"
@@ -210,7 +209,17 @@ const Categories = () => {
       </Grid2>
 
       <DataGrid
-        sx={{ fontSize: "20px", marginTop: 2, fontFamily: "BikoBold" }}
+        sx={{
+          fontSize: "12px",
+          fontFamily: "sans-serif",
+          borderRadius: "20px",
+          bgcolor: "#fff",
+          border: "1px solid rgb(209, 205, 205)", // Borde exterior naranja
+          "& .MuiDataGrid-cell": {
+            borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno claro
+          },
+        }}
+        localeText={esES.components.MuiDataGrid.defaultProps.localeText}
         columns={[
           {
             field: "name",
@@ -244,7 +253,7 @@ const Categories = () => {
               />,
               <EditButton
                 title={`Desea editar ${params.row.name}?`}
-               callbackToEdit={()=>handleOpenUpdate(params.row)}
+                callbackToEdit={() => handleOpenUpdate(params.row)}
               />,
               <Tooltip title="Ver Detalles">
                 <IconButton
@@ -283,7 +292,7 @@ const Categories = () => {
         slotProps={{
           toolbar: {
             showQuickFilter: true,
-            quickFilterProps: { debounceMs: 500},
+            quickFilterProps: { debounceMs: 500 },
           },
         }}
         printOptions={{
@@ -317,7 +326,10 @@ const Categories = () => {
       </Modal>
       <Modal open={openUpdate.value} onClose={handleCloseUpdate}>
         <Box sx={style}>
-          <EditCategory handleClose={handleCloseUpdate} category={openUpdate.category} />
+          <EditCategory
+            handleClose={handleCloseUpdate}
+            category={openUpdate.category}
+          />
         </Box>
       </Modal>
     </Grid2>

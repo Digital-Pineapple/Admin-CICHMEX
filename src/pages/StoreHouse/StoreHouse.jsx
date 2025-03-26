@@ -15,9 +15,8 @@ import {
 import { useEffect } from "react";
 import { useUI } from "../../hooks/useUi";
 import MuiPagination from "@mui/material/Pagination";
-import { Add, Close, Delete, Download, Edit, Place } from "@mui/icons-material";
+import { Add, Close, Delete,Edit, Place } from "@mui/icons-material";
 import {
-  Button,
   Card,
   CardContent,
   CardHeader,
@@ -31,7 +30,6 @@ import {
 import { useStoreHouse } from "../../hooks/useStoreHouse";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import { useState } from "react";
-import { HtmlTooltip } from "../../components/Tooltips/HtmlTooltip";
 import { MarkerF, useLoadScript } from "@react-google-maps/api";
 import MapGoogle from "../../components/Google/MapGoogle";
 import { Box } from "@mui/system";
@@ -103,8 +101,6 @@ const StoreHouse = () => {
   const handleClose = () => {
     setOpen({ value: false, data: {} });
   };
-  console.log(open);
-
   useEffect(() => {
     loadStoreHouse();
   }, []);
@@ -119,11 +115,10 @@ const StoreHouse = () => {
   };
 
   function CustomToolbar() {
-    const apiRef = useGridApiContext();
 
     return (
-      <GridToolbarContainer sx={{ justifyContent: "center", m:1 }}>
-        <GridToolbarQuickFilter label="Buscar" variant="outlined" />
+      <GridToolbarContainer sx={{ justifyContent: "center", m: 1 }}>
+        <GridToolbarQuickFilter size="small" label="Buscar" variant="outlined" />
       </GridToolbarContainer>
     );
   }
@@ -135,10 +130,9 @@ const StoreHouse = () => {
     { path: "/CEDIS/todos", name: "Centros de Distribución Logística" },
   ];
 
-
   return (
-    <Grid2 container paddingX={{xs:0, sm:10}}>
-       <Grid2
+    <Grid2 container paddingX={{ xs: 0, sm: 10 }}>
+      <Grid2
         size={12}
         paddingRight={15}
         flexGrow={1}
@@ -151,7 +145,12 @@ const StoreHouse = () => {
           <strong>Centros de Distribución Logística</strong>
         </Typography>
       </Grid2>
-      <Grid2 size={12} display={"flex"}margin={2} justifyContent={"space-between"}>
+      <Grid2
+        size={12}
+        display={"flex"}
+        margin={2}
+        justifyContent={"space-between"}
+      >
         <BreadcrumbCustom paths={paths} />
 
         <Fab
@@ -165,16 +164,16 @@ const StoreHouse = () => {
       </Grid2>
       <DataGrid
         sx={{
-                      fontSize: "12px",
-                      fontFamily: "sans-serif",
-                      borderRadius: "20px",
-                      bgcolor: "#fff",
-                      border: "1px solid rgb(209, 205, 205)", // Borde exterior naranja
-                      "& .MuiDataGrid-cell": {
-                        borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno claro
-                      },
-                    }}
-                    localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+          fontSize: "12px",
+          fontFamily: "sans-serif",
+          borderRadius: "20px",
+          bgcolor: "#fff",
+          border: "1px solid rgb(209, 205, 205)", // Borde exterior naranja
+          "& .MuiDataGrid-cell": {
+            borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno claro
+          },
+        }}
+        localeText={esES.components.MuiDataGrid.defaultProps.localeText}
         columns={[
           {
             field: "storehouse_key",

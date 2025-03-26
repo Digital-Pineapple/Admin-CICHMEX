@@ -89,7 +89,7 @@ export const Login = () => {
               variant="h1"
               fontWeight={"Bold"}
               textAlign={"center"}
-              fontSize={{ xs: "40px", md: "45px", xl: "50px" }}
+              fontSize={{ xs: "35px", md: "45px", xl: "50px" }}
               color="#fff"
             >
               Administrador

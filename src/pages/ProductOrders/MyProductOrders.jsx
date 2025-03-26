@@ -63,8 +63,8 @@ export default function FullWidthTabs() {
           variant="fullWidth"
 
         >
-          <Tab label="Pedidos pendientes por surtir"  sx={{fontWeight:'Bold'}}/>
-          <Tab label="Pedidos ya surtidos" sx={{fontWeight:'Bold'}} />
+          <Tab label="Pedidos pendientes por surtir"  sx={{fontWeight:'Bold', fontSize:{xs:'8px', md:'14px'}}}/>
+          <Tab label="Pedidos ya surtidos" sx={{fontWeight:'Bold', fontSize:{xs:'8px', md:'14px'}}} />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0} dir={theme.direction}>

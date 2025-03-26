@@ -15,14 +15,10 @@ import MuiPagination from "@mui/material/Pagination";
 import {
   Add,
   Close,
-  Download,
-  RefreshOutlined,
   Visibility,
 } from "@mui/icons-material";
 import {
-  Button,
   Avatar,
-  Grid,
   Typography,
   Fab,
   Tooltip,
@@ -33,17 +29,17 @@ import {
   CardHeader,
   CardMedia,
 } from "@mui/material";
-import { Workbook } from "exceljs";
-import { saveAs } from "file-saver";
 import DeleteAlert from "../../components/ui/DeleteAlert";
 import EditButton from "../../components/Buttons/EditButton";
 import { useSubCategories } from "../../hooks/useSubCategories";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import { useAuthStore } from "../../hooks";
-import CreateSubCategory from "./Create"
-import EditSubcategory from "./Edit"
+import CreateSubCategory from "./Create";
+import EditSubcategory from "./Edit";
 import { Box } from "@mui/system";
 import { useCategories } from "../../hooks/useCategories";
+import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
+import { esES } from "@mui/x-data-grid/locales";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -90,12 +86,8 @@ const style = {
 };
 
 const SubCategories = () => {
-  const {
-    loadSubCategories,
-    deleteSubCategory,
-    subCategories,
-    loading,
-  } = useSubCategories();
+  const { loadSubCategories, deleteSubCategory, subCategories, loading } =
+    useSubCategories();
   const { loadCategories, categories } = useCategories();
   const { user } = useAuthStore();
   const callBackCategories = useCallback(() => {
@@ -107,24 +99,27 @@ const SubCategories = () => {
     callBackCategories();
   }, [callBackCategories]);
   const [open, setOpen] = useState({ value: false, subCategory: null });
-  const [openCreate, setOpenCreate] = useState({value: false, categories: []});
+  const [openCreate, setOpenCreate] = useState({
+    value: false,
+    categories: [],
+  });
   const [openUpdate, setOpenUpdate] = useState({
     value: false,
     subCategory: null,
-    categories: null
+    categories: null,
   });
 
   const handleOpen = async (data) => {
-    setOpen({value:true, subCategory: data});
+    setOpen({ value: true, subCategory: data });
   };
-  const handleClose = () => setOpen({value:false, subCategory:null});
+  const handleClose = () => setOpen({ value: false, subCategory: null });
 
   const handleOpenCreate = () => {
-    setOpenCreate({value:true, categories: categories });
+    setOpenCreate({ value: true, categories: categories });
   };
   const handleCloseCreate = (e, reason) => {
     if (reason !== "backdropClick") {
-      setOpenCreate({value:false, categories: []});
+      setOpenCreate({ value: false, categories: [] });
     }
   };
   const handleOpenUpdate = (data) => {
@@ -135,89 +130,45 @@ const SubCategories = () => {
       setOpenUpdate({ value: false, subCategory: null, categories: null });
     }
   };
-
-  const exportToExcel = () => {
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Subcategorias");
-
-    // Agregar encabezados de columna
-    const headerRow = worksheet.addRow(["Nombre de la subcategoria"]);
-    headerRow.eachCell((cell) => {
-      cell.font = { bold: true };
-    });
-
-    // Agregar datos de las filas
-    rowsSubCategories.forEach((row) => {
-      worksheet.addRow([row.name]);
-    });
-
-    // Crear un Blob con el archivo Excel y guardarlo
-    workbook.xlsx.writeBuffer().then((buffer) => {
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      saveAs(blob, "subcategorias.xlsx");
-    });
-  };
-
   function CustomToolbar() {
-    const apiRef = useGridApiContext();
-    const handleGoToPage1 = () => apiRef.current.setPage(0);
-
     return (
-      <GridToolbarContainer sx={{ justifyContent: "space-between", paddingX:5 }}>
-        <GridToolbarQuickFilter placeholder="Buscar" />
-        <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-        {/* <Button
-          variant="text"
-          startIcon={<Download />}
-          disableElevation
-          sx={{ color: "secondary" }}
-          onClick={exportToExcel}
-        >
-          Descargar Excel
-        </Button> */}
+      <GridToolbarContainer sx={{ justifyContent: "center" }}>
+        <GridToolbarQuickFilter variant="outlined" />
       </GridToolbarContainer>
     );
   }
 
-  const rowsSubCategories =(data) => data.map((i, _id) => ({
-    id: _id.toString(),
-    ...i,
-  }));
+  const rowsSubCategories = (data) =>
+    data.map((i, _id) => ({
+      id: _id.toString(),
+      ...i,
+    }));
 
   if (loading) {
     return <LoadingScreenBlue />;
   }
 
+  const paths = [{ path: `/mi-almacen/subcategorias`, name: "Subcategorías" }];
+
   return (
-    <Grid2 container gap={2} maxWidth={"85vw"}>
+    <Grid2 paddingX={{ xs: 0, lg: 10 }} gap={2}>
       <Grid2
         size={12}
-        marginTop={{ xs: "-30px" }}
-        minHeight={"100px"}
-        className="Titles"
+        paddingRight={15}
+        flexGrow={1}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        marginBottom={2}
       >
-        <Typography
-          textAlign={"center"}
-          variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
-        >
-          Sub-categorías
+        <Typography variant="h4">
+          <strong>Subcategorías</strong>
         </Typography>
       </Grid2>
-      <Grid2 size={12}>
-        <Button
-          onClick={() => {loadSubCategories(), loadCategories()}}
-          variant="contained"
-          color="primary"
-        >
-          <RefreshOutlined />
-          Recargar
-        </Button>
+      <Grid2 size={12} m={2} display={"flex"} justifyContent={"space-between"}>
+        <BreadcrumbCustom paths={paths} />
         <Fab
-          sx={{ right: "-80%" }}
-          onClick={() => handleOpenCreate() }
+          onClick={() => handleOpenCreate()}
           color="secondary"
           aria-label="Agregar subcategoría"
           title="Agragar subcategoría"
@@ -227,7 +178,17 @@ const SubCategories = () => {
       </Grid2>
 
       <DataGrid
-        sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
+        sx={{
+          fontSize: "12px",
+          fontFamily: "sans-serif",
+          borderRadius: "20px",
+          bgcolor: "#fff",
+          border: "1px solid rgb(209, 205, 205)", // Borde exterior naranja
+          "& .MuiDataGrid-cell": {
+            borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno claro
+          },
+        }}
+        localeText={esES.components.MuiDataGrid.defaultProps.localeText}
         columns={[
           {
             field: "name",
@@ -277,7 +238,7 @@ const SubCategories = () => {
         ]}
         initialState={{
           sorting: {
-            sortModel: [{ field: "createdAt", sort: "asc" }],
+            sortModel: [{ field: "createdAt", sort: "desc" }],
           },
           pagination: {
             paginationModel: { pageSize: 20 },
@@ -329,12 +290,19 @@ const SubCategories = () => {
       </Modal>
       <Modal open={openCreate.value} onClose={handleCloseCreate}>
         <Box sx={style}>
-          <CreateSubCategory categories={openCreate.categories} handleClose={handleCloseCreate} />
+          <CreateSubCategory
+            categories={openCreate.categories}
+            handleClose={handleCloseCreate}
+          />
         </Box>
       </Modal>
       <Modal open={openUpdate.value} onClose={handleCloseUpdate}>
         <Box sx={style}>
-          <EditSubcategory handleClose={handleCloseUpdate} subCategory={openUpdate.subCategory} categories={openUpdate.categories} />
+          <EditSubcategory
+            handleClose={handleCloseUpdate}
+            subCategory={openUpdate.subCategory}
+            categories={openUpdate.categories}
+          />
         </Box>
       </Modal>
     </Grid2>

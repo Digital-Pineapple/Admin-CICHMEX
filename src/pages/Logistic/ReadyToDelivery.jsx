@@ -133,8 +133,8 @@ const ReadyToDelivery = () => {
     };
   });
 
-  const handleStartRoutes = ()=>{
-    loadStartMyRoutes(readyToPoint)    
+  const handleStartRoutes = () => {
+    loadStartMyRoutes(readyToPoint)
   }
 
   function CustomToolbar() {
@@ -150,21 +150,6 @@ const ReadyToDelivery = () => {
     return <LoadingScreenBlue />;
   }
 
-  const rechargeRoutes = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          loadOptimizedRoutes({ lat: latitude, lgt: longitude });
-        },
-        (error) => {
-          console.error("Error obteniendo la ubicación:", error);
-        }
-      );
-    } else {
-      console.log("La geolocalización no es soportada por este navegador.");
-    }
-  };
 
   return (
     <Grid2 container paddingX={{ xs: 0, lg: 10 }} display={"flex"} gap={2}>
@@ -183,24 +168,24 @@ const ReadyToDelivery = () => {
       </Grid2>
 
       {optimizedRoutes ? (
-        <Grid2 container sx={{ alignItems:'center', padding:4}} width={'100%'} display={'flex'} gap={2}>
-       <Grid2 size={{xs:12, lg:4.7}}>
-          <Typography variant="h5" color="initial">
-            Distancia aprox: <strong>{optimizedRoutes.totalDistance}</strong> <br />
-            Tiempo aprox: <strong>{optimizedRoutes.totalDuration}</strong>
-          </Typography>
-          <Button variant="contained" onClick={handleStartRoutes} startIcon={<Route/>} fullWidth>
-          Comenzar viaje
-          </Button>
+        <Grid2 container sx={{ alignItems: 'center', padding: 4 }} width={'100%'} display={'flex'} gap={2}>
+          <Grid2 size={{ xs: 12, lg: 4.7 }}>
+            <Typography variant="h5" color="initial">
+              Distancia aprox: <strong>{optimizedRoutes.totalDistance}</strong> <br />
+              Tiempo aprox: <strong>{optimizedRoutes.totalDuration}</strong>
+            </Typography>
+            <Button variant="contained" onClick={handleStartRoutes} startIcon={<Route />} fullWidth>
+              Comenzar viaje
+            </Button>
 
-        </Grid2>
-        <Grid2 size={{xs:12, lg:7}} >
-          <MapRouteOptimized
-            optimizedRoutes={optimizedRoutes}
-            myPosition={myPosition}
-          />
-        </Grid2>
-       
+          </Grid2>
+          <Grid2 size={{ xs: 12, lg: 7 }} >
+            <MapRouteOptimized
+              optimizedRoutes={optimizedRoutes}
+              myPosition={myPosition}
+            />
+          </Grid2>
+
         </Grid2>
       ) : (
         ""
@@ -304,7 +289,7 @@ const ReadyToDelivery = () => {
       <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
           <IconButton
-            sx={{ left: `calc(95%)` , top:-20 }}
+            sx={{ left: `calc(95%)`, top: -20 }}
             aria-label="Cerrar"
             onClick={() => handleClose()}
           >
@@ -312,12 +297,12 @@ const ReadyToDelivery = () => {
           </IconButton>
           <Grid2 container display={'flex'} gap={2} >
 
-          <Grid2 size={{xs: 12 , lg:6}}>
-            <TableBranchDetail branch={detail?.branch} />
-          </Grid2>
-          <Grid2 size={{xs:12, lg:5.7}}>
-            <MapGoogleMarker center={detail?.coords} zoom={16} />
-          </Grid2>
+            <Grid2 size={{ xs: 12, lg: 6 }}>
+              <TableBranchDetail branch={detail?.branch} />
+            </Grid2>
+            <Grid2 size={{ xs: 12, lg: 5.7 }}>
+              <MapGoogleMarker center={detail?.coords} zoom={16} />
+            </Grid2>
           </Grid2>
         </Box>
       </Modal>

@@ -34,13 +34,15 @@ import {
   Fab,
 } from "@mui/material";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
-import { localDate } from "../../Utils/ConvertIsoDate";
+import { localDate, localDateTable } from "../../Utils/ConvertIsoDate";
 import Grid from "@mui/material/Grid2";
 import AssignRoute from "../MyStoreHouse/ AssignRoute";
 import { blue, green, grey, pink } from "@mui/material/colors";
 import { useUsers } from "../../hooks/useUsers";
 import DetailAssignRoute from "../MyStoreHouse/DetailAssignRoute";
 import { esES } from "@mui/x-data-grid/locales";
+import { useMediaQuery } from "@mui/system";
+import CustomNoRows from "../../components/Tables/CustomNoRows";
 
 const style = {
   position: "absolute",
@@ -90,6 +92,19 @@ const ReadyToSend = ({rows = [], loading = false, type = 0}) => {
   const [openModal, setOpenModal] = useState({ value: false, selectedPO: {}, updateUser: false, updateGuide: false });
   const [openDetail, setOpenDetail] = useState({value: false, selectedPO:{}});
   const {loadCarrierDrivers, CarrierDrivers} = useUsers()
+   const isXs = useMediaQuery('(max-width:600px)');
+    const [columnVisibilityModel, setColumnVisibilityModel] = useState({
+       typeDelivery: !isXs,
+     });
+   
+      useEffect(() => {
+         setColumnVisibilityModel((prevModel) => ({
+           ...prevModel,
+           supply_date: !isXs,
+           route_detail: !isXs,
+            typeDelivery: !isXs,
+         }));
+       }, [isXs]);
 
   const handleOpen = (data) =>{ 
        
@@ -177,14 +192,13 @@ const ReadyToSend = ({rows = [], loading = false, type = 0}) => {
     }else if (!!data.route_detail.guide === true){
       return[
         <Tooltip title="Editar guia de envío">
-        <Button
+        <IconButton
           aria-label="Asignar envio"
           color="info"
-          startIcon={<Edit />}
           onClick={() => handleOpenGuide(data) }
         >
-          Editar
-        </Button>
+          <Edit />
+        </IconButton>
       </Tooltip>,
       <Tooltip title="Ver detalle">
       <IconButton
@@ -199,14 +213,13 @@ const ReadyToSend = ({rows = [], loading = false, type = 0}) => {
     }else{
       return[
         <Tooltip title="Cambiar usuario">
-        <Button
+        <IconButton
           aria-label="Cambiar usuario"
           color="info"
-          startIcon={<Edit />}
           onClick={() => handleOpenUser(data, true) }
         >
-          Editar
-        </Button>
+          <Edit />
+        </IconButton>
       </Tooltip>,
       <Tooltip title="Ver detalle">
       <IconButton
@@ -221,105 +234,112 @@ const ReadyToSend = ({rows = [], loading = false, type = 0}) => {
     }
   }
 
+  const columns = [
+     {
+          field: "date",
+          headerName: "Fecha",
+          flex: 0.5,
+          align: "center",
+          renderCell: (params) => {
+            const date = localDateTable(params.row.createdAt)
+            const day = date.split("/")[0]
+            const month = date.split("/")[1]
+            return (
+              <Typography variant="h6" fontSize={14} color="initial">
+                {day} <br />
+                {month}
+              </Typography>
+            );
+          },
+        },
+    {
+      field: "order_id",
+      hideable: false,
+      headerName: "Folio",
+      flex: 0.5,
+      sortable: false,
+    },
+    {
+      field: "supply_date",
+      headerName: "Fecha de empaque",
+      flex: 1,
+      align: "center",
+      renderCell: (params)=> localDate( params.row.supply_detail[0].date)
+    },
+    {
+      field: "route_detail",
+      headerName: "Detalle de ruta",
+      flex: 1,
+      hideable: type === 0 ? false :true,
+      align: "center",
+      renderCell:(params)=>
+        renderChip(params.row)
+      
+    },
+    {
+      field: "typeDelivery",
+      headerName: "Tipo de envío",
+      flex: 0.5,
+      align: "center",
+      renderCell:(params)=> params.row.typeDelivery ==='homedelivery'?
+      <Tooltip title='Domicilio'><Cottage sx={{ color: pink[800] }} /></Tooltip> : 
+      <Tooltip title='Punto de entrega'><Place color="secondary" /></Tooltip> 
+      
+    },
+    {
+      field: "Opciones",
+      headerName: "Opciones",
+      align: "center",
+      flex: 1,
+      sortable: false,
+      type: "actions",
+      getActions: (params) => renderOptions(params.row)
+    },
+  ]
+
   return (
     <Grid container gap={2} maxWidth={"85vw"}>
       <DataGrid
-        sx={{
-          fontSize: "12px",
-          fontFamily: "sans-serif",
-          borderRadius: "20px",
-          bgcolor: "#fff",
-          border: "1px solid rgb(209, 205, 205)", // Borde exterior naranja
-          "& .MuiDataGrid-cell": {
-            borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno claro
-          },
-        }}
-         localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-        columns={[
-          {
-            field: "date",
-            headerName: "Fecha de compra",
-            flex: 1,
-            align: "center",
-          },
-          {
-            field: "order_id",
-            hideable: false,
-            headerName: "Folio",
-            flex: 0.5,
-            sortable: false,
-          },
-          {
-            field: "supply_date",
-            headerName: "Fecha de empaque",
-            flex: 1,
-            align: "center",
-            renderCell: (params)=> localDate( params.row.supply_detail[0].date)
-          },
-          {
-            field: "route_detail",
-            headerName: "Detalle de ruta",
-            flex: 1,
-            hideable: type === 0 ? false :true,
-            align: "center",
-            renderCell:(params)=>
-              renderChip(params.row)
-            
-          },
-          {
-            field: "typeDelivery",
-            headerName: "Tipo de envío",
-            flex: 0.5,
-            align: "center",
-            renderCell:(params)=> params.row.typeDelivery ==='homedelivery'?
-            <Tooltip title='Domicilio'><Cottage sx={{ color: pink[800] }} /></Tooltip> : 
-            <Tooltip title='Punto de entrega'><Place color="secondary" /></Tooltip> 
-            
-          },
-          {
-            field: "Opciones",
-            headerName: "Opciones",
-            align: "center",
-            flex: 1,
-            sortable: false,
-            type: "actions",
-            getActions: (params) => renderOptions(params.row)
-          },
-        ]}
-        initialState={{
-          sorting: {
-            sortModel: [{ field: "createdAt", sort: "desc" }],
-          },
-          pagination: {
-            paginationModel: { pageSize: 20 },
-          },
-        }}
-        density="compact"
-        rows={rows}
-        pagination
-        slots={{
-          pagination: CustomPagination,
-          toolbar: CustomToolbar,
-          columnSortedDescendingIcon: SortedDescendingIcon,
-          columnSortedAscendingIcon: SortedAscendingIcon,
-          columnUnsortedIcon: UnsortedIcon,
-        }}
-        disableColumnFilter
-        disableColumnMenu
-        disableColumnSelector
-        disableDensitySelector
-        slotProps={{
-          toolbar: {
-            showQuickFilter: true,
-            quickFilterProps: { debounceMs: 500 },
-          },
-        }}
-        printOptions={{
-          hideFooter: true,
-          hideToolbar: true,
-        }}
-        style={{ fontFamily: "sans-serif", fontSize: "15px" }}
-      />
+            sx={{
+              fontSize: "12px",
+              fontFamily: "sans-serif",
+              borderRadius: { xs: '5px', md: '20px' },
+              bgcolor: "#fff",
+              border: "1px solid rgb(209, 205, 205)",
+              "& .MuiDataGrid-cell": {
+                borderBottom: "1px solid rgb(230, 223, 223)",
+              },
+            }}
+            rows={rows}
+            columns={columns}
+            autoHeight
+            pagination
+            columnVisibilityModel={columnVisibilityModel}
+            onColumnVisibilityModelChange={setColumnVisibilityModel}
+            slots={{
+              pagination: CustomPagination,
+              toolbar: CustomToolbar,
+              columnSortedDescendingIcon: SortedDescendingIcon,
+              columnSortedAscendingIcon: SortedAscendingIcon,
+              columnUnsortedIcon: UnsortedIcon,
+              noRowsOverlay: CustomNoRows,
+            }}
+            disableColumnFilter
+            disableColumnMenu
+            disableColumnSelector
+            disableDensitySelector
+            localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+            slotProps={{
+              toolbar: {
+                showQuickFilter: true,
+                quickFilterProps: { debounceMs: 500 },
+              },
+            }}
+            printOptions={{
+              hideFooter: true,
+              hideToolbar: true,
+            }}
+          />
 
       <Modal
         open={openModal.value}

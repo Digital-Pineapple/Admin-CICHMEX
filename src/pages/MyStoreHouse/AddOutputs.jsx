@@ -38,8 +38,6 @@ const AddOutputs = () => {
     },
   });
 
-  const regexName = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ' ]{8,}$/;
-
   const validateQuantities = (rows) => {
     // Verificamos si hay alguna fila con cantidad vacía
     return rows.every((row) => row.quantity !== "");

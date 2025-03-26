@@ -86,51 +86,13 @@ const ProductOutputs = () => {
   }, [user]);
 
 
-  const exportToExcel = () => {
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Stock de productos");
 
-    // Agregar encabezados de columna
-    const headerRow = worksheet.addRow([
-      "Código",
-      "Nombre del producto",
-      "Existencias",
-      "Precio",
-      "Tamaño",
-    ]);
-    headerRow.eachCell((cell) => {
-      cell.font = { bold: true };
-    });
-
-    // Agregar datos de las filas
-    rowsEntriesProducts.forEach((row) => {
-      worksheet.addRow([
-        row._id,
-        row.name,
-        row.description,
-        row.price,
-        row.size,
-        row.tag,
-      ]);
-    });
-
-    // Crear un Blob con el archivo Excel y guardarlo
-    workbook.xlsx.writeBuffer().then((buffer) => {
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      saveAs(blob, "productos.xlsx");
-    });
-  };
   function CustomToolbar() {
-    const apiRef = useGridApiContext();
-
-    const handleGoToPage1 = () => apiRef.current.setPage(1);
 
     return (
       <GridToolbarContainer sx={{ justifyContent: "center" }}>
        
-       <GridToolbarQuickFilter placeholder="Buscar" variant="outlined" />
+       <GridToolbarQuickFilter  variant="outlined" />
        
       </GridToolbarContainer>
     );

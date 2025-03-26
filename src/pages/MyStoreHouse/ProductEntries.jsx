@@ -12,12 +12,9 @@ import {
 } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import MuiPagination from "@mui/material/Pagination";
-import { Add, Download, Refresh } from "@mui/icons-material";
-import { Button, Fab, Grid, Grid2, Typography } from "@mui/material";
-import { Workbook } from "exceljs";
+import { Add } from "@mui/icons-material";
+import { Fab, Grid2, Typography } from "@mui/material";
 import { useProducts } from "../../hooks/useProducts";
-import AddButton2 from "../../components/Buttons/AddButton2";
-import { orange } from "@mui/material/colors";
 import { useAuthStore } from "../../hooks";
 import EntriesOutputsModal from "../../components/Modals/EntriesOutputsModal";
 import CustomNoRows from "../../components/Tables/CustomNoRows";
@@ -64,11 +61,6 @@ const ProductEntries = () => {
   const [open, setOpen] = useState(false);
   const [details, setDetails] = useState("");
 
-  const handleClickOpen = (detail) => {
-    setOpen(true);
-    setDetails(detail);
-  };
-
   const handleClose = () => {
     setOpen(false);
   };
@@ -77,46 +69,7 @@ const ProductEntries = () => {
     loadAllInputs();
   }, [user]);
 
-  const exportToExcel = () => {
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Stock de productos");
-
-    // Agregar encabezados de columna
-    const headerRow = worksheet.addRow([
-      "Código",
-      "Nombre del producto",
-      "Existencias",
-      "Precio",
-      "Tamaño",
-    ]);
-    headerRow.eachCell((cell) => {
-      cell.font = { bold: true };
-    });
-
-    // Agregar datos de las filas
-    rowsEntriesProducts.forEach((row) => {
-      worksheet.addRow([
-        row._id,
-        row.name,
-        row.description,
-        row.price,
-        row.size,
-        row.tag,
-      ]);
-    });
-
-    // Crear un Blob con el archivo Excel y guardarlo
-    workbook.xlsx.writeBuffer().then((buffer) => {
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      saveAs(blob, "productos.xlsx");
-    });
-  };
   function CustomToolbar() {
-    const apiRef = useGridApiContext();
-
-    const handleGoToPage1 = () => apiRef.current.setPage(1);
 
     return (
       <GridToolbarContainer sx={{ justifyContent: "center" }}>

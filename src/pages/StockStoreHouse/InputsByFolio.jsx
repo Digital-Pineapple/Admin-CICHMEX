@@ -68,7 +68,7 @@ function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
-const   InputsByFolio = () => {
+const InputsByFolio = () => {
   const [openModal, setOpenModal] = useState(false);
   const { loadInputs, inputs, navigate, loadPDFReport } = useStockStorehouse();
   const { user } = useAuthStore();
@@ -110,7 +110,11 @@ const   InputsByFolio = () => {
 
     return (
       <GridToolbarContainer sx={{ justifyContent: "space-evenly" }}>
-        <GridToolbarQuickFilter size="small" placeholder="Buscar" variant="outlined" />
+        <GridToolbarQuickFilter
+          size="small"
+          placeholder="Buscar"
+          variant="outlined"
+        />
       </GridToolbarContainer>
     );
   }
@@ -157,15 +161,17 @@ const   InputsByFolio = () => {
       </Grid2>
 
       <DataGrid
-      localeText={esES.components.MuiDataGrid.defaultProps.localeText}
         sx={{
           fontSize: "12px",
+          fontFamily: "sans-serif",
           borderRadius: "20px",
-          '& .MuiDataGrid-columnHeader': {
-                    backgroundColor: 'success.main',
-                    color:'white'
-                }
+          bgcolor: "#fff",
+          border: "1px solid rgb(209, 205, 205)", // Borde exterior naranja
+          "& .MuiDataGrid-cell": {
+            borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno claro
+          },
         }}
+        localeText={esES.components.MuiDataGrid.defaultProps.localeText}
         columns={[
           {
             field: "date",
@@ -216,12 +222,16 @@ const   InputsByFolio = () => {
                 onClick={() => navigate(`acomodar_producto/${params.row._id}`)}
                 label="Acomodar producto"
                 showInMenu
-                disabled={!(params.row.in_storehouse === true && params.row.in_section === false)}
+                disabled={
+                  !(
+                    params.row.in_storehouse === true &&
+                    params.row.in_section === false
+                  )
+                }
               />,
               <GridActionsCellItem
                 icon={<FilePdfFilled color="success" />}
-                onClick={() => loadPDFReport(params.row._id)
-                }
+                onClick={() => loadPDFReport(params.row._id)}
                 label="Imprimir reporte"
                 showInMenu
                 disabled={!params.row.in_storehouse}
@@ -229,7 +239,6 @@ const   InputsByFolio = () => {
             ],
           },
         ]}
-        
         rows={rows(inputs)}
         pagination
         slots={{
