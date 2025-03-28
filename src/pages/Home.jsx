@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 
 import Image from 'mui-image'
 import imageLogotipo from './../assets/Images/CHMX/Imagotipo CHMX Naranja.png'
+import imagotipo from '../assets/Images/CHMX/Imagotipo Cuadrado CHMX.png'
 import Typography from '@mui/material/Typography'
 import { useAuthStore } from '../hooks'
 import FavWhatsapp from '../components/Buttons/FavWhatsapp'
@@ -25,9 +26,13 @@ const Home = () => {
     const {user} = useAuthStore()
   return (
         <Grid2 width={'100%'} paddingX={{xs:0, md:10}} container gap={2} display={'flex'} justifyContent={'center'}>
-           <Grid2 size={12}>
+           <Grid2 size={12} display={{xs:'none', md:'block'}} justifyContent={'center'} alignItems={'center'} padding={2}> 
             <Typography padding={{xs:2,lg:4}} variant="h1" fontSize={{xs:'30px', md:'45px'}} color="initial">Bienvenido: {user.fullname}</Typography>
             <img style={{width:'100%'}} src={imageLogotipo}/>
+           </Grid2>
+           <Grid2 size={12} display={{xs:'block', md:'none'}} justifyContent={'center'} alignItems={'center'} padding={2}> 
+            <Typography padding={{xs:2,lg:4}} fontWeight={'Bold'} variant="h1" fontSize={{xs:'40px', md:'45px'}} color="initial">Bienvenido: {user.fullname}</Typography>
+            <img style={{width:'100%'}} src={imagotipo}/>
            </Grid2>
             
         </Grid2>

@@ -24,6 +24,7 @@ import { Box, height, width } from '@mui/system';
 import { Delete, UploadFileRounded } from '@mui/icons-material';
 import LoadingScreenBlue from '../../components/ui/LoadingScreenBlue';
 import { useParams } from 'react-router-dom';
+import BreadcrumbCustom from '../../components/ui/BreadCrumbCustom';
 
 const UpdateSlider = () => {
     const { id } = useParams()
@@ -256,16 +257,29 @@ const UpdateSlider = () => {
         return <LoadingScreenBlue />
     }
 
+    const paths = [
+        { path: `/contenidos/banners`, name: "Banners" },
+        { path: `/contenidos/banners/editar/:id`, name: "Editar slide" },
+    ];
+
     return (
-        <Grid2 container maxWidth="85vw" gap={2}>
-            <Grid2 marginTop={{ xs: '-30px' }} size={12} className="Titles" minHeight="80px">
-                <Typography
-                    textAlign="center"
-                    variant="h1"
-                    fontSize={{ xs: '20px', sm: '30px', lg: '40px' }}
-                >
-                    Editar slider
+        <Grid2 container paddingX={{ xs: 0, lg: 10 }} gap={2}>
+            <Grid2
+                size={12}
+                paddingRight={15}
+                flexGrow={1}
+                display={"flex"}
+                alignItems={"center"}
+                justifyContent={"space-between"}
+                marginBottom={2}
+            >
+                <Typography variant="h4">
+                    <strong>Editar slide</strong>
                 </Typography>
+            </Grid2>
+            <Grid2 size={12} display={"flex"} justifyContent={"space-between"}>
+                <BreadcrumbCustom paths={paths} />
+
             </Grid2>
             <Card variant="elevation" sx={{ width: '100%' }}>
                 <CardHeader title="Ingrese datos para crear slide" />

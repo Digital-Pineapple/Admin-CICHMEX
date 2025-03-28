@@ -31,6 +31,8 @@ import EditButton from "../../components/Buttons/EditButton";
 import CustomNoRows from "../../components/Tables/CustomNoRows";
 import CreateShippingCost from '../../pages/ShippingCost/Create'
 import UpdateShippingCost from '../../pages/ShippingCost/Edit'
+import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
+import { esES } from "@mui/x-data-grid/locales";
 
 const style = {
   position: 'absolute',
@@ -134,10 +136,8 @@ const ShippingCost = () => {
     const handleGoToPage1 = () => apiRef.current.setPage(1);
   
     return (
-      <GridToolbarContainer sx={{justifyContent:'space-between', paddingX:5}}>
-        <GridToolbarQuickFilter label='Buscar' placeholder="Buscar" />
-        <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-       
+      <GridToolbarContainer sx={{justifyContent:'center'}}>
+        <GridToolbarQuickFilter variant="outlined" />
       </GridToolbarContainer>
     );
   }
@@ -146,18 +146,42 @@ const ShippingCost = () => {
     return(<LoadingScreenBlue/>)
   }
 
+  const paths = [
+    { path: `/costos-envio`, name: "Costos de envío" },
+];
+
   return (
-    <Grid2 container >
-      <Grid2  marginTop={{xs:'-30px'}} size={12} minHeight={'100px'} className="Titles">   
-      <Typography textAlign={'center'} variant="h1" fontSize={{xs:'20px', sm:'30px', lg:'40px'}} >
-        Costos de envio
-      </Typography>
-      </Grid2>
-      <Grid2 size={12}  justifyContent={'end'} display={'flex'} >
-        <Fab onClick={()=>handleOpenAdd()} sx={{top: 10, right:20}} title="Agregar" color="secondary"> <Add/></Fab>
-      </Grid2>
+    <Grid2 container paddingX={{ xs: 0, lg: 10 }} display={"flex"} gap={2} >
+      <Grid2
+                size={12}
+                paddingRight={15}
+                flexGrow={1}
+                display={"flex"}
+                alignItems={"center"}
+                justifyContent={"space-between"}
+                marginBottom={2}
+            >
+                <Typography variant="h4">
+                    <strong>Costos de envío</strong>
+                </Typography>
+            </Grid2>
+            <Grid2 size={12} display={"flex"} justifyContent={"space-between"}>
+                <BreadcrumbCustom paths={paths} />
+                <Fab onClick={()=>handleOpenAdd()} sx={{top: 10, right:20}} title="Agregar" color="secondary"> <Add/></Fab>
+            </Grid2>
+    
       <DataGrid
-        sx={{ marginTop:2, fontSize: "15px", fontFamily: "sans-serif" }}
+       sx={{
+                           fontSize: "12px",
+                           fontFamily: "sans-serif",
+                           borderRadius: { xs: '5px', md: '20px' },
+                           bgcolor: "#fff",
+                           border: "1px solid rgb(209, 205, 205)",
+                           "& .MuiDataGrid-cell": {
+                               borderBottom: "1px solid rgb(230, 223, 223)",
+                           },
+                       }}
+                       localeText={esES.components.MuiDataGrid.defaultProps.localeText}
         columns={[
           {
             field: `date`,

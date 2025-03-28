@@ -51,7 +51,7 @@ const style = {
   transform: "translate(-50%, -50%)",
   width: 800,
   bgcolor: "background.paper",
-  borderRadius:'15px',
+  borderRadius: '15px',
   p: 4,
 };
 
@@ -87,171 +87,173 @@ function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
-const ReadyToSend = ({rows = [], loading = false, type = 0}) => {
+const ReadyToSend = ({ rows = [], loading = false, type = 0 }) => {
 
   const [openModal, setOpenModal] = useState({ value: false, selectedPO: {}, updateUser: false, updateGuide: false });
-  const [openDetail, setOpenDetail] = useState({value: false, selectedPO:{}});
-  const {loadCarrierDrivers, CarrierDrivers} = useUsers()
-   const isXs = useMediaQuery('(max-width:600px)');
-    const [columnVisibilityModel, setColumnVisibilityModel] = useState({
-       typeDelivery: !isXs,
-     });
-   
-      useEffect(() => {
-         setColumnVisibilityModel((prevModel) => ({
-           ...prevModel,
-           supply_date: !isXs,
-           route_detail: !isXs,
-            typeDelivery: !isXs,
-         }));
-       }, [isXs]);
+  const [openDetail, setOpenDetail] = useState({ value: false, selectedPO: {} });
+  const { loadCarrierDrivers, CarrierDrivers } = useUsers()
+  const isXs = useMediaQuery('(max-width:600px)');
+  const [columnVisibilityModel, setColumnVisibilityModel] = useState({
+    typeDelivery: !isXs,
+  });
 
-  const handleOpen = (data) =>{ 
-       
+  useEffect(() => {
+    setColumnVisibilityModel((prevModel) => ({
+      ...prevModel,
+      supply_date: !isXs,
+      route_detail: !isXs,
+      typeDelivery: !isXs,
+    }));
+  }, [isXs]);
+
+  const handleOpen = (data) => {
+
     loadCarrierDrivers()
     if (data.typeDelivery === 'homedelivery') {
       setOpenModal({ value: true, selectedPO: { data }, updateGuide: true })
-      
-    }else{
-      setOpenModal({ value: true, selectedPO: { data }, updateUser: true})
+
+    } else {
+      setOpenModal({ value: true, selectedPO: { data }, updateUser: true })
     }
   }
 
-  const handleOpenDetail = (data) =>{
+  const handleOpenDetail = (data) => {
     loadCarrierDrivers()
     setOpenDetail({ value: true, selectedPO: { data } })
-    
+
   }
 
-  const handleOpenGuide = (data) =>{
+  const handleOpenGuide = (data) => {
     setOpenModal({ value: true, selectedPO: { data }, updateGuide: true })
-    
+
   }
-  const handleOpenUser = (data) =>{
+  const handleOpenUser = (data) => {
     setOpenModal({ value: true, selectedPO: { data }, updateUser: true })
-    
+
   }
 
   const handleClose = () => setOpenModal({ value: false, selectedPO: {} });
 
   const handleCloseDetail = () => setOpenDetail({ value: false, selectedPO: {} });
 
- 
+
 
   function CustomToolbar() {
     const apiRef = useGridApiContext();
 
     return (
       <GridToolbarContainer sx={{ justifyContent: "center" }}>
-         <GridToolbarQuickFilter placeholder="Buscar" variant="outlined" />
+        <GridToolbarQuickFilter placeholder="Buscar" variant="outlined" />
       </GridToolbarContainer>
     );
   }
 
   if (loading) return <LoadingScreenBlue />;
 
-  const renderChip = (data) =>{
+  const renderChip = (data) => {
     if (!!data.route_detail === false) {
-      return( 
-        <Chip variant="outlined" label='No asignada' sx={{bgcolor:grey[200]}}/>
+      return (
+        <Chip variant="outlined" label='No asignada' sx={{ bgcolor: grey[200] }} />
       )
-    }else if (!!data.route_detail.guide === true){
-      return(
-        <Chip variant="outlined"  label='Asignada a compañía' sx={{bgcolor:blue[400]}} />
+    } else if (!!data.route_detail.guide === true) {
+      return (
+        <Chip variant="outlined" label='Asignada a compañía' sx={{ bgcolor: blue[400] }} />
       )
-    }else{
-      return(
-        <Chip variant="outlined"  label =  'Assignada a usuario' sx={{bgcolor:green[500]}} />
+    } else {
+      return (
+        <Chip variant="outlined" label='Assignada a usuario' sx={{ bgcolor: green[500] }} />
       )
     }
   }
 
-  const renderOptions = (data) =>{
+  const renderOptions = (data) => {
     if (!!data.route_detail === false) {
-      return[
+      return [
         <Tooltip title="Asignar compañía de envios">
-        <Button
-          aria-label="Asignar envio"
-          color="success"
-          startIcon={<LocalShipping />}
-          onClick={() => handleOpen(data) }
-        >
-          Asignar
-        </Button>
-      </Tooltip>,
-      <Tooltip title="Ver detalle">
-      <IconButton
-        aria-label="Ver detalle"
-        color="primary"
-        onClick={() => handleOpenDetail(data)}
-      >
-        <Visibility />
-      </IconButton>
-    </Tooltip>,
+          <Button
+            aria-label="Asignar envio"
+            color="success"
+            startIcon={<LocalShipping />}
+            onClick={() => handleOpen(data)}
+          >
+            Asignar
+          </Button>
+        </Tooltip>,
+        <Tooltip title="Ver detalle">
+          <IconButton
+            aria-label="Ver detalle"
+            color="primary"
+            onClick={() => handleOpenDetail(data)}
+          >
+            <Visibility />
+          </IconButton>
+        </Tooltip>,
       ]
-    }else if (!!data.route_detail.guide === true){
-      return[
+    } else if (!!data.route_detail.guide === true) {
+      return [
         <Tooltip title="Editar guia de envío">
-        <IconButton
-          aria-label="Asignar envio"
-          color="info"
-          onClick={() => handleOpenGuide(data) }
-        >
-          <Edit />
-        </IconButton>
-      </Tooltip>,
-      <Tooltip title="Ver detalle">
-      <IconButton
-        aria-label="Ver detalle"
-        color="primary"
-        onClick={() => handleOpenDetail(data)}
-      >
-        <Visibility />
-      </IconButton>
-    </Tooltip>,
+          <Button
+            aria-label="Asignar envio"
+            color="info"
+            onClick={() => handleOpenGuide(data)}
+            startIcon={<Edit />}
+          >
+            Editar
+          </Button>
+        </Tooltip>,
+        <Tooltip title="Ver detalle">
+          <IconButton
+            aria-label="Ver detalle"
+            color="primary"
+            onClick={() => handleOpenDetail(data)}
+          >
+            <Visibility />
+          </IconButton>
+        </Tooltip>,
       ]
-    }else{
-      return[
+    } else {
+      return [
         <Tooltip title="Cambiar usuario">
-        <IconButton
-          aria-label="Cambiar usuario"
-          color="info"
-          onClick={() => handleOpenUser(data, true) }
-        >
-          <Edit />
-        </IconButton>
-      </Tooltip>,
-      <Tooltip title="Ver detalle">
-      <IconButton
-        aria-label="Ver detalle"
-        color="primary"
-        onClick={() => handleOpenDetail(data)}
-      >
-        <Visibility />
-      </IconButton>
-    </Tooltip>,
+          <Button
+            aria-label="Cambiar usuario"
+            color="info"
+            onClick={() => handleOpenUser(data, true)}
+            startIcon={<Edit />}
+          >
+            Editar
+          </Button>
+        </Tooltip>,
+        <Tooltip title="Ver detalle">
+          <IconButton
+            aria-label="Ver detalle"
+            color="primary"
+            onClick={() => handleOpenDetail(data)}
+          >
+            <Visibility />
+          </IconButton>
+        </Tooltip>,
       ]
     }
   }
 
   const columns = [
-     {
-          field: "date",
-          headerName: "Fecha",
-          flex: 0.5,
-          align: "center",
-          renderCell: (params) => {
-            const date = localDateTable(params.row.createdAt)
-            const day = date.split("/")[0]
-            const month = date.split("/")[1]
-            return (
-              <Typography variant="h6" fontSize={14} color="initial">
-                {day} <br />
-                {month}
-              </Typography>
-            );
-          },
-        },
+    {
+      field: "date",
+      headerName: "Fecha",
+      flex: 0.5,
+      align: "center",
+      renderCell: (params) => {
+        const date = localDateTable(params.row.createdAt)
+        const day = date.split("/")[0]
+        const month = date.split("/")[1]
+        return (
+          <Typography variant="h6" fontSize={14} color="initial">
+            {day} <br />
+            {month}
+          </Typography>
+        );
+      },
+    },
     {
       field: "order_id",
       hideable: false,
@@ -264,27 +266,27 @@ const ReadyToSend = ({rows = [], loading = false, type = 0}) => {
       headerName: "Fecha de empaque",
       flex: 1,
       align: "center",
-      renderCell: (params)=> localDate( params.row.supply_detail[0].date)
+      renderCell: (params) => localDate(params.row.supply_detail[0].date)
     },
     {
       field: "route_detail",
       headerName: "Detalle de ruta",
       flex: 1,
-      hideable: type === 0 ? false :true,
+      hideable: type === 0 ? false : true,
       align: "center",
-      renderCell:(params)=>
+      renderCell: (params) =>
         renderChip(params.row)
-      
+
     },
     {
       field: "typeDelivery",
       headerName: "Tipo de envío",
       flex: 0.5,
       align: "center",
-      renderCell:(params)=> params.row.typeDelivery ==='homedelivery'?
-      <Tooltip title='Domicilio'><Cottage sx={{ color: pink[800] }} /></Tooltip> : 
-      <Tooltip title='Punto de entrega'><Place color="secondary" /></Tooltip> 
-      
+      renderCell: (params) => params.row.typeDelivery === 'homedelivery' ?
+        <Tooltip title='Domicilio'><Cottage sx={{ color: pink[800] }} /></Tooltip> :
+        <Tooltip title='Punto de entrega'><Place color="secondary" /></Tooltip>
+
     },
     {
       field: "Opciones",
@@ -300,46 +302,46 @@ const ReadyToSend = ({rows = [], loading = false, type = 0}) => {
   return (
     <Grid container gap={2} maxWidth={"85vw"}>
       <DataGrid
-            sx={{
-              fontSize: "12px",
-              fontFamily: "sans-serif",
-              borderRadius: { xs: '5px', md: '20px' },
-              bgcolor: "#fff",
-              border: "1px solid rgb(209, 205, 205)",
-              "& .MuiDataGrid-cell": {
-                borderBottom: "1px solid rgb(230, 223, 223)",
-              },
-            }}
-            rows={rows}
-            columns={columns}
-            autoHeight
-            pagination
-            columnVisibilityModel={columnVisibilityModel}
-            onColumnVisibilityModelChange={setColumnVisibilityModel}
-            slots={{
-              pagination: CustomPagination,
-              toolbar: CustomToolbar,
-              columnSortedDescendingIcon: SortedDescendingIcon,
-              columnSortedAscendingIcon: SortedAscendingIcon,
-              columnUnsortedIcon: UnsortedIcon,
-              noRowsOverlay: CustomNoRows,
-            }}
-            disableColumnFilter
-            disableColumnMenu
-            disableColumnSelector
-            disableDensitySelector
-            localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-            slotProps={{
-              toolbar: {
-                showQuickFilter: true,
-                quickFilterProps: { debounceMs: 500 },
-              },
-            }}
-            printOptions={{
-              hideFooter: true,
-              hideToolbar: true,
-            }}
-          />
+        sx={{
+          fontSize: "12px",
+          fontFamily: "sans-serif",
+          borderRadius: { xs: '5px', md: '20px' },
+          bgcolor: "#fff",
+          border: "1px solid rgb(209, 205, 205)",
+          "& .MuiDataGrid-cell": {
+            borderBottom: "1px solid rgb(230, 223, 223)",
+          },
+        }}
+        rows={rows}
+        columns={columns}
+        autoHeight
+        pagination
+        columnVisibilityModel={columnVisibilityModel}
+        onColumnVisibilityModelChange={setColumnVisibilityModel}
+        slots={{
+          pagination: CustomPagination,
+          toolbar: CustomToolbar,
+          columnSortedDescendingIcon: SortedDescendingIcon,
+          columnSortedAscendingIcon: SortedAscendingIcon,
+          columnUnsortedIcon: UnsortedIcon,
+          noRowsOverlay: CustomNoRows,
+        }}
+        disableColumnFilter
+        disableColumnMenu
+        disableColumnSelector
+        disableDensitySelector
+        localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+        slotProps={{
+          toolbar: {
+            showQuickFilter: true,
+            quickFilterProps: { debounceMs: 500 },
+          },
+        }}
+        printOptions={{
+          hideFooter: true,
+          hideToolbar: true,
+        }}
+      />
 
       <Modal
         open={openModal.value}
@@ -350,10 +352,10 @@ const ReadyToSend = ({rows = [], loading = false, type = 0}) => {
         }}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-        
+
       >
-        <Box sx={{...style}}>
-        <AssignRoute productOrder={openModal.selectedPO} handleClose={handleClose} carrierDrivers={CarrierDrivers} updateUser={openModal.updateUser} updateGuide={openModal.updateGuide} />
+        <Box sx={{ ...style }}>
+          <AssignRoute productOrder={openModal.selectedPO} handleClose={handleClose} carrierDrivers={CarrierDrivers} updateUser={openModal.updateUser} updateGuide={openModal.updateGuide} />
         </Box>
       </Modal>
       <Modal
@@ -365,17 +367,17 @@ const ReadyToSend = ({rows = [], loading = false, type = 0}) => {
         }}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-        
+
       >
-        <Box sx={{...style}}>
-        <Button
-        onClick={()=>handleCloseDetail()}
-        sx={{position:'absolute', top:20, right:10}}
-        
-      >
-        <Close />
-      </Button>
-        <DetailAssignRoute productOrder={openDetail.selectedPO} carrierDrivers={CarrierDrivers} />
+        <Box sx={{ ...style }}>
+          <Button
+            onClick={() => handleCloseDetail()}
+            sx={{ position: 'absolute', top: 20, right: 10 }}
+
+          >
+            <Close />
+          </Button>
+          <DetailAssignRoute productOrder={openDetail.selectedPO} carrierDrivers={CarrierDrivers} />
         </Box>
       </Modal>
     </Grid>

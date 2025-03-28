@@ -26,7 +26,7 @@ import {
   Button,
   IconButton,
   Tooltip,
-  Grid,
+  Grid2,
   Typography,
   Fab,
   Skeleton,
@@ -37,6 +37,8 @@ import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import { useAuthStore } from "../../hooks";
 import { useSizeGuide } from "../../hooks/useSizeGuide";
 import TableGuideModal from "../../components/Modals/TableGuideModal";
+import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
+import { esES } from "@mui/x-data-grid/locales";
 
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
@@ -87,60 +89,12 @@ const AllMySizeGuides = () => {
     loadSizeGuides();
   }, [user]);
 
-  const exportToExcel = () => {
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Productos");
-
-    // Agregar encabezados de columna
-    const headerRow = worksheet.addRow([
-      "Nombre del producto",
-      "Descripción",
-      "Precio",
-      "Tamaño",
-      "Código",
-    ]);
-    headerRow.eachCell((cell) => {
-      cell.font = { bold: true };
-    });
-
-    // Agregar datos de las filas
-    rowsProducts.forEach((row) => {
-      worksheet.addRow([
-        row.name,
-        row.description,
-        row.price,
-        row.size,
-        row.tag,
-      ]);
-    });
-
-    // Crear un Blob con el archivo Excel y guardarlo
-    workbook.xlsx.writeBuffer().then((buffer) => {
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      saveAs(blob, "productos.xlsx");
-    });
-  };
-
   function CustomToolbar() {
-    const apiRef = useGridApiContext();
 
-    const handleGoToPage1 = () => apiRef.current.setPage(1);
 
     return (
-      <GridToolbarContainer sx={{ justifyContent: "space-between", paddingX:5 }}>
-        <GridToolbarQuickFilter placeholder='Buscar'/>
-        <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-        {/* <Button
-          variant="text"
-          startIcon={<Download />}
-          disableElevation
-          sx={{ color: "secondary" }}
-          onClick={exportToExcel}
-        >
-          Descargar Excel
-        </Button> */}
+      <GridToolbarContainer sx={{ justifyContent: "center" }}>
+        <GridToolbarQuickFilter variant="outlined" />
       </GridToolbarContainer>
     );
   }
@@ -154,36 +108,41 @@ const AllMySizeGuides = () => {
 
   const handleClose = () => setOpenModal(false);
 
+  const paths = [
+    { path: `/guia-dimensiones`, name: "Guias de dimensiones" },
+  ];
+
+
   return (
-    <Grid container gap={2} maxWidth={"85vw"}>
-      <Grid
-        item
-        marginTop={{ xs: "-30px" }}
-        xs={12}
-        minHeight={"100px"}
-        className="Titles"
+    <Grid2 container paddingX={{ xs: 0, lg: 10 }} display={"flex"} gap={2}>
+      <Grid2
+        size={12}
+        paddingRight={15}
+        flexGrow={1}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        marginBottom={2}
       >
-        <Typography
-          textAlign={"center"}
-          variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
-        >
-          Guias de tallas o medidas
+        <Typography variant="h4">
+          <strong>Guias de dimensiones</strong>
         </Typography>
-      </Grid>
-      <Grid item display={"flex"} justifyContent={"end"} rowSpacing={2} xs={12}>
-        <Button
-          size="small"
-          startIcon={<Refresh />}
-          variant="contained"
-          color="primary"
-          onClick={() => loadSizeGuides()}
-        >
-          Recargar
-        </Button>
-      </Grid>
+      </Grid2>
+      <Grid2 size={12} display={"flex"} justifyContent={"space-between"}>
+        <BreadcrumbCustom paths={paths} />
+      </Grid2>
       <DataGrid
-        sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
+        sx={{
+          fontSize: "12px",
+          fontFamily: "sans-serif",
+          borderRadius: { xs: '5px', md: '20px' },
+          bgcolor: "#fff",
+          border: "1px solid rgb(209, 205, 205)",
+          "& .MuiDataGrid-cell": {
+            borderBottom: "1px solid rgb(230, 223, 223)",
+          },
+        }}
+        localeText={esES.components.MuiDataGrid.defaultProps.localeText}
         columns={[
           // {
           //   field: "tag",
@@ -233,7 +192,7 @@ const AllMySizeGuides = () => {
                 <IconButton
                   aria-label="Editar"
                   color="success"
-                  onClick={() => navigate(`/guia-dimensiones/editar/${params.row._id}` )}
+                  onClick={() => navigate(`/guia-dimensiones/editar/${params.row._id}`)}
                 >
                   <Edit />
                 </IconButton>
@@ -285,11 +244,11 @@ const AllMySizeGuides = () => {
         style={{ fontFamily: "sans-serif", fontSize: "15px" }}
       />
       <TableGuideModal
-      openModal={openModal}
-      handleClose={handleClose}
-      sizeGuide={sizeGuide}
+        openModal={openModal}
+        handleClose={handleClose}
+        sizeGuide={sizeGuide}
       />
-    </Grid>
+    </Grid2>
   );
 };
 

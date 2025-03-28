@@ -43,7 +43,7 @@ const style = {
   maxWidth: "90%",
   maxHeigth: "90%",
   rowGap:1,
-  p: 6,
+  p: {xs: 2, lg: 6},
 };
 
 const FillOrder = () => {

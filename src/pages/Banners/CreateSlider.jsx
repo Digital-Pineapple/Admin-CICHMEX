@@ -23,11 +23,12 @@ import { grey, orange } from '@mui/material/colors';
 import { Box, height, width } from '@mui/system';
 import { Delete, UploadFileRounded } from '@mui/icons-material';
 import LoadingScreenBlue from '../../components/ui/LoadingScreenBlue';
+import BreadcrumbCustom from '../../components/ui/BreadCrumbCustom';
 
 const CreateSlider = () => {
     const { loadAllDiscounts, discounts } = useDiscounts();
     const [selectedDiscount, setSelectedDiscount] = useState({})
-    const {createOneBanner , loading, navigate} = useUI()
+    const { createOneBanner, loading, navigate } = useUI()
 
     const { user } = useAuthStore();
 
@@ -41,44 +42,44 @@ const CreateSlider = () => {
         }
     }, [user]);
 
-    
+
 
     const validateImageSize = useCallback((file, { width, height, maxSizeMB = 10 }) => {
         return new Promise((resolve, reject) => {
-          // Validar tamaño del archivo primero (10 MB)
-          const maxSizeBytes = maxSizeMB * 1024 * 1024;
-          if (file.size > maxSizeBytes) {
-            reject(`El tamaño del archivo no debe exceder ${maxSizeMB} MB.`);
-            return;
-          }
-      
-          // Validar dimensiones de la imagen
-          const img = new Image();
-          img.src = URL.createObjectURL(file);
-          
-          img.onload = () => {
-            URL.revokeObjectURL(img.src); // Importante para liberar memoria
-            if (img.width >= width && img.height >= height) {
-              resolve(true);
-            } else {
-              reject(`La imagen debe tener un tamaño mínimo de ${width} x ${height} px.`);
+            // Validar tamaño del archivo primero (10 MB)
+            const maxSizeBytes = maxSizeMB * 1024 * 1024;
+            if (file.size > maxSizeBytes) {
+                reject(`El tamaño del archivo no debe exceder ${maxSizeMB} MB.`);
+                return;
             }
-          };
-          
-          img.onerror = () => {
-            URL.revokeObjectURL(img.src); // Limpiar incluso en errores
-            reject("Error al cargar la imagen.");
-          };
+
+            // Validar dimensiones de la imagen
+            const img = new Image();
+            img.src = URL.createObjectURL(file);
+
+            img.onload = () => {
+                URL.revokeObjectURL(img.src); // Importante para liberar memoria
+                if (img.width >= width && img.height >= height) {
+                    resolve(true);
+                } else {
+                    reject(`La imagen debe tener un tamaño mínimo de ${width} x ${height} px.`);
+                }
+            };
+
+            img.onerror = () => {
+                URL.revokeObjectURL(img.src); // Limpiar incluso en errores
+                reject("Error al cargar la imagen.");
+            };
         });
-      }, []);
-      
-      const onChangeImage = async (event, name) => {
+    }, []);
+
+    const onChangeImage = async (event, name) => {
         const file = event.target.files[0];
         if (!file) return;
-    
+
         // Limpiamos errores previos para este campo
         setFileErrors(prev => ({ ...prev, [name]: null }));
-    
+
         if (!allowedTypes.includes(file.type)) {
             setFileErrors(prev => ({
                 ...prev,
@@ -87,23 +88,23 @@ const CreateSlider = () => {
             setValue(name, null);
             return;
         }
-    
+
         const VALUES_VALIDATE = {
             image_slide: { width: 1920, height: 1080 },
             image_slide_movil: { width: 1000, height: 300 }
         };
-    
+
         try {
             if (!VALUES_VALIDATE[name]) {
                 throw new Error("Validación de tamaño no definida para este campo.");
             }
-    
+
             await validateImageSize(file, VALUES_VALIDATE[name]);
-            
+
             // Si pasa la validación, limpiamos errores
             setFileErrors(prev => ({ ...prev, [name]: null }));
             setValue(name, file);
-            
+
         } catch (error) {
             setFileErrors(prev => ({
                 ...prev,
@@ -118,13 +119,13 @@ const CreateSlider = () => {
         setIsDragging(isOver);
     };
 
-const handleDrop = (event, fieldName) => {
-    event.preventDefault();
-    setIsDragging(false);
-    if (event.dataTransfer.files.length) {
-      onChangeImage({ target: { files: event.dataTransfer.files } }, fieldName);
-    }
-  };
+    const handleDrop = (event, fieldName) => {
+        event.preventDefault();
+        setIsDragging(false);
+        if (event.dataTransfer.files.length) {
+            onChangeImage({ target: { files: event.dataTransfer.files } }, fieldName);
+        }
+    };
 
     const removeImage = (inputName) => {
         setValue(inputName, null);
@@ -172,17 +173,17 @@ const handleDrop = (event, fieldName) => {
             type_event: 'non-click',
             image_slide: '',
             image_slide_movil: '',
-            for_discount : false
+            for_discount: false
         },
     });
-    
+
 
     const onSubmit = async (data) => {
         createOneBanner(data)
     };
 
     const onChangeDiscount = (data) => {
-       const discount = data.target.value;
+        const discount = data.target.value;
         if (discount) {
             const select = discounts.find((i) => i._id === discount)
             setSelectedDiscount(select)
@@ -194,7 +195,7 @@ const handleDrop = (event, fieldName) => {
             setValue('discount', '')
             setValue('for_discount', false)
         }
-        
+
     }
 
     const renderSelected = (data) => {
@@ -227,25 +228,37 @@ const handleDrop = (event, fieldName) => {
     };
 
     if (loading) {
-     return <LoadingScreenBlue/>
+        return <LoadingScreenBlue />
     }
-    
+    const paths = [
+        { path: `/contenidos/banners`, name: "Banners" },
+        { path: `/contenidos/banners/agregar`, name: "Crear slide" },
+    ];
+
     return (
-        <Grid2 container maxWidth="85vw" gap={2}>
-            <Grid2 marginTop={{ xs: '-30px' }} size={12} className="Titles" minHeight="80px">
-                <Typography
-                    textAlign="center"
-                    variant="h1"
-                    fontSize={{ xs: '20px', sm: '30px', lg: '40px' }}
-                >
-                    Crear slider
+        <Grid2 container paddingX={{ xs: 0, lg: 10 }} gap={2}>
+            <Grid2
+                size={12}
+                paddingRight={15}
+                flexGrow={1}
+                display={"flex"}
+                alignItems={"center"}
+                justifyContent={"space-between"}
+                marginBottom={2}
+            >
+                <Typography variant="h4">
+                    <strong>Crear slide</strong>
                 </Typography>
+            </Grid2>
+            <Grid2 size={12} display={"flex"} justifyContent={"space-between"}>
+                <BreadcrumbCustom paths={paths} />
+
             </Grid2>
             <Card variant="elevation" sx={{ width: '100%' }}>
                 <CardHeader title="Ingrese datos para crear slide" />
                 <CardContent component="form" onSubmit={handleSubmit(onSubmit)}>
                     <Grid2 container gap={2}>
-                        <Grid2 size={3}>
+                        <Grid2 size={4}>
                             <Controller
                                 name="is_active"
                                 control={control}
@@ -263,7 +276,7 @@ const handleDrop = (event, fieldName) => {
                                 )}
                             />
                         </Grid2>
-                        <Grid2 size={3}>
+                        <Grid2 size={4}>
                             <Controller
                                 name="no_slide"
                                 control={control}
@@ -285,7 +298,7 @@ const handleDrop = (event, fieldName) => {
                                 )}
                             />
                         </Grid2>
-                        <Grid2 size={3}>
+                        <Grid2 size={3.7}>
                             <Controller
                                 name="discount"
                                 control={control}
@@ -298,7 +311,7 @@ const handleDrop = (event, fieldName) => {
                                             label="Exclusivo de una promoción"
                                             onChange={(e) => {
                                                 onChangeDiscount(e); // Primero ejecutas tu lógica
-                                              }}
+                                            }}
                                         >
                                             <MenuItem value={''}>No</MenuItem>
                                             {discounts.map((item) => (
@@ -399,13 +412,13 @@ const handleDrop = (event, fieldName) => {
                                                     <Typography variant="body2">
                                                         <UploadFileRounded /> <strong>Seleccionar o arrastrar archivos aquí</strong>
                                                         <br />
-                                                        { ' Sube tu imagen en JPEG, PNG o WEBP, mínimo 50px de tamaño y hasta 10MB.'}
+                                                        {' Sube tu imagen en JPEG, PNG o WEBP, mínimo 50px de tamaño y hasta 10MB.'}
                                                     </Typography>
                                                     <input
                                                         id={`imageInput-${field.name}`}
                                                         type="file"
                                                         ref={field.ref}
-                                                        onChange={(e)=>onChangeImage(e, field.name)}
+                                                        onChange={(e) => onChangeImage(e, field.name)}
                                                         style={{ display: "none" }}
                                                         accept="image/png, image/jpeg, image/webp"
                                                     />
@@ -442,7 +455,7 @@ const handleDrop = (event, fieldName) => {
                                                                 backgroundColor: "white",
                                                                 boxShadow: 1,
                                                             }}
-                                                            onClick={()=>removeImage(field.name)}
+                                                            onClick={() => removeImage(field.name)}
                                                         >
                                                             <Delete fontSize="small" />
                                                         </IconButton>
@@ -489,13 +502,13 @@ const handleDrop = (event, fieldName) => {
                                                     <Typography variant="body2">
                                                         <UploadFileRounded /> <strong>Seleccionar o arrastrar archivos aquí</strong>
                                                         <br />
-                                                        { ' Sube tu imagen en JPEG, PNG o WEBP, mínimo 50px de tamaño y hasta 10MB.'}
+                                                        {' Sube tu imagen en JPEG, PNG o WEBP, mínimo 50px de tamaño y hasta 10MB.'}
                                                     </Typography>
                                                     <input
                                                         id={`imageInput-${field.name}`}
                                                         type="file"
                                                         ref={field.ref}
-                                                        onChange={(e)=>onChangeImage(e, field.name)}
+                                                        onChange={(e) => onChangeImage(e, field.name)}
                                                         style={{ display: "none" }}
                                                         accept="image/png, image/jpeg, image/webp"
                                                     />
@@ -503,7 +516,7 @@ const handleDrop = (event, fieldName) => {
                                             </Grid2>
 
                                             {field.value && (
-                                                <Grid2 container justifyContent="center" sx={{ mt: 2, maxHeight:'400px' }} >
+                                                <Grid2 container justifyContent="center" sx={{ mt: 2, maxHeight: '400px' }} >
                                                     <Box
                                                         sx={{
                                                             position: "relative",
@@ -532,7 +545,7 @@ const handleDrop = (event, fieldName) => {
                                                                 backgroundColor: "white",
                                                                 boxShadow: 1,
                                                             }}
-                                                            onClick={()=>removeImage(field.name)}
+                                                            onClick={() => removeImage(field.name)}
                                                         >
                                                             <Delete fontSize="small" />
                                                         </IconButton>
@@ -555,7 +568,7 @@ const handleDrop = (event, fieldName) => {
                         </Grid2>
                     </Grid2>
                     <CardActions>
-                    <Button fullWidth variant="contained" color="error" size="small" onClick={()=>navigate('/contenidos/banners')}>
+                        <Button fullWidth variant="contained" color="error" size="small" onClick={() => navigate('/contenidos/banners')}>
                             Cancelar
                         </Button>
                         <Button fullWidth variant="contained" color="success" size="small" type="submit">

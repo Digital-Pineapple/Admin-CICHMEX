@@ -47,6 +47,8 @@ import EditButton from "../../components/Buttons/EditButton";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import { useAuthStore, useUI } from "../../hooks";
 import DetailSlide from "./DetailSlide";
+import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
+import { esES } from "@mui/x-data-grid/locales";
 
 
 function Pagination({ page, onPageChange, className }) {
@@ -98,7 +100,7 @@ const Banners = () => {
     const { user } = useAuthStore()
     const { loadAllBanners, banners, changeActiveBanner, loading, deleteOneBanner } = useUI()
     const [open, setOpen] = useState({ value: false, image: '' })
-    const [openDetail, setOpenDetail] = useState({value: false, slide: ''})
+    const [openDetail, setOpenDetail] = useState({ value: false, slide: '' })
     useEffect(() => {
         loadAllBanners()
     }, [user])
@@ -110,7 +112,7 @@ const Banners = () => {
         setOpen({ value: false, image: '' })
     }
 
-    const handleOpenDetail = (data) => {    
+    const handleOpenDetail = (data) => {
         setOpenDetail({ value: true, slide: data })
     }
     const handleCloseDetail = () => {
@@ -126,14 +128,10 @@ const Banners = () => {
         })) || [];
 
     function CustomToolbar() {
-        const apiRef = useGridApiContext();
-
-        const handleGoToPage1 = () => apiRef.current.setPage(1);
 
         return (
-            <GridToolbarContainer sx={{ justifyContent: "space-between", paddingX: 5 }}>
-                <GridToolbarQuickFilter placeholder="Buscar" />
-                <Button variant="text" onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
+            <GridToolbarContainer sx={{ justifyContent: "center", paddingX: 5 }}>
+                <GridToolbarQuickFilter variant="outlined" />
             </GridToolbarContainer>
         );
     }
@@ -166,31 +164,35 @@ const Banners = () => {
             <img
                 src={src}
                 alt={src}
-                style={{ objectFit: "contain", borderRadius:'10px' }}
+                style={{ objectFit: "contain", borderRadius: '10px' }}
             />
-            <Search width={'15px'}  />
+            <Search width={'15px'} />
         </Box>
     )
 
+    const paths = [
+        { path: `/contenidos/banners`, name: "Banners" },
+    ];
+
     return (
-        <Grid2 container maxWidth={"85vw"} gap={2}>
+        <Grid2 container paddingX={{ xs: 0, lg: 10 }} display={"flex"} gap={2}>
             <Grid2
-                marginTop={{ xs: "-30px" }}
                 size={12}
-                className="Titles"
-                minHeight={"80px"}
+                paddingRight={15}
+                flexGrow={1}
+                display={"flex"}
+                alignItems={"center"}
+                justifyContent={"space-between"}
+                marginBottom={2}
             >
-                <Typography
-                    textAlign={"center"}
-                    variant="h1"
-                    fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
-                >
-                    Banners
+                <Typography variant="h4">
+                    <strong>Banners</strong>
                 </Typography>
             </Grid2>
-            <Grid2 size={12}>
+            <Grid2 size={12} display={"flex"} justifyContent={"space-between"}>
+                <BreadcrumbCustom paths={paths} />
                 <Fab
-                    sx={{ right: "-80%" }}
+
                     onClick={() => navigate('/contenidos/banners/agregar')}
                     color="secondary"
                     aria-label="Agregar categoría"
@@ -199,9 +201,18 @@ const Banners = () => {
                     <Add />
                 </Fab>
             </Grid2>
-
             <DataGrid
-                sx={{ fontSize: "20px", marginTop: 2, fontFamily: "BikoBold" }}
+                sx={{
+                    fontSize: "12px",
+                    fontFamily: "sans-serif",
+                    borderRadius: { xs: '5px', md: '20px' },
+                    bgcolor: "#fff",
+                    border: "1px solid rgb(209, 205, 205)",
+                    "& .MuiDataGrid-cell": {
+                        borderBottom: "1px solid rgb(230, 223, 223)",
+                    },
+                }}
+                localeText={esES.components.MuiDataGrid.defaultProps.localeText}
                 columns={[
                     {
                         field: "is_active",
@@ -252,13 +263,13 @@ const Banners = () => {
                             />,
                             <EditButton
                                 title={`Desea editar el slide No. ${params.row.no_slide}?`}
-                                callbackToEdit={()=>navigate(`editar/${params.row._id}`)}
+                                callbackToEdit={() => navigate(`editar/${params.row._id}`)}
                             />,
                             <Tooltip title="Ver Detalles">
                                 <IconButton
                                     aria-label="ver detalle"
                                     color="primary"
-                                   onClick={() => handleOpenDetail(params.row)}
+                                    onClick={() => handleOpenDetail(params.row)}
                                 >
                                     <Visibility />
                                 </IconButton>
@@ -307,7 +318,7 @@ const Banners = () => {
                 aria-describedby="modal-detail-image"
             >
                 <Box sx={style}>
-                    <img src={open.image} width={'100%'} height={'100%'} style={{borderRadius:'10px'}} />
+                    <img src={open.image} width={'100%'} height={'100%'} style={{ borderRadius: '10px' }} />
                 </Box>
             </Modal>
             <Modal
@@ -317,7 +328,7 @@ const Banners = () => {
                 aria-describedby="modal-detail-slide"
             >
                 <Box sx={style}>
-                    <DetailSlide slide={openDetail.slide}/>
+                    <DetailSlide slide={openDetail.slide} />
                 </Box>
             </Modal>
 
