@@ -119,7 +119,7 @@ const PackagesDelivered = () => {
                 headerName: "Cliente",
                 flex: 2,
                 sortable: false,
-                renderCell: (params)=> <Typography>{params.row.user_id.fullname}</Typography>
+                renderCell: (params)=> <Typography>{params.row.user_id?.fullname}</Typography>
               },
               {
                 field: 'verification',

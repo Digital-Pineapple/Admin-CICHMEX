@@ -23,7 +23,7 @@ import {
   Popover,
   MenuList,
 } from "@mui/material";
-import { useWarehouse } from "../../../hooks";
+import { useAuthStore, useUsers, useWarehouse } from "../../../hooks";
 import { useCallback, useEffect, useState } from "react";
 import { Add, Delete, Edit, MoreVert } from "@mui/icons-material";
 import { grey, teal } from "@mui/material/colors";
@@ -62,7 +62,7 @@ const style = {
   p: 4,
 };
 
-const Zones = () => {
+const Zones = ({storehouses}) => {
   const {
     loadAllZones,
     allZones,
@@ -77,7 +77,8 @@ const Zones = () => {
 
   const [open, setOpen] = useState({ value: false, zone: {}, type: "" });
   const [openPopover, setOpenPopover] = useState(null);
-
+  const { user } = useAuthStore()
+  const typeUser = user.type_user.role
   const { control, handleSubmit, reset } = useForm();
 
   useEffect(() => {
@@ -97,9 +98,11 @@ const Zones = () => {
   const OnSubmit = (data) => {
     if (open.type === "Add") {
       loadAddZone(data, handleClose);
+      
     } else if (open.type === "Update") {
       const id = open.zone._id;
       loadUpdateZone(id, data, handleClose);
+      
     }
   };
 
@@ -115,6 +118,7 @@ const Zones = () => {
   if (loaderZones) {
     return <Skeleton variant="rounded" width={"100%"} height={"100%"} />;
   }
+  
 
   return (
     <Grid2 container>
@@ -147,6 +151,10 @@ const Zones = () => {
               <TableRow>
                 <StyledTableCell>Nombre</StyledTableCell>
                 <StyledTableCell>Tipo de zona</StyledTableCell>
+                {typeUser.includes("SUPER-ADMIN") || typeUser.includes("ADMIN") ? (
+                    <StyledTableCell>Cedis</StyledTableCell>
+                  ): null}
+                
                 <StyledTableCell align="right">Opciones</StyledTableCell>
               </TableRow>
             </TableHead>
@@ -157,6 +165,11 @@ const Zones = () => {
                     {row.name}
                   </StyledTableCell>
                   <StyledTableCell>{RenderTypeZone(row.type)}</StyledTableCell>
+                  {typeUser.includes("SUPER-ADMIN") || typeUser.includes("ADMIN") ? (
+                    <StyledTableCell component="th" scope="row">
+                    {row.storehouse.name}
+                  </StyledTableCell>
+                  ): null}
                   <StyledTableCell align="right">
                     <IconButton onClick={(e) => handleOpenPopover(e, row)}>
                       <MoreVert />
@@ -216,6 +229,29 @@ const Zones = () => {
               </FormControl>
             )}
           />
+
+          {typeUser.includes("SUPER-ADMIN") || typeUser.includes("ADMIN") ? (
+             <Controller
+             name="storehouse"
+             control={control}
+             defaultValue={open.zone?.storehouse?._id}
+             rules={{ required: "Campo requerido" }}
+             render={({ field, fieldState }) => (
+               <FormControl fullWidth error={fieldState.invalid}>
+                 <InputLabel>CEDIS</InputLabel>
+                 <Select {...field} label="Tipo de zona">
+                   {storehouses.map((item) => (
+                     <MenuItem key={item.key} value={item._id}>
+                       {item.name}
+                     </MenuItem>
+                   ))}
+                 </Select>
+                 <FormHelperText>{fieldState.error?.message}</FormHelperText>
+               </FormControl>
+             )}
+           />
+             
+          ): null}
 
           <Grid2 display="flex" gap={1} size={12}>
             <Button

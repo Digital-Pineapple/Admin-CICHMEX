@@ -23,7 +23,7 @@ import {
   Popover,
   MenuList,
 } from "@mui/material";
-import { useWarehouse } from "../../../hooks";
+import { useAuthStore, useWarehouse } from "../../../hooks";
 import { useCallback, useEffect, useState } from "react";
 import { Add, Delete, Edit, MoreVert, QrCode } from "@mui/icons-material";
 import { grey, teal } from "@mui/material/colors";
@@ -80,6 +80,9 @@ const Sections = () => {
   const [openPopover, setOpenPopover] = useState(null);
 
   const { control, handleSubmit, reset } = useForm();
+
+  const { user } = useAuthStore()
+    const typeUser = user.type_user.role
 
   useEffect(() => {
     loadAllSections();
@@ -147,6 +150,7 @@ const Sections = () => {
               <TableRow>
                 <StyledTableCell>Nombre</StyledTableCell>
                 <StyledTableCell>Pasillo</StyledTableCell>
+                <StyledTableCell>Cedis</StyledTableCell>
                 <StyledTableCell align="right">Opciones</StyledTableCell>
               </TableRow>
             </TableHead>
@@ -157,6 +161,11 @@ const Sections = () => {
                     {row.name}
                   </StyledTableCell>
                   <StyledTableCell>{row.aisle.name}</StyledTableCell>
+                  {typeUser.includes("SUPER-ADMIN") || typeUser.includes("ADMIN") ? (
+                    <StyledTableCell component="th" scope="row">
+                    {row.storehouse.name}
+                  </StyledTableCell>
+                  ): null}
                   <StyledTableCell align="right">
                     <IconButton onClick={(e) => handleOpenPopover(e, row)}>
                       <MoreVert />

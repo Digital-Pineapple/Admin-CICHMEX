@@ -23,7 +23,7 @@ import {
     Popover,
     MenuList,
   } from "@mui/material";
-  import { useWarehouse } from "../../../hooks";
+  import { useAuthStore, useWarehouse } from "../../../hooks";
   import { useCallback, useEffect, useState } from "react";
   import { Add, Delete, Edit, MoreVert } from "@mui/icons-material";
   import { grey, teal } from "@mui/material/colors";
@@ -62,7 +62,7 @@ import {
     p: 4,
   };
   
-  const Aisles = () => {
+  const Aisles = ({storehouses}) => {
     const {
       loadAllAisles,
       allAisles,
@@ -78,6 +78,9 @@ import {
     const [openPopover, setOpenPopover] = useState(null);
   
     const { control, handleSubmit, reset } = useForm();
+
+     const { user } = useAuthStore()
+      const typeUser = user.type_user.role
   
     useEffect(() => {
         loadAllAisles()
@@ -146,6 +149,9 @@ import {
                 <TableRow>
                   <StyledTableCell>Nombre</StyledTableCell>
                   <StyledTableCell>Zona</StyledTableCell>
+                  {typeUser.includes("SUPER-ADMIN") || typeUser.includes("ADMIN") ? (
+                    <StyledTableCell>Cedis</StyledTableCell>
+                  ): null}
                   <StyledTableCell align="right">Opciones</StyledTableCell>
                 </TableRow>
               </TableHead>
@@ -155,7 +161,12 @@ import {
                     <StyledTableCell component="th" scope="row">
                       {row.name}
                     </StyledTableCell>
-                    <StyledTableCell>{row.zone.name}</StyledTableCell>
+                    <StyledTableCell>{row.zone?.name}</StyledTableCell>
+                    {typeUser.includes("SUPER-ADMIN") || typeUser.includes("ADMIN") ? (
+                    <StyledTableCell component="th" scope="row">
+                    {row.storehouse.name}
+                  </StyledTableCell>
+                  ): null}
                     <StyledTableCell align="right">
                       <IconButton onClick={(e) => handleOpenPopover(e, row)}>
                         <MoreVert />
@@ -217,6 +228,28 @@ import {
               )}
             />
   
+  {typeUser.includes("SUPER-ADMIN") || typeUser.includes("ADMIN") ? (
+               <Controller
+               name="storehouse"
+               control={control}
+               defaultValue={open.aisle?.storehouse?._id}
+               rules={{ required: "Campo requerido" }}
+               render={({ field, fieldState }) => (
+                 <FormControl fullWidth error={fieldState.invalid}>
+                   <InputLabel>CEDIS</InputLabel>
+                   <Select {...field} label="Tipo de zona">
+                     {storehouses.map((item) => (
+                       <MenuItem key={item.key} value={item._id}>
+                         {item.name}
+                       </MenuItem>
+                     ))}
+                   </Select>
+                   <FormHelperText>{fieldState.error?.message}</FormHelperText>
+                 </FormControl>
+               )}
+             />
+               
+            ): null}
            
   
             <Grid2 display="flex" gap={1} size={12}>

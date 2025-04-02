@@ -345,7 +345,6 @@ export const addOneProduct =
       thumbnail,
       seoKeywords,
       purchase_price,
-      // images,
     },
     images,
     navigate
@@ -412,10 +411,6 @@ export const addOneProduct =
           navigate("/mi-almacen/productos", { replace: true });
         }
       });
-      // navigate("/mi-almacen/productos", { replace: true });
-    // } catch (error) {
-      
-    //   navigate("/mi-almacen/productos", { replace: true });
     } catch (error) {
       enqueueSnackbar(
         

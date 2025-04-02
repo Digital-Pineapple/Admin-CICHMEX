@@ -1,11 +1,22 @@
 import { Grid2, Typography, Grid } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import BreadcrumbCustom from '../../../components/ui/BreadCrumbCustom'
 import Zones from './Zones';
 import Aisles from './Aisles';
 import Sections from './Sections';
+import { useStoreHouse } from '../../../hooks/useStoreHouse';
+import { useAuthStore, useUsers } from '../../../hooks';
 
 const WarehouseManagement = () => {
+const {loadStoreHouse, StoreHouses} = useStoreHouse()
+const {user} =useAuthStore()
+const typeUser = user.type_user.role
+
+useEffect(() => {
+  if( typeUser.includes('SUPER-ADMIN') || typeUser.includes('ADMIN')){
+    loadStoreHouse()
+  }
+}, [user])
 
     const paths = [
         { path: "/warehouse/administracion", name: "Administración de almacén" },
@@ -26,13 +37,13 @@ const WarehouseManagement = () => {
         <BreadcrumbCustom paths={paths} />
       </Grid2>
       <Grid2 gridArea={'2 / 1 / 3 / 4'}>
-        <Zones/>
+        <Zones storehouses={StoreHouses} />
       </Grid2>
       <Grid2 gridArea={'3 / 1 / 6 / 4'}>
-        <Aisles/>
+        <Aisles storehouses={StoreHouses}/>
       </Grid2>
       <Grid2 gridArea={'2 / 4 / 6 / 6'} >
-        <Sections />
+        <Sections storehouses={StoreHouses} />
       </Grid2>
     </Grid2>
   )

@@ -76,7 +76,7 @@ export const startLoadZones = () => async dispatch => {
   export const startAddZones = (values, closeModal) => async dispatch => {
     dispatch(onStartLoadingZones());
     const info = {
-      storehouse : '662fe69b9ba1d8b3cfcd3634',
+      storehouse : values.storehouse ? values.storehouse : '662fe69b9ba1d8b3cfcd3634',
       ...values
     }
     try {
@@ -99,7 +99,7 @@ export const startLoadZones = () => async dispatch => {
   export const startAddAisle = (values, closeModal) => async dispatch => {
    dispatch(onStartLoadingAisles());
     const info = {
-      storehouse : '662fe69b9ba1d8b3cfcd3634',
+      storehouse : values.storehouse ? values.storehouse : '662fe69b9ba1d8b3cfcd3634',
       ...values
     }
     try {
@@ -122,7 +122,7 @@ export const startLoadZones = () => async dispatch => {
   export const startAddSection = (values, closeModal) => async dispatch => {
     dispatch(onStartLoadingSections());
      const info = {
-       storehouse : '662fe69b9ba1d8b3cfcd3634',
+      storehouse : values.storehouse ? values.storehouse : '662fe69b9ba1d8b3cfcd3634',
        ...values
      }
      try {
@@ -145,8 +145,12 @@ export const startLoadZones = () => async dispatch => {
    
   export const startUpdateZone = (id,values, closeModal) => async dispatch => {
     dispatch(onStartLoadingZones());
+    const info = {
+      storehouse : values.storehouse ? values.storehouse : '662fe69b9ba1d8b3cfcd3634',
+      ...values
+    }
     try {
-      const { data } = await instanceApi.post(`/warehouse/update_zone/${id}`,values, {
+      const { data } = await instanceApi.post(`/warehouse/update_zone/${id}`,info, {
         headers: {
           "Content-type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -166,8 +170,12 @@ export const startLoadZones = () => async dispatch => {
 
   export const startUpdateAisle = (id,values, closeModal) => async dispatch => {
     dispatch(onStartLoadingAisles());
+    const info = {
+      storehouse : values.storehouse ? values.storehouse : '662fe69b9ba1d8b3cfcd3634',
+      ...values
+    }
     try {
-      const { data } = await instanceApi.post(`/warehouse/update_aisle/${id}`,values, {
+      const { data } = await instanceApi.post(`/warehouse/update_aisle/${id}`,info, {
         headers: {
           "Content-type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -186,8 +194,12 @@ export const startLoadZones = () => async dispatch => {
   };
   export const startUpdateSection = (id,values, closeModal) => async dispatch => {
     dispatch(onStartLoadingSections());
+    const info = {
+      storehouse : values.storehouse ? values.storehouse : '662fe69b9ba1d8b3cfcd3634',
+      ...values
+    }
     try {
-      const { data } = await instanceApi.post(`/warehouse/update_section/${id}`,values, {
+      const { data } = await instanceApi.post(`/warehouse/update_section/${id}`,info, {
         headers: {
           "Content-type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
