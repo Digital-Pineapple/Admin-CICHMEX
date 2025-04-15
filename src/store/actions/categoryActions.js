@@ -1,3 +1,8 @@
+import { enqueueSnackbar } from "notistack";
+import { instanceApi } from "../../apis/configAxios";
+import { deleteCategory, editCategory, loadCategories, loadCategory, onAddNewCategory } from "../reducer/categoryReducer";
+import { startLoading, stopLoading } from "../reducer/uiReducer";
+
 // Carga todas las categorías desde la API y las almacena en el estado global
 export const startLoadCategories = () => {
   return async (dispatch) => {
