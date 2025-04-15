@@ -3,15 +3,16 @@ import Swal from "sweetalert2";
 import instanceApi from "../../apis/userApi";
 import { setOrdersByDeliveryPoint } from "../reducer/deliveryPointsReducer";
 
+// Función para iniciar la verificación de un código QR asociado a un pedido
 export const StartLoadVerifyCode = ({ order, user, code }) => {
   return async (dispatch) => {
     try {
-      const body = { order_id: order, user_id: user, v_code: code }
+      const body = { order_id: order, user_id: user, v_code: code };
       const response = await instanceApi.post(`/product-order/start-verifyQr`, body);      
       const id = response.data.data._id;
       Swal.fire({
         title: `Entrega de pedido${response.data.data.order_id}`,
-        text: "Se validó codigo correctamente",
+        text: "Se validó código correctamente",
         showCancelButton: false,
         confirmButtonText: "Terminar entrega",
         showLoaderOnConfirm: true,
@@ -32,13 +33,14 @@ export const StartLoadVerifyCode = ({ order, user, code }) => {
   };
 };
 
+// Función para marcar un pedido como entregado
 export const doneDelivery = (order_id, notes = "El pedido fue entregado") => {
   return async (dispatch) => {
     try {
       const body = { _id: order_id, notes: notes };  
       const response = await instanceApi.post(`/product-order/end-shipping`, body);
       Swal.fire({
-        title: `Se entrego el pedido con éxito`,
+        title: `Se entregó el pedido con éxito`,
       });
       await dispatch(deleteDeliveredOrder(order_id));
     } catch (error) {
@@ -52,6 +54,7 @@ export const doneDelivery = (order_id, notes = "El pedido fue entregado") => {
   };
 };
 
+// Función para obtener los pedidos pendientes de entrega por sucursal
 export const getOrdersByBranch = (id) => {
   return async (dispatch) => {
     try {

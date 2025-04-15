@@ -15,7 +15,7 @@ import {
 import { useEffect } from "react";
 import { useUI } from "../../hooks/useUi";
 import MuiPagination from "@mui/material/Pagination";
-import { Add, Close, Delete,Edit, Place } from "@mui/icons-material";
+import { Add, Close, Delete, Edit, Place } from "@mui/icons-material";
 import {
   Card,
   CardContent,
@@ -36,6 +36,7 @@ import { Box } from "@mui/system";
 import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 import { esES } from "@mui/x-data-grid/locales";
 
+// Estilos para el modal
 const style = {
   position: "absolute",
   top: "50%",
@@ -48,11 +49,13 @@ const style = {
   borderRadius: "10px",
 };
 
+// Estilos para el contenedor del mapa
 const styleContainer = {
   width: "100%",
   height: "600px",
 };
 
+// Componente de paginación personalizada
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -69,6 +72,8 @@ function Pagination({ page, onPageChange, className }) {
     />
   );
 }
+
+// Iconos personalizados para el ordenamiento
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
@@ -81,11 +86,13 @@ export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación para la tabla
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
 const StoreHouse = () => {
+  // Hooks personalizados para manejar datos y navegación
   const { loadStoreHouse, StoreHouses, navigate, deleteStoreHouse } =
     useStoreHouse();
   const [open, setOpen] = useState({ value: false, data: {} });
@@ -95,43 +102,54 @@ const StoreHouse = () => {
     googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
   });
 
+  // Función para abrir el modal con información de un CEDIS
   const handleOpen = (info) => {
     setOpen({ value: true, data: info });
   };
+
+  // Función para cerrar el modal
   const handleClose = () => {
     setOpen({ value: false, data: {} });
   };
+
+  // Cargar los datos de los CEDIS al montar el componente
   useEffect(() => {
     loadStoreHouse();
   }, []);
 
+  // Agregar un ID único a cada fila
   const rowsWithIds = StoreHouses.map((item, _id) => ({
     id: _id.toString(),
     ...item,
   }));
 
+  // Navegar a la página para crear un nuevo CEDIS
   const createStoreHouse = () => {
     navigate("/CEDIS/agregar", { replace: true });
   };
 
+  // Barra de herramientas personalizada para la tabla
   function CustomToolbar() {
-
     return (
       <GridToolbarContainer sx={{ justifyContent: "center", m: 1 }}>
         <GridToolbarQuickFilter size="small" label="Buscar" variant="outlined" />
       </GridToolbarContainer>
     );
   }
+
+  // Mostrar pantalla de carga si los datos aún no están disponibles
   if (loading) {
     return <LoadingScreenBlue />;
   }
 
+  // Rutas para el componente de breadcrumb
   const paths = [
     { path: "/CEDIS/todos", name: "Centros de Distribución Logística" },
   ];
 
   return (
     <Grid2 container paddingX={{ xs: 0, sm: 10 }}>
+      {/* Encabezado de la página */}
       <Grid2
         size={12}
         paddingRight={15}
@@ -145,6 +163,8 @@ const StoreHouse = () => {
           <strong>Centros de Distribución Logística</strong>
         </Typography>
       </Grid2>
+
+      {/* Breadcrumb y botón para crear un nuevo CEDIS */}
       <Grid2
         size={12}
         display={"flex"}
@@ -162,6 +182,8 @@ const StoreHouse = () => {
           <Add />
         </Fab>
       </Grid2>
+
+      {/* Tabla de datos de los CEDIS */}
       <DataGrid
         sx={{
           fontSize: "12px",
@@ -212,18 +234,21 @@ const StoreHouse = () => {
             sortable: false,
             type: "actions",
             getActions: (params) => [
+              // Botón para ver la ubicación en el mapa
               <GridActionsCellItem
                 icon={<Place color="secondary" />}
                 onClick={() => handleOpen(params.row)}
                 label="Ver Ubicación"
                 showInMenu
               />,
+              // Botón para editar un CEDIS
               <GridActionsCellItem
                 icon={<Edit color="success" />}
                 onClick={() => navigate(`/CEDIS/editar/${params.row._id}`)}
                 label="Editar Cedis"
                 showInMenu
               />,
+              // Botón para eliminar un CEDIS
               <GridActionsCellItem
                 icon={<Delete color="error" />}
                 onClick={() => deleteStoreHouse(params.row._id)}
@@ -257,6 +282,8 @@ const StoreHouse = () => {
           hideToolbar: true,
         }}
       />
+
+      {/* Modal para mostrar la ubicación en el mapa */}
       <Modal open={open.value} onClose={handleClose}>
         <Card sx={style} variant="outlined">
           <CardHeader

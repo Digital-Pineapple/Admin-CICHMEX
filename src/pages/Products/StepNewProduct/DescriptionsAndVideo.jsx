@@ -29,6 +29,7 @@ const DescriptionsAndVideo = ({
   isLastStep,
   handleReset
 }) => {
+  // Valores por defecto para los campos del formulario
   const DefaultValues = (data) => ({
     fields: [
       {
@@ -52,6 +53,7 @@ const DescriptionsAndVideo = ({
     videos: data.videos || [],
   });
 
+  // Configuración del formulario con react-hook-form
   const {
     control,
     handleSubmit,
@@ -60,13 +62,17 @@ const DescriptionsAndVideo = ({
     watch,
     formState: { errors },
   } = useForm({ defaultValues: DefaultValues({}) });
+
+  // Hook personalizado para manejar videos
   const { videos, handleVideoChange, error, deleteVideo } = useVideos();
 
+  // Observa los valores de los campos del formulario
   const fieldValues = watch("fields");
   const chips = watch("fields[2].values") || [];
   const [inputValue, setInputValue] = useState("");
   const { completeStepAddProduct, dataProduct, loading } = useProducts();
 
+  // Maneja la adición de chips al presionar Enter
   const handleKeyPress = (event) => {
     if (event.key === "Enter" && inputValue.trim()) {
       event.preventDefault();
@@ -76,13 +82,15 @@ const DescriptionsAndVideo = ({
     }
   };
 
+  // Maneja la eliminación de chips
   const handleDelete = (chipToDelete) => () => {
     const newChips = chips.filter((chip) => chip !== chipToDelete);
     setValue("fields[2].values", newChips);
   };
 
+  // Maneja el envío del formulario
   const onSubmit = (data) => {
-  
+    // Procesa los datos del formulario
     const info = () => {
       let newValues = {};
       data.fields.forEach((i) => {
@@ -98,27 +106,26 @@ const DescriptionsAndVideo = ({
       });
       return newValues;
     };
+
+    // Combina los datos del formulario con los videos
     const allInfo = {
       ...info(),
       videos : [...videos]
-    }
-  
-    completeStepAddProduct(dataProduct._id ,allInfo, handleReset)
-  
-    // dataStep4(data); // Asegúrate de implementar o importar esta función
-    // handleNext(); // Asegúrate de que esta función esté definida y accesible
+    };
+
+    // Completa el paso actual del producto
+    completeStepAddProduct(dataProduct._id ,allInfo, handleReset);
   };
-  
 
-
+  // Filtra los videos por tipo (vertical u horizontal)
   const videoVertical = videos.filter((i) => i.type === "vertical");
-  
   const videoHorizontal = videos.filter((i) => i.type === "horizontal");
 
+  // Muestra una pantalla de carga si está cargando
   if (loading) {
     return (
       <LoadingScreenBlue/>
-    )
+    );
   }
 
   return (
@@ -126,10 +133,12 @@ const DescriptionsAndVideo = ({
       <CardHeader title="Descripción y video" />
       <CardContent>
         <Grid container gap={2} padding={2}>
+          {/* Renderiza los campos del formulario */}
           {fieldValues?.map((field, index) => (
             <Grid item xs={12} sm={3.5} key={index}>
               {index === 2 ? (
                 <>
+                  {/* Campo de entrada para palabras clave SEO */}
                   <TextField
                     value={inputValue}
                     size="small"
@@ -144,6 +153,7 @@ const DescriptionsAndVideo = ({
                       },
                     }}
                   />
+                  {/* Lista de chips para palabras clave */}
                   <Box
                     sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 2 }}
                   >
@@ -182,6 +192,7 @@ const DescriptionsAndVideo = ({
                 />
               )}
 
+              {/* Checkbox para marcar como "No aplica" */}
               {field.checkbox && (
                 <Controller
                   name={`fields[${index}].checkbox`}
@@ -206,6 +217,7 @@ const DescriptionsAndVideo = ({
           ))}
         </Grid>
 
+        {/* Sección para subir videos */}
         <Grid
           container
           padding={1}
@@ -214,9 +226,9 @@ const DescriptionsAndVideo = ({
           direction="row"
           justifyContent="center"
           width={"100%"}
-         
         >
-          <Grid item  display={!!videoVertical[0] ? 'none':'block'} xs={6} alignContent={"center"}>
+          {/* Subida de video vertical */}
+          <Grid item display={!!videoVertical[0] ? 'none':'block'} xs={6} alignContent={"center"}>
             <Controller
               control={control}
               name={`videos`}
@@ -293,14 +305,14 @@ const DescriptionsAndVideo = ({
                           accept="video/mp4"
                         />
                       </Box>
-                    
                   </Box>
                 );
               }}
             />
           </Grid>
 
-          <Grid item  display={!!videoHorizontal[0] ? 'none':'block'} xs={6} alignContent={"center"}>
+          {/* Subida de video horizontal */}
+          <Grid item display={!!videoHorizontal[0] ? 'none':'block'} xs={6} alignContent={"center"}>
             <Controller
               control={control}
               name={`videos`}
@@ -387,99 +399,94 @@ const DescriptionsAndVideo = ({
             />
           </Grid>
 
+          {/* Vista previa y eliminación de video horizontal */}
           <Grid item xs={6} display={!!videoHorizontal[0] ? 'flex':'none'} alignItems={'center'} alignContent={'center'} flexDirection="column">
-            
-              
-              <Typography variant="body1" textAlign={'center'}  color="inherit">Video Horizontal</Typography>
-              <Grid
-                position="relative"
-                width="300px"
-                height="300px"
-                border="1px solid #ccc"
-                borderRadius="4px"
-                overflow="hidden"
-                marginX={1}
+            <Typography variant="body1" textAlign={'center'}  color="inherit">Video Horizontal</Typography>
+            <Grid
+              position="relative"
+              width="300px"
+              height="300px"
+              border="1px solid #ccc"
+              borderRadius="4px"
+              overflow="hidden"
+              marginX={1}
+            >
+              <video
+                src={videoHorizontal[0]?.filePreview}
+                controls
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                }}
+              />
+              <IconButton
+                size="small"
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  right: 0,
+                  color: "red",
+                  backgroundColor: "white",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteVideo("horizontal");
+                }}
               >
-                <video
-                  src={videoHorizontal[0]?.filePreview}
-                  controls
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "contain",
-                  }}
-                />
-                <IconButton
-                  size="small"
-                  sx={{
-                    position: "absolute",
-                    top: 0,
-                    right: 0,
-                    color: "red",
-                    backgroundColor: "white",
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteVideo("horizontal");
-                  }}
-                >
-                  <Delete fontSize="small" />
-                </IconButton>
-              </Grid>
-              
-           
+                <Delete fontSize="small" />
+              </IconButton>
+            </Grid>
           </Grid>
 
+          {/* Vista previa y eliminación de video vertical */}
           <Grid item xs={6}  display={!!videoVertical[0] ? 'flex':'none'} alignItems={'center'} alignContent={'center'} flexDirection="column">
-  
             <Typography variant="body1" textAlign={'center'}  color="inherit">Video vertical</Typography>
-          
-              <Grid
-                position="relative"
-                width="250px"
-                height="250px"
-                border="1px solid #ccc"
-                borderRadius="4px"
-                overflow="hidden"
-                marginX={1}
+            <Grid
+              position="relative"
+              width="250px"
+              height="250px"
+              border="1px solid #ccc"
+              borderRadius="4px"
+              overflow="hidden"
+              marginX={1}
+            >
+              <video
+                src={videoVertical[0]?.filePreview}
+                controls
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                }}
+              />
+              <IconButton
+                size="small"
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  right: 0,
+                  color: "red",
+                  backgroundColor: "white",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteVideo("vertical");
+                }}
               >
-                <video
-                  src={videoVertical[0]?.filePreview}
-                  controls
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "contain",
-                  }}
-                />
-                <IconButton
-                  size="small"
-                  sx={{
-                    position: "absolute",
-                    top: 0,
-                    right: 0,
-                    color: "red",
-                    backgroundColor: "white",
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteVideo("vertical");
-                  }}
-                >
-                  <Delete fontSize="small" />
-                </IconButton>
-              </Grid>
-         
+                <Delete fontSize="small" />
+              </IconButton>
+            </Grid>
           </Grid>
 
+          {/* Mensaje de error para videos */}
           <FormControl>
             <FormHelperText error={!!error}>{error}</FormHelperText>
           </FormControl>
         </Grid>
-
       </CardContent>
       <CardActions>
-        {/* <Button onClick={handleBack}>Cancelar</Button> */}
+        {/* Botón para continuar o guardar */}
         <Button variant="contained" type="submit">
           {isLastStep ? "Guardar" : "Continuar"}
         </Button>

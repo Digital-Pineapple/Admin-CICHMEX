@@ -5,6 +5,8 @@ import { useProducts } from "../../../hooks";
 
 const UpdateVariant = ({ variantValues, handleClose }) => {
   const { editVariant } = useProducts();
+
+  // Función para establecer valores predeterminados en el formulario
   const DefaultValues = (data) => ({
     price: data.price || "",
     porcentDiscount: data.porcentDiscount || "",
@@ -13,6 +15,8 @@ const UpdateVariant = ({ variantValues, handleClose }) => {
     weight: data.weight || "",
     purchase_price: data.purchase_price || "",
   });
+
+  // Configuración del formulario con react-hook-form
   const {
     control,
     formState: { errors },
@@ -24,11 +28,14 @@ const UpdateVariant = ({ variantValues, handleClose }) => {
     defaultValues: DefaultValues(variantValues),
   });
 
+  // Función para calcular el precio con descuento
   const calculateDiscountPrice = (price, porcentDiscount) => {
     const parsedPrice = parseFloat(price);
     const parsedDiscount = parseFloat(porcentDiscount) || 0;
     return parsedPrice - (parsedPrice * parsedDiscount) / 100;
   };
+
+  // Maneja los cambios en los campos de precio y descuento
   const handlePriceChange = (e) => {
     const { name, value } = e.target;
     const fieldValue = parseFloat(value) || 0; // Convierte a número o usa 0 como predeterminado
@@ -50,9 +57,11 @@ const UpdateVariant = ({ variantValues, handleClose }) => {
     setValue(`discountPrice`, discountPrice);
   };
 
+  // Maneja el envío del formulario
   const onSubmit = (e) => {
     editVariant(variantValues._id, e, handleClose);
   };
+
   return (
     <Grid2
       component={"form"}
@@ -61,6 +70,7 @@ const UpdateVariant = ({ variantValues, handleClose }) => {
       onSubmit={handleSubmit(onSubmit)}
       container
     >
+      {/* Título de la página */}
       <Grid2 size={12} minHeight={"100px"} className="Titles">
         <Typography
           textAlign={"center"}
@@ -70,6 +80,8 @@ const UpdateVariant = ({ variantValues, handleClose }) => {
           Editar talla : {variantValues.attributes?.size}
         </Typography>
       </Grid2>
+
+      {/* Campo para el precio de compra */}
       <Grid2 size={12}>
         <Controller
           name={"purchase_price"}
@@ -100,6 +112,8 @@ const UpdateVariant = ({ variantValues, handleClose }) => {
           )}
         />
       </Grid2>
+
+      {/* Campo para el precio */}
       <Grid2 size={12}>
         <Controller
           name={`price`}
@@ -123,6 +137,8 @@ const UpdateVariant = ({ variantValues, handleClose }) => {
           )}
         />
       </Grid2>
+
+      {/* Campo para el porcentaje de descuento */}
       <Grid2 size={12}>
         <Controller
           name={`porcentDiscount`}
@@ -152,6 +168,8 @@ const UpdateVariant = ({ variantValues, handleClose }) => {
           )}
         />
       </Grid2>
+
+      {/* Campo para el precio con descuento */}
       <Grid2 size={12}>
         <Controller
           name={`discountPrice`}
@@ -175,6 +193,8 @@ const UpdateVariant = ({ variantValues, handleClose }) => {
           )}
         />
       </Grid2>
+
+      {/* Campo para el código */}
       <Grid2 size={12}>
         <Controller
           name={`tag`}
@@ -194,6 +214,8 @@ const UpdateVariant = ({ variantValues, handleClose }) => {
           )}
         />
       </Grid2>
+
+      {/* Campo para el peso */}
       <Grid2 size={12}>
         <Controller
           name={`weight`}
@@ -213,6 +235,8 @@ const UpdateVariant = ({ variantValues, handleClose }) => {
           )}
         />
       </Grid2>
+
+      {/* Botones de acción */}
       <Grid2 display={"flex"} gap={2} size={12}>
         <Button
           fullWidth

@@ -1,3 +1,4 @@
+// Importación de íconos y componentes necesarios
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SortIcon from "@mui/icons-material/Sort";
@@ -30,81 +31,87 @@ import CustomNoRows from "../../components/Tables/CustomNoRows";
 import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 import { esES } from "@mui/x-data-grid/locales";
 
+// Componente de paginación personalizada para la tabla
 function Pagination({ page, onPageChange, className }) {
-  const apiRef = useGridApiContext();
-  const pageCount = useGridSelector(apiRef, gridPageCountSelector);
+  const apiRef = useGridApiContext(); // Acceso al contexto de la tabla
+  const pageCount = useGridSelector(apiRef, gridPageCountSelector); // Obtiene el número total de páginas
 
   return (
     <MuiPagination
       color="primary"
       className={className}
-      count={pageCount}
-      page={page + 1}
+      count={pageCount} // Número total de páginas
+      page={page + 1} // Página actual
       onChange={(event, newPage) => {
-        onPageChange(event, newPage - 1);
+        onPageChange(event, newPage - 1); // Cambia de página
       }}
     />
   );
 }
+
+// Ícono para indicar orden descendente
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
 
+// Ícono para indicar orden ascendente
 export function SortedAscendingIcon() {
   return <ExpandLessIcon className="icon" />;
 }
 
+// Ícono para indicar que no hay orden aplicado
 export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación personalizada que utiliza el componente Pagination
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
+// Componente principal que muestra las salidas de productos
 const ProductOutputs = () => {
   const {
-    loadAllOutputs,
-    rowsAllOutputs,
+    loadAllOutputs, // Función para cargar todas las salidas de productos
+    rowsAllOutputs, // Datos de las salidas de productos
   } = useProducts();
-  const { user, navigate } = useAuthStore();
-  const [open, setOpen] = useState(false);
-  const [details, setDetails] = useState('')
+  const { user, navigate } = useAuthStore(); // Información del usuario y función para navegar
+  const [open, setOpen] = useState(false); // Estado para controlar la apertura del modal
+  const [details, setDetails] = useState(''); // Estado para almacenar los detalles de una salida
 
+  // Abre el modal y establece los detalles de la salida seleccionada
   const handleClickOpen = (detail) => {
     setOpen(true);
-    setDetails(detail)
+    setDetails(detail);
   };
 
+  // Cierra el modal
   const handleClose = () => {
     setOpen(false);
   };
 
-
+  // Carga las salidas de productos al montar el componente o cuando cambia el usuario
   useEffect(() => {
-    loadAllOutputs()
+    loadAllOutputs();
   }, [user]);
 
-
-
+  // Barra de herramientas personalizada para la tabla
   function CustomToolbar() {
-
     return (
       <GridToolbarContainer sx={{ justifyContent: "center" }}>
-       
-       <GridToolbarQuickFilter  variant="outlined" />
-       
+        <GridToolbarQuickFilter variant="outlined" /> {/* Filtro rápido */}
       </GridToolbarContainer>
     );
   }
 
-  
+  // Rutas para el componente de breadcrumb
   const paths = [
     { path: `/mi-almacen/productos/salidas`, name: "Todas mis salidas" },
   ];
 
   return (
-    <Grid2 container paddingX={{ xs: 0, lg: 10 }} gap={1} >
+    <Grid2 container paddingX={{ xs: 0, lg: 10 }} gap={1}>
+      {/* Encabezado de la página */}
       <Grid2
         size={12}
         paddingRight={15}
@@ -118,10 +125,12 @@ const ProductOutputs = () => {
           <strong>Todas mis salidas de producto</strong>
         </Typography>
       </Grid2>
+
+      {/* Breadcrumb y botón para agregar salidas */}
       <Grid2 size={12} display={"flex"} justifyContent={"space-between"}>
-        <BreadcrumbCustom paths={paths} />
+        <BreadcrumbCustom paths={paths} /> {/* Componente de breadcrumb */}
         <Fab
-          onClick={() => navigate("/mi-almacen/salida-productos")}
+          onClick={() => navigate("/mi-almacen/salida-productos")} // Navega a la página para agregar salidas
           color="secondary"
           aria-label="Agregar entrada"
           title="Agragar entradas"
@@ -129,87 +138,73 @@ const ProductOutputs = () => {
           <Add />
         </Fab>
       </Grid2>
-      <Grid2 size={12} >
+
+      {/* Tabla de datos */}
+      <Grid2 size={12}>
         <DataGrid
           sx={{
-                      fontSize: "12px",
-                      fontFamily: "sans-serif",
-                      borderRadius: "20px",
-                      bgcolor: "#fff",
-                      border: "1px solid rgb(209, 205, 205)", // Borde exterior naranja
-                      "& .MuiDataGrid-cell": {
-                        borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno claro
-                      },
-                    }}
-                    localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+            fontSize: "12px",
+            fontFamily: "sans-serif",
+            borderRadius: "20px",
+            bgcolor: "#fff",
+            border: "1px solid rgb(209, 205, 205)", // Borde exterior
+            "& .MuiDataGrid-cell": {
+              borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno
+            },
+          }}
+          localeText={esES.components.MuiDataGrid.defaultProps.localeText} // Traducción al español
           columns={
             [
               {
                 field: "folio",
                 headerName: "Folio",
                 align: "center",
-                renderCell : (params)=> params.row.folio? params.row.folio: 'Venta'
+                renderCell: (params) =>
+                  params.row.folio ? params.row.folio : 'Venta', // Muestra "Venta" si no hay folio
               },
-            {
-              field: "date",
-              headerName: "Fecha",
-              flex: 1,
-              align: "center",
-            },
-            {
-              field: "tag",
-              headerName: "Código",
-              flex: 1,
-              align: "center",
-            },
-            {
-              field: "product_name",
-              headerName: "Nombre del prodcto",
-              flex: 1,
-              align:'center'
-            },
-            {
-              field: "quantity",
-              headerName: "Cantidad",
-              flex: 1,
-              align: "center",
-            },
-            {
-              field: "nowStock",
-              headerName: "Stock actual",
-              flex: 1,
-              align: "center",
-            },
-            
-            // {
-            //   field: "Opciones",
-            //   headerName: "Opciones",
-            //   align: "center",
-            //   flex: 1,
-            //   sortable: false,
-            //   type: "actions",
-            //   getActions: (params) => [
-            //     <AddButton2
-            //       title={`Agregar`}
-            //       product={params?.row}
-            //     />,
-            //     <Button variant="contained" onClick={()=>handleClickOpen(params?.row)}  color="info">
-            //       Detalle
-            //     </Button>
-            //   ],
-            // },
-          ]}
-          rows={rowsAllOutputs}
+              {
+                field: "date",
+                headerName: "Fecha",
+                flex: 1,
+                align: "center",
+              },
+              {
+                field: "tag",
+                headerName: "Código",
+                flex: 1,
+                align: "center",
+              },
+              {
+                field: "product_name",
+                headerName: "Nombre del prodcto",
+                flex: 1,
+                align: 'center',
+              },
+              {
+                field: "quantity",
+                headerName: "Cantidad",
+                flex: 1,
+                align: "center",
+              },
+              {
+                field: "nowStock",
+                headerName: "Stock actual",
+                flex: 1,
+                align: "center",
+              },
+            ]
+          }
+          rows={rowsAllOutputs} // Datos de las filas
           pagination
           autoHeight
           density="compact"
           slots={{
-            pagination: CustomPagination,
-            toolbar: CustomToolbar,
-            columnSortedDescendingIcon: SortedDescendingIcon,
-            columnSortedAscendingIcon: SortedAscendingIcon,
-            columnUnsortedIcon: UnsortedIcon,
-            noRowsOverlay: CustomNoRows,
+            pagination: CustomPagination, // Paginación personalizada
+            toolbar: CustomToolbar, // Barra de herramientas personalizada
+            columnSortedDescendingIcon: SortedDescendingIcon, // Ícono de orden descendente
+            columnSortedAscendingIcon: SortedAscendingIcon, // Ícono de orden ascendente
+            columnUnsortedIcon: UnsortedIcon, // Ícono sin orden
+            noRowsOverlay: CustomNoRows, // Mensaje cuando no hay filas
           }}
           disableColumnFilter
           disableColumnMenu
@@ -217,8 +212,8 @@ const ProductOutputs = () => {
           disableDensitySelector
           slotProps={{
             toolbar: {
-              showQuickFilter: true,
-              quickFilterProps: { debounceMs: 500 },
+              showQuickFilter: true, // Muestra el filtro rápido
+              quickFilterProps: { debounceMs: 500 }, // Configuración del filtro rápido
             },
           }}
           printOptions={{
@@ -226,20 +221,21 @@ const ProductOutputs = () => {
             hideToolbar: true,
           }}
           initialState={{
-            pagination:{
-              paginationModel:{pageSize:10}
+            pagination: {
+              paginationModel: { pageSize: 10 }, // Tamaño de página inicial
             },
-            sorting:{
-              sortModel: [{ field: "date", sort: "desc" }],
-            }
+            sorting: {
+              sortModel: [{ field: "date", sort: "desc" }], // Orden inicial por fecha descendente
+            },
           }}
-          style={{fontFamily:'sans-serif', fontSize:'15px'}}
+          style={{ fontFamily: 'sans-serif', fontSize: '15px' }}
         />
       </Grid2>
-      <EntriesOutputsModal open={open} handleClose={handleClose} details={details}  />
+
+      {/* Modal para mostrar detalles de una salida */}
+      <EntriesOutputsModal open={open} handleClose={handleClose} details={details} />
     </Grid2>
   );
 };
 
-
-export default ProductOutputs
+export default ProductOutputs;

@@ -17,6 +17,7 @@ import React from "react";
 const DetailAssignRoute = ({ productOrder, carrierDrivers = [] }) => {
   let info = productOrder.data;
 
+  // Función para obtener información del usuario asignado a la ruta
   const user = (user_id) => {
     const user = carrierDrivers.find((i) => user_id === i._id);
     return (
@@ -28,6 +29,7 @@ const DetailAssignRoute = ({ productOrder, carrierDrivers = [] }) => {
     );
   };
 
+  // Función para mostrar información de la compañía de envíos
   const company = (data) => {
     return (
       <>
@@ -35,18 +37,16 @@ const DetailAssignRoute = ({ productOrder, carrierDrivers = [] }) => {
           <strong>Compañía:</strong> {data.shipping_company} <br />
           <strong>Guía:</strong> {data.guide} <br />
         </Typography>
-      
-          <iframe
-            src={data.guide_pdf}
-            width="100%"
-            height="100%"
-          >
-           
-          </iframe>
-        
+        {/* Muestra un iframe con el PDF de la guía de envío */}
+        <iframe
+          src={data.guide_pdf}
+          width="100%"
+          height="100%"
+        ></iframe>
       </>
     );
   };
+
   return (
     <Grid2
       container
@@ -55,6 +55,7 @@ const DetailAssignRoute = ({ productOrder, carrierDrivers = [] }) => {
       justifyContent={"center"}
       gap={2}
     >
+      {/* Título principal de la página */}
       <Grid2
         size={12}
         minHeight={"70px"}
@@ -67,6 +68,7 @@ const DetailAssignRoute = ({ productOrder, carrierDrivers = [] }) => {
         </Typography>
       </Grid2>
 
+      {/* Tarjeta con información básica de la orden */}
       <Grid2 item size={{ xs: 12, sm: 5.7 }}>
         <Card sx={{ height: "100%" }} variant="outlined">
           <CardHeader title={`Id de orden:${info?.order_id}`} />
@@ -83,13 +85,14 @@ const DetailAssignRoute = ({ productOrder, carrierDrivers = [] }) => {
         </Card>
       </Grid2>
 
+      {/* Tarjeta con información de la sucursal o dirección de entrega */}
       <Grid2 item size={{ xs: 12, sm: 6 }}>
         <Card variant="outlined">
           <CardContent>
             {info.branch ? (
               <>
+                {/* Información de la sucursal de entrega */}
                 <Typography variant="h5">Sucursal de Entrega:</Typography>
-
                 <Typography>
                   Nombre de la sucursal: {info?.branch?.name}
                 </Typography>
@@ -103,6 +106,7 @@ const DetailAssignRoute = ({ productOrder, carrierDrivers = [] }) => {
               </>
             ) : (
               <>
+                {/* Información de la dirección de entrega */}
                 <Typography variant="h5">Dirección de entrega:</Typography>
                 <Typography fontSize={"14px"}>
                   Código Postal:{" "}
@@ -129,6 +133,8 @@ const DetailAssignRoute = ({ productOrder, carrierDrivers = [] }) => {
           </CardContent>
         </Card>
       </Grid2>
+
+      {/* Tarjeta con información de la asignación de la ruta */}
       <Grid2 size={{ xs: 12 }}>
         <Card variant="outlined">
           <CardHeader
@@ -142,6 +148,7 @@ const DetailAssignRoute = ({ productOrder, carrierDrivers = [] }) => {
             }
           />
           <CardContent>
+            {/* Muestra información del usuario o compañía asignada */}
             {info.route_detail?.user
               ? user(info.route_detail?.user)
               : info.route_detail?.guide

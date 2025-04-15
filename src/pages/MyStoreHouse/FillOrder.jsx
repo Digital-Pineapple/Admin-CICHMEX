@@ -28,6 +28,7 @@ import TableDetailSupply from "../../components/Tables/TableDetailSupply";
 import { FilePdfFilled } from "@ant-design/icons";
 import { spacing } from "@mui/system";
 
+// Estilo para los modales
 const style = {
   position: "absolute",
   top: "50%",
@@ -42,36 +43,36 @@ const style = {
   boxShadow: 24,
   maxWidth: "90%",
   maxHeigth: "90%",
-  rowGap:1,
-  p: {xs: 2, lg: 6},
+  rowGap: 1,
+  p: { xs: 2, lg: 6 },
 };
 
 const FillOrder = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // Obtiene el ID del pedido desde la URL
   const {
-    loadProductOrder,
-    productOrder,
-    loadPrintPDFOrder,
-    loading,
-    completeProductOrder,
+    loadProductOrder, // Carga los detalles del pedido
+    productOrder, // Información del pedido
+    loadPrintPDFOrder, // Genera el PDF del pedido
+    loading, // Estado de carga
+    completeProductOrder, // Marca el pedido como completado
   } = useProductOrder();
-  const { searchProductFill, supplyProduct } = useWarehouse();
+  const { searchProductFill, supplyProduct } = useWarehouse(); // Funciones relacionadas con el almacén
 
-  const [open, setOpen] = useState({ images: [], value: false });
-  const [validation, setValidation] = useState(false);
-  const [valuate, setValuate] = useState(null);
+  const [open, setOpen] = useState({ images: [], value: false }); // Estado para abrir/cerrar el modal de imágenes
+  const [validation, setValidation] = useState(false); // Validación del escaneo QR
+  const [valuate, setValuate] = useState(null); // Valor del QR escaneado
   const [openModal, setOpenModal] = useState({
     value: false,
     data: {},
     section: {},
-  });
+  }); // Estado para abrir/cerrar el modal de detalles del producto
 
   useEffect(() => {
-    loadProductOrder(id);
+    loadProductOrder(id); // Carga los detalles del pedido al montar el componente
   }, [id]);
-  
 
   useEffect(() => {
+    // Valida si el QR escaneado coincide con la sección
     if (valuate) {
       if (openModal.section && openModal.section._id === valuate) {
         setValidation(true);
@@ -82,6 +83,7 @@ const FillOrder = () => {
   }, [valuate, openModal.section]);
 
   const handleSave = () => {
+    // Guarda el producto surtido en el almacén
     const product = openModal.data;
     const data = {
       product_id: product.variant ? product.variant._id : product.item._id,
@@ -93,32 +95,40 @@ const FillOrder = () => {
     };
     supplyProduct(id, data, handleCloseModal);
   };
+
   const completeSupply = () => {
+    // Marca el pedido como completamente surtido
     completeProductOrder(id);
   };
 
   const printPDF = (id) => {
+    // Genera el PDF del pedido
     loadPrintPDFOrder(id);
   };
 
   const handleOpen = (images) => {
+    // Abre el modal de imágenes
     let UrlImages = images?.map((i) => i.url);
     setOpen({ value: true, images: UrlImages });
   };
-  const handleClose = () => setOpen({ value: false, images: [] });
+
+  const handleClose = () => setOpen({ value: false, images: [] }); // Cierra el modal de imágenes
 
   const handleSearch = (product) => {
+    // Busca un producto en el almacén
     const product_id = product.variant ? product.variant._id : product.item._id;
     searchProductFill({ id: product_id, product: product, setOpenModal });
   };
 
   const handleCloseModal = () => {
+    // Cierra el modal de detalles del producto
     setOpenModal({ data: {}, section: {}, value: false });
     setValidation(false);
     setValuate(null);
   };
 
   const RenderButtonAsign = (disabled) => (
+    // Botón para completar el surtido de un producto
     <Button
       variant="contained"
       onClick={handleSave}
@@ -129,24 +139,27 @@ const FillOrder = () => {
       Completar surtido
     </Button>
   );
-  
-  const RenderButtonAsignTotal = (disabled) => {
-    if (productOrder.storeHouseStatus) {
-      return null
-    }return(
 
-    <Button
-      variant="contained"
-      onClick={completeSupply}
-      fullWidth
-      color="success"
-      disabled={!disabled}
-    >
-      Terminar surtido
-    </Button>
-    )
-}
+  const RenderButtonAsignTotal = (disabled) => {
+    // Botón para completar el surtido total del pedido
+    if (productOrder.storeHouseStatus) {
+      return null;
+    }
+    return (
+      <Button
+        variant="contained"
+        onClick={completeSupply}
+        fullWidth
+        color="success"
+        disabled={!disabled}
+      >
+        Terminar surtido
+      </Button>
+    );
+  };
+
   const renderSection = (sectionData) => {
+    // Renderiza la información de la sección
     if (Array.isArray(sectionData) && sectionData.length > 0) {
       const sec = sectionData[0];
       return (
@@ -176,12 +189,14 @@ const FillOrder = () => {
     }
     return null;
   };
+
   const renderProduct = (product) => {
+    // Renderiza la información del producto
     if (Object.keys(product).length > 0) {
       return (
         <>
           <Typography fontSize={25}>
-           Cantidad de producto:  <strong>{product.quantity} </strong>
+            Cantidad de producto: <strong>{product.quantity} </strong>
             <br />
           </Typography>
           <Typography>
@@ -201,22 +216,24 @@ const FillOrder = () => {
     return "";
   };
 
-  const lp = productOrder.products;
-  const values = productOrder.supply_detail?.map((i) => i.status);
-  const isValid = () => lp?.length === values?.length && values?.every(Boolean);
+  const lp = productOrder.products; // Lista de productos del pedido
+  const values = productOrder.supply_detail?.map((i) => i.status); // Estado de surtido de cada producto
+  const isValid = () => lp?.length === values?.length && values?.every(Boolean); // Valida si todos los productos están surtidos
 
   const paths = [
+    // Rutas para el breadcrumb
     { path: `/almacenista/mis-ventas`, name: "Pedidos" },
     { path: `/almacenista/surtir-venta`, name: "Surtir pedido" },
   ];
 
   if (loading) {
+    // Muestra una pantalla de carga si está cargando
     return <LoadingScreenBlue />;
   }
-  
 
   return (
     <Grid2 container paddingX={{ xs: 0, lg: 10 }} display={"flex"} gap={2}>
+      {/* Encabezado del pedido */}
       <Grid2
         size={12}
         paddingRight={15}
@@ -226,15 +243,19 @@ const FillOrder = () => {
         justifyContent={"space-between"}
         marginBottom={2}
       >
-        <Typography variant="h4" sx={{fontSize:{xs:"16px", lg:"25px"}}}>
+        <Typography variant="h4" sx={{ fontSize: { xs: "16px", lg: "25px" } }}>
           <strong>Surtir pedido</strong>
           <br />
           {productOrder.order_id ? productOrder.order_id : ""}
         </Typography>
       </Grid2>
+
+      {/* Breadcrumb */}
       <Grid2 size={12}>
         <BreadcrumbCustom paths={paths} />
       </Grid2>
+
+      {/* Contenido principal */}
       <Grid2
         sx={{
           display: "grid",
@@ -244,9 +265,11 @@ const FillOrder = () => {
           gridRowGap: "10px",
         }}
       >
+        {/* Información general */}
         <Grid2
-        size={{xs:12}}
-        gridArea={{ xs: "3 / 1 / 4 / 6", lg: "1 / 4 / 7 / 6" }}>
+          size={{ xs: 12 }}
+          gridArea={{ xs: "3 / 1 / 4 / 6", lg: "1 / 4 / 7 / 6" }}
+        >
           <Typography
             paddingY={{ xs: 0, lg: 2 }}
             paddingX={{ xs: 0, lg: 2 }}
@@ -280,8 +303,14 @@ const FillOrder = () => {
           {RenderButtonAsignTotal(isValid())}
         </Grid2>
 
+        {/* Lista de productos */}
         <Grid2 gridArea={{ xs: "2 / 1 / 3 / 6", lg: "1 / 1 / 4 / 4" }}>
-          <Typography paddingY={2} paddingX={2} variant="body1" color="initial">
+          <Typography
+            paddingY={2}
+            paddingX={2}
+            variant="body1"
+            color="initial"
+          >
             <strong>Lista de productos</strong>
           </Typography>
           <TableFillProducts
@@ -291,6 +320,7 @@ const FillOrder = () => {
           />
         </Grid2>
 
+        {/* Detalle de surtido */}
         <Grid2 gridArea={{ xs: "1 / 1 / 2 / 6", lg: "4 / 1 / 7 / 4" }}>
           <Typography
             paddingY={{ xs: 0, lg: 2 }}
@@ -307,6 +337,7 @@ const FillOrder = () => {
         </Grid2>
       </Grid2>
 
+      {/* Modal de imágenes */}
       <Modal
         open={open.value}
         onClose={handleClose}
@@ -331,7 +362,11 @@ const FillOrder = () => {
             {open.images?.map((image) => {
               return (
                 <SwiperSlide>
-                  <img key={image} src={image} style={{ objectFit: "cover" }} />
+                  <img
+                    key={image}
+                    src={image}
+                    style={{ objectFit: "cover" }}
+                  />
                 </SwiperSlide>
               );
             })}
@@ -339,6 +374,7 @@ const FillOrder = () => {
         </Box>
       </Modal>
 
+      {/* Modal de detalles del producto */}
       <Modal open={openModal.value} onClose={handleClose}>
         <Grid2 container sx={style}>
           <IconButton
@@ -346,9 +382,9 @@ const FillOrder = () => {
             onClick={handleCloseModal}
             sx={{
               position: "absolute",
-              right:'10px',
-              top:'10px',
-              color:'red'
+              right: "10px",
+              top: "10px",
+              color: "red",
             }}
           >
             <Close />
@@ -356,10 +392,14 @@ const FillOrder = () => {
           <Card variant="outlined">
             <CardContent>{renderProduct(openModal.data)}</CardContent>
           </Card>
-          <Card variant="outlined" sx={{width:'100%'}}>
+          <Card variant="outlined" sx={{ width: "100%" }}>
             <CardContent>{renderSection(openModal.section)}</CardContent>
           </Card>
-          <QRScannerV2 title="Escanea el Qr de la sección" label="Escanear QR de sección" setValueQR={setValuate} />
+          <QRScannerV2
+            title="Escanea el Qr de la sección"
+            label="Escanear QR de sección"
+            setValueQR={setValuate}
+          />
           {RenderButtonAsign(validation)}
         </Grid2>
       </Modal>

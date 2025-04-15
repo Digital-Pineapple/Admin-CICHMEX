@@ -36,6 +36,7 @@ import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 import { esES } from "@mui/x-data-grid/locales";
 
+// Componente de paginación personalizada
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -52,6 +53,8 @@ function Pagination({ page, onPageChange, className }) {
     />
   );
 }
+
+// Iconos personalizados para el ordenamiento de columnas
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
@@ -64,17 +67,22 @@ export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación para el DataGrid
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
 export default function Users() {
+  // Hook para cargar usuarios, eliminar usuarios y manejar navegación
   const { loadUsers, deleteUser, navigate, users, loading } = useUsers();
   const { user } = useAuthStore();
+
+  // Cargar usuarios al montar el componente
   useEffect(() => {
     loadUsers();
   }, [user]);
 
+  // Preparar filas con IDs para el DataGrid
   const rowsWithIds = users?.map((user) => ({
     id: user._id?.toString(),
     typeUser: user.type_user?.role,
@@ -82,6 +90,7 @@ export default function Users() {
     ...user,
   }));
 
+  // Función para exportar datos a un archivo Excel
   const exportToExcel = () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Usuarios");
@@ -94,11 +103,11 @@ export default function Users() {
       "Tipo de usuario",
       "Registro con Google",
       "Telefono",
-      // "cuenta Verificada",
     ]);
     headerRow.eachCell((cell) => {
       cell.font = { bold: true };
     });
+
     // Agregar datos de las filas
     rowsWithIds.forEach((row) => {
       worksheet.addRow([
@@ -108,22 +117,20 @@ export default function Users() {
         row.typeUser == 1
           ? "Lavador"
           : row.type_user2 == 0
-            ? "Cliente"
-            : row.type_user2 == 2
-              ? "Establecimiento"
-              : "usuario",
+          ? "Cliente"
+          : row.type_user2 == 2
+          ? "Establecimiento"
+          : "usuario",
         row.google === true ? "si" : "no",
         row.phone?.phone_number
           ? row.phone?.phone_number
           : row.phone?.phone_number === undefined
-            ? "no tiene numero"
-            : null,
-        // row.accountVerify === true
-        // ? "si":"no",
+          ? "no tiene numero"
+          : null,
       ]);
     });
 
-    // Crear un Blob con el archivo Excel y guardarlo
+    // Crear un archivo Excel y descargarlo
     workbook.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -132,6 +139,7 @@ export default function Users() {
     });
   };
 
+  // Barra de herramientas personalizada para el DataGrid
   function CustomToolbar() {
     const apiRef = useGridApiContext();
 
@@ -140,18 +148,21 @@ export default function Users() {
     return (
       <GridToolbarContainer sx={{ justifyContent: "center" }}>
         <GridToolbarQuickFilter placeholder="Buscar" variant="outlined" />
-
       </GridToolbarContainer>
     );
   }
+
+  // Mostrar pantalla de carga si los datos están cargando
   if (loading) {
     return <LoadingScreenBlue />;
   }
 
+  // Rutas para el componente de breadcrumb
   const paths = [{ path: `/usuarios`, name: "Todos los usuarios" }];
 
   return (
     <Grid2 container paddingX={10}>
+      {/* Encabezado de la página */}
       <Grid2
         size={12}
         paddingRight={15}
@@ -165,9 +176,13 @@ export default function Users() {
           <strong>Todos los usuarios</strong>
         </Typography>
       </Grid2>
+
+      {/* Componente de breadcrumb */}
       <Grid2 size={12}>
         <BreadcrumbCustom paths={paths} />
       </Grid2>
+
+      {/* Tabla de usuarios */}
       <Grid2 size={12}>
         <DataGrid
           sx={{
@@ -175,9 +190,9 @@ export default function Users() {
             fontFamily: "sans-serif",
             borderRadius: "20px",
             bgcolor: "#fff",
-            border: "1px solid rgb(209, 205, 205)", // Borde exterior naranja
+            border: "1px solid rgb(209, 205, 205)", // Borde exterior
             "& .MuiDataGrid-cell": {
-              borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno claro
+              borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno
             },
           }}
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
@@ -186,7 +201,7 @@ export default function Users() {
               field: "profile_image",
               hideable: false,
               headerName: "Foto de perfil",
-              flex:1,
+              flex: 1,
               sortable: "false",
               renderCell: (params) =>
                 params?.value ? (
@@ -212,7 +227,6 @@ export default function Users() {
               flex: 1,
               align: "center",
             },
-
             { field: "email", headerName: "Correo", flex: 1, sortable: false },
             {
               field: "Opciones",
@@ -222,12 +236,14 @@ export default function Users() {
               sortable: false,
               type: "actions",
               getActions: (params) => [
+                // Botón para eliminar usuario
                 <GridActionsCellItem
                   icon={<DeleteAlert />}
                   label="Eliminar"
                   onClick={() => deleteUser(params.row._id)}
                   showInMenu
                 />,
+                // Botón para editar usuario
                 <GridActionsCellItem
                   icon={<EditButton />}
                   label="Editar"

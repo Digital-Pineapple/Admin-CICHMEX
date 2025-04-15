@@ -45,29 +45,39 @@ const style = {
 };
 
 const SizeGuideEdit = () => {
+  // Hooks personalizados para manejar guías de tallas y productos
   const { loadSizeGuides, sizeGuides, navigate, dispatch } = useSizeGuide();
   const { dataStep3, product, loading, loadProduct, updateSizeGuide } =
     useProducts();
+
+  // Estado para manejar la apertura del modal y la guía seleccionada
   const [open, setOpen] = useState(false);
   const [selectedSizeGuide, setSelectedSizeGuide] = useState(
     product?.size_guide?._id || {}
   );
+
+  // Funciones para abrir y cerrar el modal
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
-    loadSizeGuides();
+    loadSizeGuides(); // Recargar las guías de tallas al cerrar el modal
   };
 
+  // Obtener el ID del producto desde los parámetros de la URL
   const { id } = useParams();
 
+  // Callback para cargar el producto y las guías de tallas
   const callbackSizeGuide = useCallback(() => {
-    loadProduct(id);
-    loadSizeGuides();
+    loadProduct(id); // Cargar los datos del producto
+    loadSizeGuides(); // Cargar las guías de tallas
   }, [id]);
+
+  // Efecto para ejecutar el callback al montar el componente
   useEffect(() => {
     callbackSizeGuide();
   }, [callbackSizeGuide]);
 
+  // Configuración del formulario con react-hook-form
   const {
     control,
     formState: { errors },
@@ -76,15 +86,16 @@ const SizeGuideEdit = () => {
     reset,
   } = useForm({
     defaultValues: {
-      size_guide: product?.size_guide?._id || "",
+      size_guide: product?.size_guide?._id || "", // Valor inicial del formulario
     },
   });
 
+  // Función para asociar una guía de tallas al producto
   const onAddSizeGuide = (values) => {
-    updateSizeGuide(id, values);
+    updateSizeGuide(id, values); // Actualizar la guía de tallas del producto
   };
 
-  // Si está cargando
+  // Mostrar pantalla de carga si los datos están cargando
   if (loading) {
     return <LoadingScreenBlue />;
   }
@@ -98,6 +109,7 @@ const SizeGuideEdit = () => {
     <>
       <Grid2 container spacing={0}>
         <Grid2 size={12}>
+          {/* Botón para recargar los datos del producto (comentado) */}
           {/* <Button
             variant="contained"
             onClick={() => loadProduct(id)}
@@ -111,7 +123,7 @@ const SizeGuideEdit = () => {
           item
           size={12}
           component={"form"}
-          onSubmit={handleSubmit(onAddSizeGuide)}
+          onSubmit={handleSubmit(onAddSizeGuide)} // Manejar el envío del formulario
         >
           <Card variant="elevation">
             <CardHeader
@@ -120,7 +132,7 @@ const SizeGuideEdit = () => {
                   variant="contained"
                   color="secondary"
                   size="small"
-                  onClick={handleOpen}
+                  onClick={handleOpen} // Abrir el modal para agregar una nueva guía
                 >
                   Agregar nueva guía
                 </Button>
@@ -144,10 +156,11 @@ const SizeGuideEdit = () => {
                     guía que crees y ayuda a tu comprador a elegir el producto
                     de acuerdo a sus medidas.
                   </Typography>
+                  {/* Selector para elegir una guía de tallas */}
                   <FormControl
                     fullWidth
                     color="info"
-                    error={!!errors.size_guide}
+                    error={!!errors.size_guide} // Mostrar error si el campo es inválido
                   >
                     <FormLabel>Guía de medidas</FormLabel>
                     <Controller
@@ -156,7 +169,7 @@ const SizeGuideEdit = () => {
                       rules={{
                         required: {
                           value: true,
-                          message: "Campo requerido",
+                          message: "Campo requerido", // Mensaje de error si el campo está vacío
                         },
                       }}
                       render={({ field }) => (
@@ -164,8 +177,8 @@ const SizeGuideEdit = () => {
                           {...field}
                           size="small"
                           onChange={(e) => {
-                            field.onChange(e.target.value);
-                            setSelectedSizeGuide(e.target.value); // Actualiza la guía seleccionada
+                            field.onChange(e.target.value); // Actualizar el valor del formulario
+                            setSelectedSizeGuide(e.target.value); // Actualizar la guía seleccionada
                           }}
                         >
                           {sizeGuides.map((i) => (
@@ -186,6 +199,7 @@ const SizeGuideEdit = () => {
               </Card>
             </CardContent>
             <CardActions>
+              {/* Botón para guardar la guía seleccionada */}
               <Button variant="contained" type="submit" sx={{ mt: 1, mr: 1 }}>
                 Guardar
               </Button>
@@ -193,9 +207,9 @@ const SizeGuideEdit = () => {
           </Card>
         </Grid2>
         <Grid2 size={12}>
+          {/* Tabla para mostrar las dimensiones de la guía seleccionada */}
           <TableContainer component={Paper}>
             <Table>
-              {/* Cabecera de la tabla */}
               <TableHead>
                 <TableRow>
                   <TableCell>Etiqueta</TableCell>
@@ -220,16 +234,17 @@ const SizeGuideEdit = () => {
           </TableContainer>
         </Grid2>
       </Grid2>
+      {/* Modal para agregar una nueva guía */}
       <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
           <Fab
             color="primary"
             sx={{ top: 0, left: "90%" }}
-            onClick={handleClose}
+            onClick={handleClose} // Cerrar el modal
           >
             <Close />
           </Fab>
-          <TableGuides />
+          <TableGuides /> {/* Componente para gestionar las guías */}
         </Box>
       </Modal>
     </>

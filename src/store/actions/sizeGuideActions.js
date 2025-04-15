@@ -1,9 +1,4 @@
-import { enqueueSnackbar } from "notistack";
-import { instanceApi } from "../../apis/configAxios";
-import { deleteSizeGuide, editSizeGuide, loadOneSizeGuide, loadSizeGuides, onAddSizeGuide } from "../reducer/sizeGuideReducer";
-import { Zoom } from "@mui/material";
-import { startLoading, stopLoading } from "../reducer/uiReducer";
-
+// Carga todas las guías de tamaños desde el servidor
 export const startLoadSizeGuides = () => {
   return async (dispatch) => {
     dispatch(startLoading())
@@ -31,6 +26,7 @@ export const startLoadSizeGuides = () => {
   }
 }
 
+// Carga una guía de tamaño específica por su ID
 export const startLoadOneSizeGuide = (id) => {
   return async (dispatch) => {
     dispatch(startLoading())
@@ -59,8 +55,8 @@ export const startLoadOneSizeGuide = (id) => {
   }
 }
 
+// Agrega una nueva guía de tamaño al servidor
 export const startAddOneSizeGuide = (values) => {
-  
   return async (dispatch) => {
     dispatch(startLoading())
     try {
@@ -96,8 +92,8 @@ export const startAddOneSizeGuide = (values) => {
   }
 }
 
+// Selecciona una guía de tamaño en el estado de la aplicación
 export const startSelectSizeGuide = (values) => {
-  
   return async (dispatch) => {
     dispatch(startLoading())
     try {
@@ -127,8 +123,8 @@ export const startSelectSizeGuide = (values) => {
   }
 }
 
+// Elimina una guía de tamaño por su ID
 export const startDeleteSizeGuide = (id) => {
-  
   return async (dispatch) => {
     dispatch(startLoading())
     try {
@@ -164,6 +160,7 @@ export const startDeleteSizeGuide = (id) => {
   }
 }
 
+// Actualiza una guía de tamaño existente por su ID
 export const startUpdateSizeGuide = (id, values, navigate) => {
   return async (dispatch) => {
     dispatch(startLoading())
@@ -200,5 +197,3 @@ export const startUpdateSizeGuide = (id, values, navigate) => {
     }
   }
 }
-
-

@@ -27,32 +27,43 @@ const style = {
 };
 
 const LoadPackageModal = ({ openModal, handleClose, productOrder }) => {
+  // Convierte la fecha ISO a un formato local legible
   const date = localDate(productOrder?.supply_detail?.date);
+
+  // Estado para almacenar el valor escaneado del código QR
   const [valueQr, setValueQr] = useState(null);
+
+  // Estado para habilitar o deshabilitar el botón de verificación
   const [enabledButton, setEnabledButton] = useState(true);
+
+  // Estado para aplicar estilos dinámicos a la tarjeta del modal
   const [sCard, setSCard] = useState({});
+
+  // Hook personalizado para manejar acciones relacionadas con órdenes de producto
   const { loadVerifyPackage } = useProductOrder();
 
+  // Función para verificar y cargar el paquete
   const verifyPackage = (id) => {
-    loadVerifyPackage(id);
-    setValueQr(null);
-    setSCard(null);
-    setEnabledButton(true);
-    handleClose();
+    loadVerifyPackage(id); // Llama a la acción para verificar el paquete
+    setValueQr(null); // Resetea el valor del QR
+    setSCard(null); // Resetea los estilos de la tarjeta
+    setEnabledButton(true); // Habilita el botón
+    handleClose(); // Cierra el modal
   };
 
+  // Efecto que se ejecuta cuando cambia el valor del QR o la orden de producto
   useEffect(() => {
     if (valueQr !== null) {
-      styleCard(valueQr.order_id);
+      styleCard(valueQr.order_id); // Aplica estilos según el ID del QR escaneado
     }
   }, [valueQr, productOrder]);
 
-
-
+  // Función para aplicar estilos dinámicos a la tarjeta según el ID del QR
   const styleCard = (v) => {
     if (v === productOrder.order_id) {
+      // Si el QR coincide con el ID de la orden, aplica estilo de éxito
       setSCard({ border: "10px solid", borderColor: "success.light" });
-      setEnabledButton(false);
+      setEnabledButton(false); // Habilita el botón
       enqueueSnackbar({
         message: "Codigo valido",
         variant: "success",
@@ -62,8 +73,9 @@ const LoadPackageModal = ({ openModal, handleClose, productOrder }) => {
         },
       });
     } else {
+      // Si el QR no coincide, aplica estilo de error
       setSCard({ border: "10px solid", borderColor: "error.main" });
-      setEnabledButton(true);
+      setEnabledButton(true); // Deshabilita el botón
       enqueueSnackbar({
         message: "Codigo invalido",
         variant: "error",
@@ -74,14 +86,21 @@ const LoadPackageModal = ({ openModal, handleClose, productOrder }) => {
       });
     }
   };
+
+  // Coordenadas para el mapa de Google basadas en la ubicación de la sucursal o la dirección de entrega
   const coords = {
-    lat: productOrder?.branch?.location?.lat ?productOrder.branch?.location?.lat : productOrder?.deliveryLocation?.lat,
-    lng: productOrder?.branch?.location?.lgt ?productOrder.branch?.location?.lgt : productOrder?.deliveryLocation?.lgt,
+    lat: productOrder?.branch?.location?.lat
+      ? productOrder.branch?.location?.lat
+      : productOrder?.deliveryLocation?.lat,
+    lng: productOrder?.branch?.location?.lgt
+      ? productOrder.branch?.location?.lgt
+      : productOrder?.deliveryLocation?.lgt,
   };
-  
+
+  // Carga el script de Google Maps y verifica si está listo
   const { isLoaded } = useLoadScript({
     id: "google-map-script",
-    googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
+    googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY, // Clave de la API de Google Maps
   });
 
 

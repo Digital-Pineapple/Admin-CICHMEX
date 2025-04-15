@@ -3,26 +3,28 @@ import { startLoadMyCars,getOneMyCar,deleteOneMyCar,addOneMyCar,editOneMyCar } f
 import { startAddNewRegion, startDeleteRegion, startLoadAllRegions, startLoadOneRegion, startUpdateRegion } from "../store";
 import { useNavigate } from "react-router-dom";
 
-
+// Hook personalizado para manejar las regiones
 export const useRegions = () => {
 
-    const dispatch = useDispatch();
-    const navigate = useNavigate()
-    const {regions, region} = useSelector((state)=> state.regions)
+    const dispatch = useDispatch(); // Hook de Redux para despachar acciones
+    const navigate = useNavigate(); // Hook de React Router para navegar entre rutas
+    const {regions, region} = useSelector((state)=> state.regions); // Obtiene el estado de las regiones desde Redux
 
-    const loadAllRegions = () => dispatch(startLoadAllRegions())
+    // Carga todas las regiones desde el servidor
+    const loadAllRegions = () => dispatch(startLoadAllRegions());
 
-    const loadOneRegion = id => {dispatch(startLoadOneRegion(id)) }
+    // Carga una región específica por su ID
+    const loadOneRegion = id => { dispatch(startLoadOneRegion(id)) };
 
-    const addNewRegion = values => dispatch(startAddNewRegion(values,navigate))
-    const updateRegion = (id, values) => dispatch(startUpdateRegion(id, values, navigate))
+    // Agrega una nueva región con los valores proporcionados y navega a otra página
+    const addNewRegion = values => dispatch(startAddNewRegion(values, navigate));
 
-    const onDeleteRegion = id => dispatch(startDeleteRegion(id))
+    // Actualiza una región existente con un ID y valores proporcionados, y navega a otra página
+    const updateRegion = (id, values) => dispatch(startUpdateRegion(id, values, navigate));
 
+    // Elimina una región específica por su ID
+    const onDeleteRegion = id => dispatch(startDeleteRegion(id));
 
-   
-
-
-
-    return { loadAllRegions, region, regions, loadOneRegion, addNewRegion, onDeleteRegion, updateRegion, navigate }
+    // Retorna las funciones y datos necesarios para manejar las regiones
+    return { loadAllRegions, region, regions, loadOneRegion, addNewRegion, onDeleteRegion, updateRegion, navigate };
 }

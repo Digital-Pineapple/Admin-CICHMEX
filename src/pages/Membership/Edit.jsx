@@ -25,22 +25,27 @@ import { useMembership } from "../../hooks/useMembership";
 import { useParams } from "react-router-dom";
 
 const Create = () => {
+  // Estados para manejar los servicios, tipos de autos y cantidades seleccionadas
   const [selectedService, setSelectedService] = useState("");
   const [selectedTypeCar, setSelectedTypeCar] = useState("");
   const [quantity, setQuantity] = useState("");
   const [myServices, setMyServices] = useState([]);
   const [myTypeCars, setMyTypeCars] = useState([]);
+
+  // Hooks personalizados para cargar datos de servicios, tipos de autos y membresías
   const { loadServices, services, navigate } = useServices();
   const { typeCars, loadTypeCars } = useTypeCars();
   const { addMembership, loadMembership, membership } = useMembership();
   const { id } = useParams();
 
+  // Cargar datos iniciales al montar el componente
   useEffect(() => {
     loadServices();
     loadTypeCars();
     loadMembership(id);
   }, []);
 
+  // Configuración del formulario con Formik
   const formik = useFormik({
     initialValues: {
       name: membership ? membership.name : "",
@@ -52,6 +57,8 @@ const Create = () => {
     },
     onSubmit: (values) => {
       console.log(values);
+
+      // Transformar los datos de tipos de autos y servicios antes de enviarlos
       if (values.type_cars !== typeof String) {
         const updatedTypeCars = values.type_cars.map(
           (item) => item._id || item.typeCar_id
@@ -73,7 +80,8 @@ const Create = () => {
       }
 
       try {
-        // addCategory(values); // Uncomment this line to submit the form data
+        // Aquí se podría enviar la información al backend
+        // addCategory(values); // Descomentar para enviar los datos
       } catch (error) {
         enqueueSnackbar(`Error: ${error.data.response?.message}`, {
           variant: "error",
@@ -86,6 +94,7 @@ const Create = () => {
     },
   });
 
+  // Actualizar los valores del formulario cuando se cargue la membresía
   useEffect(() => {
     if (membership) {
       formik.setValues({
@@ -101,6 +110,7 @@ const Create = () => {
     }
   }, [membership]);
 
+  // Manejar cambios en los selectores de servicios y tipos de autos
   const handleChangeService = (event) => {
     setSelectedService(event.target.value);
   };
@@ -113,6 +123,7 @@ const Create = () => {
     setQuantity(event.target.value);
   };
 
+  // Agregar un servicio seleccionado a la lista
   const handleAddService = () => {
     if (selectedService && quantity) {
       const newService = {
@@ -128,6 +139,7 @@ const Create = () => {
     }
   };
 
+  // Agregar un tipo de auto seleccionado a la lista
   const handleAddTypeCar = () => {
     if (selectedTypeCar) {
       const newTypeCar = {
@@ -141,6 +153,7 @@ const Create = () => {
     }
   };
 
+  // Eliminar un servicio de la lista
   const handleDeleteService = (index) => {
     const updatedServices = [...myServices];
     updatedServices.splice(index, 1);
@@ -148,6 +161,7 @@ const Create = () => {
     formik.setFieldValue("service_quantity", updatedServices);
   };
 
+  // Eliminar un tipo de auto de la lista
   const handleDeleteTypeCar = (index) => {
     const updatedTypeCars = [...myTypeCars];
     updatedTypeCars.splice(index, 1);
@@ -155,6 +169,7 @@ const Create = () => {
     formik.setFieldValue("type_cars", updatedTypeCars);
   };
 
+  // Navegar fuera de la página de creación
   const outCreate = () => {
     navigate("/auth/Membresias");
   };
@@ -173,6 +188,7 @@ const Create = () => {
       }}
       sx={{ padding: { xs: 2 } }}
     >
+      {/* Título principal */}
       <Grid
         item
         marginTop={{ xs: "-30px" }}
@@ -189,6 +205,7 @@ const Create = () => {
         </Typography>
       </Grid>
 
+      {/* Sección de datos generales */}
       <Grid container gap={2}>
         <Grid item xs={12}>
           <Typography
@@ -201,6 +218,7 @@ const Create = () => {
           </Typography>
         </Grid>
 
+        {/* Campos de texto para nombre, precio y descuentos */}
         <Grid item xs={12} sm={8} lg={5}>
           <TextField
             focused
@@ -268,6 +286,7 @@ const Create = () => {
         </Grid>
       </Grid>
 
+      {/* Sección de servicios */}
       <Grid container gap={2}>
         <Grid item xs={12}>
           <Typography
@@ -280,6 +299,7 @@ const Create = () => {
           </Typography>
         </Grid>
 
+        {/* Selector de servicios y cantidad */}
         <Grid item xs={12} sm={6} lg={6}>
           <FormControl fullWidth>
             <InputLabel id="select-service">Seleccionar Servicio</InputLabel>
@@ -307,12 +327,14 @@ const Create = () => {
           />
         </Grid>
 
+        {/* Botón para agregar servicio */}
         <Grid item xs={12} lg={3}>
           <Button variant="contained" fullWidth onClick={handleAddService}>
             Agregar Servicio
           </Button>
         </Grid>
 
+        {/* Lista de servicios seleccionados */}
         {myServices?.length > 0 ? (
           myServices && (
             <Grid
@@ -361,6 +383,7 @@ const Create = () => {
         )}
       </Grid>
 
+      {/* Sección de tipos de autos */}
       <Grid container gap={2}>
         <Grid item xs={12}>
           <Typography
@@ -373,6 +396,7 @@ const Create = () => {
           </Typography>
         </Grid>
 
+        {/* Selector de tipos de autos */}
         <Grid item xs={12} sm={7.5} lg={8.6}>
           <FormControl fullWidth>
             <InputLabel id="select-typeCar">
@@ -393,12 +417,14 @@ const Create = () => {
           </FormControl>
         </Grid>
 
+        {/* Botón para agregar tipo de auto */}
         <Grid item xs={12} sm={4} lg={3}>
           <Button variant="contained" fullWidth onClick={handleAddTypeCar}>
             Agregar Tipo de auto
           </Button>
         </Grid>
 
+        {/* Lista de tipos de autos seleccionados */}
         {myTypeCars?.length > 0 ? (
           myTypeCars && (
             <Grid
@@ -441,6 +467,7 @@ const Create = () => {
         )}
       </Grid>
 
+      {/* Botones para guardar o salir */}
       <Grid container justifyContent={"center"} alignItems={"center"}>
         <ButtonGroup
           variant="contained"

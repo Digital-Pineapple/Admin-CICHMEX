@@ -7,23 +7,26 @@ export const stockStorehouseReducer = createSlice({
     EntryReport: {}
   },
   reducers: {
+    // Carga una lista de insumos en el estado
     loadInputs: (state, action) => {
       state.inputs = action.payload;
     },
+    // Carga un reporte de entrada en el estado
     loadEntryReport: (state, { payload }) => {
       state.EntryReport = payload;
     },
+    // Actualiza un insumo específico dentro del reporte de entrada
     onUpdateInput: (state, { payload }) => {
       if (!state.EntryReport?.inputs) return;
       state.EntryReport.inputs = state.EntryReport.inputs.map((i) =>
         i._id === payload._id ? { ...i, ...payload } : i
       );
     },
-    
-    
   },
 })
 
-export const { loadEntryReport, loadInputs, onUpdateInput} = stockStorehouseReducer.actions;
+// Exporta las acciones para ser utilizadas en otros lugares
+export const { loadEntryReport, loadInputs, onUpdateInput } = stockStorehouseReducer.actions;
 
+// Exporta el reducer para ser utilizado en la configuración de la tienda
 export default stockStorehouseReducer.reducer;

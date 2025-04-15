@@ -1,4 +1,4 @@
-
+// Importaciones necesarias de Material-UI y otros módulos
 import { styled } from '@mui/material/styles';
 import Grid from "@mui/material/Grid";
 import Card from '@mui/material/Card';
@@ -16,6 +16,8 @@ import { Add } from '@mui/icons-material';
 import { useState } from 'react';
 import { useServiceAdd } from '../../providers/ServicesProvider';
 import { useServicesCustomer } from '../../hooks/useServicesCustomer';
+
+// Componente estilizado para manejar la animación de expansión
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
   return <IconButton {...other} />;
@@ -27,122 +29,137 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
+// Componente principal que representa una tarjeta de servicio
 const ServicesCard = ({item, services_id}) => {
   
+  // Estados locales para manejar la expansión, carga, adición y apertura del diálogo
   const [expanded, setExpanded] = useState(false);
   const [loadingb, setLoadingb] = useState(false);
   const [add, setAdd] = useState('')
   const [open, setOpen] = useState(false)
-  const {addOneSCustomer} =useServicesCustomer()
+  const {addOneSCustomer} = useServicesCustomer()
 
+  // Función para manejar el clic en el botón de expansión
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
-  const handleClickOpen = ()=> {setOpen(true)} 
-  const handleClickclose = () => {setOpen(false)}
 
+  // Función para abrir el diálogo de confirmación
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
 
-  const styleAdd ={
-...(add && {
-  bgcolor: green[500],
-  "&:hover":{
-    bgcolor:green[700]
-  }
-})
-  }
+  // Función para cerrar el diálogo de confirmación
+  const handleClickclose = () => {
+    setOpen(false);
+  };
 
+  // Estilo dinámico para el botón de agregar
+  const styleAdd = {
+    ...(add && {
+      bgcolor: green[500],
+      "&:hover": {
+        bgcolor: green[700]
+      }
+    })
+  };
+
+  // Función para manejar la acción de agregar un servicio
   const handleAdd = () => {
     console.log(services_id);
     try {
-      addOneSCustomer(services_id, item)
+      addOneSCustomer(services_id, item);
     } catch (error) {
-      
+      // Manejo de errores (si es necesario)
     }
-    setAdd(true)
-    setOpen(false)
-  
-  }
+    setAdd(true);
+    setOpen(false);
+  };
   
   return (
-    <Grid item xs={18} md={9} lg={6}  width={'100%'} >
-    <Card sx={{ minWidth:300, m:2}}> 
-      <CardHeader
-        title={item.name}
-        subheader={<Chip label={item._id}/>}
-        action={
-          <Box sx={{ position: "relative" }}>
-            <Tooltip title="Agregar servicio">
-          <Fab
-            aria-label="agregar"
-            color="primary"
-            sx={styleAdd}
-            onClick={handleClickOpen}
+    <Grid item xs={18} md={9} lg={6} width={'100%'}>
+      <Card sx={{ minWidth: 300, m: 2 }}> 
+        {/* Encabezado de la tarjeta */}
+        <CardHeader
+          title={item.name}
+          subheader={<Chip label={item._id} />}
+          action={
+            <Box sx={{ position: "relative" }}>
+              <Tooltip title="Agregar servicio">
+                <Fab
+                  aria-label="agregar"
+                  color="primary"
+                  sx={styleAdd}
+                  onClick={handleClickOpen}
+                >
+                  <Add />
+                </Fab>
+              </Tooltip>
+              {loadingb && (
+                <CircularProgress
+                  size={68}
+                  sx={{
+                    color: green[500],
+                    position: "absolute",
+                    top: -6,
+                    left: -6,
+                    zIndex: 1,
+                  }}
+                />
+              )}
+            </Box>
+          }
+        />
+        {/* Imagen del servicio */}
+        <CardMedia
+          component="img"
+          height="150"
+          image={item.service_image}
+          alt={item.name}
+        />
+        
+        {/* Botón para expandir la tarjeta */}
+        <CardActions disableSpacing>
+          <ExpandMore
+            expand={expanded}
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label="Ver más"
           >
-            <Add/>
-          </Fab>
-            </Tooltip>
-          {loadingb && (
-            <CircularProgress
-              size={68}
-              sx={{
-                color: green[500],
-                position: "absolute",
-                top: -6,
-                left: -6,
-                zIndex: 1,
-              }}
-            />
-          )}
-        </Box>
-        }
-      >
-      </CardHeader>
-      <CardMedia
-        component="img"
-        height="150"
-        image={item.service_image}
-        alt={item.name}
-      />
-      
-      <CardActions disableSpacing>
-        <ExpandMore
-          expand={expanded}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="Ver más"
-        >
-          <ExpandMoreIcon />
-        </ExpandMore>
-      </CardActions>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-          <Typography variant='h4' paragraph>Detalle:</Typography>
-          <Typography paragraph>
-            SubCategoría: {item.nameSubCategory}
-          </Typography>
-          <Typography paragraph>
-           Categoria: {item.nameCategory}
-          </Typography>
-          <Typography paragraph>
-           Descripcion:
-          </Typography>
-          <Typography>
-            {item.description}
-          </Typography>
-        </CardContent>
-      </Collapse>
+            <ExpandMoreIcon />
+          </ExpandMore>
+        </CardActions>
 
-      <Dialog open={open} onClose={handleClickclose}>
-        <DialogTitle>¿Estas seguro de agregar este servicio?</DialogTitle>
-        <DialogActions>
-          <Button onClick={handleAdd}>Agregar</Button>
-          <Button onClick={handleClickclose}>Cancelar</Button>
-        </DialogActions>
-      </Dialog> 
-    </Card>
+        {/* Contenido colapsable con detalles del servicio */}
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <CardContent>
+            <Typography variant='h4' paragraph>Detalle:</Typography>
+            <Typography paragraph>
+              SubCategoría: {item.nameSubCategory}
+            </Typography>
+            <Typography paragraph>
+              Categoría: {item.nameCategory}
+            </Typography>
+            <Typography paragraph>
+              Descripción:
+            </Typography>
+            <Typography>
+              {item.description}
+            </Typography>
+          </CardContent>
+        </Collapse>
+
+        {/* Diálogo de confirmación para agregar el servicio */}
+        <Dialog open={open} onClose={handleClickclose}>
+          <DialogTitle>¿Estás seguro de agregar este servicio?</DialogTitle>
+          <DialogActions>
+            <Button onClick={handleAdd}>Agregar</Button>
+            <Button onClick={handleClickclose}>Cancelar</Button>
+          </DialogActions>
+        </Dialog> 
+      </Card>
     </Grid>
   );
 }
 
-
-export default ServicesCard
+export default ServicesCard;

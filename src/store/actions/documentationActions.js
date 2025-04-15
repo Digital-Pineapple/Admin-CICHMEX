@@ -14,7 +14,7 @@ const config = {
   },
 };    
 
-
+// Carga todas las documentaciones desde el servidor
 export const startLoadDocumentations = () => {
   return async (dispatch) => {
     try {
@@ -35,6 +35,7 @@ export const startLoadDocumentations = () => {
   };
 };
 
+// Obtiene una documentación específica por el ID del cliente
 export const getOneDocumentation = (customer_id) => async (dispatch) => {
   try {
     const { data } = await instanceApi.get(
@@ -51,6 +52,8 @@ export const getOneDocumentation = (customer_id) => async (dispatch) => {
     });
   }
 };
+
+// Agrega una nueva documentación
 export const addOneDocumentation = (values) => async (dispatch) => {
   try {
     const { data } = await instanceApi.post(`/documentation/`, values, config);
@@ -77,6 +80,7 @@ export const addOneDocumentation = (values) => async (dispatch) => {
   }
 };
 
+// Elimina una documentación específica por su ID
 export const deleteOneDocumentation = (documentation_id) => async (
   dispatch
 ) => {
@@ -97,6 +101,7 @@ export const deleteOneDocumentation = (documentation_id) => async (
   }
 };
 
+// Edita una documentación específica por su ID
 export const editOneDocumentation = (documentation_id, values) => {
   return async (dispatch) => {
     try {
@@ -135,6 +140,8 @@ export const editOneDocumentation = (documentation_id, values) => {
     }
   };
 };
+
+// Busca documentaciones basadas en un valor de búsqueda
 export const searchDocumenation = ({ value }) => {
   return async (dispatch) => {
     try {
@@ -162,6 +169,7 @@ export const searchDocumenation = ({ value }) => {
   };
 };
 
+// Verifica una documentación específica
 export const verifyOneDocument = (id,verify,message) => {
   return async (dispatch) => {
     try {

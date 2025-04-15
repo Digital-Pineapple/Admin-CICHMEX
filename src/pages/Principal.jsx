@@ -17,13 +17,17 @@ import { DonutChartCustom } from "../components/Charts/DonutChartCustom";
 import LoadingScreenBlue from '../components/ui/LoadingScreenBlue'
 import BarTopTenProducts from "../components/Charts/BarTopTenProducts";
 import LastTenTable from "../components/Tables/LastTenTable";
+
 const Principal = () => {
   const { logged } = useAuthStore();
   const { loadResumeProductOrder, resumeOrders, loading } = useProductOrder();
+
+  // Cargar el resumen de órdenes de productos al iniciar sesión
   useEffect(() => {
     loadResumeProductOrder();
   }, [logged]);
 
+  // Configuración de las tarjetas de ingresos
   const cards = [
     {
       title: "Ingresos por día",
@@ -33,14 +37,13 @@ const Principal = () => {
       color: "secondary.main",
       textColor: "secondary.contrastText",
     },
-    
     {
       title: "Ingresos por semana",
       icon: <CalendarMonthIcon />,
       number: `$ ${resumeOrders.recivedCashWeek}`,
       path: "",
     },
-   {
+    {
       title: "Ingresos por mes",
       icon: <CalendarMonthIcon />,
       number: `$${resumeOrders.recivedCashMonth}`,
@@ -48,8 +51,9 @@ const Principal = () => {
     },
   ];
 
-  const cards2 =[
- {
+  // Configuración de las tarjetas de ventas
+  const cards2 = [
+    {
       title: "Ventas del día",
       icon: <TrendingUpIcon />,
       number: `${resumeOrders.ordersDay}`,
@@ -69,21 +73,24 @@ const Principal = () => {
       number: `${resumeOrders.ordersMonth}`,
       path: "",
     },
-  ]
-  
+  ];
+
+  // Mostrar pantalla de carga si los datos aún no están disponibles
   if (loading) {
-    return ( <LoadingScreenBlue/>)
+    return <LoadingScreenBlue />;
   }
 
   return (
     <>
+      {/* Contenedor principal */}
       <Grid
         contaianer
         sx={{ padding: { xs: 0, md: 4 } }}
         maxWidth={'85vw'}
         gap={2}
       >
-        <Grid container spacing={2}>  
+        {/* Tarjetas de ingresos */}
+        <Grid container spacing={2}>
           {cards.map((item, index) => {
             return (
               <Grid key={index} item xs={6} lg={4}>
@@ -128,20 +135,24 @@ const Principal = () => {
               </Grid>
             );
           })}
-      
         </Grid>
 
+        {/* Gráficos de línea y dona */}
+        <Grid container marginY={2} spacing={2}>
+          <Grid item xs={7}>
+            <LineChartCustom salesDay={resumeOrders?.salesDayByHour} />
+          </Grid>
+          <Grid item xs={4} padding={6}>
+            <DonutChartCustom
+              commissionPayedDay={resumeOrders?.commissionPayedDay}
+              recivedCashDay={resumeOrders?.recivedCashDay}
+              cashDay={resumeOrders?.cashDay}
+            />
+          </Grid>
+        </Grid>
 
-  <Grid container marginY={2} spacing={2}>
-          <Grid item xs={7}>  
-              <LineChartCustom salesDay={resumeOrders?.salesDayByHour}/>
-          </Grid>
-          <Grid item xs={4}padding={6} >
-              <DonutChartCustom commissionPayedDay={resumeOrders?.commissionPayedDay}recivedCashDay={resumeOrders?.recivedCashDay} cashDay={resumeOrders?.cashDay} />
-          </Grid>
-  </Grid>
-   
-      <Grid container marginY={2} spacing={2}>
+        {/* Tarjetas de ventas */}
+        <Grid container marginY={2} spacing={2}>
           {cards2.map((item, index) => {
             return (
               <Grid key={index} item xs={6} lg={4}>
@@ -186,19 +197,17 @@ const Principal = () => {
               </Grid>
             );
           })}
-      </Grid>
-       
+        </Grid>
 
-<Grid container alignItems={'center'} spacing={2}>
-  
-        <Grid item xs={6} >
-              <BarTopTenProducts topProducts={resumeOrders?.topProductsMonth} />
+        {/* Gráficos de barras y tabla */}
+        <Grid container alignItems={'center'} spacing={2}>
+          <Grid item xs={6}>
+            <BarTopTenProducts topProducts={resumeOrders?.topProductsMonth} />
           </Grid>
-
-          <Grid item xs={5}  >
-              <LastTenTable rows={resumeOrders?.lastTen}/>
+          <Grid item xs={5}>
+            <LastTenTable rows={resumeOrders?.lastTen} />
           </Grid>
-</Grid>
+        </Grid>
       </Grid>
     </>
   );

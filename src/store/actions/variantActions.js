@@ -5,20 +5,20 @@ import { onAddNewSizeVariant, updateIsMainVariant, updateVariant, updateVariants
 import Swal from "sweetalert2";
 import { green } from "@mui/material/colors";
 
-
+// Actualiza una variante específica
 export const startUpdateOneVariant = (id, values, handleClose) => {
   return async (dispatch) => {
     dispatch(startLoading());
     try {
-      const { data } = await instanceApi.post(`/variant-product/update/${id}`,{body: values}, {
+      const { data } = await instanceApi.post(`/variant-product/update/${id}`, { body: values }, {
         headers: {
           "Content-type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      handleClose()
-      dispatch(updateVariant(data.data))
-      Swal.fire({title:`${data.message}`, confirmButtonColor:green[500], icon:'success'})
+      handleClose();
+      dispatch(updateVariant(data.data));
+      Swal.fire({ title: `${data.message}`, confirmButtonColor: green[500], icon: 'success' });
     } catch (error) {
       enqueueSnackbar(
         `${error.response.data.message}`,
@@ -27,13 +27,14 @@ export const startUpdateOneVariant = (id, values, handleClose) => {
           variant: "error",
         }
       );
-    }finally{
-        dispatch(stopLoading());
+    } finally {
+      dispatch(stopLoading());
     }
   };
 };
+
+// Actualiza múltiples imágenes de una variante
 export const startUpdateMultipleImages = ({ product_id, images, color }, handleClose) => {
-  
   return async (dispatch) => {
     dispatch(startLoading());
     try {
@@ -63,14 +64,13 @@ export const startUpdateMultipleImages = ({ product_id, images, color }, handleC
           },
         }
       );
-      Swal.fire({title:`${data.message}`, confirmButtonColor:green[500], icon:'success'})
-      dispatch(updateVariantsImages(data.data))
+      Swal.fire({ title: `${data.message}`, confirmButtonColor: green[500], icon: 'success' });
+      dispatch(updateVariantsImages(data.data));
 
-      handleClose()
-      
+      handleClose();
     } catch (error) {
       console.log(error);
-      
+
       enqueueSnackbar(`${error.response?.data?.message || "Error desconocido"}`, {
         anchorOrigin: { horizontal: "center", vertical: "top" },
         variant: "error",
@@ -81,14 +81,14 @@ export const startUpdateMultipleImages = ({ product_id, images, color }, handleC
   };
 };
 
+// Agrega una nueva variante de tamaño
 export const startAddVariantsize = (info, handleClose) => {
-  
   return async (dispatch) => {
     dispatch(startLoading());
     try {
       const { data } = await instanceApi.post(
         `/variant-product/addVariant/newSize`,
-        {body: info},
+        { body: info },
         {
           headers: {
             "Content-type": "application/json",
@@ -96,10 +96,9 @@ export const startAddVariantsize = (info, handleClose) => {
           },
         }
       );
-      handleClose()
-      dispatch(onAddNewSizeVariant(data.data))
-      Swal.fire({title:`${data.message}`, confirmButtonColor:green[500], icon:'success'})
-      
+      handleClose();
+      dispatch(onAddNewSizeVariant(data.data));
+      Swal.fire({ title: `${data.message}`, confirmButtonColor: green[500], icon: 'success' });
     } catch (error) {
       enqueueSnackbar(`${error.response?.data?.message || "Error desconocido"}`, {
         anchorOrigin: { horizontal: "center", vertical: "top" },
@@ -111,15 +110,14 @@ export const startAddVariantsize = (info, handleClose) => {
   };
 };
 
-export const startAssignMain = ({product_id,color}) => {
-  
-  
+// Asigna una variante como principal basado en el color
+export const startAssignMain = ({ product_id, color }) => {
   return async (dispatch) => {
     dispatch(startLoading());
     try {
       const { data } = await instanceApi.post(
         `/variant-product/update-is-main/ok/${product_id}`,
-        {color},
+        { color },
         {
           headers: {
             "Content-type": "application/json",
@@ -127,26 +125,25 @@ export const startAssignMain = ({product_id,color}) => {
           },
         }
       );
-      
-      dispatch(updateIsMainVariant(data.data))
-      Swal.fire({title:`${data.message}`, confirmButtonColor:green[500], icon:'success'})
-      
+
+      dispatch(updateIsMainVariant(data.data));
+      Swal.fire({ title: `${data.message}`, confirmButtonColor: green[500], icon: 'success' });
     } catch (error) {
       console.log(error);
-      
     } finally {
       dispatch(stopLoading());
     }
   };
 };
 
-export const startAssignMainOneVariant = ({product_id, variant_id}) => {  
+// Asigna una variante específica como principal
+export const startAssignMainOneVariant = ({ product_id, variant_id }) => {
   return async (dispatch) => {
     dispatch(startLoading());
     try {
       const { data } = await instanceApi.post(
         `/variant-product/update/oneVariant/${product_id}`,
-        {variant_id:variant_id},
+        { variant_id: variant_id },
         {
           headers: {
             "Content-type": "application/json",
@@ -154,17 +151,13 @@ export const startAssignMainOneVariant = ({product_id, variant_id}) => {
           },
         }
       );
-      
-      
-      dispatch(updateIsMainVariant(data.data))
-      Swal.fire({title:`${data.message}`, confirmButtonColor:green[500], icon:'success'})
-      
+
+      dispatch(updateIsMainVariant(data.data));
+      Swal.fire({ title: `${data.message}`, confirmButtonColor: green[500], icon: 'success' });
     } catch (error) {
       console.log(error);
-      
     } finally {
       dispatch(stopLoading());
     }
   };
 };
-

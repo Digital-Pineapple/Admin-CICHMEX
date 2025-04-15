@@ -8,6 +8,7 @@ import {
   onAddNewCommission,
 } from "../reducer/commissionReducer";
 
+// Carga todas las comisiones desde el servidor y las almacena en el estado global
 export const startLoadCommissions = () => {
   return async (dispatch) => {
     try {
@@ -25,6 +26,7 @@ export const startLoadCommissions = () => {
   };
 };
 
+// Obtiene una comisión específica por su ID y la almacena en el estado global
 export const getOneCommission = (commission_id) => async (dispatch) => {
   try {
     const { data } = await instanceApi.get(`/commission/${commission_id}`);
@@ -39,6 +41,8 @@ export const getOneCommission = (commission_id) => async (dispatch) => {
     });
   }
 };
+
+// Agrega una nueva comisión al servidor y la almacena en el estado global
 export const addOneCommission = (values) => async (dispatch) => {
   try {
     const { data } = await instanceApi.post(`/commission/`, values);
@@ -64,6 +68,7 @@ export const addOneCommission = (values) => async (dispatch) => {
   }
 };
 
+// Elimina una comisión específica por su ID del servidor y del estado global
 export const deleteOneCommission = (commission_id) => async (dispatch) => {
   try {
     await instanceApi.delete(`/commission/${commission_id}`);
@@ -79,6 +84,7 @@ export const deleteOneCommission = (commission_id) => async (dispatch) => {
   }
 };
 
+// Edita una comisión específica por su ID en el servidor y actualiza el estado global
 export const editOneCommission = (commission_id, values) => {
   console.log(values);
   return async (dispatch) => {

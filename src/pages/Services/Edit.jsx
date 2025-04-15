@@ -22,20 +22,23 @@ import { useSelector } from "react-redux";
 import ProfileImageUploader from "../../components/ui/ProfileImageUploader";
 
 const Edit = () => {
-  const { id } = useParams();
-  const { loadService, service, editService } = useServices();
-  const navigate = useNavigate();
-  const { loadSubCategories } = useSubCategories();
+  const { id } = useParams(); // Obtiene el ID del servicio desde los parámetros de la URL
+  const { loadService, service, editService } = useServices(); // Hook personalizado para manejar servicios
+  const navigate = useNavigate(); // Hook para la navegación entre rutas
+  const { loadSubCategories } = useSubCategories(); // Hook personalizado para manejar subcategorías
 
+  // Obtiene las subcategorías desde el estado global (Redux)
   const subCategories = useSelector(
     (state) => state.subCategories.subCategories
   );
 
+  // Carga el servicio y las subcategorías al montar el componente
   useEffect(() => {
-    loadService(id);
-    loadSubCategories();
+    loadService(id); // Carga los datos del servicio por ID
+    loadSubCategories(); // Carga las subcategorías disponibles
   }, [id]);
 
+  // Actualiza los valores del formulario cuando el servicio cambia
   useEffect(() => {
     formik.setValues({
       name: service.name,
@@ -45,23 +48,25 @@ const Edit = () => {
     });
   }, [service]);
 
+  // Configuración del formulario con Formik
   const formik = useFormik({
     initialValues: {
-      name: "",
-      description: "",
-      status: true,
-      subCategory: "",
-      service_image: "",
+      name: "", // Nombre del servicio
+      description: "", // Descripción del servicio
+      status: true, // Estado del servicio (activo/inactivo)
+      subCategory: "", // Subcategoría seleccionada
+      service_image: "", // Imagen del servicio
     },
     onSubmit: (values) => {
       const values2 = {
         ...values,
-        service_image: values?.profile_image ? values?.profile_image : null,
+        service_image: values?.profile_image ? values?.profile_image : null, // Asigna la imagen si existe
       };
       try {
-        editService(service._id, values2);
-        navigate("/auth/servicios", { replace: true });
+        editService(service._id, values2); // Edita el servicio con los valores del formulario
+        navigate("/auth/servicios", { replace: true }); // Navega de regreso a la lista de servicios
       } catch (error) {
+        // Muestra un mensaje de error si ocurre algún problema
         return enqueueSnackbar("Error al editar el servicio", {
           variant: "error",
           anchorOrigin: {
@@ -72,6 +77,8 @@ const Edit = () => {
       }
     },
   });
+
+  // Función para salir sin guardar cambios
   const outEdit = () => {
     navigate("/auth/servicios", { replace: true });
   };
@@ -80,9 +87,16 @@ const Edit = () => {
     <Grid
       container
       component="form"
-      onSubmit={formik.handleSubmit}
-      style={{ marginLeft: "10%", height: "70%", width: "80%", display:'flex', justifyContent:'center' }}
+      onSubmit={formik.handleSubmit} // Maneja el envío del formulario
+      style={{
+        marginLeft: "10%",
+        height: "70%",
+        width: "80%",
+        display: "flex",
+        justifyContent: "center",
+      }}
     >
+      {/* Título del formulario */}
       <Grid
         item
         marginTop={{ xs: "-30px" }}
@@ -106,15 +120,17 @@ const Edit = () => {
         flexDirection={"column"}
         alignItems={"center"}
       >
+        {/* Componente para subir la imagen del servicio */}
         <Grid item xs={12} sm={5} md={5.7}>
           <ProfileImageUploader
             formik={formik}
-            previewImage1={service?.image}
+            previewImage1={service?.image} // Imagen previa del servicio
             id={"service_image"}
             name={"service_image"}
           />
         </Grid>
 
+        {/* Campo de texto para el nombre del servicio */}
         <TextField
           focused
           fullWidth
@@ -126,6 +142,8 @@ const Edit = () => {
           sx={{ margin: 2 }}
           onChange={formik.handleChange}
         />
+
+        {/* Campo de texto para la descripción del servicio */}
         <Typography>Descipcion del servicio</Typography>
         <TextareaAutosize
           aria-label="minimum height"
@@ -137,6 +155,8 @@ const Edit = () => {
           style={{ width: "100%", fontFamily: "BikoBold", marginBottom: 20 }}
           onChange={formik.handleChange}
         />
+
+        {/* Selector de subcategorías */}
         <FormControl>
           <FormLabel>Subcategoria</FormLabel>
           <Select
@@ -159,31 +179,32 @@ const Edit = () => {
           <FormHelperText>Selecciona una Subcategoria</FormHelperText>
         </FormControl>
 
+        {/* Botones para guardar o salir */}
         <Grid
           container
           justifyContent={"center"}
           justifyItems={"center"}
           alignItems={"center"}
         >
-           <ButtonGroup
-        variant="contained"
-        color="inherit"
-        size="large"
-        aria-label="group"
-        fullWidth
-      >
-        <Button type="submit" variant="contained" color="success">
-          Guardar
-        </Button>
-        <Button
-          onClick={outEdit}
-          variant="contained"
-          size="large"
-          color="warning"
-        >
-          Salir
-        </Button>
-      </ButtonGroup>
+          <ButtonGroup
+            variant="contained"
+            color="inherit"
+            size="large"
+            aria-label="group"
+            fullWidth
+          >
+            <Button type="submit" variant="contained" color="success">
+              Guardar
+            </Button>
+            <Button
+              onClick={outEdit}
+              variant="contained"
+              size="large"
+              color="warning"
+            >
+              Salir
+            </Button>
+          </ButtonGroup>
         </Grid>
       </Grid>
     </Grid>

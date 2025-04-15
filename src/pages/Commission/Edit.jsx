@@ -11,36 +11,37 @@ import { enqueueSnackbar } from "notistack";
 import { useCommissions } from "../../hooks/useCommissions";
 
 const Edit = () => {
-  const { id } = useParams();
-  const { loadCommission, editCommission, commission } = useCommissions();
-  const navigate = useNavigate();
+  const { id } = useParams(); // Obtiene el parámetro `id` de la URL
+  const { loadCommission, editCommission, commission } = useCommissions(); // Hook personalizado para manejar comisiones
+  const navigate = useNavigate(); // Hook para navegar entre rutas
 
   useEffect(() => {
-    loadCommission(id);
+    loadCommission(id); // Carga los datos de la comisión específica al montar el componente
   }, []);
 
   useEffect(() => {
+    // Actualiza los valores del formulario cuando cambian los datos de la comisión
     formik.setValues({
       name: commission.name,
       status: commission.status,
       amount: commission.amount,
-      discount : commission.discount
+      discount: commission.discount,
     });
   }, [commission]);
 
   const formik = useFormik({
     initialValues: {
-      name: "",
-      status: "",
-      amount: "",
-      discount : "",
-
+      name: "", // Nombre de la comisión
+      status: "", // Estado de la comisión
+      amount: "", // Monto de la comisión
+      discount: "", // Descuento de la comisión
     },
     onSubmit: (values) => {
       try {
-        editCommission(commission._id, values);
-        navigate("/auth/comisiones", { replace: true });
+        editCommission(commission._id, values); // Edita la comisión con los valores del formulario
+        navigate("/auth/comisiones", { replace: true }); // Redirige a la lista de comisiones
       } catch (error) {
+        // Muestra un mensaje de error si ocurre un problema al editar
         return enqueueSnackbar("Error al editar la comisión", {
           variant: "error",
           anchorOrigin: {
@@ -53,11 +54,13 @@ const Edit = () => {
   });
 
   const outEdit = () => {
+    // Redirige a la lista de comisiones sin guardar cambios
     navigate("/auth/comisiones", { replace: true });
   };
 
   return (
     <Box component="form" onSubmit={formik.handleSubmit} marginX={"10%"}>
+      {/* Título del formulario */}
       <Titles name={<h2 align="center">Editar Comisión</h2>} />
       <Grid
         color="#F7BFBF"
@@ -74,6 +77,7 @@ const Edit = () => {
           flexDirection={"column"}
           alignItems={"center"}
         >
+          {/* Campo de texto para el nombre de la comisión */}
           <TextField
             focused
             fullWidth
@@ -86,35 +90,39 @@ const Edit = () => {
             onChange={formik.handleChange}
           />
           
+          {/* Campo de texto para el monto de la comisión */}
           <FormControl fullWidth sx={{ m: 1 }}>
-          <InputLabel>Monto</InputLabel>
-          <OutlinedInput
-            id="amount"
-            startAdornment={<InputAdornment position="start">$</InputAdornment>}
-            label="Monto"
-            focused
-            name="amount"
-            variant="outlined"
-            value={formik.values?.amount}
-            sx={{ margin: 2 }}
-            onChange={formik.handleChange}
-          />
-        </FormControl>
-        <FormControl fullWidth sx={{ m: 1 }}>
-          <InputLabel>Descuento</InputLabel>
-          <OutlinedInput
-            id="discount"
-            startAdornment={<InputAdornment position="start">$</InputAdornment>}
-            label="Descuento"
-            focused
-            name="discount"
-            variant="outlined"
-            value={formik.values?.discount}
-            sx={{ margin: 2 }}
-            onChange={formik.handleChange}
-          />
-        </FormControl>
+            <InputLabel>Monto</InputLabel>
+            <OutlinedInput
+              id="amount"
+              startAdornment={<InputAdornment position="start">$</InputAdornment>}
+              label="Monto"
+              focused
+              name="amount"
+              variant="outlined"
+              value={formik.values?.amount}
+              sx={{ margin: 2 }}
+              onChange={formik.handleChange}
+            />
+          </FormControl>
 
+          {/* Campo de texto para el descuento de la comisión */}
+          <FormControl fullWidth sx={{ m: 1 }}>
+            <InputLabel>Descuento</InputLabel>
+            <OutlinedInput
+              id="discount"
+              startAdornment={<InputAdornment position="start">$</InputAdornment>}
+              label="Descuento"
+              focused
+              name="discount"
+              variant="outlined"
+              value={formik.values?.discount}
+              sx={{ margin: 2 }}
+              onChange={formik.handleChange}
+            />
+          </FormControl>
+
+          {/* Botones para guardar o salir */}
           <Grid
             container
             justifyContent={"center"}

@@ -14,26 +14,32 @@ import { Grid, Grid2 } from "@mui/material";
 import CustomNoRows from "./CustomNoRows";
 
 const TableQuantity = ({ values, setValues, type }) => {
+  // Estado para manejar los modos de edición de las filas
   const [rowModesModel, setRowModesModel] = React.useState({});
 
+  // Maneja el evento cuando se detiene la edición de una fila
   const handleRowEditStop = (params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-      event.defaultMuiPrevented = true;
+      event.defaultMuiPrevented = true; // Previene el comportamiento predeterminado de MUI
     }
   };
 
+  // Activa el modo de edición para una fila específica
   const handleEditClick = (id) => () => {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
   };
 
+  // Guarda los cambios realizados en una fila y la pasa al modo de vista
   const handleSaveClick = (id) => () => {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
   };
 
+  // Elimina una fila específica de los valores
   const handleDeleteClick = (id) => () => {
     setValues(values.filter((row) => row.id !== id));
   };
 
+  // Cancela la edición de una fila y revierte los cambios si es necesario
   const handleCancelClick = (id) => () => {
     setRowModesModel({
       ...rowModesModel,
@@ -42,15 +48,16 @@ const TableQuantity = ({ values, setValues, type }) => {
 
     const editedRow = values.find((row) => row.id === id);
     if (editedRow.isNew) {
-      setValues(values.filter((row) => row.id !== id));
+      setValues(values.filter((row) => row.id !== id)); // Elimina filas nuevas si se cancela la edición
     }
   };
 
+  // Procesa la actualización de una fila y valida los datos
   const processRowUpdate = (newRow) => {
-    // Validate the quantity against the stock
+    // Valida que la cantidad no exceda el stock disponible
     if (newRow.quantity > newRow.stock && type !== 'entries') {
       alert("La cantidad no puede ser mayor que el stock disponible.");
-      return { ...newRow, quantity: newRow.stock }; // Reset quantity to max stock
+      return { ...newRow, quantity: newRow.stock }; // Restablece la cantidad al máximo permitido
     }
     
     const updatedRow = { ...newRow, isNew: false };
@@ -58,11 +65,12 @@ const TableQuantity = ({ values, setValues, type }) => {
     return updatedRow;
   };
 
+  // Maneja los cambios en el modelo de modos de fila
   const handleRowModesModelChange = (newRowModesModel) => {
     setRowModesModel(newRowModesModel);
   };
 
-  // Dynamically add the stock column only if the stock value is present
+  // Define las columnas de la tabla, incluyendo acciones como editar y eliminar
   const columns = [
     {
       field: "tag",
@@ -71,25 +79,16 @@ const TableQuantity = ({ values, setValues, type }) => {
       align: "left",
       headerAlign: "left",
       width: 150,
-      editable: false,
+      editable: false, // No editable
     },
     { field:'name' , headerName: "Nombre ", width: 250, editable: false },
     { field: "price", headerName: "Precio", width: 100, editable: false },
-    // ...(values.some(row => row.stock !== undefined)
-    //   ? [{
-    //       field: 'stock',
-    //       headerName: "Stock",
-    //       type: "number",
-    //       width: 100,
-    //       editable: false,
-    //     }]
-    //   : []),
     {
       field: "quantity",
       headerName: "Cantidad",
       type: "number",
       width: 100,
-      editable: true,
+      editable: true, // Editable
     },
     {
       field: "actions",
@@ -101,6 +100,7 @@ const TableQuantity = ({ values, setValues, type }) => {
         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
         if (isInEditMode) {
+          // Acciones disponibles en modo de edición
           return [
             <GridActionsCellItem
               icon={<SaveIcon />}
@@ -120,6 +120,7 @@ const TableQuantity = ({ values, setValues, type }) => {
           ];
         }
 
+        // Acciones disponibles en modo de vista
         return [
           <GridActionsCellItem
             icon={<EditIcon />}
@@ -141,22 +142,24 @@ const TableQuantity = ({ values, setValues, type }) => {
 
   return (
     <Grid2>
+      {/* Título de la tabla */}
       <Typography variant="h5" color="inherit">
         Productos seleccionados:
       </Typography>
+      {/* Componente DataGrid para mostrar los datos */}
       <DataGrid
-        rows={values}
-        columns={columns}
-        editMode="row"
-        rowModesModel={rowModesModel}
-        onRowModesModelChange={handleRowModesModelChange}
-       slots={{noRowsOverlay: CustomNoRows}}
-        onRowEditStop={handleRowEditStop}
-        processRowUpdate={processRowUpdate}
-        pageSizeOptions={[10, 15, 20]}
-        disableRowSelectionOnClick
-        density="compact"
-        sx={{ minHeight: "200px", width: "100%" }}
+        rows={values} // Filas de datos
+        columns={columns} // Columnas definidas
+        editMode="row" // Modo de edición por fila
+        rowModesModel={rowModesModel} // Modelo de modos de fila
+        onRowModesModelChange={handleRowModesModelChange} // Maneja cambios en el modelo de modos
+        slots={{ noRowsOverlay: CustomNoRows }} // Componente personalizado para mostrar cuando no hay filas
+        onRowEditStop={handleRowEditStop} // Maneja el evento de detener edición
+        processRowUpdate={processRowUpdate} // Procesa actualizaciones de filas
+        pageSizeOptions={[10, 15, 20]} // Opciones de paginación
+        disableRowSelectionOnClick // Deshabilita la selección de filas al hacer clic
+        density="compact" // Densidad compacta
+        sx={{ minHeight: "200px", width: "100%" }} // Estilos personalizados
       />
     </Grid2>
   );

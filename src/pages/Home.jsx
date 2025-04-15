@@ -9,35 +9,35 @@ import FavWhatsapp from '../components/Buttons/FavWhatsapp'
 import { Button, Grid2 } from '@mui/material'
 import io from 'socket.io-client'
 
-// const socket = io.connect(import.meta.env.VITE_SOCKET_URL)
+// Componente principal de la página de inicio
 const Home = () => {
-  // const [messages, setMessages] = useState([])
-  //   useEffect(()=>{
-  //     socket.on("received_message", (data)=>{
-  //       setMessages(prev => [...prev, data])
-  //     })
+  // Obtiene la información del usuario autenticado desde el hook personalizado
+  const { user } = useAuthStore()
 
-  //   },[socket]);
-
-  //   const handleClick = () => {
-  //     console.log("el evento fue emitido")                 
-             
-  //   }
-    const {user} = useAuthStore()
   return (
-        <Grid2 width={'100%'} paddingX={{xs:0, md:10}} container gap={2} display={'flex'} justifyContent={'center'}>
-           <Grid2 size={12} display={{xs:'none', md:'block'}} justifyContent={'center'} alignItems={'center'} padding={2}> 
-            <Typography padding={{xs:2,lg:4}} variant="h1" fontSize={{xs:'30px', md:'45px'}} color="initial">Bienvenido: {user.fullname}</Typography>
-            <img style={{width:'100%'}} src={imageLogotipo}/>
-           </Grid2>
-           <Grid2 size={12} display={{xs:'block', md:'none'}} justifyContent={'center'} alignItems={'center'} padding={2}> 
-            <Typography padding={{xs:2,lg:4}} fontWeight={'Bold'} variant="h1" fontSize={{xs:'40px', md:'45px'}} color="initial">Bienvenido: {user.fullname}</Typography>
-            <img style={{width:'100%'}} src={imagotipo}/>
-           </Grid2>
-            
-        </Grid2>
+    // Contenedor principal con diseño responsivo
+    <Grid2 width={'100%'} paddingX={{ xs: 0, md: 10 }} container gap={2} display={'flex'} justifyContent={'center'}>
       
+      {/* Sección para pantallas grandes */}
+      <Grid2 size={12} display={{ xs: 'none', md: 'block' }} justifyContent={'center'} alignItems={'center'} padding={2}>
+        {/* Mensaje de bienvenida con el nombre del usuario */}
+        <Typography padding={{ xs: 2, lg: 4 }} variant="h1" fontSize={{ xs: '30px', md: '45px' }} color="initial">
+          Bienvenido: {user.fullname}
+        </Typography>
+        {/* Imagen del logotipo principal */}
+        <img style={{ width: '100%' }} src={imageLogotipo} />
+      </Grid2>
 
+      {/* Sección para pantallas pequeñas */}
+      <Grid2 size={12} display={{ xs: 'block', md: 'none' }} justifyContent={'center'} alignItems={'center'} padding={2}>
+        {/* Mensaje de bienvenida con el nombre del usuario */}
+        <Typography padding={{ xs: 2, lg: 4 }} fontWeight={'Bold'} variant="h1" fontSize={{ xs: '40px', md: '45px' }} color="initial">
+          Bienvenido: {user.fullname}
+        </Typography>
+        {/* Imagen del logotipo alternativo */}
+        <img style={{ width: '100%' }} src={imagotipo} />
+      </Grid2>
+    </Grid2>
   )
 }
 

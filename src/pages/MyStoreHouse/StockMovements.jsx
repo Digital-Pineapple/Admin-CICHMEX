@@ -37,10 +37,12 @@ const StockMovements = () => {
   const { loadAllMovements, allMovements, isLoading } = useProducts();
   const { user } = useAuthStore();
 
+  // Cargar todos los movimientos de stock al montar el componente
   useEffect(() => {
     loadAllMovements();
   }, [user]);
 
+  // Componente de paginación personalizada para la tabla
   function Pagination({ page, onPageChange, className }) {
     const apiRef = useGridApiContext();
     const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -57,10 +59,13 @@ const StockMovements = () => {
       />
     );
   }
+
+  // Componente para integrar la paginación personalizada en el DataGrid
   function CustomPagination(props) {
     return <GridPagination ActionsComponent={Pagination} {...props} />;
   }
 
+  // Función para exportar los datos de la tabla a un archivo Excel
   const exportToExcel = () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Stock de productos");
@@ -89,7 +94,7 @@ const StockMovements = () => {
       ]);
     });
 
-    // Crear un Blob con el archivo Excel y guardarlo
+    // Crear un archivo Excel y descargarlo
     workbook.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -97,23 +102,28 @@ const StockMovements = () => {
       saveAs(blob, "entradas.xlsx");
     });
   };
+
+  // Barra de herramientas personalizada para el DataGrid
   function CustomToolbar() {
-      const apiRef = useGridApiContext();
-  
-      const handleGoToPage1 = () => apiRef.current.setPage(1);
-  
-      return (
-        <GridToolbarContainer sx={{ justifyContent: "center" }}>
-          <GridToolbarQuickFilter placeholder="Buscar" variant="outlined" />
-        </GridToolbarContainer>
-      );
-    }
+    const apiRef = useGridApiContext();
+
+    const handleGoToPage1 = () => apiRef.current.setPage(1);
+
+    return (
+      <GridToolbarContainer sx={{ justifyContent: "center" }}>
+        <GridToolbarQuickFilter placeholder="Buscar" variant="outlined" />
+      </GridToolbarContainer>
+    );
+  }
+
+  // Rutas para el componente de breadcrumb
   const paths = [
     { path: `/mi-almacen/mov-stock`, name: "Todos mis movimientos de stock" },
   ];
 
   return (
     <Grid2 container paddingX={{ xs: 0, lg: 10 }} gap={1}>
+      {/* Título de la página */}
       <Grid2
         size={12}
         paddingRight={15}
@@ -127,12 +137,16 @@ const StockMovements = () => {
           <strong>Todos mis movimientos de stock </strong>
         </Typography>
       </Grid2>
-       <Grid2 size={12} display={"flex"} justifyContent={"space-between"}>
-              <BreadcrumbCustom paths={paths} />
-             
-            </Grid2>
+
+      {/* Componente de breadcrumb para navegación */}
+      <Grid2 size={12} display={"flex"} justifyContent={"space-between"}>
+        <BreadcrumbCustom paths={paths} />
+      </Grid2>
+
+      {/* Tabla de movimientos de stock */}
       <Grid2 size={12}>
         {isLoading ? (
+          // Indicador de carga mientras se obtienen los datos
           <Box
             display="flex"
             width={"100%"}
@@ -159,6 +173,7 @@ const StockMovements = () => {
             }}
             localeText={esES.components.MuiDataGrid.defaultProps.localeText}
             columns={[
+              // Definición de columnas de la tabla
               {
                 field: "date",
                 headerName: "Fecha de entrada",
@@ -171,6 +186,7 @@ const StockMovements = () => {
                 flex: 0.5,
                 align: "center",
                 renderCell: (params) => {
+                  // Renderizado condicional para mostrar íconos según el tipo de movimiento
                   if (params.row.type === "input") {
                     return (
                       <Tooltip title="Alta">
@@ -216,11 +232,11 @@ const StockMovements = () => {
                 align: "center",
               },
             ]}
-            rows={allMovements}
+            rows={allMovements} // Datos de los movimientos de stock
             pagination
             slots={{
-              pagination: CustomPagination,
-              toolbar: CustomToolbar,
+              pagination: CustomPagination, // Paginación personalizada
+              toolbar: CustomToolbar, // Barra de herramientas personalizada
             }}
             disableColumnFilter
             disableColumnMenu
@@ -240,11 +256,11 @@ const StockMovements = () => {
             }}
             initialState={{
               sorting: {
-                sortModel: [{ field: "date", sort: "desc" }],
+                sortModel: [{ field: "date", sort: "desc" }], // Orden inicial por fecha descendente
               },
-              pagination: { paginationModel: { pageSize: 50, page: 0 } },
+              pagination: { paginationModel: { pageSize: 50, page: 0 } }, // Configuración inicial de paginación
             }}
-            pageSizeOptions={[50, 100]}
+            pageSizeOptions={[50, 100]} // Opciones de tamaño de página
           />
         )}
       </Grid2>

@@ -19,10 +19,10 @@ import TableQuantity from "../../components/Tables/TableQuantity";
 import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 
 const AddOutputs = () => {
-  const { loadStockProducts, addMultipleOutputs, navigate } = useProducts();
-  const { user } = useAuthStore();
-  const [product, setProduct] = useState(null);
-  const [allProducts, setAllProducts] = useState([]);
+  const { loadStockProducts, addMultipleOutputs, navigate } = useProducts(); // Hooks personalizados para cargar productos, agregar salidas y navegar
+  const { user } = useAuthStore(); // Hook para obtener información del usuario autenticado
+  const [product, setProduct] = useState(null); // Estado para almacenar el producto seleccionado
+  const [allProducts, setAllProducts] = useState([]); // Estado para almacenar todos los productos seleccionados
   const {
     control,
     handleSubmit,
@@ -36,38 +36,43 @@ const AddOutputs = () => {
       reason: "",
       products: [],
     },
-  });
+  }); // Configuración del formulario con react-hook-form
 
+  // Función para validar que todas las cantidades estén completas
   const validateQuantities = (rows) => {
-    // Verificamos si hay alguna fila con cantidad vacía
     return rows.every((row) => row.quantity !== "");
   };
 
+  // Función que se ejecuta al enviar el formulario
   const onSubmit = async (data) => {
     if (!validateQuantities(rowsIds)) {
-      Swal.fire("Por favor, completa todas las cantidades.", "", "error");
+      Swal.fire("Por favor, completa todas las cantidades.", "", "error"); // Alerta si faltan cantidades
       return;
     }
-    setValue("products", allProducts);
-    const values = getValues();
-    addMultipleOutputs(values);
+    setValue("products", allProducts); // Asigna los productos seleccionados al formulario
+    const values = getValues(); // Obtiene los valores del formulario
+    addMultipleOutputs(values); // Llama a la función para agregar múltiples salidas
   };
 
+  // Carga los productos del stock al montar el componente
   useEffect(() => {
     loadStockProducts();
   }, [user]);
 
+  // Agrega un producto al estado cuando se selecciona
   useEffect(() => {
     if (product) {
       setAllProducts((prevProducts) => [...prevProducts, product]);
     }
   }, [product]);
 
+  // Mapea los productos seleccionados para generar filas con IDs
   const rowsIds = allProducts?.map((item, index) => ({
     id: index,
     ...item,
   }));
 
+  // Rutas para el componente de breadcrumb
   const paths = [
     { path: `/mi-almacen/productos/salidas`, name: "Todas mis salidas" },
     { path: `/mi-almacen/salida-productos`, name: "Crear salida" },
@@ -78,10 +83,11 @@ const AddOutputs = () => {
       component={"form"}
       onSubmit={(e) => {
         e.preventDefault(); // Previene el envío por defecto
-        handleSubmit(onSubmit)(); // Llama a tu función de envío
+        handleSubmit(onSubmit)(); // Llama a la función de envío del formulario
       }}
       container paddingX={{ xs: 0, lg: 10 }} gap={1}
     >
+      {/* Título del formulario */}
       <Grid2
         size={12}
         paddingRight={15}
@@ -95,15 +101,16 @@ const AddOutputs = () => {
           <strong>Crear salida de producto</strong>
         </Typography>
       </Grid2>
+
+      {/* Breadcrumb para navegación */}
       <Grid2 size={12} display={"flex"} justifyContent={"space-between"}>
         <BreadcrumbCustom paths={paths} />
-        
       </Grid2>
 
+      {/* Contenedor principal del formulario */}
       <Grid2 container gap={2} paddingX={10} justifyContent={"center"}>
-        <Grid2
-          size={{xs:12, lg:5.8}}
-        >
+        {/* Campo para seleccionar el motivo de la salida */}
+        <Grid2 size={{ xs: 12, lg: 5.8 }}>
           <Typography variant="h6" textAlign={"center"} color="initial">
             Introduzca el motivo de la salida del producto
           </Typography>
@@ -136,46 +143,47 @@ const AddOutputs = () => {
           />
         </Grid2>
 
-        <Grid2
-          size={{xs:12, lg:5.8}}
-        >
+        {/* Campo para buscar productos por nombre o código de barras */}
+        <Grid2 size={{ xs: 12, lg: 5.8 }}>
           <Typography variant="h6" textAlign={"center"} color="initial">
             Introduzca el nombre o código de barras del producto
           </Typography>
           <FormSearch
-            setSelected={setProduct}
-            allValues={allProducts}
-            titleAlert={"Ya se agrego este producto"}
+            setSelected={setProduct} // Actualiza el producto seleccionado
+            allValues={allProducts} // Lista de productos ya seleccionados
+            titleAlert={"Ya se agrego este producto"} // Mensaje de alerta si el producto ya fue agregado
           />
         </Grid2>
 
+        {/* Tabla para mostrar y editar las cantidades de los productos */}
         <Grid2 size={12}>
           <TableQuantity
-            values={rowsIds}
-            setValues={setAllProducts}
-            allValues={allProducts}
+            values={rowsIds} // Filas de la tabla con IDs
+            setValues={setAllProducts} // Actualiza la lista de productos
+            allValues={allProducts} // Lista completa de productos seleccionados
           />
         </Grid2>
-        <Grid2 size={12} display={'flex'} gap={2}>
-          
-            <Button
-              variant="contained"
-              fullWidth
-              size="small"
-              onClick={() => navigate("/mi-almacen/productos/salidas")}
-              color="error"
-            >
-              Salir
-            </Button>
-            <Button
-              variant="contained"
-              fullWidth
-              size="small"
-              onClick={handleSubmit(onSubmit)}
-              color="success"
-            >
-              Subir salida
-            </Button>
+
+        {/* Botones para salir o subir la salida */}
+        <Grid2 size={12} display={"flex"} gap={2}>
+          <Button
+            variant="contained"
+            fullWidth
+            size="small"
+            onClick={() => navigate("/mi-almacen/productos/salidas")} // Navega a la página de salidas
+            color="error"
+          >
+            Salir
+          </Button>
+          <Button
+            variant="contained"
+            fullWidth
+            size="small"
+            onClick={handleSubmit(onSubmit)} // Llama a la función de envío del formulario
+            color="success"
+          >
+            Subir salida
+          </Button>
         </Grid2>
       </Grid2>
     </Grid2>

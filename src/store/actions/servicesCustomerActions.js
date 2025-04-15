@@ -9,6 +9,7 @@ import {
 import Cookies from "js-cookie";
 import { object } from "yup";
 
+// Función para cargar un servicio de cliente específico por su ID
 export const startLoadCuServ = (id) => {
   return async (dispatch) => {
     try {
@@ -22,6 +23,7 @@ export const startLoadCuServ = (id) => {
   };
 };
 
+// Función para agregar o editar un servicio de cliente
 export const addOneCustomerService = (services_id, values) => async (dispatch) => {
   try {
     const { data } = await instanceApi.post(
@@ -54,6 +56,7 @@ export const addOneCustomerService = (services_id, values) => async (dispatch) =
   }
 };
 
+// Función para eliminar o actualizar un servicio de cliente
 export const deleteServicesOneCustomer = (services_id, values) => {
   return async (dispatch) => {
     try {

@@ -3,7 +3,6 @@ import {
   LoadOneProduct,
   StartUpdateMainFeatures,
   addOneProduct,
-  // addProductAndVariants,
   deleteOneProduct,
   editOneProduct,
   finishCreateProduct,
@@ -48,92 +47,148 @@ import {
 import { startLoadColors } from "../store/actions/uiActions";
 import { startAddVariantsize, startAssignMain, startAssignMainOneVariant, startUpdateMultipleImages, startUpdateOneVariant } from "../store/actions/variantActions";
 import { validate as isUUID } from "uuid";
+
 export const useProducts = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // Selecciona los estados necesarios del store
   const { products, product, stockProducts, productsPaginate, entries, outputs, dataProduct, allMovements, isLoading } =
     useSelector((state) => state.products);
   const { loading, colors } = useSelector((state) => state.ui);
 
+  // Función para cargar todos los productos
   const loadProducts = async () => dispatch(startLoadProducts());
+
+  // Función para cargar todos los productos para búsqueda
   const loadAllProductsForSearch = async () => dispatch(startLoadProductsForSearch());
-  const loadProductsByCategory = async (name) => dispatch(startLoadProductsByCategory(name))
-  const loadProductsBySubCategory = async (name) => dispatch(startLoadProductsBySubCategory(name))
+
+  // Función para cargar productos por categoría
+  const loadProductsByCategory = async (name) => dispatch(startLoadProductsByCategory(name));
+
+  // Función para cargar productos por subcategoría
+  const loadProductsBySubCategory = async (name) => dispatch(startLoadProductsBySubCategory(name));
+
+  // Función para cargar productos con paginación
   const loadProductsPaginate = async (page, limit) => dispatch(startLoadAllProducts(page, limit));
 
+  // Función para cargar entradas de productos
   const loadEntriesProducts = async () => dispatch(startLoadEntriesProduct());
+
+  // Función para cargar salidas de productos
   const loadOutputsProducts = async () => dispatch(startLoadOutputsProduct());
+
+  // Función para cargar todas las entradas
   const loadAllInputs = async () => dispatch(startLoadAllInputs());
+
+  // Función para cargar todas las salidas
   const loadAllOutputs = async () => dispatch(startLoadAllOutputs());
-  const loadAllMovements = async () => dispatch(startLoadAllMovements())
+
+  // Función para cargar todos los movimientos
+  const loadAllMovements = async () => dispatch(startLoadAllMovements());
+
+  // Función para cargar productos en stock
   const loadStockProducts = async () => dispatch(startLoadStockProducts());
+
+  // Función para cargar productos sin stock
   const loadNoStockProducts = async () => dispatch(startLoadNonExistProduct());
+
+  // Función para cargar un producto específico por ID
   const loadProduct = async (_id) => {
     const response = dispatch(LoadOneProduct(_id));
     return response;
   };
 
+  // Función para crear un nuevo producto
   const createProduct = async (values, images) => {
     dispatch(addOneProduct(values, images, navigate));
   };
+
+  // Función para agregar múltiples entradas
   const addMultipleEntries = async (values) => {
     dispatch(startAddMultipleEntries(values, navigate));
   };
+
+  // Función para agregar múltiples salidas
   const addMultipleOutputs = async (values) => {
     dispatch(startAddMultipleOutputs(values, navigate));
   };
 
+  // Función para editar un producto
   const editProduct = async (id, values) =>
     dispatch(editOneProduct(id, values, navigate));
 
+  // Función para editar una variante de producto
   const editVariant = async (id, values, handleClose) =>
     dispatch(startUpdateOneVariant(id, values, handleClose));
 
+  // Función para actualizar el video de un producto
   const updateVideo = (id, values) => dispatch(updateProductVideos(id, values));
+
+  // Función para actualizar la miniatura de un producto
   const updateThumbnail = (id, values) =>
     dispatch(startUpdateThumbnail(id, values));
+
+  // Función para agregar una imagen a un producto
   const addOneImage = (id, file) => dispatch(startAddOneImage(id, file));
+
+  // Función para eliminar una imagen del detalle de un producto
   const deleteImageDetail = (id, image_id) =>
     dispatch(startDeleteOneImage(id, image_id));
+
+  // Función para eliminar un producto
   const deleteProduct = async (id) => dispatch(deleteOneProduct(id));
+
+  // Función para cambiar la posición de las imágenes de un producto
   const changeImagePositions = async (product_id, images) =>
     dispatch(startChangeImagesPosition(product_id, images, navigate));
+
+  // Función para cargar los colores disponibles
   const loadColors = () => dispatch(startLoadColors());
 
+  // Función para limpiar el detalle de un producto
   const cleanProductD = () => dispatch(cleanProductDetail());
 
+  // Función para eliminar una variante de producto
   const deleteVariant = (id) => {
-     dispatch(startDelete(id));
+    dispatch(startDelete(id));
   };
 
+  // Mapear productos en stock para mostrarlos en una tabla
   const rowsStockProducts = stockProducts.map((item, _id) => ({
     id: _id.toString(),
     total: item.price * item.stock,
     ...item,
   }));
 
+  // Mapear productos sin stock para mostrarlos en una tabla
   const rowsOutOfStockProducts = products?.map((item, _id) => ({
     id: _id.toString(),
     ...item,
   }));
 
+  // Mapear todos los productos para mostrarlos en una tabla
   const rowsProducts = products?.map((item, _id) => ({
     id: _id.toString(),
     Category: item?.category?.name,
     SubCategory: item?.subCategory?.name,
     ...item,
   }));
+
+  // Mapear todas las entradas para mostrarlas en una tabla
   const rowsAllInputs = entries?.map((item, index) => ({
     id: index,
     tag: item.tag ? item.tag : item.variant_tag,
     ...item,
   }));
+
+  // Mapear todas las salidas para mostrarlas en una tabla
   const rowsAllOutputs = outputs?.map((item, index) => ({
     id: index,
     ...item,
   }));
 
+  // Función para manejar el paso 1 del flujo de creación de productos
   const dataStep1 = (data, handleNext) => {
     const body = {
       brand: "",
@@ -147,7 +202,7 @@ export const useProducts = () => {
 
     body.category = data.category;
     body.subCategory = data.subCategory;
-    body.product_key = data.product_key
+    body.product_key = data.product_key;
 
     data.fields.forEach((i) => {
       if (i.id === "brand") body.brand = i.textInput;
@@ -158,21 +213,25 @@ export const useProducts = () => {
     dispatch(startAddProductWithVariants(body, handleNext));
   };
 
+  // Función para manejar el paso 2 del flujo de creación de productos
   const dataStep2 = (id, data, handleNext) => {
     const condition = data.condition;
     dispatch(updateConditionStep(id, condition, handleNext));
   };
 
+  // Función para manejar el paso 3 del flujo de creación de productos
   const dataStep3 = (id, data, handleNext) => {
     const size_guide = data?.size_guide || "";
     dispatch(selectSizeGuide(id, size_guide, handleNext));
   };
 
+  // Función para actualizar la guía de tallas
   const updateSizeGuide = (id, data) => {
     const size_guide = data?.size_guide || "";
     dispatch(sizeGuideEdit(id, size_guide));
   };
 
+  // Función para manejar el paso 4 del flujo de creación de productos
   const dataStep4 = (id, data, handleNext) => {
     const body = {
       variants: [],
@@ -210,90 +269,89 @@ export const useProducts = () => {
     dispatch(startAddVariantsProduct(id, body, handleNext));
   };
 
+  // Función para agregar variantes a un producto
   const dataAddVariants = (id, data, handleClose) => {
-    
     const body = {
       variants: [],
       images: [],
     };
-  
+
     data.forEach((variant) => {
       variant.sizes.forEach((item) => {
         const values = {
-          tag: item.tag, // Etiqueta del tamaño
-          weight: item.weight, // Peso del tamaño
+          tag: item.tag,
+          weight: item.weight,
           purchase_price: item.purchase_price,
-          price: item.price, // Precio del tamaño
-          porcentDiscount: item.porcentDiscount, // Porcentaje de descuento
-          discountPrice: item.discountPrice, // Precio con descuento
-          design: variant.design.textInput, // Texto del diseño
-          stock: item.stock, // Stock
+          price: item.price,
+          porcentDiscount: item.porcentDiscount,
+          discountPrice: item.discountPrice,
+          design: variant.design.textInput,
+          stock: item.stock,
           attributes: {
-            color: variant.color.name, // Nombre del color
-            size: item.size, // Tamaño
-            material: null, // Sin material definido
+            color: variant.color.name,
+            size: item.size,
+            material: null,
           },
         };
-        body.variants.push(values); // Agregar al array de variantes
+        body.variants.push(values);
       });
-  
-      // Procesar imágenes
+
       variant.images.forEach((img) => {
         const image = {
           filePreview: img.filePreview,
           color: variant.color.name,
         };
-        body.images.push(image); // Agregar al array de imágenes
+        body.images.push(image);
       });
     });
-  
+
     dispatch(startAddVariantsProductClothes2(id, body, handleClose));
   };
 
+  // Función para manejar variantes de ropa y zapatos
   const dataClothesShoes = (id, data, handleNext) => {
-  
     const body = {
       variants: [],
       images: [],
     };
-  
+
     data.forEach((variant) => {
       variant.sizes.forEach((item) => {
         const values = {
-          tag: item.tag, // Etiqueta del tamaño
-          weight: item.weight, // Peso del tamaño
-          price: item.price, // Precio del tamaño
+          tag: item.tag,
+          weight: item.weight,
+          price: item.price,
           purchase_price: item.purchase_price,
-          porcentDiscount: item.porcentDiscount, // Porcentaje de descuento
-          discountPrice: item.discountPrice, // Precio con descuento
-          design: variant.design.textInput, // Texto del diseño
-          stock: item.stock, // Stock
+          porcentDiscount: item.porcentDiscount,
+          discountPrice: item.discountPrice,
+          design: variant.design.textInput,
+          stock: item.stock,
           attributes: {
-            color: variant.color.name, // Nombre del color
-            size: item.size, // Tamaño
-            material: null, // Sin material definido
+            color: variant.color.name,
+            size: item.size,
+            material: null,
           },
         };
-        body.variants.push(values); // Agregar al array de variantes
+        body.variants.push(values);
       });
-  
-      // Procesar imágenes
+
       variant.images.forEach((img) => {
         const image = {
           filePreview: img.filePreview,
           color: variant.color.name,
         };
-        body.images.push(image); // Agregar al array de imágenes
+        body.images.push(image);
       });
-    });  
-     dispatch(startAddVariantsProductClothes(id, body, handleNext));
+    });
+    dispatch(startAddVariantsProductClothes(id, body, handleNext));
   };
-  
 
+  // Función para completar el flujo de creación de productos
   const completeStepAddProduct = (id, data, handleReset) => {
     dispatch(finishCreateProduct(id, data, navigate, handleReset));
   };
 
+  // Función para actualizar características principales de un producto
   const dataUpdateMainFeatures = (id, data) => {
     const body = {
       brand: "",
@@ -302,12 +360,12 @@ export const useProducts = () => {
       model: "",
       gender: "",
       name: "",
-      product_key:''
+      product_key: "",
     };
 
     body.category = data.category;
     body.subCategory = data.subCategory;
-    body.product_key = data.product_key
+    body.product_key = data.product_key;
 
     data.fields.forEach((i) => {
       if (i.id === "brand") body.brand = i.textInput;
@@ -318,6 +376,7 @@ export const useProducts = () => {
     dispatch(StartUpdateMainFeatures(id, body));
   };
 
+  // Función para actualizar variantes de un producto
   const updateVariants = (id, data) => {
     const body = {
       variants: [],
@@ -349,7 +408,7 @@ export const useProducts = () => {
       values.design = variant.design.textInput;
       values.stock = variant.stock;
       values.images = variant.images;
-      values._id = variant.id
+      values._id = variant.id;
       values.purchase_price = JSON.parse(variant.purchase_price);
 
       body.variants.push(values);
@@ -358,29 +417,39 @@ export const useProducts = () => {
     dispatch(startUpdateVariants(id, body));
   };
 
+  // Función para eliminar una imagen de una variante
   const deleteImageVariant = (variant_id, image_id) =>
     dispatch(startDeleteImageVariant(variant_id, image_id));
 
+  // Función para actualizar la descripción de un producto
   const updateDescription = (id, data) => {
     dispatch(startUpdateDescription(id, data));
   };
 
-  const updateMultipleImagesVariant =(data, handleClose)=>{
-    dispatch(startUpdateMultipleImages(data, handleClose))
-  }
+  // Función para actualizar múltiples imágenes de una variante
+  const updateMultipleImagesVariant = (data, handleClose) => {
+    dispatch(startUpdateMultipleImages(data, handleClose));
+  };
 
-  const addOneSizeVariant =(data, handleClose)=>{
-    dispatch(startAddVariantsize(data, handleClose))
-  }
-  const assignMain =(data)=>{
-    dispatch(startAssignMain(data))
-  }
-  const assignMainOneVariant =(data)=>{
-    dispatch(startAssignMainOneVariant(data))
-  }
-  const loadProductsBySearch =(value)=>{
-    dispatch(startSearchProducts(value))
-  }
+  // Función para agregar una nueva talla a una variante
+  const addOneSizeVariant = (data, handleClose) => {
+    dispatch(startAddVariantsize(data, handleClose));
+  };
+
+  // Función para asignar una variante como principal
+  const assignMain = (data) => {
+    dispatch(startAssignMain(data));
+  };
+
+  // Función para asignar una variante específica como principal
+  const assignMainOneVariant = (data) => {
+    dispatch(startAssignMainOneVariant(data));
+  };
+
+  // Función para buscar productos por un valor
+  const loadProductsBySearch = (value) => {
+    dispatch(startSearchProducts(value));
+  };
 
   return {
     loadProducts,
@@ -443,6 +512,6 @@ export const useProducts = () => {
     loadAllProductsForSearch,
     loadAllMovements,
     allMovements,
-    isLoading
+    isLoading,
   };
 };

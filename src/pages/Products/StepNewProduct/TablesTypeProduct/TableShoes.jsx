@@ -20,19 +20,19 @@ import { useEffect, useState } from "react";
 import { useSizeGuide } from "../../../../hooks/useSizeGuide";
 import { useParams } from "react-router-dom";
 
-
+// Componente para la barra de herramientas personalizada que permite agregar una nueva fila
 function EditToolbar(props) {
   const { setRows, setRowModesModel } = props;
 
   const handleClick = () => {
-    const id = randomId();
+    const id = randomId(); // Genera un ID único para la nueva fila
     setRows((oldRows) => [
       ...oldRows,
-      { id, label: "", equivalence: "", isNew: true },
+      { id, label: "", equivalence: "", isNew: true }, // Agrega una nueva fila vacía
     ]);
     setRowModesModel((oldModel) => ({
       ...oldModel,
-      [id]: { mode: GridRowModes.Edit, fieldToFocus: "label" },
+      [id]: { mode: GridRowModes.Edit, fieldToFocus: "label" }, // Activa el modo de edición para la nueva fila
     }));
   };
 
@@ -52,36 +52,40 @@ function EditToolbar(props) {
 }
 
 const TableShoes = ({ initialRows = [], sizeGuide, fromVariants = false }) => {
-  const [rows, setRows] = useState(initialRows);
-  const [rowModesModel, setRowModesModel] =useState({});
-  const {loadAddOneSizeGuide, updateSizeGuide} =  useSizeGuide()
-  const { id } = useParams()
-  
-  const DefaultValues = (data)=>({
-    name : data?.name || "",
-    type : "shoes",
-    dimensions : data?.dimensions|| [],
-})
-    const {
+  const [rows, setRows] = useState(initialRows); // Estado para las filas de la tabla
+  const [rowModesModel, setRowModesModel] = useState({}); // Estado para los modos de edición de las filas
+  const { loadAddOneSizeGuide, updateSizeGuide } = useSizeGuide(); // Hooks personalizados para manejar la guía de tallas
+  const { id } = useParams(); // Obtiene el parámetro de la URL
+
+  // Valores predeterminados para el formulario
+  const DefaultValues = (data) => ({
+    name: data?.name || "",
+    type: "shoes",
+    dimensions: data?.dimensions || [],
+  });
+
+  const {
     control,
     formState: { errors },
     setValue,
     handleSubmit,
   } = useForm({
-    defaultValues: DefaultValues(sizeGuide)
+    defaultValues: DefaultValues(sizeGuide),
   });
 
+  // Actualiza el valor de las dimensiones en el formulario cuando cambian las filas
   useEffect(() => {
-  setValue('dimensions', rows)
-  }, [rows, setRows])
+    setValue("dimensions", rows);
+  }, [rows, setRows]);
 
-
+  // Maneja el evento de detener la edición de una fila
   const handleRowEditStop = (params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-      event.defaultMuiPrevented = true;
+      event.defaultMuiPrevented = true; // Previene que se detenga la edición al perder el foco
     }
   };
 
+  // Activa el modo de edición para una fila específica
   const handleEditClick = (id) => {
     setRowModesModel((prevRowModes) => ({
       ...prevRowModes,
@@ -89,22 +93,23 @@ const TableShoes = ({ initialRows = [], sizeGuide, fromVariants = false }) => {
     }));
   };
 
+  // Valida las propiedades de la celda antes de procesarlas
   const handleProcessEditCellProps = async (params) => {
     const value = params.props?.value;
 
     if (!value || value.trim() === "") {
-      return { ...params.props, error: true };
+      return { ...params.props, error: true }; // Marca como error si el valor está vacío
     }
 
     return { ...params.props, error: false };
   };
 
-  
-
+  // Elimina una fila específica
   const handleDeleteClick = (id) => {
     setRows(rows.filter((row) => row.id !== id));
   };
 
+  // Cancela la edición de una fila
   const handleCancelClick = (id) => {
     setRowModesModel({
       ...rowModesModel,
@@ -113,20 +118,23 @@ const TableShoes = ({ initialRows = [], sizeGuide, fromVariants = false }) => {
 
     const editedRow = rows.find((row) => row.id === id);
     if (editedRow.isNew) {
-      setRows(rows.filter((row) => row.id !== id));
+      setRows(rows.filter((row) => row.id !== id)); // Elimina la fila si es nueva
     }
   };
 
+  // Actualiza una fila con los nuevos datos
   const processRowUpdate = (newRow) => {
     const updatedRow = { ...newRow, isNew: false };
     setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
     return updatedRow;
   };
 
+  // Maneja los cambios en el modelo de modos de fila
   const handleRowModesModelChange = (newRowModesModel) => {
     setRowModesModel(newRowModesModel);
   };
 
+  // Componente personalizado para el pie de la tabla
   const CustomFooter = () => (
     <Button
       sx={{ margin: 4 }}
@@ -137,6 +145,8 @@ const TableShoes = ({ initialRows = [], sizeGuide, fromVariants = false }) => {
       Guardar
     </Button>
   );
+
+  // Definición de las columnas de la tabla
   const columns = [
     {
       field: "label",
@@ -213,15 +223,17 @@ const TableShoes = ({ initialRows = [], sizeGuide, fromVariants = false }) => {
     },
   ];
 
+  // Maneja el envío del formulario
   const submitForm = handleSubmit((data) => {
     if (!!id && fromVariants === false) {
-      updateSizeGuide(id, data);
+      updateSizeGuide(id, data); // Actualiza la guía de tallas existente
     } else if (fromVariants === true) {
-      loadAddOneSizeGuide(data);
-    }else{
-      loadAddOneSizeGuide(data);
+      loadAddOneSizeGuide(data); // Carga una nueva guía de tallas
+    } else {
+      loadAddOneSizeGuide(data); // Carga una nueva guía de tallas
     }
   });
+
   return (
     <Box
       sx={{
@@ -229,8 +241,9 @@ const TableShoes = ({ initialRows = [], sizeGuide, fromVariants = false }) => {
         minHeight: "400px",
       }}
       component="form"
-      onSubmit={(e)=>submitForm(e)}
+      onSubmit={(e) => submitForm(e)}
     >
+      {/* Campo de texto para el nombre de la guía */}
       <Controller
         control={control}
         name="name"
@@ -251,17 +264,18 @@ const TableShoes = ({ initialRows = [], sizeGuide, fromVariants = false }) => {
         )}
       />
 
+      {/* Tabla de datos */}
       <DataGrid
-      sx={{
-        "& .actions": { color: "text.secondary" },
-        "& .Mui-error": {
-          bgcolor: red[100], // Color de fondo cuando hay error
-          color: red[700], // Color de texto cuando hay error
-          border: "solid 2px red",
-          width: "100%",
-          height: "100%",
-        },
-      }}
+        sx={{
+          "& .actions": { color: "text.secondary" },
+          "& .Mui-error": {
+            bgcolor: red[100], // Color de fondo cuando hay error
+            color: red[700], // Color de texto cuando hay error
+            border: "solid 2px red",
+            width: "100%",
+            height: "100%",
+          },
+        }}
         rows={rows}
         columns={columns}
         editMode="row"
@@ -270,8 +284,8 @@ const TableShoes = ({ initialRows = [], sizeGuide, fromVariants = false }) => {
         onRowEditStop={handleRowEditStop}
         processRowUpdate={processRowUpdate}
         slots={{
-          toolbar: EditToolbar,
-          footer: CustomFooter,
+          toolbar: EditToolbar, // Barra de herramientas personalizada
+          footer: CustomFooter, // Pie de tabla personalizado
         }}
         slotProps={{
           toolbar: { setRows, setRowModesModel },
@@ -281,4 +295,4 @@ const TableShoes = ({ initialRows = [], sizeGuide, fromVariants = false }) => {
   );
 };
 
-export default TableShoes
+export default TableShoes;

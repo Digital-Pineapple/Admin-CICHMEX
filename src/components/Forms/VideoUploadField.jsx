@@ -4,6 +4,7 @@ import { VideoCallSharp } from "@mui/icons-material";
 import useVideos from "../../hooks/useVideos";
 import { useFormik } from "formik";
 
+// Componente estilizado para ocultar el input de carga de archivos visualmente
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
@@ -17,10 +18,11 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 const VideoUploadField = () => {
-
+  // Hook personalizado para manejar la lógica de los videos
   const { deleteVideo, handleVideoChange, videoFiles, videos, videosPreview, error } =
     useVideos();
 
+  // Función para evaluar los videos cargados y clasificarlos en vertical y horizontal
   const valuateVideo = (videos) => {
     if (videos?.length > 0) {
       const videoVertical = videos.find((i) => i.type === "vertical");
@@ -31,10 +33,13 @@ const VideoUploadField = () => {
     // Retornar valores nulos si no hay videos
     return { videoVertical: null, videoHorizontal: null };
   };
+
+  // Obtener los videos vertical y horizontal
   const { videoVertical, videoHorizontal } = valuateVideo(videos);
- 
+
   return (
-    <Grid container display={"flex"} spacing={2}  alignContent={'center'} justifyContent={"center"}>
+    <Grid container display={"flex"} spacing={2} alignContent={"center"} justifyContent={"center"}>
+      {/* Sección para subir o mostrar el video vertical */}
       <Grid
         item
         xs={12}
@@ -44,10 +49,11 @@ const VideoUploadField = () => {
         justifyContent={"space-between"}
         height={"100%"}
       >
-        <Typography variant="h6" textAlign="center" >
+        <Typography variant="h6" textAlign="center">
           Subir video vertical
         </Typography>
         {!videoVertical ? (
+          // Botón para subir un video vertical
           <Button
             component="label"
             variant="contained"
@@ -62,17 +68,26 @@ const VideoUploadField = () => {
             />
           </Button>
         ) : (
-          <Grid container  width={'100%'}  >
-            <video style={{maxWidth:'200px', marginLeft:'auto', marginRight:'auto'}} controls>
+          // Mostrar el video vertical cargado y botón para eliminarlo
+          <Grid container width={"100%"}>
+            <video style={{ maxWidth: "200px", marginLeft: "auto", marginRight: "auto" }} controls>
               <source src={videoVertical?.filePreview} type="video/mp4" />
               Tu navegador no soporta la reproducción de videos.
             </video>
-            <Button onClick={()=>deleteVideo('vertical') } fullWidth sx={{marginTop:1}} variant="contained" color="error">
+            <Button
+              onClick={() => deleteVideo("vertical")}
+              fullWidth
+              sx={{ marginTop: 1 }}
+              variant="contained"
+              color="error"
+            >
               Eliminar video vertical
             </Button>
           </Grid>
         )}
       </Grid>
+
+      {/* Sección para subir o mostrar el video horizontal */}
       <Grid
         item
         xs={12}
@@ -86,6 +101,7 @@ const VideoUploadField = () => {
           Subir video horizontal
         </Typography>
         {!videoHorizontal ? (
+          // Botón para subir un video horizontal
           <Button
             component="label"
             variant="contained"
@@ -100,18 +116,26 @@ const VideoUploadField = () => {
             />
           </Button>
         ) : (
-          <Grid container width={'100%'}  >
-            <video style={{maxWidth:'300px', marginLeft:'auto', marginRight:'auto'}} controls>
+          // Mostrar el video horizontal cargado y botón para eliminarlo
+          <Grid container width={"100%"}>
+            <video style={{ maxWidth: "300px", marginLeft: "auto", marginRight: "auto" }} controls>
               <source src={videoHorizontal?.filePreview} type="video/mp4" />
               Tu navegador no soporta la reproducción de videos.
             </video>
-            <Button fullWidth onClick={()=>deleteVideo('horizontal') }  variant="contained" sx={{marginTop:1}} color="warning">
+            <Button
+              fullWidth
+              onClick={() => deleteVideo("horizontal")}
+              variant="contained"
+              sx={{ marginTop: 1 }}
+              color="warning"
+            >
               Eliminar video horizontal
             </Button>
           </Grid>
         )}
       </Grid>
 
+      {/* Mostrar mensaje de error si existe */}
       {error && (
         <Typography color="error" textAlign="center" mt={2}>
           {error}

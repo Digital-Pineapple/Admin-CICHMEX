@@ -45,82 +45,103 @@ const style = {
 };
 
 export const DeliveryPointsOrder = () => {
+  // Obtiene los parámetros de la URL (id y nombre de la sucursal)
   const { id, name } = useParams();
+
+  // Hooks personalizados para cargar pedidos y verificar QR
   const { onLoadOrdersByPointDelivery, orders } = useDeliveryPoints();
-  const { loadVerifyQRtoPoint, loadVerifyQR } = useProductOrder()
-  const [openModal, setOpenModal] = useState({value: false, data: null })
-  const [validation, setValidation] = useState(false)
-  const [valueQR, setValueQR] = useState('')
-  const [openModalSupply, setOpenModalSupply] = useState({value: false, data: null })
-  const [validationSupply, setValidationSupply] = useState(false)
-  const [valueQRSupply, setValueQRSupply] = useState('')
-  
+  const { loadVerifyQRtoPoint, loadVerifyQR } = useProductOrder();
+
+  // Estados para manejar los modales y sus datos
+  const [openModal, setOpenModal] = useState({ value: false, data: null });
+  const [validation, setValidation] = useState(false);
+  const [valueQR, setValueQR] = useState('');
+  const [openModalSupply, setOpenModalSupply] = useState({ value: false, data: null });
+  const [validationSupply, setValidationSupply] = useState(false);
+  const [valueQRSupply, setValueQRSupply] = useState('');
+
+  // Mapea los pedidos para asignar un id único a cada fila
   const rowsWithIds = orders.map((order, _id) => ({
     id: _id.toString(),
     ...order,
   }));
 
-  const handleOpenModal = (values)=>{
-    setOpenModal({value: true, data: values})
-  }
-  const handleCloseModal = () =>{
-    setOpenModal({value: false, data: null})
-    setValueQR('')
-    setValidation(false)
-  }
-  const handleOpenModalSupply = (values)=>{
-    setOpenModalSupply({value: true, data: values})
-  }
-  const handleCloseModalSupply = () =>{
-    setOpenModalSupply({value: false, data: null})
-    setValueQRSupply('')
-    setValidationSupply(false)
-  }
+  // Abre el modal para leer el QR del paquete
+  const handleOpenModal = (values) => {
+    setOpenModal({ value: true, data: values });
+  };
 
+  // Cierra el modal de lectura de QR del paquete
+  const handleCloseModal = () => {
+    setOpenModal({ value: false, data: null });
+    setValueQR('');
+    setValidation(false);
+  };
+
+  // Abre el modal para leer el QR del cliente
+  const handleOpenModalSupply = (values) => {
+    setOpenModalSupply({ value: true, data: values });
+  };
+
+  // Cierra el modal de lectura de QR del cliente
+  const handleCloseModalSupply = () => {
+    setOpenModalSupply({ value: false, data: null });
+    setValueQRSupply('');
+    setValidationSupply(false);
+  };
+
+  // Carga los pedidos del punto de entrega al montar el componente
   useEffect(() => {
     onLoadOrdersByPointDelivery(id);
   }, []);
 
-  const validationCode = (value)=>{
+  // Valida el código QR del paquete
+  const validationCode = (value) => {
     if (value === openModal.data.order_id) {
-      setValidation(true)
-    }else{
-      Swal.fire({title:'No coincide con QR de paquete', icon:'error'})
+      setValidation(true);
+    } else {
+      Swal.fire({ title: 'No coincide con QR de paquete', icon: 'error' });
     }
-  }
-  const validationCodeSupply = (value)=>{
-    if (value === openModalSupply.data.order_id) {
-      setValidationSupply(true)
-    }else{
-      Swal.fire({title:'No coincide con paquete', icon:'error'})
-    }
-  }
+  };
 
+  // Valida el código QR del cliente
+  const validationCodeSupply = (value) => {
+    if (value === openModalSupply.data.order_id) {
+      setValidationSupply(true);
+    } else {
+      Swal.fire({ title: 'No coincide con paquete', icon: 'error' });
+    }
+  };
+
+  // Observa cambios en el QR del paquete y valida el código
   useEffect(() => {
-  if (valueQR) {
-    validationCode(valueQR.order_id)
-  }
-  
-  }, [valueQR])
+    if (valueQR) {
+      validationCode(valueQR.order_id);
+    }
+  }, [valueQR]);
+
+  // Observa cambios en el QR del cliente y valida el código
   useEffect(() => {
     if (valueQRSupply) {
-      validationCodeSupply(valueQRSupply.order)
+      validationCodeSupply(valueQRSupply.order);
     }
-    }, [valueQRSupply])
-  
-  const VerifyPackage = ()=>{
-    loadVerifyQRtoPoint({order_id:openModal.data.order_id}, handleCloseModal)
-  }
+  }, [valueQRSupply]);
 
-  const SupplyPackage = ()=>{
-    loadVerifyQR( valueQRSupply, handleCloseModalSupply)
-  }
-  
+  // Verifica el paquete en el punto de entrega
+  const VerifyPackage = () => {
+    loadVerifyQRtoPoint({ order_id: openModal.data.order_id }, handleCloseModal);
+  };
+
+  // Entrega el paquete al cliente
+  const SupplyPackage = () => {
+    loadVerifyQR(valueQRSupply, handleCloseModalSupply);
+  };
   
   
 
   return (
     <Grid2 container paddingX={{ xs: 0, lg: 10 }} display={"flex"} gap={2}>
+      {/* Encabezado con el nombre de la sucursal y título de la página */}
       <Grid2
         size={12}
         paddingRight={15}
@@ -136,6 +157,7 @@ export const DeliveryPointsOrder = () => {
         </Typography>
       </Grid2>
 
+      {/* Tabla de datos con los pedidos */}
       <DataGrid
         sx={{
           fontSize: "12px",
@@ -163,6 +185,7 @@ export const DeliveryPointsOrder = () => {
             flex: 2,
             sortable: false,
             renderCell: (params) => {
+              // Renderiza un Chip con el estado del pedido
               let label;
               let color;
               if (params.row.deliveryStatus) {
@@ -183,18 +206,20 @@ export const DeliveryPointsOrder = () => {
             headerName: "Opciones",
             flex: 2,
             sortable: false,
-            renderCell: (params)=>(
+            renderCell: (params) => (
               <>
-              <Tooltip title={'Leer Qr'} >
-              <IconButton disabled={params.row.point_pickup_status} onClick={()=>handleOpenModal(params.row)}>
-                <QrCode/>
-              </IconButton>
-              </Tooltip>
-               <Tooltip title={'Entregar'} >
-               <IconButton disabled={!params.row.point_pickup_status} onClick={()=>handleOpenModalSupply(params.row)}>
-                 <HandshakeOutlined/>
-               </IconButton>
-               </Tooltip>
+                {/* Botón para leer el QR del paquete */}
+                <Tooltip title={'Leer Qr'} >
+                  <IconButton disabled={params.row.point_pickup_status} onClick={() => handleOpenModal(params.row)}>
+                    <QrCode/>
+                  </IconButton>
+                </Tooltip>
+                {/* Botón para entregar el paquete */}
+                <Tooltip title={'Entregar'} >
+                  <IconButton disabled={!params.row.point_pickup_status} onClick={() => handleOpenModalSupply(params.row)}>
+                    <HandshakeOutlined/>
+                  </IconButton>
+                </Tooltip>
               </>
             )
           },
@@ -233,7 +258,9 @@ export const DeliveryPointsOrder = () => {
         }}
         style={{ fontFamily: "sans-serif", fontSize: "15px" }}
       />
-       <Modal
+      
+      {/* Modal para leer el QR del paquete */}
+      <Modal
         open={openModal.value}
         onClose={handleCloseModal}
         aria-labelledby="modal-modal-QR"
@@ -243,7 +270,9 @@ export const DeliveryPointsOrder = () => {
           <Typography id="modal-modal-QR" variant="h6" component="h2">
             Leer qr del paquete : <strong>{openModal.data?.order_id}</strong> 
           </Typography>
+          {/* Componente de escaneo de QR */}
           <QRScannerV2 setValueQR={setValueQR}  title={`Paquete: ${openModal?.data?.order_id}`} />
+          {/* Botón para confirmar la recepción del paquete */}
           <Button startIcon={<Check/>} 
           disabled={!validation} variant="contained" 
           fullWidth color="success"
@@ -253,6 +282,8 @@ export const DeliveryPointsOrder = () => {
           </Button>
         </Box>
       </Modal>
+
+      {/* Modal para leer el QR del cliente */}
       <Modal
         open={openModalSupply.value}
         onClose={handleCloseModalSupply}
@@ -264,7 +295,9 @@ export const DeliveryPointsOrder = () => {
             Leer qr del cliente : <strong>{openModalSupply.data?.order_id}</strong> <br />
             Cliente: <strong>{openModalSupply.data?.user_id.fullname}</strong>
           </Typography>
+          {/* Componente de escaneo de QR */}
           <QRScannerV2 setValueQR={setValueQRSupply}  title={`Leer codigo del cliente`} />
+          {/* Botón para confirmar la entrega del paquete */}
           <Button startIcon={<Check/>} 
           disabled={!validationSupply} variant="contained" 
           fullWidth color="success"
@@ -278,8 +311,8 @@ export const DeliveryPointsOrder = () => {
   );
 };
 
+// Barra de herramientas personalizada para la tabla
 function CustomToolbar() {
-
   return (
     <GridToolbarContainer sx={{ justifyContent: "center" }}>
       <GridToolbarQuickFilter variant="outlined" />
@@ -287,6 +320,7 @@ function CustomToolbar() {
   );
 }
 
+// Componente de paginación personalizada
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -303,18 +337,23 @@ function Pagination({ page, onPageChange, className }) {
     />
   );
 }
+
+// Icono para orden descendente
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
 
+// Icono para orden ascendente
 export function SortedAscendingIcon() {
   return <ExpandLessIcon className="icon" />;
 }
 
+// Icono para columna sin orden
 export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación personalizada para la tabla
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }

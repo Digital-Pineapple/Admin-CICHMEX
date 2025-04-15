@@ -21,6 +21,7 @@ import InputControlTimePicker from "../../components/ui/InputControlTimePicker";
 import StyledDropzone from "../../components/DropZone/StyledDropZone";
 import useImagesV2 from "../../hooks/useImagesV2";
 import useDeliveryPoints from "../../hooks/useDeliveryPoints";
+
 const styleContainer = {
   width: "100%",
   height: "600px",
@@ -28,11 +29,16 @@ const styleContainer = {
 
 function CreateDeliveryPoint() {
   const [openTooltip, setOpenTooltip] = useState(true);
+
+  // Desplaza la ventana al inicio al cargar el componente
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+  // Manejo de imágenes para la sucursal
   const { addImage, deleteImage, images, imagesFiles } = useImagesV2();
+
+  // Manejo de horarios y asignación de horarios a días específicos
   const {
     schedules,
     handleSelectedSchedules,
@@ -44,6 +50,7 @@ function CreateDeliveryPoint() {
     isAScheduleAssigned,
   } = useSchedules();
 
+  // Manejo de geolocalización y coordenadas
   const {
     center,
     marker,
@@ -52,20 +59,30 @@ function CreateDeliveryPoint() {
     handleSetMarker,
     handleSetCenter,
   } = useGeocode();
+
+  // Función para registrar un punto de entrega
   const { onRegisterDeliveryPoint } = useDeliveryPoints();
 
+  // Cierra el tooltip que aparece sobre el mapa
   const handleTooltipClose = () => setOpenTooltip(false);
+
+  // Detecta si la pantalla es pequeña para ajustar el diseño
   const isSmallScreen = useMediaQuery("(max-width:600px)");
+
   const dispatch = useDispatch();
   const { navigate } = useAuthStore();
-  const [loading, setLoading] = useState(false);  
+  const [loading, setLoading] = useState(false);
+
+  // Manejo del formulario con react-hook-form
   const { formState: { errors }, handleSubmit, control, watch, setValue, setError, clearErrors } = useForm();
 
+  // Carga del script de Google Maps
   const { isLoaded } = useLoadScript({
     id: "google-map-script",
     googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
   });
 
+  // Función para registrar la sucursal con los datos del formulario
   const registerBranchOffice = (data) => {    
     if (!marker.lat && !marker.lng) {
       return;
@@ -74,12 +91,14 @@ function CreateDeliveryPoint() {
     }
   };
 
+  // Limpia los campos de dirección
   function clearAddressInputs() {
     setValue("municipality", "");
     setValue("state", "");
     setValue("neighborhood", "");
   }
 
+  // Obtiene la dirección a partir de coordenadas y actualiza los campos del formulario
   function handleAddressFromCoords(lat, lng) {
     getAddressFromCoords(lat, lng, (data) =>  {
       if (data === undefined || data === null) {
@@ -88,7 +107,6 @@ function CreateDeliveryPoint() {
       }
       clearAddressInputs();
       const detalles = data?.results;
-      // console.log(detalles);
       for (let i = 0; i < detalles.length; i++) {
         var d = detalles[i];
         switch (d.types[0]) {
@@ -126,8 +144,10 @@ function CreateDeliveryPoint() {
     })       
   }
 
+  // Llama a la función de obtener dirección con un retraso para evitar múltiples llamadas
   const debouncedInputsByCoords = useDebouncedCallback((latitud, longitud) => handleAddressFromCoords(latitud, longitud), 1000);
 
+  // Actualiza los campos del formulario al mover el marcador en el mapa
   function setInputsByMarker(event) {
     setLoading(true);
     const latitud = event.latLng.lat();
@@ -137,6 +157,7 @@ function CreateDeliveryPoint() {
     debouncedInputsByCoords(latitud, longitud);
   }
 
+  // Actualiza los campos del formulario al ingresar un código postal
   function setInputsByZipcode(zipcode) {
     if (!zipcode && typeof zipcode !== string && zipcode.length !== 5) {
       return;
@@ -144,23 +165,17 @@ function CreateDeliveryPoint() {
     setLoading(true);
     getCenterFromZipCode(zipcode, (data) => {
       const { lat, lng } = data;    
-      console.log(data, "xdxd");      
       if (lat && lng) {
         handleSetMarker(lat, lng);
         handleSetCenter(lat, lng);
         debouncedInputsByCoords(lat, lng);
-      }else{
-        setLoading(false)
+      } else {
+        setLoading(false);
       }
-    }, (error) => setLoading(false) );
-    
+    }, (error) => setLoading(false));
   }
 
-  const schedule = {
-    open: watch("opening_time"),
-    close: watch("closing_time"),
-  };
-
+  // Valida que al menos un horario haya sido asignado
   const validateSchedules = () => {
     if (!isAScheduleAssigned()) {
       setError("schedule", { type: "manual", message: "Asigne al menos un horario de atención" });
@@ -172,6 +187,7 @@ function CreateDeliveryPoint() {
   return (
     <Container maxWidth="lg">
       <form onSubmit={handleSubmit(registerBranchOffice)}>
+        {/* Título del formulario */}
         <Typography
           textAlign="center"
           marginY="1rem"
@@ -182,6 +198,7 @@ function CreateDeliveryPoint() {
           Registrar Punto de entrega
         </Typography>
         <Grid container spacing={2} sx={{ backgroundColor: "" }}>
+          {/* Campos del formulario para nombre, teléfono y descripción */}
           <Grid item xs={4}>
             <InputControl
               name={"name"}
@@ -213,13 +230,13 @@ function CreateDeliveryPoint() {
               control={control}
               errors={errors}
               multiline
-              // rows={2}
             />
           </Grid>
+          {/* Componente para subir imágenes */}
           <Grid item xs={6}>
             <Box flexGrow={1} bgcolor={""}>
               <Typography variant="body2">
-                Agrega imagenes de tu sucursal
+                Agrega imágenes de tu sucursal
               </Typography>
               <StyledDropzone
                 files={images}
@@ -228,10 +245,11 @@ function CreateDeliveryPoint() {
               />
             </Box>
           </Grid>
+          {/* Selección de horarios y días de atención */}
           <Grid item xs={6}>
             <Box flexGrow={1}>
               <Typography variant="body2" mb={1}>
-                Selecciona los dias de atención y asigne un horario
+                Selecciona los días de atención y asigna un horario
               </Typography>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <Stack direction={"row"} spacing={0} mb={3}>
@@ -269,11 +287,12 @@ function CreateDeliveryPoint() {
               />
             </Box>
           </Grid>
+          {/* Campos de dirección y mapa interactivo */}
           <Grid item xs={6} container rowGap={2}>
             <Typography variant="body1">Ingresa la dirección</Typography>
             <Typography variant="body2" color={"text.secondary"}>
-              Al ingresar el código postal se rellenaran los campos de tu
-              dirección (cambialos de ser necesario)
+              Al ingresar el código postal se rellenarán los campos de tu
+              dirección (cámbialos de ser necesario)
             </Typography>
             <Stack direction={"row"} columnGap={2} alignItems={"center"}>
               <InputControl
@@ -338,6 +357,7 @@ function CreateDeliveryPoint() {
             />
           </Grid>
           <Grid item xs={6}>
+            {/* Mapa interactivo para seleccionar ubicación */}
             {isLoaded ? (
               center.lat &&
               center.lng && (
@@ -348,7 +368,7 @@ function CreateDeliveryPoint() {
                   title={
                     <Typography color="success">
                       <strong>Seleccione la ubicación exacta</strong> <br />
-                      Mueva el puntero a la ubicacion del punto de entrega
+                      Mueva el puntero a la ubicación del punto de entrega
                     </Typography>
                   }
                   sx={{ fontSize: "60px", zIndex: 2 }}
@@ -378,6 +398,7 @@ function CreateDeliveryPoint() {
               <CircularProgress />
             )}
           </Grid>
+          {/* Botones para crear o cancelar */}
           <Grid item xs={12}>
             <Stack direction={"row"} display={"flex"} columnGap={2}>
               <Button variant="contained" fullWidth type="submit" onClick={validateSchedules} size="large">

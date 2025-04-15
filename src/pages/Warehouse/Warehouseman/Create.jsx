@@ -23,6 +23,7 @@ import { AttachMoney, Percent } from "@mui/icons-material";
 import { lightGreen } from "@mui/material/colors";
 
 const CreateWarehouseman = () => {
+  // Configuración inicial del formulario con valores predeterminados
   const {
     control,
     handleSubmit,
@@ -44,29 +45,36 @@ const CreateWarehouseman = () => {
     },
   });
 
+  // Hooks personalizados para obtener almacenes y manejar usuarios
   const { StoreHouses, loadStoreHouse } = useStoreHouse();
   const { user, navigate } = useAuthStore();
   const { createWarehouseman, loading } = useUsers();
 
+  // Función para crear un nuevo almacenista
   const createOneCarrier = (values) => {
-     createWarehouseman(values);
+    createWarehouseman(values);
   };
 
+  // Observa el campo de almacén seleccionado
   const watchField = watch("employee_detail.store_house", false);
 
+  // Carga los almacenes al montar el componente
   useEffect(() => {
     loadStoreHouse();
   }, [user]);
 
+  // Muestra una pantalla de carga si está en proceso
   if (loading) {
     return <LoadingScreenBlue />;
   }
 
+  // Tipos de usuario disponibles
   const TypesUser = [
     { value: "WAREHOUSE-MANAGER", name: "Encargado de almacén" },
     { value: "WAREHOUSEMAN", name: "Almacenista" },
   ];
 
+  // Rutas para el componente de breadcrumb
   const paths = [
     { path: `/usuarios`, name: "Todos los usuarios" },
     { path: `/usuarios/almacenistas`, name: "Mis almacenistas" },
@@ -75,6 +83,7 @@ const CreateWarehouseman = () => {
 
   return (
     <Grid2 container paddingX={{ xs: 10 }}>
+      {/* Título de la página */}
       <Grid2
         size={12}
         paddingRight={15}
@@ -88,9 +97,13 @@ const CreateWarehouseman = () => {
           <strong>Crear almacenista</strong>
         </Typography>
       </Grid2>
+
+      {/* Componente de breadcrumb */}
       <Grid2 size={12}>
         <BreadcrumbCustom paths={paths} />
       </Grid2>
+
+      {/* Formulario para crear almacenista */}
       <Grid2
         onSubmit={handleSubmit(createOneCarrier)}
         component={"form"}
@@ -104,6 +117,7 @@ const CreateWarehouseman = () => {
           borderRadius: "20px",
         }}
       >
+        {/* Campo para el nombre completo */}
         <Grid2 size={{ xs: 12, sm: 4 }}>
           <Controller
             name="fullname"
@@ -132,6 +146,7 @@ const CreateWarehouseman = () => {
           />
         </Grid2>
 
+        {/* Campo para el correo electrónico */}
         <Grid2 size={{ xs: 12, sm: 4 }}>
           <Controller
             name="email"
@@ -160,6 +175,7 @@ const CreateWarehouseman = () => {
           />
         </Grid2>
 
+        {/* Campo para la contraseña */}
         <Grid2 size={{ xs: 12, sm: 3.5 }}>
           <Controller
             name="password"
@@ -190,6 +206,7 @@ const CreateWarehouseman = () => {
           />
         </Grid2>
 
+        {/* Campo para el teléfono */}
         <Grid2 size={{ xs: 12, sm: 4 }}>
           <Controller
             name="phone"
@@ -220,6 +237,7 @@ const CreateWarehouseman = () => {
           />
         </Grid2>
 
+        {/* Campo para el salario */}
         <Grid2 size={{ xs: 12, sm: 4 }}>
           <Controller
             name="employee_detail.salary"
@@ -235,7 +253,7 @@ const CreateWarehouseman = () => {
                 label="Salario"
                 type="number"
                 size="small"
-                 autoComplete="off"
+                autoComplete="off"
                 helperText={
                   fieldState.error ? <b>{fieldState.error.message}</b> : ""
                 }
@@ -249,6 +267,7 @@ const CreateWarehouseman = () => {
           />
         </Grid2>
 
+        {/* Campo para las comisiones */}
         <Grid2 size={{ xs: 12, sm: 3.5 }}>
           <Controller
             name="employee_detail.sales_commission_porcent"
@@ -267,7 +286,7 @@ const CreateWarehouseman = () => {
                 fullWidth
                 type="number"
                 size="small"
-                 autoComplete="off"
+                autoComplete="off"
                 helperText={
                   fieldState.error ? <b>{fieldState.error.message}</b> : ""
                 }
@@ -281,6 +300,7 @@ const CreateWarehouseman = () => {
           />
         </Grid2>
 
+        {/* Campo para seleccionar el almacén */}
         <Grid2 size={{ xs: 12, sm: 12 }}>
           <Controller
             name="employee_detail.store_house"
@@ -295,7 +315,7 @@ const CreateWarehouseman = () => {
                 label="Almacen"
                 fullWidth
                 size="small"
-                 autoComplete="off"
+                autoComplete="off"
                 helperText={
                   fieldState.error ? <b>{fieldState.error.message}</b> : ""
                 }
@@ -316,6 +336,7 @@ const CreateWarehouseman = () => {
               </TextField>
             )}
           />
+          {/* Muestra el almacén seleccionado */}
           {watchField?.name && (
             <Card
               sx={{ bgcolor: lightGreen[200], marginTop: 2 }}
@@ -330,7 +351,8 @@ const CreateWarehouseman = () => {
           )}
         </Grid2>
 
-        <Grid2 size={12} gap={1} >
+        {/* Campo para seleccionar el tipo de usuario */}
+        <Grid2 size={12} gap={1}>
           <Controller
             name="type"
             control={control}
@@ -338,8 +360,12 @@ const CreateWarehouseman = () => {
               required: { value: true, message: "Valor requerido" },
             }}
             render={({ field, fieldState }) => (
-              <FormControl error={fieldState.invalid} size="small" sx={{width:'100%'}} >
-                <Select {...field} variant="outlined" >
+              <FormControl
+                error={fieldState.invalid}
+                size="small"
+                sx={{ width: "100%" }}
+              >
+                <Select {...field} variant="outlined">
                   {TypesUser?.map((item, index) => (
                     <MenuItem key={index} value={item.value}>
                       {item.name}
@@ -354,6 +380,7 @@ const CreateWarehouseman = () => {
           />
         </Grid2>
 
+        {/* Botones para cancelar o crear */}
         <Grid2 gap={2} container size={{ xs: 12 }}>
           <Grid2 size={{ xs: 12, md: 5.8 }}>
             <Button

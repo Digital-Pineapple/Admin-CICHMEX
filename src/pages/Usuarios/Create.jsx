@@ -10,22 +10,25 @@ import Button from '@mui/material/Button';
 import UploadFile from '../../components/ui/UploadFile';
 import { pink } from '@mui/material/colors';
 
-
-
 const Create = () => {
     return (
         <DrawerIcons>
+            {/* Título principal de la página */}
             <Titles
                 name={<h2 align='center'>Nuevo usuario</h2>}
             />
+            {/* Contenedor principal con estilo y bordes */}
             <Box color='#F7BFBF' borderRadius={5} mt={3} sx={{ border: 3, p: 5 }}>
                 <Grid container spacing={2}>
+                    {/* Sección de datos generales */}
                     <Grid item xs={12} backgroundColor="#D7B3C6" color="common.black" sx={{ display: 'flex', justifyContent: 'center' }}>
                         <Typography variant='h5' align='center'>Datos Generales</Typography>
                     </Grid>
+                    {/* Subir imagen del usuario */}
                     <Grid item xs={4} sx={{ display: 'flex', justifyContent: 'center' }}>
                         <UploadImage />
                     </Grid>
+                    {/* Campos de texto para nombre, teléfono y correo */}
                     <Grid item xs={8} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
                         <TextField id="outlined-basic" label="Nombre" variant="outlined" fullWidth="true" />
                         <Grid item sx={{ display: 'flex', py: 2 }}>
@@ -33,9 +36,11 @@ const Create = () => {
                             <TextField id="outlined-basic" label="Correo" variant="outlined" fullWidth="true" />
                         </Grid>
                     </Grid>
+                    {/* Sección de dirección */}
                     <Grid item xs={12} backgroundColor="#D7B3C6" color="common.black" sx={{ display: 'flex', justifyContent: 'center' }}>
                         <Typography variant='h5' align='center'>Registra los siguientes datos de tu dirección</Typography>
                     </Grid>
+                    {/* Campos de texto para dirección: calle, número, código postal, etc. */}
                     <Grid item xs={3}>
                         <TextField id="outlined-basic" label="Calle" variant="outlined" fullWidth="true" />
                     </Grid>
@@ -57,9 +62,11 @@ const Create = () => {
                     <Grid item xs={4}>
                         <TextField id="outlined-basic" label="Ciudad" variant="outlined" fullWidth="true" />
                     </Grid>
+                    {/* Sección de documentos */}
                     <Grid item xs={12} backgroundColor="#D7B3C6" color="common.black" sx={{ display: 'flex', justifyContent: 'center', mt:2 }}>
                         <Typography variant='h5' align='center'>Documentos</Typography>
                     </Grid>
+                    {/* Subir documentos: INE, comprobante domiciliario, etc. */}
                     <Grid item xs={6} color="common.black" sx={{ display:'flex', justifyContent: 'space-between', mt:2}}>
                         <Typography variant='h5' align='center'>Ine:</Typography>
                         <UploadFile/>
@@ -76,6 +83,7 @@ const Create = () => {
                         <Typography variant='h5' align='center'>Curp:</Typography>
                         <UploadFile/>
                     </Grid>
+                    {/* Botón para guardar los datos */}
                     <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center'}}>
                         <Button variant="contained" size='large'  sx={{bgcolor:pink[500],  mt:5 }}>Guardar</Button>
                     </Grid>

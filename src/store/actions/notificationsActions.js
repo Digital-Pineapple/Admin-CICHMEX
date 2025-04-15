@@ -2,9 +2,10 @@ import { instanceApi } from "../../apis/configAxios";
 import { loadNotifications, markNotificationAsRead, markAllNotificationsAsRead, setNotificationsLoading } from "../reducer/notificationsReducer";
 import { enqueueSnackbar } from "notistack";
 
+// Función para obtener las notificaciones de un usuario por su ID
 export const getNotificationsByUserId = () => {
   return async (dispatch) => {
-    dispatch(setNotificationsLoading(true));
+    dispatch(setNotificationsLoading(true)); // Indica que las notificaciones están cargando
     try {
       const { data } = await instanceApi.get(`/notification/user`, {
         headers: {
@@ -12,7 +13,7 @@ export const getNotificationsByUserId = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      dispatch(loadNotifications(data.data));
+      dispatch(loadNotifications(data.data)); // Carga las notificaciones en el estado
     } catch (error) {
         console.log(error);        
       enqueueSnackbar(`Error: ${error.response?.data.message}`, {
@@ -23,11 +24,12 @@ export const getNotificationsByUserId = () => {
         },
       });
     } finally {
-        dispatch(setNotificationsLoading(false));
+        dispatch(setNotificationsLoading(false)); // Finaliza el estado de carga
     }
   };
 };
 
+// Función para marcar una notificación como leída por su ID
 export const markNotificationAsReadById = (notificationId) => {
   return async (dispatch) => {
     try {
@@ -37,7 +39,7 @@ export const markNotificationAsReadById = (notificationId) => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      dispatch(markNotificationAsRead(notificationId));
+      dispatch(markNotificationAsRead(notificationId)); // Actualiza el estado de la notificación como leída
     } catch (error) {
       enqueueSnackbar(`Error: ${error.response?.data.message}`, {
         variant: "error",
@@ -50,6 +52,7 @@ export const markNotificationAsReadById = (notificationId) => {
   };
 };
 
+// Función para marcar todas las notificaciones como leídas
 export const markAllAsReaded = () => {
   return async (dispatch) => {
     try {
@@ -59,7 +62,7 @@ export const markAllAsReaded = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      dispatch(markAllNotificationsAsRead());
+      dispatch(markAllNotificationsAsRead()); // Actualiza el estado de todas las notificaciones como leídas
     } catch (error) {
       enqueueSnackbar(`Error: ${error.response?.data.message}`, {
         variant: "error",

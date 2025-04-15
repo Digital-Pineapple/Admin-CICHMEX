@@ -1,3 +1,4 @@
+// Importación de íconos y componentes necesarios de Material-UI y otras librerías
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SortIcon from "@mui/icons-material/Sort";
@@ -21,10 +22,7 @@ import {
   IconButton,
 } from "@mui/material";
 
-
-
 import { Close, Handshake, Visibility } from "@mui/icons-material";
-
 
 import { esES } from "@mui/x-data-grid/locales";
 import { useAuthStore, useProductOrder, useUsers } from "../../../hooks";
@@ -35,6 +33,7 @@ import { localDate } from "../../../Utils/ConvertIsoDate";
 import CustomNoRows from "../../../components/Tables/CustomNoRows";
 import MapGoogleMarker from "../../../components/Google/MapGoogleMarker";
 
+// Componente de paginación personalizada para la tabla
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -52,6 +51,7 @@ function Pagination({ page, onPageChange, className }) {
   );
 }
 
+// Íconos personalizados para la tabla (orden ascendente, descendente y sin ordenar)
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
@@ -64,10 +64,12 @@ export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación personalizada para integrarlo con DataGrid
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
+// Estilo para el modal de detalles
 const style = {
   position: "absolute",
   top: "50%",
@@ -82,22 +84,30 @@ const style = {
   overflow: "auto",
 };
 
+// Componente principal para mostrar paquetes listos para entrega
 const PackagesReady = () => {
+  // Hooks para manejar datos y estados
   const { loading, readyToDelivery, loadReadyToDelivery, navigate, loadRoutesDelivery } =
     useProductOrder();
   const { user } = useAuthStore();
   const { optimizedRoutes } = useUsers();
-  const [detail, setDetail] = useState(null);
-  const [open, setOpen] = useState(false);
-  const [myPosition, setMyPosition] = useState({ lat: "", lng: "" });
+  const [detail, setDetail] = useState(null); // Estado para manejar los detalles del paquete seleccionado
+  const [open, setOpen] = useState(false); // Estado para controlar la apertura del modal
+  const [myPosition, setMyPosition] = useState({ lat: "", lng: "" }); // Estado para almacenar la posición actual del usuario
+
+  // Función para abrir el modal con los detalles del paquete
   const handleOpen = (values) => {
     const location = values.deliveryLocation || values.branch?.location;
     const coords = { lat: location.lat, lng: location.lgt };
     setOpen(true), setDetail({ ...values, coords, location });
   };
+
+  // Función para cerrar el modal
   const handleClose = () => {
     setOpen(false), setDetail(null);
   };
+
+  // useEffect para cargar datos iniciales y obtener la ubicación del usuario
   useEffect(() => {
     loadReadyToDelivery();
     if (navigator.geolocation) {
@@ -116,6 +126,7 @@ const PackagesReady = () => {
     }
   }, [user]);
 
+  // Mapeo de datos para agregar IDs y calcular información adicional para la tabla
   const rowsWithIds = readyToDelivery?.map((item, index) => {
     const quantities = item.products.map((i) => i.quantity);
     const suma = quantities.reduce(
@@ -136,9 +147,8 @@ const PackagesReady = () => {
     };
   });
 
-
+  // Barra de herramientas personalizada para la tabla
   function CustomToolbar() {
-
     return (
       <GridToolbarContainer sx={{ justifyContent: "space-evenly" }}>
         <GridToolbarQuickFilter variant="outlined" />
@@ -146,12 +156,15 @@ const PackagesReady = () => {
     );
   }
 
+  // Pantalla de carga mientras se obtienen los datos
   if (loading) {
     return <LoadingScreenBlue />;
   }
 
+  // Renderizado principal del componente
   return (
     <Grid2 container paddingX={{ xs: 0, lg: 10 }} display={"flex"} gap={2}>
+      {/* Título de la página */}
       <Grid2
         size={12}
         paddingRight={15}
@@ -166,26 +179,25 @@ const PackagesReady = () => {
         </Typography>
       </Grid2>
 
+      {/* Mapa con rutas optimizadas si están disponibles */}
       {optimizedRoutes ? (
-        <Grid2 container sx={{ alignItems:'center', padding:4}} width={'100%'} display={'flex'} gap={2}>
-       <Grid2 size={{xs:12}}>
-          <MapRouteOptimized
-            optimizedRoutes={optimizedRoutes}
-            myPosition={myPosition}
-          />
-          <Typography variant="h5" color="initial">
-            Distancia aprox: <strong>{optimizedRoutes.totalDistance}</strong> <br />
-            Tiempo aprox: <strong>{optimizedRoutes.totalDuration}</strong>
-          </Typography>
-
-        </Grid2>
-       
-       
+        <Grid2 container sx={{ alignItems: 'center', padding: 4 }} width={'100%'} display={'flex'} gap={2}>
+          <Grid2 size={{ xs: 12 }}>
+            <MapRouteOptimized
+              optimizedRoutes={optimizedRoutes}
+              myPosition={myPosition}
+            />
+            <Typography variant="h5" color="initial">
+              Distancia aprox: <strong>{optimizedRoutes.totalDistance}</strong> <br />
+              Tiempo aprox: <strong>{optimizedRoutes.totalDuration}</strong>
+            </Typography>
+          </Grid2>
         </Grid2>
       ) : (
         ""
       )}
 
+      {/* Tabla de paquetes listos para entrega */}
       <Grid2 size={12}>
         <DataGrid
           sx={{
@@ -237,18 +249,6 @@ const PackagesReady = () => {
                 >
                   Ver Detalles
                 </Button>,
-                // <Button
-                //   startIcon={<Handshake />}
-                //   sx={{ textTransform: "capitalize" }}
-                //   size="small"
-                //   onClick={() =>
-                //     navigate(`/transportista/entregar/${params.row._id}`)
-                //   }
-                //   variant="text"
-                //   color="success"
-                // >
-                //   Entregar
-                // </Button>,
               ],
             },
           ]}
@@ -281,23 +281,23 @@ const PackagesReady = () => {
         />
       </Grid2>
 
+      {/* Modal para mostrar detalles del paquete seleccionado */}
       <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
           <IconButton
-            sx={{ left: `calc(95%)` , top:-20 }}
+            sx={{ left: `calc(95%)`, top: -20 }}
             aria-label="Cerrar"
             onClick={() => handleClose()}
           >
             <Close />
           </IconButton>
-          <Grid2 container display={'flex'} gap={2} >
-
-          <Grid2 size={{xs: 12 , lg:6}}>
-            <TableBranchDetail branch={detail?.branch} />
-          </Grid2>
-          <Grid2 size={{xs:12, lg:5.7}}>
-            <MapGoogleMarker center={detail?.coords} zoom={16} />
-          </Grid2>
+          <Grid2 container display={'flex'} gap={2}>
+            <Grid2 size={{ xs: 12, lg: 6 }}>
+              <TableBranchDetail branch={detail?.branch} />
+            </Grid2>
+            <Grid2 size={{ xs: 12, lg: 5.7 }}>
+              <MapGoogleMarker center={detail?.coords} zoom={16} />
+            </Grid2>
           </Grid2>
         </Box>
       </Modal>
@@ -305,4 +305,4 @@ const PackagesReady = () => {
   );
 };
 
-export default PackagesReady
+export default PackagesReady;

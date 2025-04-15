@@ -1,20 +1,4 @@
-import { enqueueSnackbar } from "notistack";
-import { instanceApi } from "../../apis/configAxios";
-import {
-  loadCategories,
-  loadCategory,
-  deleteCategory,
-  editCategory,
-  onAddNewCategory,
-} from "../reducer/categoryReducer";
-import {
-  headerConfig,
-  headerConfigForm,
-  headerConfigFormData,
-} from "./headers";
-import { startLoading, stopLoading } from "../reducer/uiReducer";
-import Swal from "sweetalert2";
-
+// Carga todas las categorías desde la API y las almacena en el estado global
 export const startLoadCategories = () => {
   return async (dispatch) => {
     dispatch(startLoading());
@@ -40,6 +24,7 @@ export const startLoadCategories = () => {
   };
 };
 
+// Obtiene una categoría específica por su ID y la almacena en el estado global
 export const getOneCategory = (category_id) => async (dispatch) => {
   try {
     const { data } = await instanceApi.get(
@@ -57,21 +42,23 @@ export const getOneCategory = (category_id) => async (dispatch) => {
     });
   }
 };
+
+// Agrega una nueva categoría con nombre e imagen, y actualiza el estado global
 export const addOneCategory =
   ({ name, image }, handleClose) =>
   async (dispatch) => {
-    dispatch(startLoading())
+    dispatch(startLoading());
     try {
       const formData = new FormData();
       formData.append("name", name);
       formData.append("image", image);
-    const {data} =  await instanceApi.post(`/category`, formData, {
+      const { data } = await instanceApi.post(`/category`, formData, {
         headers: {
           "Content-type": "/multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      dispatch(onAddNewCategory(data.data))
+      dispatch(onAddNewCategory(data.data));
       enqueueSnackbar("Categoria creada con éxito", {
         variant: "success",
         anchorOrigin: {
@@ -79,15 +66,16 @@ export const addOneCategory =
           horizontal: "right",
         },
       });
-      handleClose()
+      handleClose();
     } catch (error) {
-      console.log(error)
-      handleClose()
-    }finally{
-      dispatch(stopLoading())
+      console.log(error);
+      handleClose();
+    } finally {
+      dispatch(stopLoading());
     }
   };
 
+// Elimina una categoría específica por su ID y actualiza el estado global
 export const deleteOneCategory = (category_id) => async (dispatch) => {
   try {
     await instanceApi.delete(`/category/${category_id}`, headerConfig);
@@ -103,6 +91,7 @@ export const deleteOneCategory = (category_id) => async (dispatch) => {
   }
 };
 
+// Edita una categoría específica por su ID y actualiza el estado global
 export const editOneCategory = (
   category_id,
   { name, category_image },
@@ -125,16 +114,17 @@ export const editOneCategory = (
         }
       );
       dispatch(editCategory(data.data));
-      Swal.fire(`${data.message}`, '', 'success')
+      Swal.fire(`${data.message}`, '', 'success');
     } catch (error) {
-     console.log(error);
-     
+      console.log(error);
     } finally {
       dispatch(stopLoading());
-      handleClose()
+      handleClose();
     }
   };
 };
+
+// Busca categorías por un valor de búsqueda y actualiza el estado global
 export const searchCategories = ({ value }) => {
   return async (dispatch) => {
     try {

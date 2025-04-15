@@ -8,9 +8,8 @@ import Radio from '@mui/material/Radio';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { axisClasses } from '@mui/x-charts/ChartsAxis';
 import { Skeleton, Typography } from '@mui/material';
-// Importa una función de ejemplo que obtenga los datos más vendidos desde tu backend
-// import { fetchTopProducts } from '../api'; // Esta es una función ficticia, debes implementarla
 
+// Componente para seleccionar los parámetros de los ticks en el gráfico
 function TickParamsSelector({
   tickPlacement,
   tickLabelPlacement,
@@ -55,8 +54,10 @@ function TickParamsSelector({
   );
 }
 
+// Función para formatear los valores mostrados en el gráfico
 const valueFormatter = (value) => `${value} unidades`;
 
+// Configuración general del gráfico de barras
 const chartSetting = {
   yAxis: [
     {
@@ -72,33 +73,28 @@ const chartSetting = {
   },
 };
 
-const BarTopTenProducts = ({topProducts}) => {
-
-
+// Componente principal que muestra el gráfico de los 10 productos más vendidos
+const BarTopTenProducts = ({ topProducts }) => {
   return (
     <div style={{ width: '100%' }}>
       {
-        topProducts ?
-        (
+        topProducts ? (
           <>
-          <Typography variant="h6" color="initial">Top productos más vendidos del mes</Typography>
-      <BarChart
-        dataset={topProducts}
-        xAxis={[
-          { scaleType: 'band', dataKey: 'productName', tickPlacement:'middle', tickLabelPlacement:'middle' },
-        ]}
-        {...chartSetting}
-      />
+            <Typography variant="h6" color="initial">Top productos más vendidos del mes</Typography>
+            <BarChart
+              dataset={topProducts}
+              xAxis={[
+                { scaleType: 'band', dataKey: 'productName', tickPlacement: 'middle', tickLabelPlacement: 'middle' },
+              ]}
+              {...chartSetting}
+            />
           </>
-         
-        ):(
+        ) : (
           <Skeleton variant="rectangular" width="100%" height="100%" animation="pulse" />
         )
       }
-      
     </div>
   );
 }
 
-
-export default BarTopTenProducts
+export default BarTopTenProducts;

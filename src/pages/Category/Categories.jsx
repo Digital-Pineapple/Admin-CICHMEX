@@ -47,6 +47,7 @@ import { Box } from "@mui/system";
 import { esES } from "@mui/x-data-grid/locales";
 import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 
+// Componente de paginación personalizada
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -63,22 +64,28 @@ function Pagination({ page, onPageChange, className }) {
     />
   );
 }
+
+// Icono para indicar orden descendente
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
 
+// Icono para indicar orden ascendente
 export function SortedAscendingIcon() {
   return <ExpandLessIcon className="icon" />;
 }
 
+// Icono para indicar que no hay orden aplicado
 export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación personalizada para DataGrid
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
+// Estilo para los modales
 const style = {
   position: "absolute",
   top: "50%",
@@ -91,13 +98,17 @@ const style = {
   borderRadius: "10px",
 };
 
+// Componente principal para la gestión de categorías
 const Categories = () => {
   const { loadCategories, deleteCategory, categories, loading } =
     useCategories();
+
+  // Cargar las categorías al montar el componente
   useEffect(() => {
     loadCategories();
   }, []);
 
+  // Estados para manejar la apertura y cierre de modales
   const [open, setOpen] = useState({ value: false, category: null });
   const [openCreate, setOpenCreate] = useState(false);
   const [openUpdate, setOpenUpdate] = useState({
@@ -105,6 +116,7 @@ const Categories = () => {
     category: null,
   });
 
+  // Funciones para manejar la apertura y cierre de los modales
   const handleOpen = (data) => {
     setOpen({ value: true, category: data });
   };
@@ -128,12 +140,14 @@ const Categories = () => {
     }
   };
 
+  // Agregar un ID único a cada categoría para usar en el DataGrid
   const rowsWithIds = (categories) =>
     categories?.map((category, _id) => ({
       id: _id.toString(),
       ...category,
     })) || [];
 
+  // Exportar las categorías a un archivo Excel
   const exportToExcel = () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Categorias");
@@ -162,6 +176,7 @@ const Categories = () => {
     });
   };
 
+  // Barra de herramientas personalizada para el DataGrid
   function CustomToolbar() {
     const apiRef = useGridApiContext();
 
@@ -173,14 +188,18 @@ const Categories = () => {
       </GridToolbarContainer>
     );
   }
+
+  // Mostrar pantalla de carga mientras se obtienen las categorías
   if (loading) {
     return <LoadingScreenBlue />;
   }
 
+  // Rutas para el componente de Breadcrumb
   const paths = [{ path: `/mi-almacen/categorías`, name: "Categorías" }];
 
   return (
     <Grid2 paddingX={{ xs: 0, lg: 10 }} gap={2}>
+      {/* Encabezado con el título de la página */}
       <Grid2
         size={12}
         paddingRight={15}
@@ -195,6 +214,7 @@ const Categories = () => {
         </Typography>
       </Grid2>
 
+      {/* Breadcrumb y botón para agregar categorías */}
       <Grid2 size={12} m={2} display={"flex"} justifyContent={"space-between"}>
         <BreadcrumbCustom paths={paths} />
 
@@ -208,6 +228,7 @@ const Categories = () => {
         </Fab>
       </Grid2>
 
+      {/* Tabla de categorías */}
       <DataGrid
         sx={{
           fontSize: "12px",
@@ -301,6 +322,8 @@ const Categories = () => {
         }}
         style={{ fontFamily: "sans-serif", fontSize: "15px" }}
       />
+
+      {/* Modal para mostrar detalles de una categoría */}
       <Modal open={open.value} onClose={handleClose}>
         <Card sx={style} variant="outlined">
           <CardHeader
@@ -319,11 +342,15 @@ const Categories = () => {
           />
         </Card>
       </Modal>
+
+      {/* Modal para crear una nueva categoría */}
       <Modal open={openCreate} onClose={handleCloseCreate}>
         <Box sx={style}>
           <CreateCategory handleClose={handleCloseCreate} />
         </Box>
       </Modal>
+
+      {/* Modal para editar una categoría existente */}
       <Modal open={openUpdate.value} onClose={handleCloseUpdate}>
         <Box sx={style}>
           <EditCategory

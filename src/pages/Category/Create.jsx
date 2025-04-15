@@ -1,4 +1,3 @@
-
 import TextField from "@mui/material/TextField";
 import {
   Button,
@@ -37,16 +36,22 @@ const CreateCategory = ({ handleClose }) => {
       },
     },
   });
+
+  // Función para limpiar el formulario y cerrar el modal
   const outCreate = () => {
     reset();
     handleClose();
   };
+
+  // Función que se ejecuta al enviar el formulario
   const onSubmit = (e) => {
     addCategory({ name: e.name, image: e.image.file }, handleClose);
   };
 
+  // Observa el valor actual de la vista previa de la imagen
   const currentImage = watch("image.filePreview");
 
+  // Maneja el cambio de imagen y genera una vista previa
   const onChangeImage = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -64,6 +69,7 @@ const CreateCategory = ({ handleClose }) => {
     };
   };
 
+  // Elimina la imagen seleccionada y limpia los campos relacionados
   const removeImage = () => {
     resetField("image");
   };
@@ -76,6 +82,7 @@ const CreateCategory = ({ handleClose }) => {
       style={{ display: "flex", justifyContent: "center" }}
       gap={1}
     >
+      {/* Título del formulario */}
       <Grid2 size={12} minHeight={"60px"} className="Titles">
         <Typography
           textAlign={"center"}
@@ -86,6 +93,7 @@ const CreateCategory = ({ handleClose }) => {
         </Typography>
       </Grid2>
 
+      {/* Campo de texto para el nombre de la categoría */}
       <Grid2 my={1} size={12}>
         <Controller
           control={control}
@@ -107,6 +115,7 @@ const CreateCategory = ({ handleClose }) => {
         />
       </Grid2>
 
+      {/* Sección para subir o arrastrar una imagen */}
       <Grid2 display={"flex"} size={12}>
         <Grid2
           container
@@ -125,15 +134,18 @@ const CreateCategory = ({ handleClose }) => {
               render={({ field: { name, ref, onBlur } }) => {
                 const [isDragging, setIsDragging] = useState(false);
 
+                // Maneja el evento de arrastrar sobre el área
                 const handleDragOver = (event) => {
                   event.preventDefault();
                   setIsDragging(true);
                 };
 
+                // Maneja el evento de salir del área de arrastre
                 const handleDragLeave = () => {
                   setIsDragging(false);
                 };
 
+                // Maneja el evento de soltar archivos en el área
                 const handleDrop = (event) => {
                   event.preventDefault();
                   setIsDragging(false);
@@ -155,6 +167,7 @@ const CreateCategory = ({ handleClose }) => {
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
                   >
+                    {/* Área de arrastre o selección de archivo */}
                     <Box
                       sx={{
                         position: "relative",
@@ -208,6 +221,7 @@ const CreateCategory = ({ handleClose }) => {
             />
           </Grid2>
 
+          {/* Vista previa de la imagen seleccionada */}
           <Grid2
             size={12}
             display={currentImage ? "flex" : "none"}
@@ -231,6 +245,7 @@ const CreateCategory = ({ handleClose }) => {
                 }}
               />
 
+              {/* Botón para eliminar la imagen seleccionada */}
               <Box display="flex" justifyContent="space-between" mt={1}>
                 <IconButton
                   size="small"
@@ -254,6 +269,7 @@ const CreateCategory = ({ handleClose }) => {
         </Grid2>
       </Grid2>
 
+      {/* Botones de acción: Salir y Guardar */}
       <Grid2 display={"flex"} gap={2} size={12}>
         <Button
           onClick={outCreate}

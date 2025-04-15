@@ -24,20 +24,25 @@ import { blueGrey } from "@mui/material/colors";
 import { useMembership } from "../../hooks/useMembership";
 
 const Create = () => {
+  // Estados para manejar los servicios seleccionados, tipos de autos, y otros valores
   const [selectedService, setSelectedService] = useState("");
   const [selectedTypeCar, setSelectedTypeCar] = useState("");
   const [quantity, setQuantity] = useState("");
   const [myServices, setMyServices] = useState([]);
   const [myTypeCars, setMyTypeCars] = useState([]);
+
+  // Hooks personalizados para cargar servicios y tipos de autos
   const { loadServices, services, navigate } = useServices();
   const { typeCars, loadTypeCars } = useTypeCars();
-  const {addMembership} = useMembership()
+  const { addMembership } = useMembership();
 
+  // useEffect para cargar los servicios y tipos de autos al montar el componente
   useEffect(() => {
     loadServices();
     loadTypeCars();
   }, []);
 
+  // Configuración de Formik para manejar el formulario y su envío
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -48,13 +53,15 @@ const Create = () => {
       type_cars: [],
     },
     onSubmit: (values) => {
-     const x = values.type_cars
-     const y = x.map((i)=>i.typeCar_id)
-     values.type_cars = y
-     console.log(values);
+      // Transformar los datos de tipos de autos antes de enviarlos
+      const x = values.type_cars;
+      const y = x.map((i) => i.typeCar_id);
+      values.type_cars = y;
+      console.log(values);
+
       try {
-        addMembership(values)
-        
+        // Llamar a la función para agregar la membresía
+        addMembership(values);
       } catch (error) {
         enqueueSnackbar(`Error: ${error.data.response?.message}`, {
           variant: "error",
@@ -67,18 +74,22 @@ const Create = () => {
     },
   });
 
+  // Manejar el cambio de selección de servicio
   const handleChangeService = (event) => {
     setSelectedService(event.target.value);
   };
 
+  // Manejar el cambio de selección de tipo de auto
   const handleChangeTypeCar = (event) => {
     setSelectedTypeCar(event.target.value);
   };
 
+  // Manejar el cambio de cantidad de servicios
   const handleChangeQuantity = (event) => {
     setQuantity(event.target.value);
   };
 
+  // Agregar un servicio seleccionado a la lista
   const handleAddService = () => {
     if (selectedService && quantity) {
       const newService = {
@@ -93,6 +104,7 @@ const Create = () => {
     }
   };
 
+  // Agregar un tipo de auto seleccionado a la lista
   const handleAddTypeCar = () => {
     if (selectedTypeCar) {
       const newTypeCar = {
@@ -106,6 +118,7 @@ const Create = () => {
     }
   };
 
+  // Eliminar un servicio de la lista
   const handleDeleteService = (index) => {
     const updatedServices = [...myServices];
     updatedServices.splice(index, 1);
@@ -113,6 +126,7 @@ const Create = () => {
     formik.setFieldValue("service_quantity", updatedServices);
   };
 
+  // Eliminar un tipo de auto de la lista
   const handleDeleteTypeCar = (index) => {
     const updatedTypeCars = [...myTypeCars];
     updatedTypeCars.splice(index, 1);
@@ -120,6 +134,7 @@ const Create = () => {
     formik.setFieldValue("type_cars", updatedTypeCars);
   };
 
+  // Navegar fuera de la página de creación
   const outCreate = () => {
     navigate("/auth/Membresias");
   };
@@ -128,14 +143,16 @@ const Create = () => {
     <Grid
       container
       component="form"
-      onSubmit={formik.handleSubmit}
+      onSubmit={formik.handleSubmit} // Maneja el envío del formulario utilizando Formik
     >
+      {/* Título principal de la página */}
       <Grid item marginTop={{ xs: "-30px" }} xs={12} minHeight={"100px"} className="Titles">
         <Typography textAlign={"center"} variant="h1" fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}>
           Crear Membresía
         </Typography>
       </Grid>
 
+      {/* Sección de datos generales */}
       <Grid container gap={2}>
         <Grid item xs={12}>
           <Typography variant="h3" margin={2} fontSize={"30px"} textAlign="center">
@@ -143,6 +160,7 @@ const Create = () => {
           </Typography>
         </Grid>
 
+        {/* Campo para el nombre de la membresía */}
         <Grid item xs={12} sm={8} lg={5}>
           <TextField
             focused
@@ -155,6 +173,8 @@ const Create = () => {
             onChange={formik.handleChange}
           />
         </Grid>
+
+        {/* Campo para el precio estándar */}
         <Grid item xs={12} sm={3.5} lg={2.3}>
           <TextField
             focused
@@ -174,6 +194,8 @@ const Create = () => {
             onChange={formik.handleChange}
           />
         </Grid>
+
+        {/* Campo para el porcentaje de descuento */}
         <Grid item xs={12} sm={5.9} lg={2}>
           <TextField
             focused
@@ -191,6 +213,8 @@ const Create = () => {
             onChange={formik.handleChange}
           />
         </Grid>
+
+        {/* Campo para el descuento en productos */}
         <Grid item xs={12} sm={5.6} lg={2}>
           <TextField
             focused
@@ -210,6 +234,7 @@ const Create = () => {
         </Grid>
       </Grid>
 
+      {/* Sección para agregar servicios */}
       <Grid container gap={2}>
         <Grid item xs={12}>
           <Typography variant="h3" margin={2} fontSize={"30px"} textAlign="center">
@@ -217,6 +242,7 @@ const Create = () => {
           </Typography>
         </Grid>
 
+        {/* Selector de servicios */}
         <Grid item xs={12} sm={6} lg={6}>
           <FormControl fullWidth>
             <InputLabel id="select-service">Seleccionar Servicio</InputLabel>
@@ -234,6 +260,8 @@ const Create = () => {
             </Select>
           </FormControl>
         </Grid>
+
+        {/* Campo para la cantidad de servicios */}
         <Grid item xs={12} sm={5.5} lg={2.5}>
           <TextField
             label="Cantidad"
@@ -244,12 +272,14 @@ const Create = () => {
           />
         </Grid>
 
+        {/* Botón para agregar servicio */}
         <Grid item xs={12} lg={3}>
           <Button variant="contained" fullWidth onClick={handleAddService}>
             Agregar Servicio
           </Button>
         </Grid>
 
+        {/* Lista de servicios seleccionados */}
         {myServices.length > 0 ? (
           <Grid
             container
@@ -288,6 +318,7 @@ const Create = () => {
         )}
       </Grid>
 
+      {/* Sección para agregar tipos de autos */}
       <Grid container gap={2}>
         <Grid item xs={12}>
           <Typography variant="h3" margin={2} fontSize={"30px"} textAlign="center">
@@ -295,6 +326,7 @@ const Create = () => {
           </Typography>
         </Grid>
 
+        {/* Selector de tipos de autos */}
         <Grid item xs={12} sm={7.5} lg={8.6}>
           <FormControl fullWidth>
             <InputLabel id="select-typeCar">Seleccionar tipo de auto</InputLabel>
@@ -313,12 +345,14 @@ const Create = () => {
           </FormControl>
         </Grid>
 
+        {/* Botón para agregar tipo de auto */}
         <Grid item xs={12} sm={4} lg={3}>
           <Button variant="contained" fullWidth onClick={handleAddTypeCar}>
             Agregar Tipo de auto
           </Button>
         </Grid>
 
+        {/* Lista de tipos de autos seleccionados */}
         {myTypeCars.length > 0 ? (
           <Grid
             container
@@ -356,6 +390,7 @@ const Create = () => {
         )}
       </Grid>
 
+      {/* Botones para guardar o salir */}
       <Grid container justifyContent={"center"} alignItems={"center"}>
         <ButtonGroup variant="contained" color="inherit" size="large" aria-label="group" fullWidth>
           <Button type="submit" variant="contained" color="success">

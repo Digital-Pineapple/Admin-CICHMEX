@@ -16,11 +16,16 @@ import { useProducts } from "../../../hooks/useProducts";
 
 const AddSizeModal = ({ productId, variant, sizes, handleClose }) => {
   const { addOneSizeVariant } = useProducts();
+
+  // Obtiene las tallas ya existentes en el producto
   const sizesExist = variant.items.map((i) => i.attributes.size);
+
+  // Filtra las tallas disponibles que aún no han sido seleccionadas
   const availableSizes = sizes.filter(
     (size) => !sizesExist.some((existing) => existing === size.label)
   );
 
+  // Valores predeterminados para el formulario
   const DefaultValues = (variant) => ({
     size: "",
     price: "",
@@ -35,6 +40,8 @@ const AddSizeModal = ({ productId, variant, sizes, handleClose }) => {
     product_id: productId,
     purchase_price: "",
   });
+
+  // Configuración del formulario con react-hook-form
   const {
     control,
     formState: { errors },
@@ -46,11 +53,14 @@ const AddSizeModal = ({ productId, variant, sizes, handleClose }) => {
     defaultValues: DefaultValues(variant),
   });
 
+  // Calcula el precio con descuento basado en el precio y el porcentaje de descuento
   const calculateDiscountPrice = (price, porcentDiscount) => {
     const parsedPrice = parseFloat(price);
     const parsedDiscount = parseFloat(porcentDiscount) || 0;
     return parsedPrice - (parsedPrice * parsedDiscount) / 100;
   };
+
+  // Maneja los cambios en los campos de precio y descuento
   const handlePriceChange = (e) => {
     const { name, value } = e.target;
     const fieldValue = parseFloat(value) || 0; // Convierte a número o usa 0 como predeterminado
@@ -72,6 +82,7 @@ const AddSizeModal = ({ productId, variant, sizes, handleClose }) => {
     setValue(`discountPrice`, discountPrice);
   };
 
+  // Maneja el envío del formulario
   const onSubmit = (e) => {
     addOneSizeVariant(e, handleClose);
   };
@@ -84,6 +95,7 @@ const AddSizeModal = ({ productId, variant, sizes, handleClose }) => {
       onSubmit={handleSubmit(onSubmit)}
       container
     >
+      {/* Título del modal */}
       <Grid2 size={12} minHeight={"100px"} className="Titles">
         <Typography
           textAlign={"center"}
@@ -93,6 +105,8 @@ const AddSizeModal = ({ productId, variant, sizes, handleClose }) => {
           Agregar talla
         </Typography>
       </Grid2>
+
+      {/* Selector de talla o medida */}
       <Grid2 size={12}>
         <FormControl fullWidth error={!!errors.size}>
           <InputLabel>Talla o medida*</InputLabel>
@@ -122,6 +136,8 @@ const AddSizeModal = ({ productId, variant, sizes, handleClose }) => {
           </FormHelperText>
         </FormControl>
       </Grid2>
+
+      {/* Campo de precio de compra */}
       <Grid2 size={12}>
         <Controller
           name={"purchase_price"}
@@ -152,6 +168,8 @@ const AddSizeModal = ({ productId, variant, sizes, handleClose }) => {
           )}
         />
       </Grid2>
+
+      {/* Campo de precio neto */}
       <Grid2 size={12}>
         <Controller
           name={`price`}
@@ -179,6 +197,8 @@ const AddSizeModal = ({ productId, variant, sizes, handleClose }) => {
           )}
         />
       </Grid2>
+
+      {/* Campo de porcentaje de descuento */}
       <Grid2 size={12}>
         <Controller
           name={`porcentDiscount`}
@@ -208,6 +228,8 @@ const AddSizeModal = ({ productId, variant, sizes, handleClose }) => {
           )}
         />
       </Grid2>
+
+      {/* Campo de precio con descuento */}
       <Grid2 size={12}>
         <Controller
           name={`discountPrice`}
@@ -231,6 +253,8 @@ const AddSizeModal = ({ productId, variant, sizes, handleClose }) => {
           )}
         />
       </Grid2>
+
+      {/* Campo de código */}
       <Grid2 size={12}>
         <Controller
           name={`tag`}
@@ -250,6 +274,8 @@ const AddSizeModal = ({ productId, variant, sizes, handleClose }) => {
           )}
         />
       </Grid2>
+
+      {/* Campo de peso */}
       <Grid2 size={12}>
         <Controller
           name={`weight`}
@@ -269,6 +295,8 @@ const AddSizeModal = ({ productId, variant, sizes, handleClose }) => {
           )}
         />
       </Grid2>
+
+      {/* Campo de stock */}
       <Grid2 size={12}>
         <Controller
           name={`stock`}
@@ -289,6 +317,8 @@ const AddSizeModal = ({ productId, variant, sizes, handleClose }) => {
           )}
         />
       </Grid2>
+
+      {/* Botones de acción */}
       <Grid2 display={"flex"} gap={2} size={12}>
         <Button
           fullWidth

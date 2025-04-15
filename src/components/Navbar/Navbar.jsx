@@ -1,3 +1,4 @@
+// Importaciones de Material-UI y otros componentes necesarios
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import AppBar from "@mui/material/AppBar";
@@ -23,10 +24,11 @@ import BtnIconNotification from "../ui/BtnIconNotification";
 import NotificationsPanel from "../ui/Notifications";
 import { useSelector } from "react-redux";
 import { useCallback, useState } from "react";
-// import io from "socket.io-client";
 
+// Ancho del drawer lateral
 const drawerWidth = 240;
 
+// Estilización personalizada para el componente Accordion
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
 ))(({ theme }) => ({
@@ -41,6 +43,7 @@ const Accordion = styled((props) => (
   color: theme.palette.primary.contrastText,
 }));
 
+// Estilización personalizada para el componente AccordionSummary
 const AccordionSummary = styled((props) => (
   <MuiAccordionSummary
     expandIcon={
@@ -61,11 +64,13 @@ const AccordionSummary = styled((props) => (
   },
 }));
 
+// Estilización personalizada para el componente AccordionDetails
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   padding: theme.spacing(2),
   borderTop: "1px solid rgba(0, 0, 0, .125)",
 }));
 
+// Estilo para el drawer lateral
 const drawerPaperStyle = {
   width: drawerWidth,
   boxSizing: "border-box",
@@ -73,22 +78,31 @@ const drawerPaperStyle = {
   backgroundColor: "primary.main",
 };
 
+// Componente principal Navbar
 export const Navbar = (props) => {
+  // Estado para controlar la apertura del drawer lateral
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // Estado para controlar qué panel del acordeón está expandido
   const [expanded, setExpanded] = useState("");
+
+  // Estado para controlar la visibilidad del drawer de notificaciones
   const [showNotiDrawer, setShowNotiDrawer] = useState(false);
 
-  // Se unifican las desestructuraciones
+  // Hook para obtener datos de autenticación y rutas dinámicas
   const { logged, navigate, user, routes } = useAuthStore();
   const { notifications } = useSelector((state) => state.notifications);
   const { groupRoutes } = useDynamicRoutes();
 
+  // Agrupar rutas en categorías
   const listLinks = groupRoutes(routes);
 
+  // Función para alternar la apertura del drawer lateral
   const toggleDrawer = useCallback(() => {
     setDrawerOpen((prev) => !prev);
   }, []);
 
+  // Función para manejar la expansión de los paneles del acordeón
   const handleChange = useCallback(
     (panel) => (event, newExpanded) => {
       setExpanded(newExpanded ? panel : "");
@@ -96,6 +110,7 @@ export const Navbar = (props) => {
     []
   );
 
+  // Función para manejar la navegación al hacer clic en un enlace
   const handleNavigateClick = useCallback(
     (value) => {
       navigate(value, { replace: true });
@@ -106,6 +121,7 @@ export const Navbar = (props) => {
 
   return (
     <Box sx={{ display: "flex" }}>
+      {/* Drawer para mostrar notificaciones */}
       <Drawer 
         sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}  
         open={showNotiDrawer} 
@@ -115,6 +131,7 @@ export const Navbar = (props) => {
         <NotificationsPanel />            
       </Drawer>
       <CssBaseline />
+      {/* Barra de navegación superior */}
       <AppBar
         position="fixed"
         sx={{
@@ -124,6 +141,7 @@ export const Navbar = (props) => {
         }}
       >
         <Toolbar>
+          {/* Botón para abrir el drawer lateral en pantallas pequeñas */}
           <IconButton
             sx={{ display: { xs: "flex", md: "none" }, color: "primary.main" }}
             onClick={toggleDrawer}
@@ -131,6 +149,7 @@ export const Navbar = (props) => {
           >
             <Menu />
           </IconButton>
+          {/* Logo principal */}
           <Grid2
             width={drawerWidth}
             sx={{ display: { xs: "none", md: "flex" }, alignContent: "center", paddingX: 2 }}
@@ -145,6 +164,7 @@ export const Navbar = (props) => {
             </Link>
           </Grid2>
           <Divider orientation="vertical" flexItem />
+          {/* Información del usuario y botones de notificaciones */}
           <Grid2 width="100%" display="flex" justifyContent="space-between">
             <Grid2 size={{ xs: 6, md: 8, xl: 9 }} padding={1}>
               <Typography
@@ -166,6 +186,7 @@ export const Navbar = (props) => {
         </Toolbar>
       </AppBar>
 
+      {/* Drawer lateral permanente para navegación en pantallas grandes */}
       <Drawer
         variant="permanent"
         sx={{
@@ -179,6 +200,7 @@ export const Navbar = (props) => {
         <MenuDrawer navLinks={listLinks} />
       </Drawer>
 
+      {/* Drawer lateral para navegación en pantallas pequeñas */}
       <Drawer
         anchor="left"
         sx={{
@@ -215,6 +237,7 @@ export const Navbar = (props) => {
         </Box>
       </Drawer>
 
+      {/* Contenedor principal para el contenido de la página */}
       <Box component="main" sx={{ flexGrow: 1, p: 5, minHeight: "100vh" }}>
         <Toolbar />
         {props.children}

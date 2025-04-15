@@ -19,7 +19,6 @@ import { orange } from "@mui/material/colors";
 import { useSubCategories } from "../../hooks/useSubCategories";
 
 const CreateSubCategory = ({ handleClose, categories, subCategory }) => {
-
   const { addSubCategory } = useSubCategories();
 
   const {
@@ -40,10 +39,14 @@ const CreateSubCategory = ({ handleClose, categories, subCategory }) => {
       },
     },
   });
+
+  // Función para limpiar el formulario y cerrar el modal
   const outCreate = () => {
     reset();
     handleClose();
   };
+
+  // Función para manejar el envío del formulario
   const onSubmit = (e) => {
     addSubCategory(
       {
@@ -55,25 +58,24 @@ const CreateSubCategory = ({ handleClose, categories, subCategory }) => {
     );
   };
 
+  // Observa el valor actual de la imagen
   const currentImage = watch("image.filePreview");
 
+  // Maneja el cambio de imagen y genera una vista previa
   const onChangeImage = (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Crear vista previa del archivo
     const filePreview = URL.createObjectURL(file);
-
-    // Actualizar los valores en el estado o formulario
     setValue("image.filePreview", filePreview);
     setValue("image.file", file);
 
-    // Limpiar el recurso de la URL cuando ya no sea necesario
     return () => {
       URL.revokeObjectURL(filePreview);
     };
   };
 
+  // Elimina la imagen seleccionada
   const removeImage = () => {
     resetField("image");
   };
@@ -86,6 +88,7 @@ const CreateSubCategory = ({ handleClose, categories, subCategory }) => {
       style={{ display: "flex", justifyContent: "center" }}
       gap={1}
     >
+      {/* Título del formulario */}
       <Grid2 size={12} minHeight={"60px"} className="Titles">
         <Typography
           textAlign={"center"}
@@ -96,6 +99,7 @@ const CreateSubCategory = ({ handleClose, categories, subCategory }) => {
         </Typography>
       </Grid2>
 
+      {/* Campo para el nombre de la subcategoría */}
       <Grid2 my={1} size={12}>
         <Controller
           control={control}
@@ -116,6 +120,8 @@ const CreateSubCategory = ({ handleClose, categories, subCategory }) => {
           )}
         />
       </Grid2>
+
+      {/* Selector de categoría */}
       <Grid2 size={12}>
         <Controller
           control={control}
@@ -142,13 +148,15 @@ const CreateSubCategory = ({ handleClose, categories, subCategory }) => {
                   </MenuItem>
                 ))}
               </Select>
-              <FormHelperText sx={{color:'error.main'}} >{errors?.category_id?.message}</FormHelperText>
+              <FormHelperText sx={{ color: "error.main" }}>
+                {errors?.category_id?.message}
+              </FormHelperText>
             </FormControl>
-            
           )}
         />
       </Grid2>
 
+      {/* Campo para subir imagen */}
       <Grid2 display={"flex"} size={12}>
         <Grid2
           container
@@ -167,15 +175,18 @@ const CreateSubCategory = ({ handleClose, categories, subCategory }) => {
               render={({ field: { name, ref, onBlur } }) => {
                 const [isDragging, setIsDragging] = useState(false);
 
+                // Maneja el evento de arrastrar sobre el área de carga
                 const handleDragOver = (event) => {
                   event.preventDefault();
                   setIsDragging(true);
                 };
 
+                // Maneja el evento de salir del área de carga
                 const handleDragLeave = () => {
                   setIsDragging(false);
                 };
 
+                // Maneja el evento de soltar archivos en el área de carga
                 const handleDrop = (event) => {
                   event.preventDefault();
                   setIsDragging(false);
@@ -203,8 +214,8 @@ const CreateSubCategory = ({ handleClose, categories, subCategory }) => {
                         backgroundColor: isDragging
                           ? "secondary.main"
                           : !!errors?.image?.file
-                            ? "error.dark"
-                            : orange[200],
+                          ? "error.dark"
+                          : orange[200],
                         width: "100%",
                         minHeight: "150px",
                         padding: "30px 70px",
@@ -250,6 +261,7 @@ const CreateSubCategory = ({ handleClose, categories, subCategory }) => {
             />
           </Grid2>
 
+          {/* Vista previa de la imagen seleccionada */}
           <Grid2
             size={12}
             display={currentImage ? "flex" : "none"}
@@ -296,6 +308,7 @@ const CreateSubCategory = ({ handleClose, categories, subCategory }) => {
         </Grid2>
       </Grid2>
 
+      {/* Botones de acción */}
       <Grid2 display={"flex"} gap={2} size={12}>
         <Button
           onClick={outCreate}

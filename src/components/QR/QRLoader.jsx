@@ -1,80 +1,82 @@
-import { Scanner } from "@yudiel/react-qr-scanner";
+import { Scanner } from "@yudiel/react-qr-scanner"; // Componente para escanear códigos QR
 import React, { useState } from "react";
-import Button from "@mui/material/Button";
-import Grid from '@mui/material/Grid'
-import Swal from "sweetalert2";
+import Button from "@mui/material/Button"; // Botón de Material-UI
+import Grid from '@mui/material/Grid'; // Contenedor de cuadrícula de Material-UI
+import Swal from "sweetalert2"; // Biblioteca para mostrar alertas personalizadas
 
 const QRLoader = ({ setValueQR, orderID }) => {
   
+  // Estado para controlar si el escáner está activo o no
   const [loadQR, setLoadQR] = useState(true);
+
+  // Función para procesar el resultado del escaneo
   const valuate = (result) => {
-   
-    let parsedResult;
-    try {
-      parsedResult = JSON.parse(result[0].rawValue);
-    } catch (error) {
-      Swal.fire('Error', 'El código escaneado no es válido', 'error');
-      return;
-    }
-    
-    if (orderID !== parsedResult.order) {
-      Swal.fire('Código no coincide con orden', '', 'error');
-      setLoadQR(true)
-      return;
-    }
+  let parsedResult;
+  try {
+    // Intenta parsear el resultado del código QR como JSON
+    parsedResult = JSON.parse(result[0].rawValue);
+  } catch (error) {
+    // Muestra una alerta si el código QR no es válido
+    Swal.fire('Error', 'El código escaneado no es válido', 'error');
+    return;
+  }
   
-    setLoadQR(true);
-    
-    
-    setValueQR(parsedResult);
+  // Verifica si el código QR coincide con el ID de la orden
+  if (orderID !== parsedResult.order) {
+    Swal.fire('Código no coincide con orden', '', 'error');
+    setLoadQR(true); // Reactiva el botón de escaneo
+    return;
+  }
+  
+  setLoadQR(true); // Reactiva el botón de escaneo
+  setValueQR(parsedResult); // Actualiza el valor del QR escaneado
   };
   
 
   return (
-    <>
+  <>
     {
-      loadQR ? (
-         <Button
-         fullWidth
-        variant="contained"
-        onClick={() => setLoadQR(!loadQR)}
-        color="primary"
-     
+    loadQR ? (
+      // Botón para iniciar el escaneo del código QR
+      <Button
+      fullWidth
+      variant="contained"
+      onClick={() => setLoadQR(!loadQR)}
+      color="primary"
       >
-        Scanear QR
+      Scanear QR
       </Button>
-      ):
-      (
-         <Button
-        variant="contained"
-        onClick={() => setLoadQR(!loadQR)}
-        color='error'
-        fullWidth
+    ) : (
+      // Botón para cerrar el escáner
+      <Button
+      variant="contained"
+      onClick={() => setLoadQR(!loadQR)}
+      color='error'
+      fullWidth
       >
-        Cerrar
+      Cerrar
       </Button>
-      )
+    )
     }
-     
-     
-      <Grid container display={loadQR ? 'none':'flex'}>
-      <Scanner
-        paused={loadQR}
-        components={{ finder: true }}
-        allowMultiple={false}
-        scanDelay={200}
-        styles={{
-          container: {
-            maxWidth: "400px",
-            margin:'10px'
-          },
-        }}
-        onScan={(result) => {valuate(result)
-        }}
-      />
-        
-      </Grid>
-    </>
+   
+    {/* Contenedor para el escáner QR, visible solo cuando loadQR es false */}
+    <Grid container display={loadQR ? 'none':'flex'}>
+    <Scanner
+      paused={loadQR} // Pausa el escáner si loadQR es true
+      components={{ finder: true }} // Activa el componente de localización del QR
+      allowMultiple={false} // No permite escanear múltiples códigos QR
+      scanDelay={200} // Intervalo entre escaneos
+      styles={{
+      container: {
+        maxWidth: "400px", // Ancho máximo del contenedor
+        margin:'10px' // Espaciado alrededor del contenedor
+      },
+      }}
+      // Llama a la función valuate cuando se escanea un código QR
+      onScan={(result) => {valuate(result)}}
+    />
+    </Grid>
+  </>
   );
 };
 

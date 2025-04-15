@@ -4,6 +4,7 @@ import { useAuthStore, useShippingCost } from "../../hooks";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 
 const Create = ({handleCloseModal}) => {
+  // Configuración del formulario con valores predeterminados
   const { control, handleSubmit } = useForm({
     defaultValues: {
       starting_weight: "",
@@ -11,14 +12,18 @@ const Create = ({handleCloseModal}) => {
       price_weight: "",
     },
   });
+
+  // Hook personalizado para manejar la creación de costos de envío
   const { createShippingCost } = useShippingCost();
 
+  // Función para manejar la creación de un costo de envío
   const createOneShippingCost = (values) => {
     createShippingCost(values, handleCloseModal);
   };
 
   return (
-    <Grid2  container>
+    <Grid2 container>
+      {/* Título del formulario */}
       <Grid2
         size={12}
         minHeight={"70px"}
@@ -34,13 +39,16 @@ const Create = ({handleCloseModal}) => {
         </Typography>
       </Grid2>
 
+      {/* Formulario para crear el costo de envío */}
       <Grid2
-        onSubmit={handleSubmit(createOneShippingCost)}
+        onSubmit={handleSubmit(createOneShippingCost)} // Manejo del envío del formulario
         component={"form"}
         container
         gap={2}
       >
+        {/* Campos del formulario */}
         <Grid2 size={12} gap={2} flexDirection={'column'} display={'flex'}>
+          {/* Campo para el peso inicial */}
           <Controller
             name="starting_weight"
             control={control}
@@ -62,6 +70,7 @@ const Create = ({handleCloseModal}) => {
             )}
           />
        
+          {/* Campo para el peso final */}
           <Controller
             name="end_weight"
             control={control}
@@ -84,6 +93,7 @@ const Create = ({handleCloseModal}) => {
             )}
           />
        
+          {/* Campo para el precio del envío */}
           <Controller
             name="price_weight"
             control={control}
@@ -106,10 +116,13 @@ const Create = ({handleCloseModal}) => {
           />
         </Grid2>
 
+        {/* Botones de acción */}
         <Grid2 width={"100%"} >
+          {/* Botón para crear el costo de envío */}
           <Button variant="contained" fullWidth type="submit" color="success">
             Crear
           </Button>
+          {/* Botón para cancelar y cerrar el modal */}
           <Button sx={{marginTop:1}} variant="contained" fullWidth onClick={()=> handleCloseModal()} color="warning">
             Cancelar
           </Button>

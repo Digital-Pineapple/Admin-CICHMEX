@@ -32,6 +32,7 @@ import EditButton from "../../components/Buttons/EditButton";
 import { loadOneRoute } from "../../store/actions/dynamicRouteActions";
 import RegionDetailModal from "../../components/Modals/RegionDetailModal";
 
+// Componente de paginación personalizada
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -49,26 +50,34 @@ function Pagination({ page, onPageChange, className }) {
   );
 }
 
+// Icono para indicar orden descendente
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
 
+// Icono para indicar orden ascendente
 export function SortedAscendingIcon() {
   return <ExpandLessIcon className="icon" />;
 }
 
+// Icono para indicar que no hay orden aplicado
 export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación personalizada para DataGrid
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
+// Barra de herramientas personalizada para DataGrid
 function CustomToolbar() {
   const apiRef = useGridApiContext();
 
+  // Función para regresar a la primera página
   const handleGoToPage1 = () => apiRef.current.setPage(1);
+
+  // Función para exportar datos a un archivo Excel
   const exportToExcel = () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Pedidos");
@@ -120,43 +129,44 @@ function CustomToolbar() {
   );
 }
 
+// Componente principal para la gestión de regiones
 const Regions = () => {
-  const {
-    navigate,
-    loading,
-  } = useProductOrder();
-  const {loadAllRegions, regions, onDeleteRegion, loadOneRegion, region} = useRegions()
+  const { navigate, loading } = useProductOrder();
+  const { loadAllRegions, regions, onDeleteRegion, loadOneRegion, region } = useRegions();
   const { user } = useAuthStore();
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
-
+  // Cargar todas las regiones al montar el componente
   useEffect(() => {
-    loadAllRegions()
+    loadAllRegions();
   }, [user]);
-  
 
+  // Agregar un identificador único a cada fila
   const rowsWithIds = regions?.map((item, index) => ({
     id: index,
     ...item,
   }));
 
-  const handleOpen = (id)=>{
-    loadOneRegion(id)
-    setOpen(true)
-  }
-  const handleClose = () =>{
-    setOpen(false)
-  }
+  // Abrir modal de detalles de región
+  const handleOpen = (id) => {
+    loadOneRegion(id);
+    setOpen(true);
+  };
 
+  // Cerrar modal de detalles de región
+  const handleClose = () => {
+    setOpen(false);
+  };
 
-
+  // Mostrar pantalla de carga si los datos están cargando
   if (loading) {
     return <LoadingScreenBlue />;
   }
 
   return (
     <Grid container gap={1}>
-         <Grid
+      {/* Título de la página */}
+      <Grid
         item
         marginTop={{ xs: "-30px" }}
         xs={12}
@@ -171,10 +181,13 @@ const Regions = () => {
           Regiones
         </Typography>
       </Grid>
+
+      {/* Mapa con múltiples regiones */}
       <Grid item xs={12}>
-        <MultiRegionMap regions={regions}/>
+        <MultiRegionMap regions={regions} />
       </Grid>
 
+      {/* Tabla de datos de regiones */}
       <Grid item xs={12}>
         <DataGrid
           sx={{ fontSize: "14px", fontFamily: "sans-serif" }}
@@ -199,23 +212,28 @@ const Regions = () => {
               sortable: false,
               type: "actions",
               getActions: (params) => [
+                // Botón para eliminar una región
                 <DeleteAlert
                   title={`¿Desea eliminar ${params.row.name}?`}
                   callbackToDeleteItem={() => onDeleteRegion(params.row._id)}
                 />,
-               
-                <Tooltip title='Ver Detalles'>
-                  <IconButton aria-label="ver detalle" color="primary" onClick={()=>handleOpen(params.row._id)}>
-                    <Visibility/>
+                // Botón para ver detalles de una región
+                <Tooltip title="Ver Detalles">
+                  <IconButton
+                    aria-label="ver detalle"
+                    color="primary"
+                    onClick={() => handleOpen(params.row._id)}
+                  >
+                    <Visibility />
                   </IconButton>
-  
                 </Tooltip>,
-                 <EditButton
-                 title={`Desea editar ${params.row.name}?`}
-                 callbackToEdit={() =>
-                   navigate(`/region/editar/${params.row._id}`)
-                 }
-               />,
+                // Botón para editar una región
+                <EditButton
+                  title={`Desea editar ${params.row.name}?`}
+                  callbackToEdit={() =>
+                    navigate(`/region/editar/${params.row._id}`)
+                  }
+                />,
               ],
             },
           ]}
@@ -229,14 +247,13 @@ const Regions = () => {
             columnSortedAscendingIcon: SortedAscendingIcon,
             columnUnsortedIcon: UnsortedIcon,
             noRowsOverlay: CustomNoRows,
-
           }}
           initialState={{
-            pagination:{
-              paginationModel:{
-                pageSize:10
-              }
-            }
+            pagination: {
+              paginationModel: {
+                pageSize: 10,
+              },
+            },
           }}
           disableColumnFilter
           disableColumnMenu
@@ -244,7 +261,6 @@ const Regions = () => {
           disableDensitySelector
           disableRowSelectionOnClick
           density="compact"
-          
           slotProps={{
             toolbar: {
               showQuickFilter: true,
@@ -257,15 +273,17 @@ const Regions = () => {
           }}
         />
       </Grid>
-      {
-        open ? (
-          <RegionDetailModal
-          region={region.name ? region :[]}
+
+      {/* Modal para mostrar detalles de una región */}
+      {open ? (
+        <RegionDetailModal
+          region={region.name ? region : []}
           open={open}
           handleClose={handleClose}
-          />
-        ): ''
-      }
+        />
+      ) : (
+        ""
+      )}
     </Grid>
   );
 };

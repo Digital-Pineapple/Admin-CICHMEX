@@ -24,6 +24,7 @@ import { redirectPages } from '../../helpers';
 import { useCommissions } from "../../hooks/useCommissions";
 import { Workbook } from "exceljs";
 
+// Componente de paginación personalizada para el DataGrid
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -40,18 +41,23 @@ function Pagination({ page, onPageChange, className }) {
     />
   );
 }
+
+// Icono personalizado para orden descendente
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
 
+// Icono personalizado para orden ascendente
 export function SortedAscendingIcon() {
   return <ExpandLessIcon className="icon" />;
 }
 
+// Icono personalizado para columnas sin ordenar
 export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación personalizada que utiliza el componente Pagination
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
@@ -61,17 +67,23 @@ const Commissions = () => {
   const { commissions } = useSelector((state) => state.commissions);
   const navigate = useNavigate();
 
+  // Cargar las comisiones al montar el componente
   useEffect(() => {
- loadCommissions();
+    loadCommissions();
   }, []);
 
+  // Agregar un ID único a cada fila de datos
   const rowsWithIds = commissions.map((commission, _id) => ({
     id: _id.toString(),
     ...commission,
   }));
+
+  // Navegar a la página para crear una nueva comisión
   const createCommission = () => {
     navigate('/auth/CrearComisiones')
   }
+
+  // Exportar los datos de las comisiones a un archivo Excel
   const exportToExcel = () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Comisiones");
@@ -92,7 +104,7 @@ const Commissions = () => {
       worksheet.addRow([row._id, row.name, row.amount, row.discount]);
     });
 
-    // Crear un Blob con el archivo Excel y guardarlo
+    // Crear un archivo Excel y descargarlo
     workbook.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer], {
         type:
@@ -102,9 +114,11 @@ const Commissions = () => {
     });
   };
 
+  // Barra de herramientas personalizada para el DataGrid
   function CustomToolbar() {
     const apiRef = useGridApiContext();
   
+    // Función para regresar a la primera página
     const handleGoToPage1 = () => apiRef.current.setPage(1);
   
     return (
@@ -112,22 +126,22 @@ const Commissions = () => {
         <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
         <GridToolbarQuickFilter/>
         <Button
-        variant="text"
-        startIcon={<Download/>}
-        disableElevation
-        sx={{ color: "secondary" }}
-        onClick={exportToExcel}
-      >
-        Descargar Excel
-      </Button>
+          variant="text"
+          startIcon={<Download/>}
+          disableElevation
+          sx={{ color: "secondary" }}
+          onClick={exportToExcel}
+        >
+          Descargar Excel
+        </Button>
       </GridToolbarContainer>
     );
   }
 
-
   return (
     <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
       
+      {/* Botón para registrar una nueva comisión */}
       <Button
           variant="contained"
           disableElevation
@@ -136,6 +150,8 @@ const Commissions = () => {
         >
           Registrar nuevo descuento
         </Button>
+
+      {/* Tabla de datos con las comisiones */}
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
@@ -171,9 +187,8 @@ const Commissions = () => {
             sortable: false,
             type: "actions",
             getActions: (params) => [
-        
+              // Acción para redirigir a la edición de una comisión
               <GridActionsCellItem icon={<Edit />} onClick={()=>redirectPages(navigate,(params.row._id))}  label="Editar comisión" showInMenu />,
-                             
             ],
           },
         ]}
@@ -205,6 +220,4 @@ const Commissions = () => {
   );
 }
 
-
-
-export default Commissions
+export default Commissions;

@@ -1,10 +1,4 @@
-import { enqueueSnackbar } from "notistack";
-import { instanceApi } from "../../apis/configAxios";
-import { deleteShippingCost, editShippingCost, loadOneShippingCost, loadShippingCosts, onAddNewShippingCost } from "../reducer/shippingCostReducer";
-import {headerConfig} from './headers'
-import { Zoom } from "@mui/material";
-import { startLoading, stopLoading } from "../reducer/uiReducer";
-
+// Carga todos los costos de envío desde la API y los almacena en el estado
 export const startLoadShippingCosts = () => {
   return async (dispatch) => {
     dispatch(startLoading())
@@ -32,6 +26,7 @@ export const startLoadShippingCosts = () => {
   }
 }
 
+// Carga un costo de envío específico desde la API según su ID
 export const startLoadOneShippingCost = (id, navigate) => {
     return async (dispatch) => {
       try {
@@ -48,7 +43,8 @@ export const startLoadOneShippingCost = (id, navigate) => {
     };
   };
 
-  export const startCreateShippingCost = (values, navigate, handleCloseModal) => {
+// Crea un nuevo costo de envío y lo agrega al estado
+export const startCreateShippingCost = (values, navigate, handleCloseModal) => {
     return async (dispatch) => {
       dispatch(startLoading())
       try {
@@ -85,7 +81,9 @@ export const startLoadOneShippingCost = (id, navigate) => {
       }
     };
   };
-  export const startUpdateShippingCost = (id,values, handleCloseModal) => {
+
+// Actualiza un costo de envío existente según su ID
+export const startUpdateShippingCost = (id,values, handleCloseModal) => {
     return async (dispatch) => {
       try {
         const { data } = await instanceApi.put(`/shipping-cost/${id}`, 
@@ -120,7 +118,8 @@ export const startLoadOneShippingCost = (id, navigate) => {
     };
   };
 
-  export const startDeleteShippingCost = (id) => {
+// Elimina un costo de envío según su ID
+export const startDeleteShippingCost = (id) => {
     return async (dispatch) => {
         dispatch(startLoading())
       try {

@@ -1,6 +1,3 @@
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import SortIcon from "@mui/icons-material/Sort";
 import {
   DataGrid,
   GridPagination,
@@ -42,66 +39,72 @@ import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 import { esES } from "@mui/x-data-grid/locales";
 
 const Products = () => {
-  const { user } = useAuthStore();
+  const { user } = useAuthStore(); // Obtiene la información del usuario autenticado
   const {
-    loadProductsPaginate,
-    navigate,
-    deleteProduct,
-    loadProduct,
-    productsPaginate,
-    product,
-    loading,
-    loadProductsBySearch
+    loadProductsPaginate, // Carga productos paginados
+    navigate, // Navegación entre rutas
+    deleteProduct, // Elimina un producto
+    loadProduct, // Carga un producto específico
+    productsPaginate, // Datos de productos paginados
+    product, // Producto seleccionado
+    loading, // Estado de carga
+    loadProductsBySearch, // Carga productos por búsqueda
   } = useProducts();
-  const [openModal, setOpenModal] = useState(false);
+
+  const [openModal, setOpenModal] = useState(false); // Estado para abrir/cerrar el modal de detalles del producto
 
   const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 20,
+    page: 0, // Página actual
+    pageSize: 20, // Tamaño de página
   });
 
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState([]); // Filas de datos para la tabla
 
-
+  // Efecto para cargar productos paginados cuando cambian la página o el usuario
   useEffect(() => {
     loadProductsPaginate(paginationModel.page + 1, paginationModel.pageSize);
   }, [paginationModel, user]);
-  
+
+  // Efecto para actualizar las filas cuando se cargan los productos paginados
   useEffect(() => {
     if (productsPaginate?.products) {
       setRows(rowsProducts(productsPaginate.products));
     }
   }, [productsPaginate]);
 
-  const rowsProducts = useCallback((data) =>
-    data?.map((item, _id) => ({
-      id: _id.toString(),
-      Category: item?.category?.name,
-      SubCategory: item?.subCategory?.name,
-      ...item,
-    })), []
+  // Función para transformar los datos de productos en filas para la tabla
+  const rowsProducts = useCallback(
+    (data) =>
+      data?.map((item, _id) => ({
+        id: _id.toString(),
+        Category: item?.category?.name,
+        SubCategory: item?.subCategory?.name,
+        ...item,
+      })),
+    []
   );
-  const [value, setValue] = useState('')
 
+  const [value, setValue] = useState(""); // Estado para el valor del campo de búsqueda
+
+  // Función para buscar productos
   function searchProduct() {
     const search = value.trim();
-    if(search.length < 1){
-      return
-    } 
+    if (search.length < 1) {
+      return;
+    }
     loadProductsBySearch(search);
   }
-  
 
-
-  // if (loading) return <LoadingScreenBlue />;
-
+  // Función para abrir el modal de detalles de un producto
   const handleOpen = async (id) => {
     await loadProduct(id);
     setOpenModal(true);
   };
 
+  // Función para cerrar el modal de detalles
   const handleClose = () => setOpenModal(false);
 
+  // Función para navegar a la edición de un producto o sus variantes
   const valuateNavigateEdit = async (id) => {
     const response = await loadProduct(id);
     let variants = response.variants;
@@ -114,11 +117,12 @@ const Products = () => {
   };
 
   const paths = [
-    { path: `/mi-almacen/productos`, name: "Todos mis productos" },
+    { path: `/mi-almacen/productos`, name: "Todos mis productos" }, // Ruta para el breadcrumb
   ];
 
   return (
-    <Grid2 container paddingX={{ xs: 0, lg: 10 }} gap={1} >
+    <Grid2 container paddingX={{ xs: 0, lg: 10 }} gap={1}>
+      {/* Título de la página */}
       <Grid2
         size={12}
         paddingRight={15}
@@ -132,9 +136,13 @@ const Products = () => {
           <strong>Todos mis productos</strong>
         </Typography>
       </Grid2>
+
+      {/* Breadcrumb */}
       <Grid2 size={12} display={"flex"} justifyContent={"space-between"}>
         <BreadcrumbCustom paths={paths} />
       </Grid2>
+
+      {/* Botones para agregar productos */}
       <Grid2 display={"flex"} justifyContent={"end"} rowSpacing={2} size={12}>
         <Button
           size="small"
@@ -155,58 +163,51 @@ const Products = () => {
         >
           Agregar sin variantes
         </Button>
-        
       </Grid2>
+
+      {/* Campo de búsqueda */}
       <TextField
-        size='small'
+        size="small"
         value={value}
         fullWidth
         placeholder="Buscar productos"
-        onChange={(e)=>setValue(e.target.value)}    
-        onKeyUp={(e)=>{
-          if(e.key === 'Enter'){
-            searchProduct()
-          }          
-        }}                    
-        // focused
-        InputProps={{ 
-          // autoComplete:false,   
+        onChange={(e) => setValue(e.target.value)}
+        onKeyUp={(e) => {
+          if (e.key === "Enter") {
+            searchProduct();
+          }
+        }}
+        InputProps={{
           style: {
-            borderRadius: '5px',
-            backgroundColor: 'white',
-            paddingLeft :'8px',
-            // width:
-          },   
+            borderRadius: "5px",
+            backgroundColor: "white",
+            paddingLeft: "8px",
+          },
           endAdornment: (
             <InputAdornment position="end">
-              <IconButton onClick={()=>searchProduct()} aria-label='search'>
+              <IconButton onClick={() => searchProduct()} aria-label="search">
                 <Search />
               </IconButton>
             </InputAdornment>
           ),
         }}
       />
-    
+
+      {/* Tabla de productos */}
       <DataGrid
         density="compact"
-         sx={{
-                    fontSize: "12px",
-                    fontFamily: "sans-serif",
-                    borderRadius: "20px",
-                    bgcolor: "#fff",
-                    border: "1px solid rgb(209, 205, 205)", // Borde exterior naranja
-                    "& .MuiDataGrid-cell": {
-                      borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno claro
-                    },
-                  }}
-                  localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+        sx={{
+          fontSize: "12px",
+          fontFamily: "sans-serif",
+          borderRadius: "20px",
+          bgcolor: "#fff",
+          border: "1px solid rgb(209, 205, 205)",
+          "& .MuiDataGrid-cell": {
+            borderBottom: "1px solid rgb(230, 223, 223)",
+          },
+        }}
+        localeText={esES.components.MuiDataGrid.defaultProps.localeText}
         columns={[
-          // {
-          //   field: "tag",
-          //   headerName: "Código",
-          //   flex: 1,
-          //   align: "center",
-          // },
           {
             field: "name",
             hideable: false,
@@ -214,12 +215,6 @@ const Products = () => {
             flex: 1,
             sortable: false,
           },
-          // {
-          //   field: "price",
-          //   headerName: "Precio",
-          //   flex: 1,
-          //   align: "center",
-          // },
           {
             field: "Category",
             headerName: "Categoria",
@@ -237,17 +232,16 @@ const Products = () => {
             headerName: "Clave SAT",
             flex: 1,
             align: "center",
-            renderCell: (params)=>[
-              params.row.product_key ? 
-              params.row.product_key : 
-              (
-              <Tooltip title='Falta clave sat'>
-                <Warning color="warning"  />
-              </Tooltip>
-              )
-            ]
+            renderCell: (params) => [
+              params.row.product_key ? (
+                params.row.product_key
+              ) : (
+                <Tooltip title="Falta clave sat">
+                  <Warning color="warning" />
+                </Tooltip>
+              ),
+            ],
           },
-
           {
             field: "Opciones",
             headerName: "Opciones",
@@ -259,7 +253,7 @@ const Products = () => {
               <DeleteAlert
                 title={`¿Estas seguro de eliminar el producto ${params.row?.name}`}
                 callbackToDeleteItem={() => deleteProduct(params.row._id)}
-                disabled={params.row?.has_variants ? true: false} 
+                disabled={params.row?.has_variants ? true : false}
               />,
               <Tooltip title="Editar Producto">
                 <IconButton
@@ -283,7 +277,6 @@ const Products = () => {
           },
         ]}
         rows={rows}
-        
         pagination
         paginationMode="server"
         rowCount={productsPaginate.totalProducts}
@@ -292,6 +285,8 @@ const Products = () => {
         loading={loading}
         style={{ fontFamily: "sans-serif", fontSize: "15px" }}
       />
+
+      {/* Modal de detalles del producto */}
       <ProductDetailModal
         handleClose={handleClose}
         handleOpen={handleOpen}

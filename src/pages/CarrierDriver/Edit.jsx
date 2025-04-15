@@ -30,15 +30,20 @@ import {
 } from "@react-google-maps/api";
 
 const EditCarrierDriver = () => {
+  // Hooks personalizados para cargar datos de almacenes, transportistas y regiones
   const { StoreHouses, loadStoreHouse } = useStoreHouse();
   const { CarrierDriver, loadOneCarrieDriver, loading, updateCarrier, navigate } =
     useUsers();
   const { loadAllRegions, regions } = useRegions();
+
+  // Estados locales para manejar regiones seleccionadas y observadas
   const [watchRegions, setWatchRegions] = useState([]);
   const [selectedRegions, setSelectedRegions] = useState([]);
 
+  // Obtener el ID del transportista desde los parámetros de la URL
   const { id } = useParams();
 
+  // Configuración del formulario con valores predeterminados
   const { control, handleSubmit, setValue, watch, reset } = useForm({
     defaultValues: {
       fullname: "",
@@ -52,14 +57,16 @@ const EditCarrierDriver = () => {
     },
   });
 
+  // Cargar datos iniciales al montar el componente
   useEffect(() => {
     if (!StoreHouses.length) {
-      loadStoreHouse();
+      loadStoreHouse(); // Cargar almacenes si no están cargados
     }
-    loadOneCarrieDriver(id);
-    loadAllRegions();
+    loadOneCarrieDriver(id); // Cargar datos del transportista por ID
+    loadAllRegions(); // Cargar todas las regiones
   }, [id]);
 
+  // Actualizar el formulario con los datos del transportista cuando estén disponibles
   useEffect(() => {
     if (CarrierDriver) {
       reset({
@@ -73,23 +80,26 @@ const EditCarrierDriver = () => {
           store_house: CarrierDriver.employee_detail?.store_house || [],
         },
       });
-      setWatchRegions(CarrierDriver.employee_detail?.operationRegions);
+      setWatchRegions(CarrierDriver.employee_detail?.operationRegions); // Configurar regiones observadas
     }
   }, [CarrierDriver, reset]);
 
+  // Manejar cambios en las regiones seleccionadas
   const handleRegionChange = (e) => {
-    const regionIds = e.target.value; // Obtén un array de IDs seleccionados
+    const regionIds = e.target.value; // Obtener un array de IDs seleccionados
     setSelectedRegions(regionIds);
-    setWatchRegions(regionIds.map((id) => regions.find((r) => r._id === id)));
+    setWatchRegions(regionIds.map((id) => regions.find((r) => r._id === id))); // Actualizar regiones observadas
     setValue("employee_detail.operationRegions", regionIds, {
       shouldValidate: true,
       shouldDirty: true,
     });
   };
 
+  // Estilo obligatorio para el mapa
   const __mapMandatoryStyles = { width: "100%", height: "700px" };
   const googleMapsApiKey = import.meta.env.VITE_REACT_APP_MAP_KEY;
 
+  // Calcular el centro de una región a partir de su ruta
   const calculateCenter = (path) => {
     const latLngs = path.map(
       (point) => new window.google.maps.LatLng(point.lat, point.lng)
@@ -99,14 +109,16 @@ const EditCarrierDriver = () => {
     return bounds.getCenter().toJSON();
   };
 
+  // Cargar el script de Google Maps
   const { isLoaded } = useLoadScript({
     googleMapsApiKey,
   });
 
   if (!isLoaded) {
-    return <div>Cargando mapa...</div>;
+    return <div>Cargando mapa...</div>; // Mostrar mensaje mientras se carga el mapa
   }
 
+  // Agregar el centro calculado dinámicamente a una región
   const regionWithCenter = (region) => {
     return {
       ...region,
@@ -114,18 +126,20 @@ const EditCarrierDriver = () => {
     };
   };
 
+  // Manejar el envío del formulario
   const onSubmit = (data) => {
-    updateCarrier(id, data);
+    updateCarrier(id, data); // Actualizar datos del transportista
   };
 
   if (loading) {
-    return <LoadingScreenBlue />;
+    return <LoadingScreenBlue />; // Mostrar pantalla de carga si está cargando
   }
 
-  const watchField = watch("employee_detail.store_house", false);
+  const watchField = watch("employee_detail.store_house", false); // Observar cambios en el almacén seleccionado
 
   return (
     <Grid container style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
+      {/* Título de la página */}
       <Grid
         item
         marginTop={{ xs: "-30px" }}
@@ -141,6 +155,8 @@ const EditCarrierDriver = () => {
           Editar transportista
         </Typography>
       </Grid>
+
+      {/* Formulario principal */}
       <Grid
         component={"form"}
         container
@@ -150,6 +166,7 @@ const EditCarrierDriver = () => {
         textAlign={"center"}
         onSubmit={handleSubmit(onSubmit)}
       >
+        {/* Campo de nombre completo */}
         <Grid item xs={12} sm={6}>
           <Controller
             name="fullname"
@@ -177,6 +194,7 @@ const EditCarrierDriver = () => {
           />
         </Grid>
 
+        {/* Campo de correo electrónico */}
         <Grid item xs={12} sm={5.5}>
           <Controller
             name="email"
@@ -205,6 +223,7 @@ const EditCarrierDriver = () => {
           />
         </Grid>
 
+        {/* Campo de salario */}
         <Grid item xs={12} sm={6}>
           <Controller
             name="employee_detail.salary"
@@ -237,6 +256,7 @@ const EditCarrierDriver = () => {
           />
         </Grid>
 
+        {/* Campo de porcentaje de comisión */}
         <Grid item xs={12} sm={5.5}>
           <Controller
             name="employee_detail.sales_commission_porcent"
@@ -272,6 +292,7 @@ const EditCarrierDriver = () => {
           />
         </Grid>
 
+        {/* Campo de almacén */}
         <Grid item xs={12} sm={12}>
           <Controller
             name="employee_detail.store_house"
@@ -306,6 +327,7 @@ const EditCarrierDriver = () => {
               </TextField>
             )}
           />
+          {/* Mostrar almacén seleccionado */}
           {watchField.name ? (
             <Card
               sx={{ bgcolor: lightGreen[200], marginTop: 2 }}
@@ -321,6 +343,8 @@ const EditCarrierDriver = () => {
             ""
           )}
         </Grid>
+
+        {/* Mapa y regiones */}
         <Grid container display={"flex"} justifyContent={"center"}>
           {watchRegions?.map((item, index) => (
             <Grid key={index} item xs={12} md={6}>
@@ -364,6 +388,7 @@ const EditCarrierDriver = () => {
             </Grid>
           ))}
 
+          {/* Selector de regiones */}
           <Controller
             name="employee_detail.operationRegions"
             control={control}
@@ -394,6 +419,7 @@ const EditCarrierDriver = () => {
           />
         </Grid>
 
+        {/* Botones de acción */}
         <Grid item xs={12}>
           <ButtonGroup fullWidth variant="contained" color="inherit" aria-label="Actions">
           <Button variant="contained" onClick={()=>navigate('/usuarios/transportistas', {replace:true})} color="error">

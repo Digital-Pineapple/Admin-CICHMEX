@@ -236,6 +236,7 @@ const ArrangeProducts = () => {
 
   return (
     <Grid2 container paddingX={{ lg: 20 }} display="flex" gap={2}>
+      {/* Encabezado con título y folio */}
       <Grid2 size={12} paddingRight={15} flexGrow={1} display="flex" alignItems="center" justifyContent="space-between">
         <Typography variant="h4">
           <strong>Acomodo de producto</strong>
@@ -244,10 +245,13 @@ const ArrangeProducts = () => {
           <strong>Folio:</strong> {EntryReport._id} <br />
         </Typography>
       </Grid2>
+
+      {/* Breadcrumb para navegación */}
       <Grid2 size={12}>
         <BreadcrumbCustom paths={paths} />
       </Grid2>
 
+      {/* Información del responsable de entrada */}
       <Grid2 bgcolor="#fff" sx={{ boxShadow: "0px 0px 4px -1px #7a7a7a" }} padding={2} borderRadius="15px" size={{xs:12,lg:6}}>
         <Typography variant="body2" color="initial">
           <strong>Responsable de entrada</strong>
@@ -260,6 +264,7 @@ const ArrangeProducts = () => {
         </Typography>
       </Grid2>
 
+      {/* Información del responsable en almacén */}
       <Grid2 bgcolor="#fff" sx={{ boxShadow: "0px 0px 4px -1px #7a7a7a" }} padding={2} size={{xs:12, lg:5.7}} borderRadius="15px">
         <Typography variant="body2" color="initial">
           <strong>Responsable de entrada en almacén</strong>
@@ -271,6 +276,7 @@ const ArrangeProducts = () => {
         </Typography>
       </Grid2>
 
+      {/* Tabla con productos y opciones */}
       <Grid2 size={12}>
         <TableContainer component={Paper} sx={{ borderRadius: "20px" }}>
           <Table>
@@ -299,6 +305,7 @@ const ArrangeProducts = () => {
                     )}
                   </TableCell>
                   <TableCell>
+                    {/* Botón para buscar ubicación */}
                     <Tooltip title="Buscar ubicación">
                       <IconButton
                         onClick={() =>
@@ -322,11 +329,14 @@ const ArrangeProducts = () => {
             </TableBody>
           </Table>
         </TableContainer>
+        {/* Botón para finalizar si todos los productos están asignados */}
         {RenderButtonSubmit()}
       </Grid2>
 
+      {/* Modal para asignar producto a una sección */}
       <Modal open={openModal.value} onClose={handleClose}>
         <Grid2 container sx={style}>
+          {/* Botón para cerrar el modal */}
           <IconButton
             disableRipple
             aria-label="Cerrar"
@@ -335,19 +345,25 @@ const ArrangeProducts = () => {
           >
             <Close />
           </IconButton>
+          {/* Escáner QR para validar la sección */}
           <QRScannerV2 label="Escanear QR de sección" title="Escanea el QR de la sección"  setValueQR={setValuate} />
+          {/* Información del producto */}
           <Card variant="outlined" sx={{width:'100%'}}>
             <CardContent>{renderProduct(openModal.data)}</CardContent>
           </Card>
+          {/* Información de la sección */}
           <Card variant="outlined" sx={{width:'100%'}} >
             <CardContent>{renderSection(openModal.section)}</CardContent>
           </Card>
+          {/* Botón para asignar ubicación */}
           {RenderButtonAsign(validation)}
         </Grid2>
       </Modal>
 
+      {/* Modal para buscar y asignar sección */}
       <Modal open={openModalSection.value} onClose={handleCloseSection}>
         <Grid2 container sx={style}>
+          {/* Botón para cerrar el modal */}
           <IconButton
             disableRipple
             aria-label="Cerrar"
@@ -356,13 +372,17 @@ const ArrangeProducts = () => {
           >
             <Close />
           </IconButton>
+          {/* Escáner QR para buscar sección */}
           <QRScannerV2 setValueQR={setSection} title="Escanea el QR de la sección" />
+          {/* Información del producto */}
           <Card variant="outlined" sx={{width:'100%'}} >
             <CardContent>{renderProduct(openModalSection.data)}</CardContent>
           </Card>
+          {/* Información de la sección */}
           <Card variant="outlined" sx={{width:'100%'}} >
             <CardContent>{renderSection(section)}</CardContent>
           </Card>
+          {/* Botón para asignar ubicación */}
           <Button variant="contained" onClick={handleSaveProductToSection} fullWidth color="success">
             Asignar ubicación
           </Button>

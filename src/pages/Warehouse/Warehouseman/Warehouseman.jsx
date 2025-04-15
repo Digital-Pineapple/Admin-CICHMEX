@@ -12,32 +12,34 @@ import EditButton from "../../../components/Buttons/EditButton";
 
 const Warehouseman = () => {
   const {
-    deleteOneCD,
-    loadAllWarehouseman,
-    allWarehouseman,
-    rows,
-    navigate,
-    loading,
+    deleteOneCD, // Función para eliminar un almacenista
+    loadAllWarehouseman, // Función para cargar todos los almacenistas
+    allWarehouseman, // Lista de todos los almacenistas
+    rows, // Función para mapear los datos a filas del DataGrid
+    navigate, // Navegación entre rutas
+    loading, // Estado de carga
   } = useUsers();
-  const { user } = useAuthStore();
+  const { user } = useAuthStore(); // Información del usuario autenticado
 
   useEffect(() => {
-    loadAllWarehouseman();
+    loadAllWarehouseman(); // Cargar todos los almacenistas al montar el componente
   }, [user]);
 
   const Delete = (value) => {
-    deleteOneCD(value);
+    deleteOneCD(value); // Lógica para eliminar un almacenista
   };
+
   if (loading) {
-    return <LoadingScreenBlue />;
+    return <LoadingScreenBlue />; // Pantalla de carga mientras se obtienen los datos
   }
+
   const paths = [
-    { path: `/usuarios/almacenistas`, name: "Mis almacenistas" },
+    { path: `/usuarios/almacenistas`, name: "Mis almacenistas" }, // Ruta para el breadcrumb
   ];
-  
 
   return (
     <Grid2 container paddingX={10}>
+      {/* Encabezado de la página */}
       <Grid2
         size={12}
         paddingRight={15}
@@ -51,9 +53,10 @@ const Warehouseman = () => {
           <strong>Mis almacenistas</strong>
         </Typography>
       </Grid2>
-      <Grid2 size={12} display={"flex"}margin={2} justifyContent={"space-between"}>
-        <BreadcrumbCustom paths={paths} />
 
+      {/* Breadcrumb y botón para crear un nuevo almacenista */}
+      <Grid2 size={12} display={"flex"} margin={2} justifyContent={"space-between"}>
+        <BreadcrumbCustom paths={paths} />
         <Fab
           onClick={() =>
             navigate("/usuarios/almacenistas/crear", { replace: true })
@@ -65,6 +68,8 @@ const Warehouseman = () => {
           <Add />
         </Fab>
       </Grid2>
+
+      {/* Tabla que muestra la lista de almacenistas */}
       <Grid2 size={12}>
         {allWarehouseman ? (
           <DataGrid
@@ -73,30 +78,30 @@ const Warehouseman = () => {
               fontFamily: "sans-serif",
               borderRadius: "20px",
               bgcolor: "#fff",
-              border: "1px solid rgb(209, 205, 205)", // Borde exterior naranja
+              border: "1px solid rgb(209, 205, 205)", // Borde exterior
               "& .MuiDataGrid-cell": {
-                borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno claro
+                borderBottom: "1px solid rgb(230, 223, 223)", // Borde interno
               },
             }}
-            localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+            localeText={esES.components.MuiDataGrid.defaultProps.localeText} // Localización en español
             columns={[
               {
                 field: "fullname",
                 hideable: false,
-                headerName: "Nombre",
+                headerName: "Nombre", // Columna para el nombre
                 flex: 2,
                 sortable: false,
               },
               {
                 field: "email",
                 hideable: false,
-                headerName: "Correo",
+                headerName: "Correo", // Columna para el correo
                 flex: 2,
                 sortable: false,
               },
               {
                 field: "Opciones",
-                headerName: "Opciones",
+                headerName: "Opciones", // Columna para las acciones
                 align: "center",
                 flex: 1,
                 sortable: false,
@@ -104,22 +109,22 @@ const Warehouseman = () => {
                 getActions: (params) => [
                   <DeleteAlert
                     title="¿Desea eliminar el siguiente elemento?"
-                    callbackToDeleteItem={() => Delete(params.row._id)}
+                    callbackToDeleteItem={() => Delete(params.row._id)} // Acción para eliminar
                   />,
                   <EditButton
                     title={`Desea editar ${params.row.fullname}?`}
-                    callbackToEdit={() =>{
-                        console.log(params.row._id),
-                      navigate( `/almacenistas/editar/${params.row._id}`,{replace:true} )}
-                    }
+                    callbackToEdit={() => {
+                      console.log(params.row._id),
+                        navigate(`/almacenistas/editar/${params.row._id}`, { replace: true });
+                    }} // Acción para editar
                   />,
                 ],
               },
             ]}
-            rows={rows(allWarehouseman)}
+            rows={rows(allWarehouseman)} // Datos de las filas
             slotProps={{
               toolbar: {
-                showQuickFilter: true,
+                showQuickFilter: true, // Filtro rápido
                 quickFilterProps: { debounceMs: 500 },
               },
             }}
@@ -130,20 +135,19 @@ const Warehouseman = () => {
             style={{ fontFamily: "sans-serif", fontSize: "15px" }}
             initialState={{
               sorting: {
-                sortModel: [{ field: "name", sort: "desc" }],
+                sortModel: [{ field: "name", sort: "desc" }], // Orden inicial
               },
               pagination: {
-                paginationModel: { pageSize: 20, page: 0 },
+                paginationModel: { pageSize: 20, page: 0 }, // Configuración de paginación
               },
             }}
           />
         ) : (
-          <Skeleton title="Cargando..." variant="rectangular" />
+          <Skeleton title="Cargando..." variant="rectangular" /> // Esqueleto de carga
         )}
       </Grid2>
     </Grid2>
   );
 };
 
-
-export default Warehouseman
+export default Warehouseman;
