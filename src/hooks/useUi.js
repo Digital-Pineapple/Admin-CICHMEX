@@ -15,7 +15,7 @@ export const useUI = () => {
     const loadAllBanners =  () =>  dispatch(startLoadAllBanners());
 
     // Función para cargar un banner específico por su ID
-    const loadOneBanner = (id) => dispatch(startLoadOneBanner(id));
+    const loadOneBanner = (id) => dispatch(startLoadOneBanner(id, navigate));
 
     // Función para cambiar el estado activo de un banner
     const changeActiveBanner = (id, active) => dispatch(startChangeActive(id, active));

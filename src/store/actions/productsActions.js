@@ -1138,6 +1138,8 @@ export const startAddVariantsProduct = (id, values, handleNext) => {
       // Avanzar al siguiente paso
       handleNext();
     } catch (error) {
+      console.log(error);
+      
       enqueueSnackbar(
         error.response?.data?.message || "Error al enviar las variantes",
         {

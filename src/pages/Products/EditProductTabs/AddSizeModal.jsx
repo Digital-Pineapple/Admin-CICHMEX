@@ -36,7 +36,7 @@ const AddSizeModal = ({ productId, variant, sizes, handleClose }) => {
     color: variant.color,
     design: variant.design[0],
     images: variant.images,
-    stock: "",
+    // stock: "",
     product_id: productId,
     purchase_price: "",
   });
@@ -297,7 +297,7 @@ const AddSizeModal = ({ productId, variant, sizes, handleClose }) => {
       </Grid2>
 
       {/* Campo de stock */}
-      <Grid2 size={12}>
+      {/* <Grid2 size={12}>
         <Controller
           name={`stock`}
           control={control}
@@ -316,7 +316,7 @@ const AddSizeModal = ({ productId, variant, sizes, handleClose }) => {
             />
           )}
         />
-      </Grid2>
+      </Grid2> */}
 
       {/* Botones de acción */}
       <Grid2 display={"flex"} gap={2} size={12}>

@@ -1,6 +1,7 @@
 import { enqueueSnackbar } from "notistack";
-import { onLoadBanners, onLoadOneBanner, startLoading, stopLoading, updateActiveBanner } from "../reducer/uiReducer";
+import { onAddNewSlide, onLoadBanners, onLoadOneBanner, startLoading, stopLoading, updateActiveBanner } from "../reducer/uiReducer";
 import { instanceApi } from "../../apis/configAxios";
+import Swal from "sweetalert2";
 
 // Función para agregar una nueva ruta dinámica
 export const startAddRoute = (values, navigate) => {
