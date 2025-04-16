@@ -5,6 +5,7 @@ import { useDropzone } from "react-dropzone";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { styled } from "@mui/material/styles";
 
+// Estilos base para el área de dropzone
 const baseStyle = {
   flex: 1,
   display: "flex",
@@ -13,7 +14,6 @@ const baseStyle = {
   padding: "20px",
   borderWidth: 2,
   borderRadius: 2,
-  // height: 300,
   borderColor: "#bdbdbd",
   borderStyle: "dashed",
   backgroundColor: "#fafafa",
@@ -23,18 +23,22 @@ const baseStyle = {
   cursor: "pointer",
 };
 
+// Estilo cuando el área de dropzone está enfocada
 const focusedStyle = {
   borderColor: "#2196f3",
 };
 
+// Estilo cuando se aceptan archivos
 const acceptStyle = {
   borderColor: "#00e676",
 };
 
+// Estilo cuando se rechazan archivos
 const rejectStyle = {
   borderColor: "#ff1744",
 };
 
+// Contenedor para las miniaturas de las imágenes
 const thumbsContainer = {
   display: "flex",
   flexDirection: "row",
@@ -42,8 +46,8 @@ const thumbsContainer = {
   marginTop: 16,
 };
 
+// Estilo para cada miniatura
 const thumb = {
-  // display: 'inline-flex',
   borderRadius: 2,
   border: "1px solid #eaeaea",
   marginBottom: 8,
@@ -51,21 +55,23 @@ const thumb = {
   width: 300,
   height: 300,
   padding: 4,
-  // boxSizing: 'border-box'
 };
 
+// Contenedor interno de cada miniatura
 const thumbInner = {
   display: "flex",
   minWidth: 0,
   overflow: "hidden",
 };
 
+// Estilo para las imágenes dentro de las miniaturas
 const img = {
   display: "block",
   width: "auto",
   height: "100%",
 };
 
+// Componente estilizado para el badge (ícono de eliminar)
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
     right: 19,
@@ -73,25 +79,27 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
+// Componente principal StyledDropzone
 export default function StyledDropzone({ callback, files, onDelete = () => null }) {
+  // Configuración del hook useDropzone
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
     useDropzone({
       onDrop: (acceptedFiles) => {
-        if(files.length === 3){
+        // Limita el número de archivos a 3
+        if (files.length === 3) {
           return;
         }
-        // if (acceptedFiles.length > 0) {
-        //   callback(acceptedFiles[0]);
-        // }
+        // Llama al callback con el archivo aceptado
         callback(acceptedFiles[0]);
       },
-      maxFiles: 3,
+      maxFiles: 3, // Máximo de archivos permitidos
       accept: {
         "image/jpeg": [],
         "image/png": [],
       },
     });
 
+  // Combina los estilos dinámicos según el estado del dropzone
   const style = useMemo(
     () => ({
       ...baseStyle,
@@ -102,6 +110,7 @@ export default function StyledDropzone({ callback, files, onDelete = () => null 
     [isFocused, isDragAccept, isDragReject]
   );
 
+  // Genera las miniaturas de las imágenes cargadas
   const images = files.map((file) => (
     <StyledBadge
       badgeContent={
@@ -111,40 +120,35 @@ export default function StyledDropzone({ callback, files, onDelete = () => null 
             color: "black",
           }}
           onClick={(e) => {
-            e.stopPropagation(); 
-            onDelete(file.id);
+            e.stopPropagation(); // Evita que el evento se propague
+            onDelete(file.id); // Llama a la función onDelete con el ID del archivo
           }}
-        >          
+        >
           <DeleteIcon sx={{ color: "white", fontSize: "20px" }} />
         </IconButton>
       }
     >
-      <Avatar       
-        src={URL.createObjectURL(file.file)}
-        style={{ objectFit: "contain" }}             
+      <Avatar
+        src={URL.createObjectURL(file.file)} // Genera una URL temporal para mostrar la imagen
+        style={{ objectFit: "contain" }}
         variant="square"
         sx={{ width: "150px", height: "150px" }}
       />
     </StyledBadge>
-    // <Box height={300}>
-    //   <Image
-    //     duration={200}
-    //     src={URL.createObjectURL(file)}
-    //     style={{ objectFit: "contain" }}
-    //     width={"100%"}
-    //   />
-    // </Box>
   ));
 
   return (
     <div className="container">
+      {/* Área de dropzone */}
       <div {...getRootProps({ style })}>
         <input {...getInputProps()} />
+        {/* Mensaje inicial si no hay archivos cargados */}
         {files.length === 0 && (
-          <p>Arrastra la imagen aqui o haz click sobre el recuadro </p>
+          <p>Arrastra la imagen aquí o haz click sobre el recuadro</p>
         )}
-        <div style={{display:"flex", flexWrap:"wrap"}}>
-         {images}
+        {/* Contenedor de las imágenes cargadas */}
+        <div style={{ display: "flex", flexWrap: "wrap" }}>
+          {images}
         </div>
       </div>
     </div>

@@ -1,19 +1,13 @@
 import {
   Button,
   Typography,
-  Box,
-  OutlinedInput,
-  InputLabel,
   IconButton,
   InputAdornment,
-  FormControl,
   Grid2,
-  Divider,
   TextField,
 } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
-  BlockSharp,
   SendSharp,
   Visibility,
   VisibilityOff,
@@ -23,34 +17,62 @@ import { useAuthStore } from "../hooks";
 import Image from "mui-image";
 import logo from "../assets/Images/logotipo.png";
 import LogoCHMX from "../assets/Images/CHMX/Imagotipo CHMX Blanco.png";
-import { blue, orange, teal } from "@mui/material/colors";
-import { ErrorMessage } from "@hookform/error-message";
+import { orange, teal } from "@mui/material/colors";
 import ReCAPTCHA from "react-google-recaptcha";
 import Swal from "sweetalert2";
 
+/**
+ * Componente Login - Página de autenticación de usuarios
+ * @returns {JSX.Element} Componente de inicio de sesión
+ */
 export const Login = () => {
+  // Obtener la clave del sitio para reCAPTCHA desde las variables de entorno
   const captchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
-  const { register, control, formState, handleSubmit } = useForm({
+
+  // Configuración del formulario con react-hook-form
+  const { control, handleSubmit } = useForm({
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
+  // Obtener la función de inicio de sesión del store de autenticación
   const { StartLogin } = useAuthStore();
-  const [showPassword, setShowPassword] = useState(false);
 
-  const [captcha, setCaptcha] = useState(null); // Estado para almacenar el valor del captcha
+  // Estado para controlar la visibilidad de la contraseña
+  const [showPassword, setShowPassword] = useState(false);
+  
+  // Estado para almacenar el token de reCAPTCHA
+  const [captcha, setCaptcha] = useState(null);
+
+  /**
+   * Alterna la visibilidad de la contraseña
+   */
   const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  /**
+   * Previene el comportamiento por defecto del evento
+   * @param {Event} event - Evento del mouse
+   */
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
 
+  /**
+   * Maneja el cambio en el reCAPTCHA
+   * @param {string} value - Token generado por reCAPTCHA
+   */
   const handleCaptchaChange = (value) => {
-    setCaptcha(value); // Captura el valor del reCAPTCHA
+    setCaptcha(value);
   };
 
+  /**
+   * Maneja el envío del formulario
+   * @param {Object} data - Datos del formulario (email y password)
+   */
   const onSubmit = (data) => {
+    // Validar que el reCAPTCHA esté completado
     if (!captcha) {
       Swal.fire({
         title: "Por favor, verifica que no eres un robot.",
@@ -60,12 +82,13 @@ export const Login = () => {
       });
       return;
     }
-    // Inicia sesión pasando el token de reCAPTCHA
-    StartLogin(data.email, data.password, captcha); // Pasa el token de reCAPTCHA a tu función de login
+    // Llamar a la función de inicio de sesión con los datos del formulario y el token de reCAPTCHA
+    StartLogin(data.email, data.password, captcha);
   };
 
   return (
     <>
+      {/* Contenedor principal con fondo oscuro */}
       <Grid2
         bgcolor={"#0D0318"}
         container
@@ -75,6 +98,7 @@ export const Login = () => {
         display={"flex"}
         alignContent={"space-evenly"}
       >
+        {/* Sección superior con logos y título */}
         <Grid2
           maxHeight={"250px"}
           padding={2}
@@ -84,6 +108,7 @@ export const Login = () => {
           container
           width={'100%'}
         >
+          {/* Título "Administrador" */}
           <Grid2 size={12}>
             <Typography
               variant="h1"
@@ -95,6 +120,8 @@ export const Login = () => {
               Administrador
             </Typography>
           </Grid2>
+          
+          {/* Logo principal */}
           <Grid2 size={{ xs: 6, lg:4 }}>
             <Image
               src={logo}
@@ -107,6 +134,8 @@ export const Login = () => {
               }}
             />
           </Grid2>
+          
+          {/* Logo CHMX */}
           <Grid2 size={{ xs: 6, lg:4 }}>
             <Image
               src={LogoCHMX}
@@ -119,8 +148,9 @@ export const Login = () => {
               }}
             />
           </Grid2>
-
         </Grid2>
+
+        {/* Formulario de inicio de sesión */}
         <Grid2
           component="form"
           autoComplete="off"
@@ -134,6 +164,7 @@ export const Login = () => {
           maxHeight={{ xs: "400px" }}
           padding={{ xs: 1, md: 4 }}
         >
+          {/* Título del formulario */}
           <Grid2 size={12}>
             <Typography
               fontSize={{ xs: 25, sm: 30, md: 35, lg: 34}}
@@ -144,7 +175,7 @@ export const Login = () => {
             </Typography>
           </Grid2>
 
-          {/* CORREO */}
+          {/* Campo de email */}
           <Controller
             name="email"
             control={control}
@@ -171,18 +202,13 @@ export const Login = () => {
             )}
           />
 
+          {/* Campo de contraseña */}
           <Controller
             name="password"
             control={control}
             defaultValue=""
             rules={{
               required: { value: true, message: "Valor requerido" },
-              // pattern: {
-              //   value:
-              //     /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-              //   message:
-              //     "Debe contener: Letra mayuscula, minúscula, un numero, carácter especial, min 8 caracteres",
-              // },
             }}
             render={({ field, fieldState }) => (
               <TextField
@@ -211,12 +237,16 @@ export const Login = () => {
               />
             )}
           />
+          
+          {/* reCAPTCHA */}
           <Grid2 display={"flex"} justifyContent={"center"} mt={1} size={12}>
             <ReCAPTCHA
               sitekey={captchaSiteKey}
               onChange={handleCaptchaChange}
             />
           </Grid2>
+          
+          {/* Botón de submit */}
           <Button
             variant="contained"
             fullWidth
@@ -227,7 +257,6 @@ export const Login = () => {
           >
             Iniciar sesión
           </Button>
-
         </Grid2>
       </Grid2>
     </>

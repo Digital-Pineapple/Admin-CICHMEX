@@ -23,6 +23,7 @@ import { HtmlTooltip } from "../../components/Tooltips/HtmlTooltip";
 import InputControl from "../../components/ui/InputControl";
 import { useStoreHouse } from "../../hooks/useStoreHouse";
 import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
+
 const styleContainer = {
   width: "100%",
   height: "600px",
@@ -30,6 +31,8 @@ const styleContainer = {
 
 function Create() {
   const [openTooltip, setOpenTooltip] = useState(true);
+
+  // Desplazar la ventana al inicio al cargar el componente
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -42,11 +45,13 @@ function Create() {
     handleSetMarker,
     handleSetCenter,
   } = useGeocode();
+
   const { loadCreateStoreHouse } = useStoreHouse();
 
   const handleTooltipClose = () => setOpenTooltip(false);
   const { navigate } = useAuthStore();
   const [loading, setLoading] = useState(false);
+
   const {
     formState: { errors },
     handleSubmit,
@@ -60,12 +65,14 @@ function Create() {
     googleMapsApiKey: import.meta.env.VITE_REACT_APP_MAP_KEY,
   });
 
+  // Limpiar los campos de dirección
   function clearAddressInputs() {
     setValue("municipality", "");
     setValue("state", "");
     setValue("neighborhood", "");
   }
 
+  // Obtener dirección a partir de coordenadas
   function handleAddressFromCoords(lat, lng) {
     getAddressFromCoords(lat, lng, (data) => {
       if (data === undefined || data === null) {
@@ -74,7 +81,6 @@ function Create() {
       }
       clearAddressInputs();
       const detalles = data?.results;
-      // console.log(detalles);
       for (let i = 0; i < detalles.length; i++) {
         var d = detalles[i];
         switch (d.types[0]) {
@@ -112,11 +118,13 @@ function Create() {
     });
   }
 
+  // Debounce para evitar múltiples llamadas al obtener dirección por coordenadas
   const debouncedInputsByCoords = useDebouncedCallback(
     (latitud, longitud) => handleAddressFromCoords(latitud, longitud),
     1000
   );
 
+  // Actualizar inputs al mover el marcador en el mapa
   function setInputsByMarker(event) {
     setLoading(true);
     const latitud = event.latLng.lat();
@@ -126,6 +134,7 @@ function Create() {
     debouncedInputsByCoords(latitud, longitud);
   }
 
+  // Actualizar inputs al ingresar un código postal
   function setInputsByZipcode(zipcode) {
     if (!zipcode && typeof zipcode !== string && zipcode.length !== 5) {
       return;
@@ -147,6 +156,7 @@ function Create() {
     );
   }
 
+  // Manejar el envío del formulario
   const onSubmit = (data) => {
     loadCreateStoreHouse(data, marker);
   };
@@ -158,6 +168,7 @@ function Create() {
 
   return (
     <Grid2 container paddingX={{ xs: 0, sm: 10 }} gap={1}>
+      {/* Encabezado */}
       <Grid2
         size={12}
         paddingRight={15}
@@ -171,6 +182,8 @@ function Create() {
           <strong>Centros de Distribución Logística</strong>
         </Typography>
       </Grid2>
+
+      {/* Breadcrumb */}
       <Grid2
         size={12}
         display={"flex"}
@@ -180,6 +193,7 @@ function Create() {
         <BreadcrumbCustom paths={paths} />
       </Grid2>
 
+      {/* Formulario */}
       <Grid2
         container
         gap={1}
@@ -191,6 +205,7 @@ function Create() {
           borderRadius: "20px",
         }}
       >
+        {/* Campos del formulario */}
         <Grid2 size={4}>
           <InputControl
             name={"name"}
@@ -222,10 +237,10 @@ function Create() {
             control={control}
             errors={errors}
             multiline
-            // rows={2}
           />
         </Grid2>
 
+        {/* Dirección y mapa */}
         <Grid2 size={12} display={"flex"} gap={1}>
           <Grid2 size={6} display={"flex"} gap={1} flexDirection={"column"}>
             <Typography variant="body1">Ingresa la dirección</Typography>
@@ -300,6 +315,7 @@ function Create() {
             />
           </Grid2>
           <Grid2 size={5.7}>
+            {/* Mapa de Google */}
             {isLoaded ? (
               center.lat &&
               center.lng && (
@@ -347,6 +363,7 @@ function Create() {
           </Grid2>
         </Grid2>
 
+        {/* Botones de acción */}
         <Grid2 size={12}>
           <Stack direction={"row"} display={"flex"} columnGap={2}>
             <Button

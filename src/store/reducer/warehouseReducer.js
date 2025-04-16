@@ -70,7 +70,7 @@ export const warehouseReducer = createSlice({
     },
     onAddAisle: (state, { payload }) => {
       const Zone = state.zones.allZones.find((i) => i._id === payload.zone);
-      state.aisles.allAisles.unshift({ ...payload, zone: Zone });
+      state.aisles.allAisles.unshift({ ...payload });
       state.aisles.loader = false;
     },
     onAddSection: (state, { payload }) => {
@@ -85,9 +85,8 @@ export const warehouseReducer = createSlice({
       state.zones.loader = false;
     },
     onUpdateAisle: (state, { payload }) => {
-      const infoZone = (id) => state.zones.allZones.find((i) => i._id === id);
       state.aisles.allAisles = state.aisles.allAisles.map((i) =>
-        i._id === payload._id ? { ...payload, zone: infoZone(payload.zone) } : i
+        i._id === payload._id ? { ...payload } : i
       );
       state.aisles.loader = false;
     },

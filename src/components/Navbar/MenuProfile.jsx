@@ -11,37 +11,49 @@ import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 
-export const  MenuProfile = ({user}) => {
+// Componente principal que representa el menú de perfil del usuario
+export const MenuProfile = ({ user }) => {
+  // Estado para controlar si el menú está abierto o cerrado
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+
+  // Maneja el evento de clic para abrir el menú
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
+  // Maneja el evento de cierre del menú
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   return (
     <React.Fragment>
+      {/* Contenedor para el avatar y el botón del menú */}
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+        {/* Tooltip que muestra "Account settings" al pasar el cursor sobre el avatar */}
         <Tooltip title="Account settings">
           <IconButton
-            onClick={handleClick}
+            onClick={handleClick} // Abre el menú al hacer clic
             size="small"
             sx={{ ml: 2 }}
-            aria-controls={open ? 'account-menu' : undefined}
+            aria-controls={open ? 'account-menu' : undefined} // Asocia el menú con el botón
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
+            {/* Muestra el avatar del usuario con su imagen de perfil */}
             <Avatar src={user.profile_image} sx={{ width: 32, height: 32 }}></Avatar>
           </IconButton>
         </Tooltip>
       </Box>
+
+      {/* Menú desplegable que se muestra al hacer clic en el avatar */}
       <Menu
-        anchorEl={anchorEl}
+        anchorEl={anchorEl} // Define el elemento al que está anclado el menú
         id="account-menu"
-        open={open}
-        onClose={handleClose}
-        onClick={handleClose}
+        open={open} // Controla si el menú está abierto o cerrado
+        onClose={handleClose} // Cierra el menú al hacer clic fuera de él
+        onClick={handleClose} // Cierra el menú al hacer clic en una opción
         PaperProps={{
           elevation: 0,
           sx: {
@@ -68,37 +80,38 @@ export const  MenuProfile = ({user}) => {
             },
           },
         }}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }} // Define el origen de la transformación del menú
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }} // Define dónde se ancla el menú
       >
+        {/* Opciones del menú */}
         <MenuItem onClick={handleClose}>
-          <Avatar /> Profile
+          <Avatar /> Profile {/* Opción para ver el perfil del usuario */}
         </MenuItem>
         <MenuItem onClick={handleClose}>
-          <Avatar /> My account
+          <Avatar /> My account {/* Opción para acceder a la cuenta del usuario */}
         </MenuItem>
-        <Divider />
+        <Divider /> {/* Separador visual entre las opciones */}
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
-            <PersonAdd fontSize="small" />
+            <PersonAdd fontSize="small" /> {/* Icono para agregar otra cuenta */}
           </ListItemIcon>
-          Add another account
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
-          Settings
+          Add another account {/* Opción para agregar otra cuenta */}
         </MenuItem>
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
-            <Logout fontSize="small" />
+            <Settings fontSize="small" /> {/* Icono para configuración */}
           </ListItemIcon>
-          Logout
+          Settings {/* Opción para acceder a la configuración */}
+        </MenuItem>
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <Logout fontSize="small" /> {/* Icono para cerrar sesión */}
+          </ListItemIcon>
+          Logout {/* Opción para cerrar sesión */}
         </MenuItem>
       </Menu>
     </React.Fragment>
   );
-}
+};
 
-export default MenuProfile
+export default MenuProfile;

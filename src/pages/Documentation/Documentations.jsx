@@ -25,120 +25,129 @@ import { enqueueSnackbar } from "notistack";
 import { useUsers } from "../../hooks/useUsers";
 
 const Documentation = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const { loadDocumentation, documentations } = useDocumentations();
-  const { loadUser, user, verifyUser} = useUsers()
+  const { id } = useParams(); // Obtiene el parámetro `id` de la URL.
+  const navigate = useNavigate(); // Hook para navegar entre rutas.
+  const { loadDocumentation, documentations } = useDocumentations(); // Hook personalizado para cargar documentación.
+  const { loadUser, user, verifyUser } = useUsers(); // Hook personalizado para cargar y verificar usuarios.
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false); // Estado para controlar la apertura del diálogo.
 
   useEffect(() => {
-    loadUser(id);
-    loadDocumentation(id);
+    loadUser(id); // Carga la información del usuario basado en el `id`.
+    loadDocumentation(id); // Carga la documentación del usuario basado en el `id`.
   }, [id]);
 
   const handleClickOpen = () => {
-    setOpen(true);
+    setOpen(true); // Abre el diálogo de confirmación.
   };
 
   const handleClose = () => {
-    setOpen(false);
+    setOpen(false); // Cierra el diálogo de confirmación.
   };
 
   const out = () => {
-    navigate("/auth/usuarios", { replace: true });
+    navigate("/auth/usuarios", { replace: true }); // Redirige a la página de usuarios.
   };
+
   const findFile = (name, targetName) => {
+    // Busca un archivo específico en la lista de documentaciones.
     return documentations.find(
       (documentations) => documentations.name === targetName
     );
   };
+
   const verification = () => {
-      verifyUser(id);
-      setOpen(false)
+    verifyUser(id); // Verifica al usuario.
+    setOpen(false); // Cierra el diálogo después de la verificación.
   };
 
-  const pathCsf = findFile(documentations.name, "csf");
- 
-
+  const pathCsf = findFile(documentations.name, "csf"); // Obtiene el archivo de comprobante de situación fiscal.
 
   return (
     <Box marginX={"10%"}>
-
-
+      {/* Título de la página */}
       <Titles name={<h2 align="center">Verificar Documentos</h2>} />
 
-        {/* Informacion de usuario */}
-      
-        <Grid container display={'block'} justifyContent={'center'} alignContent={'center'}>
-          <Card sx={{ minWidth: "50%" }}>
-            <CardContent>
-              <Avatar
-                variant="circular"
-                src={user?.profile_image}
-                alt="foto de perfil"
-                sx={{ width: "100px", height: "100px" }}
-              />
-              <Typography
-                sx={{ fontSize: 14 }}
-                color="text.secondary"
-                gutterBottom
-              >
-                Usuario : {user._id}
-              </Typography>
-              <Typography variant="h5" component="div">
-                {user?.fullname}
-              </Typography>
-              <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                {user?.email}
-              </Typography>
-              <Typography variant="body2">
-                Tipo de usuario:
-                <br />
-                {user?.type_customer === "0"
-                  ? "Cliente"
-                  : user?.type_customer === "1"
-                  ? "Lavador independiente"
-                  : user?.type_customer === "2"
-                  ? "Establecimiento"
-                  : "administrador"}
-              </Typography>
-              <Typography variant="body2">Numero de telefono:</Typography>
-
-              {user.phone?.phone_number
-                ? user?.phone.phone_number
-                : "No hay telefono registrado"}
-            </CardContent>
-          </Card>
-        </Grid>
-        {/* Documentos */}
-
-  
-
-        <Grid container display={'flex'} minHeight={'50vh'} justifyContent={'center'} alignContent={'center'} direction={"row"}>
-        {/* Componente RFC */}
-
+      {/* Información del usuario */}
+      <Grid container display={"block"} justifyContent={"center"} alignContent={"center"}>
+        <Card sx={{ minWidth: "50%" }}>
           <CardContent>
-            <ModalDocuments
-              pdfPath={pathCsf?.url}
-              name={"Comprobante de siruación fiscal"}
+            {/* Muestra la imagen de perfil del usuario */}
+            <Avatar
+              variant="circular"
+              src={user?.profile_image}
+              alt="foto de perfil"
+              sx={{ width: "100px", height: "100px" }}
             />
-            {pathCsf?.message === undefined ||
-            (pathCsf?.message.length > 0 && pathCsf?.verify === false) ? (
-              <Paper elevation={5} sx={{ padding: "20px" }}>
-                <Typography variant="h5">Motivo de rechazo:</Typography>
-                {pathCsf?.message}
-              </Paper>
-            ) : null}
-            <CardActions>
-              <VerifyButton pathFile={pathCsf} />
-            </CardActions>
+            {/* Información básica del usuario */}
+            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+              Usuario : {user._id}
+            </Typography>
+            <Typography variant="h5" component="div">
+              {user?.fullname}
+            </Typography>
+            <Typography sx={{ mb: 1.5 }} color="text.secondary">
+              {user?.email}
+            </Typography>
+            <Typography variant="body2">
+              Tipo de usuario:
+              <br />
+              {user?.type_customer === "0"
+                ? "Cliente"
+                : user?.type_customer === "1"
+                ? "Lavador independiente"
+                : user?.type_customer === "2"
+                ? "Establecimiento"
+                : "administrador"}
+            </Typography>
+            <Typography variant="body2">Numero de telefono:</Typography>
+            {/* Muestra el número de teléfono del usuario o un mensaje si no está registrado */}
+            {user.phone?.phone_number
+              ? user?.phone.phone_number
+              : "No hay telefono registrado"}
           </CardContent>
+        </Card>
+      </Grid>
 
+      {/* Documentos */}
+      <Grid
+        container
+        display={"flex"}
+        minHeight={"50vh"}
+        justifyContent={"center"}
+        alignContent={"center"}
+        direction={"row"}
+      >
+        {/* Componente RFC */}
+        <CardContent>
+          {/* Modal para visualizar el documento */}
+          <ModalDocuments
+            pdfPath={pathCsf?.url}
+            name={"Comprobante de siruación fiscal"}
+          />
+          {/* Muestra el motivo de rechazo si existe */}
+          {pathCsf?.message === undefined ||
+          (pathCsf?.message.length > 0 && pathCsf?.verify === false) ? (
+            <Paper elevation={5} sx={{ padding: "20px" }}>
+              <Typography variant="h5">Motivo de rechazo:</Typography>
+              {pathCsf?.message}
+            </Paper>
+          ) : null}
+          <CardActions>
+            {/* Botón para verificar el documento */}
+            <VerifyButton pathFile={pathCsf} />
+          </CardActions>
+        </CardContent>
+      </Grid>
 
-        </Grid>
-
-      <Grid display={'flex'}  justifyContent={"center"} marginBottom={'3rem'}  minHeight={'5vh'} width="100%">
+      {/* Botones para verificar la cuenta o salir */}
+      <Grid
+        display={"flex"}
+        justifyContent={"center"}
+        marginBottom={"3rem"}
+        minHeight={"5vh"}
+        width="100%"
+      >
         {pathCsf?.verify === true ? (
           <Button onClick={handleClickOpen} variant="contained">
             Verificar cuenta
@@ -153,6 +162,7 @@ const Documentation = () => {
         </Button>
       </Grid>
 
+      {/* Diálogo de confirmación para verificar la cuenta */}
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>{"¿Estas seguro(a) de verificar la cuenta?"}</DialogTitle>
         <DialogContent>

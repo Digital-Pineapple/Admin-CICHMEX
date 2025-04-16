@@ -46,6 +46,8 @@ import { useDiscounts } from "../../hooks/useDiscounts";
 import { localDate } from "../../Utils/ConvertIsoDate";
 import { esES } from '@mui/x-data-grid/locales'
 import ModalDicountDetail from "../../components/Modals/ModalDicountDetail";
+
+// Componente de paginación personalizada para la tabla
 function Pagination({ page, onPageChange, className, rowsPerPage, onRowsPerPageChange }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -84,26 +86,34 @@ function Pagination({ page, onPageChange, className, rowsPerPage, onRowsPerPageC
   );
 }
 
+// Icono para indicar orden descendente en las columnas
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
 
+// Icono para indicar orden ascendente en las columnas
 export function SortedAscendingIcon() {
   return <ExpandLessIcon className="icon" />;
 }
 
+// Icono para indicar que una columna no está ordenada
 export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación personalizada que utiliza el componente de paginación definido
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
+// Barra de herramientas personalizada para la tabla
 function CustomToolbar() {
   const apiRef = useGridApiContext();
 
+  // Función para regresar a la primera página
   const handleGoToPage1 = () => apiRef.current.setPage(1);
+
+  // Función para exportar los datos de la tabla a un archivo Excel
   const exportToExcel = () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Pedidos");
@@ -129,7 +139,7 @@ function CustomToolbar() {
       ]);
     });
 
-    // Crear un Blob con el archivo Excel y guardarlo
+    // Crear un archivo Excel y descargarlo
     workbook.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -155,15 +165,18 @@ function CustomToolbar() {
   );
 }
 
+// Componente principal que muestra la lista de descuentos
 const Discounts = () => {
   const { loadAllDiscounts, discounts, loadingDiscount, changeActiveDiscount } = useDiscounts();
   const { navigate, user } = useAuthStore();
   const [openModal, setOpenModal] = useState({value:false, data:{}})
 
+  // Cargar todos los descuentos al montar el componente
   useEffect(() => {
     loadAllDiscounts();
   }, [user]); 
 
+  // Formatear los datos de los descuentos para la tabla
   const rowsWithIds = Array.isArray(discounts) 
     ? discounts.map((item, index) => ({
         id: index.toString(),
@@ -173,10 +186,12 @@ const Discounts = () => {
       }))
     : [];
 
-    const handleOpenModal = (info) => setOpenModal({value:true, data: info });
-    const handleCloseModal = () => setOpenModal({value: false, data: {}});
+  // Abrir el modal con los detalles del descuento
+  const handleOpenModal = (info) => setOpenModal({value:true, data: info });
+  // Cerrar el modal
+  const handleCloseModal = () => setOpenModal({value: false, data: {}});
 
-
+  // Renderizar los íconos de acciones (editar y ver detalle)
   const renderIcon = (values) => {
       return (
         <>
@@ -203,45 +218,49 @@ const Discounts = () => {
         </>
       );
   };
+
+  // Cambiar el estado activo/inactivo de un descuento
   const handleChangeActive = (data)=>{
     const active = data.row.is_active
     const newValue = !active
     changeActiveDiscount(data.row._id,newValue)
   }
 
+  // Renderizar el switch para activar/desactivar un descuento
   const renderChip = (values) => {
     const { is_active } = values.row;
       return <Switch checked={is_active} color="secondary" onClick={()=>handleChangeActive(values)} />
-    
   };
 
-const renderType = (data) => {
-  
-  const { type_discount } = data.row;
+  // Renderizar el tipo de descuento con un chip
+  const renderType = (data) => {
+    const { type_discount } = data.row;
 
-  const info = [
-    { value: 'is_percent', color: 'secondary', label: 'Porcentaje(%)' },
-    { value: 'is_amount', color: 'info', label: 'Monto($)' },
-    { value: 'free_shipping', color: 'success', label: 'Envío gratis' },
-    { value: 'first_buy', color: 'warning', label: 'Primera compra' },
-    { value: 'for_creators', color: 'error', label: 'Creadores' },
-  ];
+    const info = [
+      { value: 'is_percent', color: 'secondary', label: 'Porcentaje(%)' },
+      { value: 'is_amount', color: 'info', label: 'Monto($)' },
+      { value: 'free_shipping', color: 'success', label: 'Envío gratis' },
+      { value: 'first_buy', color: 'warning', label: 'Primera compra' },
+      { value: 'for_creators', color: 'error', label: 'Creadores' },
+    ];
 
-  const validItem = info.find((item) => item.value === type_discount);
+    const validItem = info.find((item) => item.value === type_discount);
 
-  if (validItem) {
-    return <Chip color={validItem.color} label={validItem.label} />;
-  }
+    if (validItem) {
+      return <Chip color={validItem.color} label={validItem.label} />;
+    }
 
-  return null; // Devuelve null si no hay elementos válidos
-};
+    return null; // Devuelve null si no hay elementos válidos
+  };
 
+  // Mostrar pantalla de carga si los descuentos están cargando
   if (loadingDiscount) {
     return <LoadingScreenBlue />;
   }
 
   return (
     <Grid2 container>
+      {/* Título de la página */}
       <Grid2
         marginTop={{ xs: "-30px" }}
         size={12}
@@ -256,6 +275,7 @@ const renderType = (data) => {
           Todos los descuentos
         </Typography>
       </Grid2>
+      {/* Botón flotante para agregar un nuevo descuento */}
       <Grid2
         marginY={1}
         display={"flex"}
@@ -271,6 +291,7 @@ const renderType = (data) => {
           <Add />
         </Fab>
       </Grid2>
+      {/* Tabla de descuentos */}
       <Grid2 size={12}>
         <DataGrid
           sx={{ fontSize: "14px", fontFamily: "sans-serif" }}
@@ -351,10 +372,10 @@ const renderType = (data) => {
           }}
         />
       </Grid2>
+      {/* Modal para mostrar detalles del descuento */}
       <ModalDicountDetail open={openModal.value} handleClose={handleCloseModal} data={openModal.data}/>
     </Grid2>
   );
 };
 
 export default Discounts;
-

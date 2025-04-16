@@ -42,6 +42,7 @@ const MenuProps = {
   },
 };
 
+// Función para aplicar estilos a los roles seleccionados
 function getStyles(name, rolesAllowed, theme) {
   return {
     fontWeight:
@@ -51,6 +52,7 @@ function getStyles(name, rolesAllowed, theme) {
   };
 }
 
+// Esquema de validación con Yup para los campos del formulario
 const validationSchema = Yup.object({
   name: Yup.string().required("El nombre es obligatorio"),
   path: Yup.string().required("La ruta es obligatoria"),
@@ -61,16 +63,17 @@ const validationSchema = Yup.object({
 });
 
 const AddDynamicRoute = () => {
-  const theme = useTheme();
-  const { id } = useParams();
+  const theme = useTheme(); // Hook para acceder al tema de Material-UI
+  const { id } = useParams(); // Obtiene el parámetro `id` de la URL
   const {
-    loadOneDynamicRoute,
-    dynamicRoute,
-    loading,
-    navigate,
-    loadEditDynamicRoute,
+    loadOneDynamicRoute, // Función para cargar una ruta dinámica específica
+    dynamicRoute, // Datos de la ruta dinámica cargada
+    loading, // Estado de carga
+    navigate, // Función para navegar entre rutas
+    loadEditDynamicRoute, // Función para guardar los cambios en la ruta dinámica
   } = useDynamicRoutes();
 
+  // Configuración del formulario con Formik
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -81,12 +84,13 @@ const AddDynamicRoute = () => {
       redirectTo: "",
       system: "",
     },
-    validationSchema,
+    validationSchema, // Esquema de validación
     onSubmit: (values) => {
-      loadEditDynamicRoute(id, values);
+      loadEditDynamicRoute(id, values); // Llama a la función para guardar los cambios
     },
   });
 
+  // Efecto para cargar los datos de la ruta dinámica al montar el componente
   useEffect(() => {
     const fetchDynamicRoute = async () => {
       await loadOneDynamicRoute(id);
@@ -94,6 +98,7 @@ const AddDynamicRoute = () => {
     fetchDynamicRoute();
   }, [id]);
 
+  // Efecto para actualizar los valores del formulario cuando se cargan los datos de la ruta
   useEffect(() => {
     if (dynamicRoute) {
       formik.setValues({
@@ -119,7 +124,7 @@ const AddDynamicRoute = () => {
   ];
 
   if (loading) {
-    return <LoadingScreenBlue />;
+    return <LoadingScreenBlue />; // Muestra una pantalla de carga si está cargando
   }
 
   const paths = [
@@ -130,12 +135,13 @@ const AddDynamicRoute = () => {
   return (
     <Grid2
       component="form"
-      onSubmit={formik.handleSubmit}
+      onSubmit={formik.handleSubmit} // Maneja el envío del formulario
       display="flex"
       container
       gap={2}
       paddingX={{ xs: 0, md: 10 }}
     >
+      {/* Título de la página */}
       <Grid2
         size={12}
         paddingRight={15}
@@ -149,6 +155,8 @@ const AddDynamicRoute = () => {
           <strong>Editar url</strong>
         </Typography>
       </Grid2>
+
+      {/* Breadcrumb para navegación */}
       <Grid2
         size={12}
         display={"flex"}
@@ -158,6 +166,7 @@ const AddDynamicRoute = () => {
         <BreadcrumbCustom paths={paths} />
       </Grid2>
 
+      {/* Contenedor principal del formulario */}
       <Grid2
         container
         sx={{
@@ -168,6 +177,7 @@ const AddDynamicRoute = () => {
           gap: 2,
         }}
       >
+        {/* Campos de texto para nombre, ruta y componente */}
         <Grid2 size={{ xs: 12, lg: 4 }}>
           <TextField
             size="small"
@@ -210,6 +220,8 @@ const AddDynamicRoute = () => {
             helperText={formik.touched.component && formik.errors.component}
           />
         </Grid2>
+
+        {/* Selección de si la ruta es privada */}
         <Grid2
           size={{ xs: 12, lg: 4 }}
           display={"flex"}
@@ -231,6 +243,8 @@ const AddDynamicRoute = () => {
             </RadioGroup>
           </FormGroup>
         </Grid2>
+
+        {/* Selección del sistema */}
         <Grid2
           size={{ xs: 12, md: 3.6 }}
           display={"flex"}
@@ -264,6 +278,8 @@ const AddDynamicRoute = () => {
             </RadioGroup>
           </FormGroup>
         </Grid2>
+
+        {/* Selección de roles permitidos */}
         <Grid2 size={12}>
           <FormControl
             sx={{ m: 1 }}
@@ -317,6 +333,7 @@ const AddDynamicRoute = () => {
         </Grid2>
       </Grid2>
 
+      {/* Botones para salir o guardar cambios */}
       <Grid2 size={12} display={"flex"} gap={2}>
         <Button
           onClick={() => navigate("/url", { replace: true })}

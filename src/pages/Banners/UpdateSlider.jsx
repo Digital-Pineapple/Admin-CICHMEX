@@ -27,37 +27,45 @@ import { useParams } from 'react-router-dom';
 import BreadcrumbCustom from '../../components/ui/BreadCrumbCustom';
 
 const UpdateSlider = () => {
-    const { id } = useParams()
-    const { loadAllDiscounts, discounts } = useDiscounts();
-    const [selectedDiscount, setSelectedDiscount] = useState({})
-    const { updateOneBanner, loading, navigate, loadOneBanner, banner } = useUI()
+    // Obtiene el parámetro "id" de la URL
+    const { id } = useParams();
 
+    // Hook para cargar descuentos y obtener la lista de descuentos
+    const { loadAllDiscounts, discounts } = useDiscounts();
+
+    // Estado para almacenar el descuento seleccionado
+    const [selectedDiscount, setSelectedDiscount] = useState({});
+
+    // Hook para manejar la lógica de UI y datos relacionados con banners
+    const { updateOneBanner, loading, navigate, loadOneBanner, banner } = useUI();
+
+    // Estados para manejar el arrastre de archivos y errores de validación de archivos
     const [isDragging, setIsDragging] = useState(false);
     const [fileErrors, setFileErrors] = useState({});
-    const allowedTypes = ["image/png", "image/jpeg", "image/webp"];
+    const allowedTypes = ["image/png", "image/jpeg", "image/webp"]; // Tipos de archivos permitidos
 
+    // Efecto para cargar descuentos y un banner específico al montar el componente
     useEffect(() => {
         if (id) {
-            loadAllDiscounts();
-            loadOneBanner(id)
+            loadAllDiscounts(); // Carga todos los descuentos
+            loadOneBanner(id); // Carga un banner específico por su ID
         }
-    }, [id]);  
+    }, [id]);
 
+    // Valida el tamaño y las dimensiones de una imagen
     const validateImageSize = useCallback((file, { width, height, maxSizeMB = 10 }) => {
         return new Promise((resolve, reject) => {
-            // Validar tamaño del archivo primero (10 MB)
-            const maxSizeBytes = maxSizeMB * 1024 * 1024;
+            const maxSizeBytes = maxSizeMB * 1024 * 1024; // Tamaño máximo en bytes
             if (file.size > maxSizeBytes) {
                 reject(`El tamaño del archivo no debe exceder ${maxSizeMB} MB.`);
                 return;
             }
 
-            // Validar dimensiones de la imagen
             const img = new Image();
             img.src = URL.createObjectURL(file);
 
             img.onload = () => {
-                URL.revokeObjectURL(img.src); // Importante para liberar memoria
+                URL.revokeObjectURL(img.src); // Libera memoria
                 if (img.width >= width && img.height >= height) {
                     resolve(true);
                 } else {
@@ -66,18 +74,18 @@ const UpdateSlider = () => {
             };
 
             img.onerror = () => {
-                URL.revokeObjectURL(img.src); // Limpiar incluso en errores
+                URL.revokeObjectURL(img.src); // Libera memoria en caso de error
                 reject("Error al cargar la imagen.");
             };
         });
     }, []);
 
+    // Maneja el cambio de imagen y valida el archivo
     const onChangeImage = async (event, name) => {
         const file = event.target.files[0];
         if (!file) return;
 
-        // Limpiamos errores previos para este campo
-        setFileErrors(prev => ({ ...prev, [name]: null }));
+        setFileErrors(prev => ({ ...prev, [name]: null })); // Limpia errores previos
 
         if (!allowedTypes.includes(file.type)) {
             setFileErrors(prev => ({
@@ -100,8 +108,7 @@ const UpdateSlider = () => {
 
             await validateImageSize(file, VALUES_VALIDATE[name]);
 
-            // Si pasa la validación, limpiamos errores
-            setFileErrors(prev => ({ ...prev, [name]: null }));
+            setFileErrors(prev => ({ ...prev, [name]: null })); // Limpia errores si pasa la validación
             setValue(name, file);
 
         } catch (error) {
@@ -113,11 +120,13 @@ const UpdateSlider = () => {
         }
     };
 
+    // Maneja eventos de arrastre de archivos
     const handleDragEvents = (event, isOver) => {
         event.preventDefault();
         setIsDragging(isOver);
     };
 
+    // Maneja el evento de soltar archivos en el área de arrastre
     const handleDrop = (event, fieldName) => {
         event.preventDefault();
         setIsDragging(false);
@@ -126,10 +135,12 @@ const UpdateSlider = () => {
         }
     };
 
+    // Elimina la imagen seleccionada
     const removeImage = (inputName) => {
         setValue(inputName, null);
     };
 
+    // Estilos para el área de arrastre de archivos
     const dropZoneStyles = {
         position: "relative",
         backgroundColor: isDragging ? "secondary.main" : orange[200],
@@ -147,7 +158,7 @@ const UpdateSlider = () => {
         },
     };
 
-
+    // Tipos de descuentos disponibles
     const DISCOUNT_TYPES = [
         { value: "free_shipping", label: "Envío gratis" },
         { value: "first_buy", label: "Primera compra" },
@@ -156,6 +167,7 @@ const UpdateSlider = () => {
         { value: "is_percent", label: "Porcentaje" },
     ];
 
+    // Obtiene los valores predeterminados para el formulario
     const getDefaultValues = (data) => {
         if (!data) {
             return {
@@ -184,53 +196,57 @@ const UpdateSlider = () => {
         };
     };
 
-
+    // Configuración del formulario con react-hook-form
     const {
         formState: { errors },
         control,
         setValue,
         reset,
         handleSubmit,
-    } = useForm ( {defaultValues: getDefaultValues()})
+    } = useForm({ defaultValues: getDefaultValues() });
 
+    // Efecto para actualizar el formulario cuando se carga un banner
     useEffect(() => {
         if (banner) {
-          reset(getDefaultValues(banner));
-
+            reset(getDefaultValues(banner)); // Resetea el formulario con los valores del banner
         }
         if (banner.discount) {
-            setSelectedDiscount(banner.discount)
+            setSelectedDiscount(banner.discount); // Establece el descuento seleccionado
         }
-      }, [banner, reset]);
+    }, [banner, reset]);
 
-
+    // Maneja el envío del formulario
     const onSubmit = async (data) => {
-        updateOneBanner(id, data)
+        updateOneBanner(id, data); // Actualiza el banner con los datos del formulario
     };
 
+    // Maneja el cambio de descuento seleccionado
     const onChangeDiscount = (data) => {
         const discount = data.target.value;
         if (discount) {
-            const select = discounts.find((i) => i._id === discount)
-            setSelectedDiscount(select)
-            setValue('discount', discount)
-            setValue('for_discount', true)
+            const select = discounts.find((i) => i._id === discount);
+            setSelectedDiscount(select); // Establece el descuento seleccionado
+            setValue('discount', discount);
+            setValue('for_discount', true);
         }
         if (discount === '') {
-            setSelectedDiscount({})
-            setValue('discount', '')
-            setValue('for_discount', false)
+            setSelectedDiscount({});
+            setValue('discount', '');
+            setValue('for_discount', false);
         }
+    };
 
-    }
-
+    // Renderiza la información del descuento seleccionado
     const renderSelected = (data) => {
-
+        // Si no hay datos o el objeto está vacío, no renderiza nada
         if (!data || Object.keys(data).length === 0) {
             return '';
         }
 
+        // Desestructura los datos del descuento
         const { name, code, description, start_date, expiration_date, type_discount, min_cart_amount, max_cart_amount, maxUses, unlimited, is_active } = data;
+
+        // Renderiza un contenedor con la información del descuento
         return (
             <Grid2 size={12} sx={{ backgroundColor: grey[200], padding: 2, borderRadius: '15px' }} >
                 <Typography textAlign="center" variant="h6" component="h2">
@@ -253,17 +269,20 @@ const UpdateSlider = () => {
         );
     };
 
+    // Muestra una pantalla de carga mientras se están obteniendo los datos
     if (loading) {
         return <LoadingScreenBlue />
     }
 
+    // Define las rutas para el componente de breadcrumb
     const paths = [
-        { path: `/contenidos/banners`, name: "Banners" },
-        { path: `/contenidos/banners/editar/:id`, name: "Editar slide" },
+        { path: `/contenidos/banners`, name: "Banners" }, // Ruta para la lista de banners
+        { path: `/contenidos/banners/editar/:id`, name: "Editar slide" }, // Ruta para editar un banner específico
     ];
 
     return (
         <Grid2 container paddingX={{ xs: 0, lg: 10 }} gap={2}>
+            {/* Encabezado de la página */}
             <Grid2
                 size={12}
                 paddingRight={15}
@@ -277,14 +296,18 @@ const UpdateSlider = () => {
                     <strong>Editar slide</strong>
                 </Typography>
             </Grid2>
+
+            {/* Breadcrumb para navegación */}
             <Grid2 size={12} display={"flex"} justifyContent={"space-between"}>
                 <BreadcrumbCustom paths={paths} />
-
             </Grid2>
+
+            {/* Contenedor principal del formulario */}
             <Card variant="elevation" sx={{ width: '100%' }}>
                 <CardHeader title="Ingrese datos para crear slide" />
                 <CardContent component="form" onSubmit={handleSubmit(onSubmit)}>
                     <Grid2 container gap={2}>
+                        {/* Selector de estado del slide */}
                         <Grid2 size={3}>
                             <Controller
                                 name="is_active"
@@ -303,6 +326,8 @@ const UpdateSlider = () => {
                                 )}
                             />
                         </Grid2>
+
+                        {/* Selector del número de slide */}
                         <Grid2 size={3}>
                             <Controller
                                 name="no_slide"
@@ -325,6 +350,8 @@ const UpdateSlider = () => {
                                 )}
                             />
                         </Grid2>
+
+                        {/* Selector de descuento asociado */}
                         <Grid2 size={3}>
                             <Controller
                                 name="discount"
@@ -337,7 +364,7 @@ const UpdateSlider = () => {
                                             labelId="select-discount-label"
                                             label="Exclusivo de una promoción"
                                             onChange={(e) => {
-                                                onChangeDiscount(e); // Primero ejecutas tu lógica
+                                                onChangeDiscount(e); // Lógica para manejar el cambio de descuento
                                             }}
                                         >
                                             <MenuItem value={''}>No</MenuItem>
@@ -357,9 +384,13 @@ const UpdateSlider = () => {
                                 )}
                             />
                         </Grid2>
+
+                        {/* Información del descuento seleccionado */}
                         <Grid2 size={12}>
                             {renderSelected(selectedDiscount)} {/* Renderiza en tiempo real */}
                         </Grid2>
+
+                        {/* Campo para el título del slide */}
                         <Grid2 size={12}>
                             <Controller
                                 name="title"
@@ -375,6 +406,8 @@ const UpdateSlider = () => {
                                 )}
                             />
                         </Grid2>
+
+                        {/* Campo para la descripción del slide */}
                         <Grid2 size={12}>
                             <Controller
                                 name="description"
@@ -382,7 +415,7 @@ const UpdateSlider = () => {
                                 render={({ field }) => (
                                     <TextField
                                         {...field}
-                                        label="Desctipción(Opcional)"
+                                        label="Descripción(Opcional)"
                                         fullWidth
                                         multiline
                                         rows={3}
@@ -392,6 +425,8 @@ const UpdateSlider = () => {
                                 )}
                             />
                         </Grid2>
+
+                        {/* Selector del tipo de evento */}
                         <Grid2 size={3}>
                             <Controller
                                 name="type_event"
@@ -412,7 +447,10 @@ const UpdateSlider = () => {
                             />
                         </Grid2>
                     </Grid2>
+
+                    {/* Contenedor para las imágenes del slide */}
                     <Grid2 container width={'100%'}>
+                        {/* Imagen para dispositivos de escritorio */}
                         <Grid2 size={6}>
                             <Controller
                                 name='image_slide'
@@ -422,6 +460,7 @@ const UpdateSlider = () => {
                                     <FormControl fullWidth error={!!errors.image_slide}>
                                         <Typography textAlign={'center'} variant="body1" color={!!errors.image_slide ? 'error' : 'primary'}>Imagen slide</Typography>
                                         <Grid2 container sx={{ width: "100%", margin: "auto", display: 'flex', justifyContent: 'center' }}>
+                                            {/* Área de arrastre y selección de archivo */}
                                             <Grid2
                                                 container
                                                 direction="column"
@@ -452,6 +491,7 @@ const UpdateSlider = () => {
                                                 </Box>
                                             </Grid2>
 
+                                            {/* Vista previa de la imagen seleccionada */}
                                             {field.value && (
                                                 <Grid2 container justifyContent="center" sx={{ mt: 2 }}>
                                                     <Box
@@ -473,8 +513,6 @@ const UpdateSlider = () => {
                                                                     : URL.createObjectURL(field.value)
                                                                   : undefined
                                                               }
-                                                              
-                                                              
                                                             alt="Preview"
                                                             style={{
                                                                 width: "100%",
@@ -482,6 +520,7 @@ const UpdateSlider = () => {
                                                                 objectFit: "contain",
                                                             }}
                                                         />
+                                                        {/* Botón para eliminar la imagen */}
                                                         <IconButton
                                                             size="small"
                                                             sx={{
@@ -499,6 +538,7 @@ const UpdateSlider = () => {
                                                     </Box>
                                                 </Grid2>
                                             )}
+                                            {/* Mensaje de error si la imagen no es válida */}
                                             {fileErrors[field.name] && (
                                                 <FormHelperText error sx={{ textAlign: "center", mt: 1 }}>
                                                     {fileErrors[field.name]}
@@ -513,6 +553,7 @@ const UpdateSlider = () => {
                             />
                         </Grid2>
 
+                        {/* Imagen para dispositivos móviles */}
                         <Grid2 size={6}>
                             <Controller
                                 control={control}
@@ -522,6 +563,7 @@ const UpdateSlider = () => {
                                     <FormControl fullWidth error={!!errors.image_slide_movil}>
                                         <Typography textAlign={'center'} variant="body1" color={!!errors.image_slide_movil ? 'error' : 'primary'}>Imagen slide móviles</Typography>
                                         <Grid2 container sx={{ width: "100%", margin: "auto", display: 'flex', justifyContent: 'center' }}>
+                                            {/* Área de arrastre y selección de archivo */}
                                             <Grid2
                                                 container
                                                 direction="column"
@@ -552,6 +594,7 @@ const UpdateSlider = () => {
                                                 </Box>
                                             </Grid2>
 
+                                            {/* Vista previa de la imagen seleccionada */}
                                             {field.value && (
                                                 <Grid2 container justifyContent="center" sx={{ mt: 2, maxHeight: '400px' }} >
                                                     <Box
@@ -573,7 +616,6 @@ const UpdateSlider = () => {
                                                                     : URL.createObjectURL(field.value)
                                                                   : undefined
                                                               }
-                                                              
                                                             alt="Preview"
                                                             style={{
                                                                 width: "100%",
@@ -581,6 +623,7 @@ const UpdateSlider = () => {
                                                                 objectFit: "contain",
                                                             }}
                                                         />
+                                                        {/* Botón para eliminar la imagen */}
                                                         <IconButton
                                                             size="small"
                                                             sx={{
@@ -598,6 +641,7 @@ const UpdateSlider = () => {
                                                     </Box>
                                                 </Grid2>
                                             )}
+                                            {/* Mensaje de error si la imagen no es válida */}
                                             {fileErrors[field.name] && (
                                                 <FormHelperText error sx={{ textAlign: "center", mt: 1 }}>
                                                     {fileErrors[field.name]}
@@ -610,9 +654,10 @@ const UpdateSlider = () => {
                                     </FormControl>
                                 )}
                             />
-
                         </Grid2>
                     </Grid2>
+
+                    {/* Botones de acción */}
                     <CardActions>
                         <Button fullWidth variant="contained" color="error" size="small" onClick={() => navigate('/contenidos/banners')}>
                             Cancelar

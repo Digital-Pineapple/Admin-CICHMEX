@@ -23,6 +23,7 @@ import useDeliveryPoints from "../../hooks/useDeliveryPoints";
 import { useParams } from "react-router-dom";
 import { parseScheduleAdapter } from "../../adapters/branch";
 import ImageDeleteCard from "../../components/cards/ImageDeleteCard";
+
 const styleContainer = {
   width: "100%",
   height: "600px",
@@ -62,6 +63,7 @@ function BranchOfficeEdit() {
     loadMarker
   } = useGeocode();
 
+  // Cargar los datos de la sucursal al iniciar el componente
   useEffect(() => {
     window.scrollTo(0, 0);
     onGetDeliveryPoint(id, (branch) => {
@@ -88,6 +90,7 @@ function BranchOfficeEdit() {
 
   }, []);
 
+  // Función para editar la sucursal
   const editBranchOffice = (data) => {    
     if (!marker.lat && !marker.lng) {
       return;
@@ -96,12 +99,14 @@ function BranchOfficeEdit() {
     }
   };
 
+  // Limpiar los campos de dirección
   function clearAddressInputs() {
     setValue("municipality", "");
     setValue("state", "");
     setValue("neighborhood", "");
   }
 
+  // Obtener dirección a partir de coordenadas
   function handleAddressFromCoords(lat, lng) {
     getAddressFromCoords(lat, lng, (data) =>  {
       if (data === undefined || data === null) {
@@ -110,7 +115,6 @@ function BranchOfficeEdit() {
       }
       clearAddressInputs();
       const detalles = data?.results;
-      // console.log(detalles);
       for (let i = 0; i < detalles.length; i++) {
         var d = detalles[i];
         switch (d.types[0]) {
@@ -148,8 +152,10 @@ function BranchOfficeEdit() {
     }, () => setLoading(false))       
   }
 
+  // Función para manejar la dirección con debounce
   const debouncedInputsByCoords = useDebouncedCallback((latitud, longitud) => handleAddressFromCoords(latitud, longitud), 1000);
 
+  // Configurar inputs a partir del marcador en el mapa
   function setInputsByMarker(event) {
     setLoading(true);
     const latitud = event.latLng.lat();
@@ -159,6 +165,7 @@ function BranchOfficeEdit() {
     debouncedInputsByCoords(latitud, longitud);
   }
 
+  // Configurar inputs a partir del código postal
   function setInputsByZipcode(zipcode) {
     if (!(zipcode.length === 5) && isNaN(zipcode)) {
       return;
@@ -179,6 +186,7 @@ function BranchOfficeEdit() {
     close: watch("closing_time"),
   };
 
+  // Validar que se hayan asignado horarios
   const validateSchedules = () => {
     if (!isAScheduleAssigned()) {
       setError("schedule", { type: "manual", message: "Asigne al menos un horario de atención" });
@@ -190,6 +198,7 @@ function BranchOfficeEdit() {
   return (
     <Container maxWidth="lg">
       <form onSubmit={handleSubmit(editBranchOffice)}>
+        {/* Título de la página */}
         <Typography
           textAlign="center"
           marginY="1rem"
@@ -200,6 +209,7 @@ function BranchOfficeEdit() {
           Editar Punto de entrega
         </Typography>
         <Grid container spacing={2} sx={{ backgroundColor: "" }}>
+          {/* Campos de entrada para nombre, teléfono y descripción */}
           <Grid item xs={4}>
             <InputControl
               name={"name"}
@@ -229,6 +239,7 @@ function BranchOfficeEdit() {
               multiline              
             />
           </Grid>
+          {/* Sección para imágenes */}
           <Grid item xs={6}>            
             <br></br>   
             {
@@ -251,6 +262,7 @@ function BranchOfficeEdit() {
               />
             </Box>
           </Grid>
+          {/* Sección para horarios */}
           <Grid item xs={6}>
             <Box flexGrow={1}>
               <Typography variant="body2" mb={1}>
@@ -292,6 +304,7 @@ function BranchOfficeEdit() {
               />
             </Box>
           </Grid>
+          {/* Sección para dirección */}
           <Grid item xs={6} container rowGap={2}>
             <Typography variant="body1">Ingresa la dirección</Typography>
             <Typography variant="body2" color={"text.secondary"}>
@@ -355,6 +368,7 @@ function BranchOfficeEdit() {
               }}
             />
           </Grid>
+          {/* Mapa de Google para seleccionar ubicación */}
           <Grid item xs={6}>
             {isLoaded ? (
               center.lat &&
@@ -378,6 +392,7 @@ function BranchOfficeEdit() {
               <CircularProgress />
             )}
           </Grid>
+          {/* Botones para guardar o cancelar */}
           <Grid item xs={12}>
             <Stack direction={"row"} display={"flex"} columnGap={2}>
               <Button variant="contained" fullWidth type="submit" onClick={validateSchedules} size="large">

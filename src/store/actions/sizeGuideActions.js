@@ -1,9 +1,9 @@
 import { enqueueSnackbar } from "notistack";
 import { instanceApi } from "../../apis/configAxios";
 import { deleteSizeGuide, editSizeGuide, loadOneSizeGuide, loadSizeGuides, onAddSizeGuide } from "../reducer/sizeGuideReducer";
-import { Zoom } from "@mui/material";
 import { startLoading, stopLoading } from "../reducer/uiReducer";
 
+// Carga todas las guías de tamaños desde el servidor
 export const startLoadSizeGuides = () => {
   return async (dispatch) => {
     dispatch(startLoading())
@@ -23,7 +23,6 @@ export const startLoadSizeGuides = () => {
         },
         autoHideDuration:500,
         variant:'error',
-        TransitionComponent:Zoom,
       })
     } finally{
         dispatch(stopLoading())
@@ -31,6 +30,7 @@ export const startLoadSizeGuides = () => {
   }
 }
 
+// Carga una guía de tamaño específica por su ID
 export const startLoadOneSizeGuide = (id) => {
   return async (dispatch) => {
     dispatch(startLoading())
@@ -51,7 +51,6 @@ export const startLoadOneSizeGuide = (id) => {
         },
         autoHideDuration:500,
         variant:'error',
-        TransitionComponent:Zoom,
       })
     } finally{
         dispatch(stopLoading())
@@ -59,8 +58,8 @@ export const startLoadOneSizeGuide = (id) => {
   }
 }
 
+// Agrega una nueva guía de tamaño al servidor
 export const startAddOneSizeGuide = (values) => {
-  
   return async (dispatch) => {
     dispatch(startLoading())
     try {
@@ -78,7 +77,6 @@ export const startAddOneSizeGuide = (values) => {
         },
         autoHideDuration:3000,
         variant:'success',
-        TransitionComponent:Zoom,
       })
     } catch (error) {
       enqueueSnackbar(`${error.response.data.message}`,{
@@ -88,7 +86,6 @@ export const startAddOneSizeGuide = (values) => {
         },
         autoHideDuration:3000,
         variant:'error',
-        TransitionComponent:Zoom,
       })
     } finally{
         dispatch(stopLoading())
@@ -96,8 +93,8 @@ export const startAddOneSizeGuide = (values) => {
   }
 }
 
+// Selecciona una guía de tamaño en el estado de la aplicación
 export const startSelectSizeGuide = (values) => {
-  
   return async (dispatch) => {
     dispatch(startLoading())
     try {
@@ -109,7 +106,6 @@ export const startSelectSizeGuide = (values) => {
         },
         autoHideDuration:3000,
         variant:'success',
-        TransitionComponent:Zoom,
       })
     } catch (error) {
       enqueueSnackbar(`No se selecciono correctamente`,{
@@ -119,7 +115,6 @@ export const startSelectSizeGuide = (values) => {
         },
         autoHideDuration:3000,
         variant:'error',
-        TransitionComponent:Zoom,
       })
     } finally{
         dispatch(stopLoading())
@@ -127,8 +122,8 @@ export const startSelectSizeGuide = (values) => {
   }
 }
 
+// Elimina una guía de tamaño por su ID
 export const startDeleteSizeGuide = (id) => {
-  
   return async (dispatch) => {
     dispatch(startLoading())
     try {
@@ -146,7 +141,6 @@ export const startDeleteSizeGuide = (id) => {
         },
         autoHideDuration:3000,
         variant:'success',
-        TransitionComponent:Zoom,
       })
     } catch (error) {
       enqueueSnackbar(`${error.response.data.message}`,{
@@ -156,7 +150,6 @@ export const startDeleteSizeGuide = (id) => {
         },
         autoHideDuration:3000,
         variant:'error',
-        TransitionComponent:Zoom,
       })
     } finally{
         dispatch(stopLoading())
@@ -164,6 +157,7 @@ export const startDeleteSizeGuide = (id) => {
   }
 }
 
+// Actualiza una guía de tamaño existente por su ID
 export const startUpdateSizeGuide = (id, values, navigate) => {
   return async (dispatch) => {
     dispatch(startLoading())
@@ -182,7 +176,6 @@ export const startUpdateSizeGuide = (id, values, navigate) => {
         },
         autoHideDuration:3000,
         variant:'success',
-        TransitionComponent:Zoom,
       })
       navigate(`/guia-dimensiones`,{replace:true})
     } catch (error) {
@@ -193,12 +186,9 @@ export const startUpdateSizeGuide = (id, values, navigate) => {
         },
         autoHideDuration:3000,
         variant:'error',
-        TransitionComponent:Zoom,
       })
     } finally{
         dispatch(stopLoading())
     }
   }
 }
-
-

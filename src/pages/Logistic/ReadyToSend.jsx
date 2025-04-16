@@ -44,6 +44,7 @@ import { esES } from "@mui/x-data-grid/locales";
 import { useMediaQuery } from "@mui/system";
 import CustomNoRows from "../../components/Tables/CustomNoRows";
 
+// Estilo para los modales
 const style = {
   position: "absolute",
   top: "50%",
@@ -55,6 +56,7 @@ const style = {
   p: 4,
 };
 
+// Componente de paginación personalizada
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -71,6 +73,8 @@ function Pagination({ page, onPageChange, className }) {
     />
   );
 }
+
+// Iconos personalizados para el ordenamiento de columnas
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
@@ -83,20 +87,24 @@ export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación personalizada para la tabla
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
+// Componente principal que representa la tabla de "Listo para enviar"
 const ReadyToSend = ({ rows = [], loading = false, type = 0 }) => {
 
+  // Estados para manejar los modales y su contenido
   const [openModal, setOpenModal] = useState({ value: false, selectedPO: {}, updateUser: false, updateGuide: false });
   const [openDetail, setOpenDetail] = useState({ value: false, selectedPO: {} });
-  const { loadCarrierDrivers, CarrierDrivers } = useUsers()
-  const isXs = useMediaQuery('(max-width:600px)');
+  const { loadCarrierDrivers, CarrierDrivers } = useUsers(); // Hook para cargar conductores de transportistas
+  const isXs = useMediaQuery('(max-width:600px)'); // Verifica si la pantalla es pequeña
   const [columnVisibilityModel, setColumnVisibilityModel] = useState({
     typeDelivery: !isXs,
   });
 
+  // Actualiza la visibilidad de las columnas según el tamaño de la pantalla
   useEffect(() => {
     setColumnVisibilityModel((prevModel) => ({
       ...prevModel,
@@ -106,38 +114,39 @@ const ReadyToSend = ({ rows = [], loading = false, type = 0 }) => {
     }));
   }, [isXs]);
 
+  // Función para abrir el modal de asignación
   const handleOpen = (data) => {
-
-    loadCarrierDrivers()
+    loadCarrierDrivers();
     if (data.typeDelivery === 'homedelivery') {
-      setOpenModal({ value: true, selectedPO: { data }, updateGuide: true })
-
+      setOpenModal({ value: true, selectedPO: { data }, updateGuide: true });
     } else {
-      setOpenModal({ value: true, selectedPO: { data }, updateUser: true })
+      setOpenModal({ value: true, selectedPO: { data }, updateUser: true });
     }
-  }
+  };
 
+  // Función para abrir el modal de detalle
   const handleOpenDetail = (data) => {
-    loadCarrierDrivers()
-    setOpenDetail({ value: true, selectedPO: { data } })
+    loadCarrierDrivers();
+    setOpenDetail({ value: true, selectedPO: { data } });
+  };
 
-  }
-
+  // Función para abrir el modal de guía
   const handleOpenGuide = (data) => {
-    setOpenModal({ value: true, selectedPO: { data }, updateGuide: true })
+    setOpenModal({ value: true, selectedPO: { data }, updateGuide: true });
+  };
 
-  }
+  // Función para abrir el modal de usuario
   const handleOpenUser = (data) => {
-    setOpenModal({ value: true, selectedPO: { data }, updateUser: true })
+    setOpenModal({ value: true, selectedPO: { data }, updateUser: true });
+  };
 
-  }
-
+  // Función para cerrar el modal de asignación
   const handleClose = () => setOpenModal({ value: false, selectedPO: {} });
 
+  // Función para cerrar el modal de detalle
   const handleCloseDetail = () => setOpenDetail({ value: false, selectedPO: {} });
 
-
-
+  // Barra de herramientas personalizada para la tabla
   function CustomToolbar() {
     const apiRef = useGridApiContext();
 
@@ -148,30 +157,33 @@ const ReadyToSend = ({ rows = [], loading = false, type = 0 }) => {
     );
   }
 
+  // Muestra una pantalla de carga si los datos están cargando
   if (loading) return <LoadingScreenBlue />;
 
+  // Renderiza un chip según el estado del detalle de la ruta
   const renderChip = (data) => {
     if (!!data.route_detail === false) {
       return (
         <Chip variant="outlined" label='No asignada' sx={{ bgcolor: grey[200] }} />
-      )
+      );
     } else if (!!data.route_detail.guide === true) {
       return (
         <Chip variant="outlined" label='Asignada a compañía' sx={{ bgcolor: blue[400] }} />
-      )
+      );
     } else {
       return (
-        <Chip variant="outlined" label='Assignada a usuario' sx={{ bgcolor: green[500] }} />
-      )
+        <Chip variant="outlined" label='Asignada a usuario' sx={{ bgcolor: green[500] }} />
+      );
     }
-  }
+  };
 
+  // Renderiza las opciones de acción según el estado del detalle de la ruta
   const renderOptions = (data) => {
     if (!!data.route_detail === false) {
       return [
-        <Tooltip title="Asignar compañía de envios">
+        <Tooltip title="Asignar compañía de envíos">
           <Button
-            aria-label="Asignar envio"
+            aria-label="Asignar envío"
             color="success"
             startIcon={<LocalShipping />}
             onClick={() => handleOpen(data)}
@@ -188,12 +200,12 @@ const ReadyToSend = ({ rows = [], loading = false, type = 0 }) => {
             <Visibility />
           </IconButton>
         </Tooltip>,
-      ]
+      ];
     } else if (!!data.route_detail.guide === true) {
       return [
-        <Tooltip title="Editar guia de envío">
+        <Tooltip title="Editar guía de envío">
           <Button
-            aria-label="Asignar envio"
+            aria-label="Editar guía"
             color="info"
             onClick={() => handleOpenGuide(data)}
             startIcon={<Edit />}
@@ -210,7 +222,7 @@ const ReadyToSend = ({ rows = [], loading = false, type = 0 }) => {
             <Visibility />
           </IconButton>
         </Tooltip>,
-      ]
+      ];
     } else {
       return [
         <Tooltip title="Cambiar usuario">
@@ -232,10 +244,11 @@ const ReadyToSend = ({ rows = [], loading = false, type = 0 }) => {
             <Visibility />
           </IconButton>
         </Tooltip>,
-      ]
+      ];
     }
-  }
+  };
 
+  // Configuración de las columnas de la tabla
   const columns = [
     {
       field: "date",
@@ -243,9 +256,9 @@ const ReadyToSend = ({ rows = [], loading = false, type = 0 }) => {
       flex: 0.5,
       align: "center",
       renderCell: (params) => {
-        const date = localDateTable(params.row.createdAt)
-        const day = date.split("/")[0]
-        const month = date.split("/")[1]
+        const date = localDateTable(params.row.createdAt);
+        const day = date.split("/")[0];
+        const month = date.split("/")[1];
         return (
           <Typography variant="h6" fontSize={14} color="initial">
             {day} <br />
@@ -266,7 +279,7 @@ const ReadyToSend = ({ rows = [], loading = false, type = 0 }) => {
       headerName: "Fecha de empaque",
       flex: 1,
       align: "center",
-      renderCell: (params) => localDate(params.row.supply_detail[0].date)
+      renderCell: (params) => localDate(params.row.supply_detail[0].date),
     },
     {
       field: "route_detail",
@@ -275,8 +288,7 @@ const ReadyToSend = ({ rows = [], loading = false, type = 0 }) => {
       hideable: type === 0 ? false : true,
       align: "center",
       renderCell: (params) =>
-        renderChip(params.row)
-
+        renderChip(params.row),
     },
     {
       field: "typeDelivery",
@@ -285,8 +297,7 @@ const ReadyToSend = ({ rows = [], loading = false, type = 0 }) => {
       align: "center",
       renderCell: (params) => params.row.typeDelivery === 'homedelivery' ?
         <Tooltip title='Domicilio'><Cottage sx={{ color: pink[800] }} /></Tooltip> :
-        <Tooltip title='Punto de entrega'><Place color="secondary" /></Tooltip>
-
+        <Tooltip title='Punto de entrega'><Place color="secondary" /></Tooltip>,
     },
     {
       field: "Opciones",
@@ -295,9 +306,9 @@ const ReadyToSend = ({ rows = [], loading = false, type = 0 }) => {
       flex: 1,
       sortable: false,
       type: "actions",
-      getActions: (params) => renderOptions(params.row)
+      getActions: (params) => renderOptions(params.row),
     },
-  ]
+  ];
 
   return (
     <Grid container gap={2} maxWidth={"85vw"}>
@@ -343,6 +354,7 @@ const ReadyToSend = ({ rows = [], loading = false, type = 0 }) => {
         }}
       />
 
+      {/* Modal para asignar rutas */}
       <Modal
         open={openModal.value}
         onClose={(event, reason) => {
@@ -352,12 +364,13 @@ const ReadyToSend = ({ rows = [], loading = false, type = 0 }) => {
         }}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-
       >
         <Box sx={{ ...style }}>
           <AssignRoute productOrder={openModal.selectedPO} handleClose={handleClose} carrierDrivers={CarrierDrivers} updateUser={openModal.updateUser} updateGuide={openModal.updateGuide} />
         </Box>
       </Modal>
+
+      {/* Modal para mostrar detalles */}
       <Modal
         open={openDetail.value}
         onClose={(event, reason) => {
@@ -367,13 +380,11 @@ const ReadyToSend = ({ rows = [], loading = false, type = 0 }) => {
         }}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-
       >
         <Box sx={{ ...style }}>
           <Button
             onClick={() => handleCloseDetail()}
             sx={{ position: 'absolute', top: 20, right: 10 }}
-
           >
             <Close />
           </Button>

@@ -20,6 +20,7 @@ import { Workbook } from "exceljs";
 import DeleteAlert from '../../components/ui/DeleteAlert'
 import EditButton from "../../components/Buttons/EditButton";
 
+// Componente de paginación personalizada
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -36,6 +37,8 @@ function Pagination({ page, onPageChange, className }) {
     />
   );
 }
+
+// Iconos personalizados para el ordenamiento de columnas
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
@@ -48,6 +51,7 @@ export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación personalizada para el DataGrid
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
@@ -55,13 +59,17 @@ function CustomPagination(props) {
 const TypeCar = () => {
   const { loadTypeCars, deleteTypeCar, rowsTypeCars, navigate } = useTypeCars();
 
+  // Cargar los datos de los tipos de autos al montar el componente
   useEffect(() => {
     loadTypeCars()
   }, []);
 
+  // Navegar a la página para crear un nuevo tipo de auto
   const createTypeCar = () => {
     navigate('/auth/createTypeCar')
   }
+
+  // Exportar los datos a un archivo Excel
   const exportToExcel = () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Tipos de autos");
@@ -90,6 +98,7 @@ const TypeCar = () => {
     });
   };
 
+  // Barra de herramientas personalizada para el DataGrid
   function CustomToolbar() {
     const apiRef = useGridApiContext();
   
@@ -121,6 +130,7 @@ const TypeCar = () => {
         minHeight={"100px"}
         className="Titles"
       >
+        {/* Título de la página */}
         <Typography
           textAlign={"center"}
           variant="h1"
@@ -147,7 +157,9 @@ const TypeCar = () => {
             sortable: false,
             type: "actions",
             getActions: (params) => [
+              // Botón para eliminar un tipo de auto
               <DeleteAlert title={`¿Desea eliminar ${params.row.name}?`} callbackToDeleteItem={()=>deleteTypeCar(params.row._id)}/> , 
+              // Botón para editar un tipo de auto
               <EditButton title={`¿Desea editar ${params.row.name}?`} callbackToEdit={()=>navigate(`/auth/typeCar/${params.row._id}`)} />           
             ],
           },

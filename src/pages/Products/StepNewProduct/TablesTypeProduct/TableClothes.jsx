@@ -20,10 +20,11 @@ import { useEffect, useState } from "react";
 import { useSizeGuide } from "../../../../hooks/useSizeGuide";
 import { useParams } from "react-router-dom";
 
-
+// Componente para la barra de herramientas de edición
 function EditToolbar(props) {
   const { setRows, setRowModesModel } = props;
 
+  // Maneja el clic para agregar una nueva fila
   const handleClick = () => {
     const id = randomId();
     setRows((oldRows) => [
@@ -51,12 +52,15 @@ function EditToolbar(props) {
   );
 }
 
-const TableClothes = ({initialRows = [], sizeGuide, fromVariants = false}) => {
-  const [rows, setRows] = useState(initialRows);
-  const [rowModesModel, setRowModesModel] =useState({});
-  const {loadAddOneSizeGuide, updateSizeGuide} =  useSizeGuide()
-  const{id} =  useParams()
-    const {
+// Componente principal de la tabla
+const TableClothes = ({ initialRows = [], sizeGuide, fromVariants = false }) => {
+  const [rows, setRows] = useState(initialRows); // Estado para las filas de la tabla
+  const [rowModesModel, setRowModesModel] = useState({}); // Estado para los modos de edición de las filas
+  const { loadAddOneSizeGuide, updateSizeGuide } = useSizeGuide(); // Hooks personalizados para manejar guías de tallas
+  const { id } = useParams(); // Obtiene parámetros de la URL
+
+  // Configuración del formulario con react-hook-form
+  const {
     control,
     formState: { errors },
     setValue,
@@ -64,22 +68,24 @@ const TableClothes = ({initialRows = [], sizeGuide, fromVariants = false}) => {
   } = useForm({
     defaultValues: {
       name: sizeGuide?.name || "",
-      type:'clothes',
-      dimensions:  [],
+      type: "clothes",
+      dimensions: [],
     },
   });
 
+  // Actualiza las dimensiones en el formulario cuando cambian las filas
   useEffect(() => {
-  setValue('dimensions', rows)
-  }, [rows, setRows])
+    setValue("dimensions", rows);
+  }, [rows, setRows]);
 
-
+  // Maneja el evento cuando se detiene la edición de una fila
   const handleRowEditStop = (params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
       event.defaultMuiPrevented = true;
     }
   };
 
+  // Cambia una fila al modo de edición
   const handleEditClick = (id) => {
     setRowModesModel((prevRowModes) => ({
       ...prevRowModes,
@@ -87,6 +93,7 @@ const TableClothes = ({initialRows = [], sizeGuide, fromVariants = false}) => {
     }));
   };
 
+  // Valida las celdas editadas
   const handleProcessEditCellProps = async (params) => {
     const value = params.props?.value;
 
@@ -97,12 +104,12 @@ const TableClothes = ({initialRows = [], sizeGuide, fromVariants = false}) => {
     return { ...params.props, error: false };
   };
 
-  
-
+  // Elimina una fila
   const handleDeleteClick = (id) => {
     setRows(rows.filter((row) => row.id !== id));
   };
 
+  // Cancela la edición de una fila
   const handleCancelClick = (id) => {
     setRowModesModel({
       ...rowModesModel,
@@ -115,16 +122,19 @@ const TableClothes = ({initialRows = [], sizeGuide, fromVariants = false}) => {
     }
   };
 
+  // Actualiza una fila después de la edición
   const processRowUpdate = (newRow) => {
     const updatedRow = { ...newRow, isNew: false };
     setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
     return updatedRow;
   };
 
+  // Maneja los cambios en los modos de edición de las filas
   const handleRowModesModelChange = (newRowModesModel) => {
     setRowModesModel(newRowModesModel);
   };
 
+  // Componente personalizado para el pie de la tabla
   const CustomFooter = () => (
     <Button
       sx={{ margin: 4 }}
@@ -135,6 +145,8 @@ const TableClothes = ({initialRows = [], sizeGuide, fromVariants = false}) => {
       Guardar
     </Button>
   );
+
+  // Configuración de las columnas de la tabla
   const columns = [
     {
       field: "label",
@@ -242,15 +254,17 @@ const TableClothes = ({initialRows = [], sizeGuide, fromVariants = false}) => {
     },
   ];
 
+  // Maneja el envío del formulario
   const submitForm = handleSubmit((data) => {
     if (!!id && fromVariants === false) {
       updateSizeGuide(id, data);
     } else if (fromVariants === true) {
       loadAddOneSizeGuide(data);
-    }else{
+    } else {
       loadAddOneSizeGuide(data);
     }
   });
+
   return (
     <Box
       sx={{
@@ -258,8 +272,9 @@ const TableClothes = ({initialRows = [], sizeGuide, fromVariants = false}) => {
         minHeight: "400px",
       }}
       component="form"
-      onSubmit={(e)=>submitForm(e)}
+      onSubmit={(e) => submitForm(e)}
     >
+      {/* Campo de texto para el nombre de la guía */}
       <Controller
         control={control}
         name="name"
@@ -280,17 +295,18 @@ const TableClothes = ({initialRows = [], sizeGuide, fromVariants = false}) => {
         )}
       />
 
+      {/* Tabla de datos */}
       <DataGrid
-      sx={{
-        "& .actions": { color: "text.secondary" },
-        "& .Mui-error": {
-          bgcolor: red[100], // Color de fondo cuando hay error
-          color: red[700], // Color de texto cuando hay error
-          border: "solid 2px red",
-          width: "100%",
-          height: "100%",
-        },
-      }}
+        sx={{
+          "& .actions": { color: "text.secondary" },
+          "& .Mui-error": {
+            bgcolor: red[100], // Color de fondo cuando hay error
+            color: red[700], // Color de texto cuando hay error
+            border: "solid 2px red",
+            width: "100%",
+            height: "100%",
+          },
+        }}
         rows={rows}
         columns={columns}
         editMode="row"

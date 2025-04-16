@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import { Cancel, Close, CloudDone, CloudUpload, Done, Edit } from "@mui/icons-material";
 import noImage from "../../assets/Images/ui/no-image.png";
 
+// Estilo para el modal
 const style = {
   position: "absolute",
   top: "50%",
@@ -19,6 +20,7 @@ const style = {
   p: 4,
 };
 
+// Componente de input visualmente oculto para subir archivos
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
@@ -31,57 +33,73 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-const ImageUpdateField = ({idProduct,imageProduct, onSubmit, textButton}) => {
+// Componente principal para actualizar imágenes
+const ImageUpdateField = ({ idProduct, imageProduct, onSubmit, textButton }) => {
+  // Estado para controlar la apertura del modal
   const [open, setOpen] = useState(false);
+  // Estado para mostrar un loader mientras se carga una imagen
   const [loader, setloader] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => {
-    if(imageProduct?.length > 0){
-        setImagePreview(imageProduct)
-    } 
-    setOpen(false)};
+  // Estado para la vista previa de la imagen
   const [imagePreview, setImagePreview] = useState(null);
+  // Estado para almacenar el archivo de imagen seleccionado
   const [fileImage, setFileImage] = useState([]);
 
+  // Función para abrir el modal
+  const handleOpen = () => setOpen(true);
+
+  // Función para cerrar el modal y restaurar la vista previa de la imagen
+  const handleClose = () => {
+    if (imageProduct?.length > 0) {
+      setImagePreview(imageProduct);
+    }
+    setOpen(false);
+  };
+
+  // Efecto para inicializar la vista previa de la imagen cuando cambia `imageProduct`
   useEffect(() => {
     if (imageProduct !== null) {
-        setImagePreview(imageProduct);
+      setImagePreview(imageProduct);
     }
   }, [imageProduct]);
 
+  // Función para manejar la carga de una nueva imagen
   const handleUploadImage = (event) => {
-    setloader(true);
+    setloader(true); // Muestra el loader
     event.preventDefault();
-    const file = event.target.files[0];
-    setFileImage(file);
-    const imageUrl = URL.createObjectURL(file);
-    setImagePreview(imageUrl);
-    setloader(false);
+    const file = event.target.files[0]; // Obtiene el archivo seleccionado
+    setFileImage(file); // Guarda el archivo en el estado
+    const imageUrl = URL.createObjectURL(file); // Genera una URL para la vista previa
+    setImagePreview(imageUrl); // Actualiza la vista previa
+    setloader(false); // Oculta el loader
   };
 
-  const handleSaveImage  = () => {
-    onSubmit(idProduct,fileImage);
-     setFileImage('')
-     handleClose()
-  }
-  if (loader) {
-    return<Skeleton  variant="circular" width={40} height={40} />;
-  }
+  // Función para guardar la imagen cargada
+  const handleSaveImage = () => {
+    onSubmit(idProduct, fileImage); // Llama a la función `onSubmit` con el ID del producto y la imagen
+    setFileImage(""); // Limpia el archivo seleccionado
+    handleClose(); // Cierra el modal
+  };
 
+  // Si el loader está activo, muestra un esqueleto de carga
+  if (loader) {
+    return <Skeleton variant="circular" width={40} height={40} />;
+  }
 
   return (
     <div>
-      <Card sx={{padding:2}} variant="outlined">
-          <CardMedia sx={{display:'flex', justifyContent:'center'}}>
-            {open ? (
-              <Skeleton variant="rectangular" width={250} height={'450px'}/>
-            ) : imagePreview !== null ? (
-              <img style={{borderRadius:'10px'}} width="300" height='450' src={imagePreview} />
-            ) : (
-              <img style={{borderRadius:'10px'}} width="300" height='450' src={noImage} alt="No image available" />
-            )}
-          </CardMedia>
+      {/* Tarjeta principal que muestra la imagen o un placeholder */}
+      <Card sx={{ padding: 2 }} variant="outlined">
+        <CardMedia sx={{ display: 'flex', justifyContent: 'center' }}>
+          {open ? (
+            <Skeleton variant="rectangular" width={250} height={'450px'} />
+          ) : imagePreview !== null ? (
+            <img style={{ borderRadius: '10px' }} width="300" height="450" src={imagePreview} />
+          ) : (
+            <img style={{ borderRadius: '10px' }} width="300" height="450" src={noImage} alt="No image available" />
+          )}
+        </CardMedia>
         <CardActions>
+          {/* Botón para abrir el modal */}
           <Button
             component="label"
             role={undefined}
@@ -96,6 +114,7 @@ const ImageUpdateField = ({idProduct,imageProduct, onSubmit, textButton}) => {
         </CardActions>
       </Card>
 
+      {/* Modal para editar y guardar la imagen */}
       <Modal
         open={open}
         onClose={handleClose}
@@ -103,28 +122,30 @@ const ImageUpdateField = ({idProduct,imageProduct, onSubmit, textButton}) => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-            <Grid container display={'flex'} justifyContent={'end'} spacing={0}>   
+          {/* Botón para cerrar el modal */}
+          <Grid container display={'flex'} justifyContent={'end'} spacing={0}>
             <Fab
               color="primary"
               aria-label="Cancelar"
-              sx={{alignContent:'flex-end'}}
+              sx={{ alignContent: 'flex-end' }}
               title="Cancelar"
               onClick={() => handleClose()}
             >
               <Close />
             </Fab>
-            </Grid>
+          </Grid>
           <Card variant="elevation">
-            <CardMedia sx={{display:'flex', justifyContent:'center'}}>
+            <CardMedia sx={{ display: 'flex', justifyContent: 'center' }}>
               {loader ? (
                 <Skeleton />
               ) : imagePreview !== null ? (
-                <img style={{objectFit:'contain'}} width="300" height={'450px'}   src={imagePreview}  />
+                <img style={{ objectFit: 'contain' }} width="300" height={'450px'} src={imagePreview} />
               ) : (
-                <img src={noImage} width="300" height={'450px'}  alt="No image available" />
+                <img src={noImage} width="300" height={'450px'} alt="No image available" />
               )}
             </CardMedia>
             <CardActions>
+              {/* Botón para seleccionar una nueva imagen */}
               <Button
                 component="label"
                 role={undefined}
@@ -140,12 +161,13 @@ const ImageUpdateField = ({idProduct,imageProduct, onSubmit, textButton}) => {
                   onChange={(e) => handleUploadImage(e)}
                 />
               </Button>
+              {/* Botón para guardar la imagen seleccionada */}
               <Button
                 component="label"
                 role={undefined}
                 variant="contained"
                 tabIndex={-1}
-                startIcon={<CloudDone/>}
+                startIcon={<CloudDone />}
                 onClick={() => handleSaveImage()}
                 fullWidth
                 color="success"
@@ -160,5 +182,4 @@ const ImageUpdateField = ({idProduct,imageProduct, onSubmit, textButton}) => {
   );
 };
 
-
-export default ImageUpdateField
+export default ImageUpdateField;

@@ -40,6 +40,7 @@ import TableGuideModal from "../../components/Modals/TableGuideModal";
 import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 import { esES } from "@mui/x-data-grid/locales";
 
+// Componente de paginación personalizada
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -56,6 +57,8 @@ function Pagination({ page, onPageChange, className }) {
     />
   );
 }
+
+// Iconos personalizados para el ordenamiento de columnas
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
@@ -68,6 +71,7 @@ export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación personalizada para la tabla
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
@@ -75,23 +79,23 @@ function CustomPagination(props) {
 const AllMySizeGuides = () => {
   const { user } = useAuthStore();
   const {
-    loadSizeGuides,
-    loadOneSizeGuide,
-    rowsAllGuides,
-    sizeGuide,
-    deleteSizeGuide,
-    navigate,
-    loading
+    loadSizeGuides, // Cargar todas las guías de tallas
+    loadOneSizeGuide, // Cargar una guía de tallas específica
+    rowsAllGuides, // Filas de datos para la tabla
+    sizeGuide, // Datos de una guía de tallas específica
+    deleteSizeGuide, // Eliminar una guía de tallas
+    navigate, // Navegación entre rutas
+    loading, // Estado de carga
   } = useSizeGuide();
-  const [openModal, setOpenModal] = useState(false);
+  const [openModal, setOpenModal] = useState(false); // Estado para abrir/cerrar el modal
 
+  // Cargar las guías de tallas al montar el componente
   useEffect(() => {
     loadSizeGuides();
   }, [user]);
 
+  // Barra de herramientas personalizada para la tabla
   function CustomToolbar() {
-
-
     return (
       <GridToolbarContainer sx={{ justifyContent: "center" }}>
         <GridToolbarQuickFilter variant="outlined" />
@@ -99,22 +103,24 @@ const AllMySizeGuides = () => {
     );
   }
 
-  if (loading) return <LoadingScreenBlue />;
+  if (loading) return <LoadingScreenBlue />; // Mostrar pantalla de carga si está cargando
 
+  // Manejar la apertura del modal con los datos de una guía específica
   const handleOpen = async (id) => {
     await loadOneSizeGuide(id);
     setOpenModal(true);
   };
 
+  // Manejar el cierre del modal
   const handleClose = () => setOpenModal(false);
 
   const paths = [
     { path: `/guia-dimensiones`, name: "Guias de dimensiones" },
   ];
 
-
   return (
     <Grid2 container paddingX={{ xs: 0, lg: 10 }} display={"flex"} gap={2}>
+      {/* Encabezado de la página */}
       <Grid2
         size={12}
         paddingRight={15}
@@ -128,9 +134,13 @@ const AllMySizeGuides = () => {
           <strong>Guias de dimensiones</strong>
         </Typography>
       </Grid2>
+
+      {/* Breadcrumb para navegación */}
       <Grid2 size={12} display={"flex"} justifyContent={"space-between"}>
         <BreadcrumbCustom paths={paths} />
       </Grid2>
+
+      {/* Tabla principal con las guías de tallas */}
       <DataGrid
         sx={{
           fontSize: "12px",
@@ -144,12 +154,6 @@ const AllMySizeGuides = () => {
         }}
         localeText={esES.components.MuiDataGrid.defaultProps.localeText}
         columns={[
-          // {
-          //   field: "tag",
-          //   headerName: "Código",
-          //   flex: 1,
-          //   align: "center",
-          // },
           {
             field: "name",
             hideable: false,
@@ -157,12 +161,6 @@ const AllMySizeGuides = () => {
             flex: 1,
             sortable: false,
           },
-          // {
-          //   field: "price",
-          //   headerName: "Precio",
-          //   flex: 1,
-          //   align: "center",
-          // },
           {
             field: "Category",
             headerName: "Categoria",
@@ -175,7 +173,6 @@ const AllMySizeGuides = () => {
             flex: 1,
             align: "center",
           },
-
           {
             field: "Opciones",
             headerName: "Opciones",
@@ -184,10 +181,12 @@ const AllMySizeGuides = () => {
             sortable: false,
             type: "actions",
             getActions: (params) => [
+              // Botón para eliminar una guía de tallas
               <DeleteAlert
                 title={`¿Estas seguro de eliminar esta guia de tallas ${params.row?.name}`}
                 callbackToDeleteItem={() => deleteSizeGuide(params.row._id)}
               />,
+              // Botón para editar una guía de tallas
               <Tooltip title="Editar Producto">
                 <IconButton
                   aria-label="Editar"
@@ -197,6 +196,7 @@ const AllMySizeGuides = () => {
                   <Edit />
                 </IconButton>
               </Tooltip>,
+              // Botón para ver detalles de una guía de tallas
               <Tooltip title="Ver detalle">
                 <IconButton
                   aria-label="Ver detalle"
@@ -221,11 +221,11 @@ const AllMySizeGuides = () => {
         rows={rowsAllGuides}
         pagination
         slots={{
-          pagination: CustomPagination,
-          toolbar: CustomToolbar,
-          columnSortedDescendingIcon: SortedDescendingIcon,
-          columnSortedAscendingIcon: SortedAscendingIcon,
-          columnUnsortedIcon: UnsortedIcon,
+          pagination: CustomPagination, // Paginación personalizada
+          toolbar: CustomToolbar, // Barra de herramientas personalizada
+          columnSortedDescendingIcon: SortedDescendingIcon, // Icono de orden descendente
+          columnSortedAscendingIcon: SortedAscendingIcon, // Icono de orden ascendente
+          columnUnsortedIcon: UnsortedIcon, // Icono de sin orden
         }}
         disableColumnFilter
         disableColumnMenu
@@ -243,6 +243,8 @@ const AllMySizeGuides = () => {
         }}
         style={{ fontFamily: "sans-serif", fontSize: "15px" }}
       />
+
+      {/* Modal para mostrar detalles de una guía de tallas */}
       <TableGuideModal
         openModal={openModal}
         handleClose={handleClose}
@@ -252,5 +254,4 @@ const AllMySizeGuides = () => {
   );
 };
 
-
-export default AllMySizeGuides
+export default AllMySizeGuides;

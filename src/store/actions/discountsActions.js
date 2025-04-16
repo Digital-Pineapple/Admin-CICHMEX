@@ -9,6 +9,7 @@ import {
 } from "../reducer/discountsReducer";
 import { onClearProducts } from "../reducer/productsReducer";
 
+// Carga la lista de descuentos desde el servidor
 export const startLoadDiscounts = () => {
   return async (dispatch) => {
     dispatch(startLoadingDiscount());
@@ -27,6 +28,8 @@ export const startLoadDiscounts = () => {
     }
   };
 };
+
+// Crea un nuevo descuento en el servidor
 export const startLoadCreateDiscount = (values, navigate) => {
   return async (dispatch) => {
     dispatch(startLoadingDiscount());
@@ -58,6 +61,7 @@ export const startLoadCreateDiscount = (values, navigate) => {
   };
 };
 
+// Actualiza un descuento existente en el servidor
 export const startLoadUpdateDiscount = (id, values, navigate) => {
   return async (dispatch) => {
     dispatch(startLoadingDiscount());
@@ -88,6 +92,7 @@ export const startLoadUpdateDiscount = (id, values, navigate) => {
   };
 };
 
+// Obtiene los detalles de un descuento específico
 export const startLoadDiscountDetail = (id) => {
   return async (dispatch) => {
     dispatch(startLoadingDiscount());
@@ -108,6 +113,7 @@ export const startLoadDiscountDetail = (id) => {
   };
 };
 
+// Cambia el estado activo/inactivo de un descuento
 export const startLoadChangeActive = (id, value) => {
   return async (dispatch) => {
     try {
@@ -123,7 +129,7 @@ export const startLoadChangeActive = (id, value) => {
       );
       Swal.fire({
         title: data.message,
-        icon:'success',
+        icon: 'success',
         timer: 2000,
         confirmButtonColor: "green",
       });

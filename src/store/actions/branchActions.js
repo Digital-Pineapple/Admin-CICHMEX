@@ -14,6 +14,7 @@ const config = {
   },
 };
 
+// Función para cargar todas las sucursales desde la API y almacenarlas en el estado global
 export const startLoadBranches = () => {
   return async (dispatch) => {
     try {
@@ -31,6 +32,7 @@ export const startLoadBranches = () => {
   };
 };
 
+// Función para cargar una sucursal específica desde la API y almacenarla en el estado global
 export const startLoadBranch = (id) => {
   return async (dispatch) => {
     try {
@@ -48,6 +50,7 @@ export const startLoadBranch = (id) => {
   };
 };
 
+// Función para verificar una sucursal, activarla y redirigir al usuario a otra página
 export const startVerifyBranch = (_id, user_id, navigate) => {
   return async (dispatch) => {
     try {
@@ -77,6 +80,8 @@ export const startVerifyBranch = (_id, user_id, navigate) => {
     }
   };
 };
+
+// Función para eliminar una sucursal desde la API y actualizar el estado global
 export const startDeleteBranch = (id) => {
   return async (dispatch) => {
     try {

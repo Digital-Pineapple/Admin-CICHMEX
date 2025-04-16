@@ -87,17 +87,19 @@ const colors = [
 const filter = createFilterOptions();
 
 const ColorSelector = ({
-  value,
-  onChange,
-  fullWidth,
-  disabled,
-  label,
-  error,
-  helperText,
+  value, // Valor seleccionado actualmente
+  onChange, // Función para manejar cambios en el valor seleccionado
+  fullWidth, // Si el componente debe ocupar todo el ancho disponible
+  disabled, // Si el componente está deshabilitado
+  label, // Etiqueta del campo de entrada
+  error, // Indica si hay un error en el campo
+  helperText, // Texto de ayuda o mensaje de error
 }) => {
   
+  // Estado local para almacenar el valor seleccionado
   const [selectedValue, setSelectedValue] = React.useState(null);
 
+  // Efecto para actualizar el estado local cuando cambia la prop `value`
   React.useEffect(() => {
     if (value) {
       setSelectedValue(value);
@@ -106,14 +108,17 @@ const ColorSelector = ({
   
   return (
     <Autocomplete
-      value={selectedValue}
+      value={selectedValue} // Valor actual del Autocomplete
       onKeyDown={(event) => {
+        // Evitar que la tecla Enter provoque un comportamiento no deseado
         if (event.key === "Enter") {
           event.stopPropagation();
         }
       }}
       onChange={(event, newValue) => {
+        // Manejar cambios en el valor seleccionado
         if (typeof newValue === "string") {
+          // Si el nuevo valor es un string, buscar si ya existe en la lista de colores
           const existingColor = colors.find(
             (color) => color.name.toLowerCase() === newValue.toLowerCase()
           );
@@ -121,21 +126,25 @@ const ColorSelector = ({
           setSelectedValue(finalValue);
           onChange(finalValue);
         } else if (newValue && newValue.inputValue) {
+          // Si el nuevo valor tiene un `inputValue`, usarlo como el valor final
           const finalValue = { name: newValue.inputValue };
           setSelectedValue(finalValue);
           onChange(finalValue);
         } else {
+          // Si no, simplemente actualizar el valor seleccionado
           setSelectedValue(newValue);
           onChange(newValue);
         }
       }}
       filterOptions={(options, params) => {
+        // Filtrar las opciones disponibles según el texto ingresado
         const filtered = filter(options, params);
         const { inputValue } = params;
         const isExisting = options.some(
           (option) => inputValue.toLowerCase() === option.name.toLowerCase()
         );
         if (inputValue !== "" && !isExisting) {
+          // Agregar una opción personalizada si no existe en la lista
           filtered.push({
             inputValue,
             name: inputValue,
@@ -143,12 +152,13 @@ const ColorSelector = ({
         }
         return filtered;
       }}
-      selectOnFocus
-      clearOnBlur
-      handleHomeEndKeys
-      id="free-solo-with-text-demo"
-      options={colors}
+      selectOnFocus // Seleccionar automáticamente al enfocar
+      clearOnBlur // Limpiar el valor al perder el foco
+      handleHomeEndKeys // Manejar teclas Home y End
+      id="free-solo-with-text-demo" // ID único del Autocomplete
+      options={colors} // Lista de opciones disponibles
       getOptionLabel={(option) => {
+        // Obtener la etiqueta que se muestra para cada opción
         if (typeof option === "string") {
           return option;
         }
@@ -158,10 +168,12 @@ const ColorSelector = ({
         return option.name;
       }}
       renderOption={(props, option) => {
+        // Renderizar cada opción en el menú desplegable
         const { key, ...optionProps } = props;
         return (
           <Box component="li" {...optionProps} sx={{ display: "flex", alignItems: "center" }}>
             {option.hex && (
+              // Mostrar un círculo de color si la opción tiene un valor hexadecimal
               <Box
                 sx={{
                   width: "20px",
@@ -177,17 +189,19 @@ const ColorSelector = ({
           </Box>
         );
       }}
-      sx={{ width: fullWidth ? "100%" : 300 }}
-      freeSolo
+      sx={{ width: fullWidth ? "100%" : 300 }} // Ajustar el ancho del componente
+      freeSolo // Permitir valores personalizados
       renderInput={(params) => (
+        // Renderizar el campo de entrada
         <TextField
           {...params}
-          label={label}
-          disabled={disabled}
-          error={error}
-          helperText={helperText}
-          size="small"
+          label={label} // Etiqueta del campo
+          disabled={disabled} // Si el campo está deshabilitado
+          error={error} // Mostrar error si aplica
+          helperText={helperText} // Mostrar texto de ayuda o error
+          size="small" // Tamaño del campo
           onKeyDown={(event) => {
+            // Evitar que la tecla Enter provoque un comportamiento no deseado
             if (event.key === "Enter") {
               event.stopPropagation();
             }

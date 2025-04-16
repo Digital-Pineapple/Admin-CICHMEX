@@ -26,24 +26,35 @@ import LoadingScreenBlue from '../../components/ui/LoadingScreenBlue';
 import BreadcrumbCustom from '../../components/ui/BreadCrumbCustom';
 
 const CreateSlider = () => {
+    // Hook para cargar descuentos y obtener la lista de descuentos disponibles
     const { loadAllDiscounts, discounts } = useDiscounts();
-    const [selectedDiscount, setSelectedDiscount] = useState({})
-    const { createOneBanner, loading, navigate } = useUI()
 
+    // Estado para almacenar el descuento seleccionado
+    const [selectedDiscount, setSelectedDiscount] = useState({});
+
+    // Hooks personalizados para crear banners, manejar el estado de carga y navegación
+    const { createOneBanner, loading, navigate } = useUI();
+
+    // Hook para obtener información del usuario autenticado
     const { user } = useAuthStore();
 
+    // Estado para manejar el estado de arrastre de archivos
     const [isDragging, setIsDragging] = useState(false);
+
+    // Estado para manejar errores específicos de archivos
     const [fileErrors, setFileErrors] = useState({});
+
+    // Tipos de archivos permitidos para las imágenes
     const allowedTypes = ["image/png", "image/jpeg", "image/webp"];
 
+    // Efecto para cargar los descuentos cuando el usuario está disponible
     useEffect(() => {
         if (user) {
             loadAllDiscounts();
         }
     }, [user]);
 
-
-
+    // Función para validar el tamaño y dimensiones de las imágenes
     const validateImageSize = useCallback((file, { width, height, maxSizeMB = 10 }) => {
         return new Promise((resolve, reject) => {
             // Validar tamaño del archivo primero (10 MB)
@@ -58,7 +69,7 @@ const CreateSlider = () => {
             img.src = URL.createObjectURL(file);
 
             img.onload = () => {
-                URL.revokeObjectURL(img.src); // Importante para liberar memoria
+                URL.revokeObjectURL(img.src); // Liberar memoria
                 if (img.width >= width && img.height >= height) {
                     resolve(true);
                 } else {
@@ -67,19 +78,21 @@ const CreateSlider = () => {
             };
 
             img.onerror = () => {
-                URL.revokeObjectURL(img.src); // Limpiar incluso en errores
+                URL.revokeObjectURL(img.src); // Limpiar memoria en caso de error
                 reject("Error al cargar la imagen.");
             };
         });
     }, []);
 
+    // Función para manejar el cambio de imagen y validarla
     const onChangeImage = async (event, name) => {
         const file = event.target.files[0];
         if (!file) return;
 
-        // Limpiamos errores previos para este campo
+        // Limpiar errores previos para este campo
         setFileErrors(prev => ({ ...prev, [name]: null }));
 
+        // Validar tipo de archivo
         if (!allowedTypes.includes(file.type)) {
             setFileErrors(prev => ({
                 ...prev,
@@ -101,7 +114,7 @@ const CreateSlider = () => {
 
             await validateImageSize(file, VALUES_VALIDATE[name]);
 
-            // Si pasa la validación, limpiamos errores
+            // Si pasa la validación, limpiar errores
             setFileErrors(prev => ({ ...prev, [name]: null }));
             setValue(name, file);
 
@@ -114,11 +127,13 @@ const CreateSlider = () => {
         }
     };
 
+    // Función para manejar eventos de arrastre de archivos
     const handleDragEvents = (event, isOver) => {
         event.preventDefault();
         setIsDragging(isOver);
     };
 
+    // Función para manejar la acción de soltar archivos en el área de arrastre
     const handleDrop = (event, fieldName) => {
         event.preventDefault();
         setIsDragging(false);
@@ -127,10 +142,12 @@ const CreateSlider = () => {
         }
     };
 
+    // Función para eliminar la imagen seleccionada
     const removeImage = (inputName) => {
         setValue(inputName, null);
     };
 
+    // Estilos para el área de arrastre de archivos
     const dropZoneStyles = {
         position: "relative",
         backgroundColor: isDragging ? "secondary.main" : orange[200],
@@ -148,7 +165,7 @@ const CreateSlider = () => {
         },
     };
 
-
+    // Tipos de descuentos disponibles
     const DISCOUNT_TYPES = [
         { value: "free_shipping", label: "Envío gratis" },
         { value: "first_buy", label: "Primera compra" },
@@ -157,6 +174,7 @@ const CreateSlider = () => {
         { value: "is_percent", label: "Porcentaje" },
     ];
 
+    // Configuración del formulario con valores predeterminados
     const {
         formState: { errors },
         control,
@@ -177,29 +195,29 @@ const CreateSlider = () => {
         },
     });
 
-
+    // Función para manejar el envío del formulario
     const onSubmit = async (data) => {
-        createOneBanner(data)
+        createOneBanner(data);
     };
 
+    // Función para manejar el cambio de descuento seleccionado
     const onChangeDiscount = (data) => {
         const discount = data.target.value;
         if (discount) {
-            const select = discounts.find((i) => i._id === discount)
-            setSelectedDiscount(select)
-            setValue('discount', discount)
-            setValue('for_discount', true)
+            const select = discounts.find((i) => i._id === discount);
+            setSelectedDiscount(select);
+            setValue('discount', discount);
+            setValue('for_discount', true);
         }
         if (discount === '') {
-            setSelectedDiscount({})
-            setValue('discount', '')
-            setValue('for_discount', false)
+            setSelectedDiscount({});
+            setValue('discount', '');
+            setValue('for_discount', false);
         }
+    };
 
-    }
-
+    // Función para renderizar los detalles del descuento seleccionado
     const renderSelected = (data) => {
-
         if (!data || Object.keys(data).length === 0) {
             return '';
         }
@@ -227,9 +245,12 @@ const CreateSlider = () => {
         );
     };
 
+    // Mostrar pantalla de carga si está en estado de carga
     if (loading) {
-        return <LoadingScreenBlue />
+        return <LoadingScreenBlue />;
     }
+
+    // Rutas para el breadcrumb de navegación
     const paths = [
         { path: `/contenidos/banners`, name: "Banners" },
         { path: `/contenidos/banners/agregar`, name: "Crear slide" },
@@ -237,6 +258,7 @@ const CreateSlider = () => {
 
     return (
         <Grid2 container paddingX={{ xs: 0, lg: 10 }} gap={2}>
+            {/* Encabezado de la página */}
             <Grid2
                 size={12}
                 paddingRight={15}
@@ -250,14 +272,18 @@ const CreateSlider = () => {
                     <strong>Crear slide</strong>
                 </Typography>
             </Grid2>
+
+            {/* Breadcrumb para navegación */}
             <Grid2 size={12} display={"flex"} justifyContent={"space-between"}>
                 <BreadcrumbCustom paths={paths} />
-
             </Grid2>
+
+            {/* Tarjeta principal del formulario */}
             <Card variant="elevation" sx={{ width: '100%' }}>
                 <CardHeader title="Ingrese datos para crear slide" />
                 <CardContent component="form" onSubmit={handleSubmit(onSubmit)}>
                     <Grid2 container gap={2}>
+                        {/* Campo para seleccionar el estado del slide */}
                         <Grid2 size={4}>
                             <Controller
                                 name="is_active"
@@ -276,6 +302,8 @@ const CreateSlider = () => {
                                 )}
                             />
                         </Grid2>
+
+                        {/* Campo para seleccionar el número del slide */}
                         <Grid2 size={4}>
                             <Controller
                                 name="no_slide"
@@ -298,6 +326,8 @@ const CreateSlider = () => {
                                 )}
                             />
                         </Grid2>
+
+                        {/* Campo para seleccionar una promoción asociada */}
                         <Grid2 size={3.7}>
                             <Controller
                                 name="discount"
@@ -310,7 +340,7 @@ const CreateSlider = () => {
                                             labelId="select-discount-label"
                                             label="Exclusivo de una promoción"
                                             onChange={(e) => {
-                                                onChangeDiscount(e); // Primero ejecutas tu lógica
+                                                onChangeDiscount(e); // Actualiza el descuento seleccionado
                                             }}
                                         >
                                             <MenuItem value={''}>No</MenuItem>
@@ -330,9 +360,13 @@ const CreateSlider = () => {
                                 )}
                             />
                         </Grid2>
+
+                        {/* Renderizado de detalles de la promoción seleccionada */}
                         <Grid2 size={12}>
-                            {renderSelected(selectedDiscount)} {/* Renderiza en tiempo real */}
+                            {renderSelected(selectedDiscount)}
                         </Grid2>
+
+                        {/* Campo para ingresar el título del slide */}
                         <Grid2 size={12}>
                             <Controller
                                 name="title"
@@ -348,6 +382,8 @@ const CreateSlider = () => {
                                 )}
                             />
                         </Grid2>
+
+                        {/* Campo para ingresar la descripción del slide */}
                         <Grid2 size={12}>
                             <Controller
                                 name="description"
@@ -365,6 +401,8 @@ const CreateSlider = () => {
                                 )}
                             />
                         </Grid2>
+
+                        {/* Campo para seleccionar el tipo de evento del slide */}
                         <Grid2 size={3}>
                             <Controller
                                 name="type_event"
@@ -385,7 +423,10 @@ const CreateSlider = () => {
                             />
                         </Grid2>
                     </Grid2>
+
+                    {/* Campos para subir imágenes del slide */}
                     <Grid2 container width={'100%'}>
+                        {/* Campo para subir imagen del slide para escritorio */}
                         <Grid2 size={6}>
                             <Controller
                                 name='image_slide'
@@ -425,6 +466,7 @@ const CreateSlider = () => {
                                                 </Box>
                                             </Grid2>
 
+                                            {/* Vista previa de la imagen seleccionada */}
                                             {field.value && (
                                                 <Grid2 container justifyContent="center" sx={{ mt: 2 }}>
                                                     <Box
@@ -476,6 +518,7 @@ const CreateSlider = () => {
                             />
                         </Grid2>
 
+                        {/* Campo para subir imagen del slide para móviles */}
                         <Grid2 size={6}>
                             <Controller
                                 control={control}
@@ -515,6 +558,7 @@ const CreateSlider = () => {
                                                 </Box>
                                             </Grid2>
 
+                                            {/* Vista previa de la imagen seleccionada */}
                                             {field.value && (
                                                 <Grid2 container justifyContent="center" sx={{ mt: 2, maxHeight: '400px' }} >
                                                     <Box
@@ -564,9 +608,10 @@ const CreateSlider = () => {
                                     </FormControl>
                                 )}
                             />
-
                         </Grid2>
                     </Grid2>
+
+                    {/* Botones de acción */}
                     <CardActions>
                         <Button fullWidth variant="contained" color="error" size="small" onClick={() => navigate('/contenidos/banners')}>
                             Cancelar

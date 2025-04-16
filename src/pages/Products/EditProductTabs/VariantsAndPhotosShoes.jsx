@@ -30,6 +30,7 @@ import AddSizeModal from "./AddSizeModal";
 import Swal from "sweetalert2";
 import { green } from "@mui/material/colors";
 
+// Estilos para los modales
 const style = {
   position: "absolute",
   top: "50%",
@@ -61,17 +62,18 @@ const styleFull = {
   maxHeight: "90vh",
   p: 4,
 };
+
 const VariantsAndPhotosShoes = () => {
-  const { id } = useParams();
-  const { loading, loadProduct, product, deleteVariant, assignMain,  } =
-    useProducts();
+  const { id } = useParams(); // Obtiene el ID del producto desde la URL
+  const { loading, loadProduct, product, deleteVariant, assignMain } =
+    useProducts(); // Hook personalizado para manejar productos
+
+  // Estados para manejar la apertura y cierre de modales
   const [open, setOpen] = useState({ image: null, value: false });
   const [openUpdateVariant, setOpenUpdateVariant] = useState({
     variant: {},
     value: false,
   });
-
-  
   const [openUpdateColor, setOpenUpdateColor] = useState({
     data: {},
     color: "",
@@ -83,9 +85,7 @@ const VariantsAndPhotosShoes = () => {
     color: null,
     value: false,
   });
-
   const [openAddVariant, setOpenAddVariant] = useState(false);
-
   const [openAddSize, setOpenAddSize] = useState({
     value: false,
     sizes: [],
@@ -93,35 +93,46 @@ const VariantsAndPhotosShoes = () => {
     product_id: "",
   });
 
+  // Estado para manejar el menú contextual
   const [anchorEl, setAnchorEl] = useState({ value: null, color: null });
   const openMore = Boolean(anchorEl.value);
 
+  // Función para abrir el menú contextual
   const handleClickMore = (event, color) => {
     setAnchorEl({ value: event.currentTarget, color: color });
   };
+
+  // Función para cerrar el menú contextual
   const handleCloseMore = () => {
     setAnchorEl({ value: null, color: null });
   };
 
+  // Función para abrir el modal de actualización de color
   const handleOpenColor = (data) => {
     setOpenUpdateColor({ data: data, color: anchorEl.color, value: true });
   };
+
+  // Función para cerrar el modal de actualización de color
   const handleCloseColor = () => {
     setOpenUpdateColor({ data: {}, variants_ids: [], value: false });
   };
 
+  // Función para abrir el modal de agregar variante
   const handleOpenAddOneVariant = () => {
     setOpenAddVariant(true);
   };
+
+  // Función para cerrar el modal de agregar variante
   const handleCloseAddOneVariant = () => {
     setOpenAddVariant(false);
   };
 
+  // Función para abrir el modal de agregar talla
   const handleOpenAddSize = (data, product) => {
     const dataSize = product.size_guide.dimensions.length;
     const variant = data.find((i) => i.color === anchorEl.color);
     if (variant.items.length >= dataSize) {
-      return Swal.fire("No se pueden agregar mas tallas", "", "error");
+      return Swal.fire("No se pueden agregar más tallas", "", "error");
     }
     setOpenAddSize({
       product_id: id,
@@ -130,10 +141,13 @@ const VariantsAndPhotosShoes = () => {
       sizes: product.size_guide.dimensions,
     });
   };
+
+  // Función para cerrar el modal de agregar talla
   const handleCloseAddSize = () => {
     setOpenAddSize({ product_id: "", variant: {}, value: false, sizes: [] });
   };
 
+  // Función para abrir el modal de imágenes
   const handleOpenImages = (data) => {
     const variant = data.find((i) => i.color === anchorEl.color);
     setOpenUpdateImages({
@@ -143,14 +157,18 @@ const VariantsAndPhotosShoes = () => {
       value: true,
     });
   };
+
+  // Función para cerrar el modal de imágenes
   const handleCloseImages = () => {
     setOpenUpdateImages({ images: [], items: [], value: false });
   };
 
+  // Función para abrir el modal de visualización de imagen
   const handleOpen = (image) => {
     setOpen({ image: image, value: true });
   };
 
+  // Función para cargar el producto al montar el componente
   const callbackProduct = useCallback(() => {
     loadProduct(id);
   }, [id]);
@@ -159,8 +177,10 @@ const VariantsAndPhotosShoes = () => {
     callbackProduct();
   }, [callbackProduct]);
 
+  // Función para cerrar el modal de visualización de imagen
   const handleClose = () => setOpen({ image: null, value: false });
 
+  // Agrupa las variantes del producto por color
   const grouped = product?.variants?.reduce((acc, item) => {
     const color = item.attributes.color;
 
@@ -183,6 +203,7 @@ const VariantsAndPhotosShoes = () => {
     return acc;
   }, {});
 
+  // Convierte el objeto agrupado en un array para iterar
   const groupedArray = Object.entries(grouped)?.map(
     ([color, { items, images, design, is_main }]) => ({
       color,
@@ -193,18 +214,23 @@ const VariantsAndPhotosShoes = () => {
     })
   );
 
+  // Función para abrir el modal de actualización de variante
   const handleOpenUpdate = (variant) => {
     setOpenUpdateVariant({ variant: variant, value: true });
   };
+
+  // Función para cerrar el modal de actualización de variante
   const handleCloseUpdate = () => {
     setOpenUpdateVariant({ variant: {}, value: false });
   };
+
+  // Función para asignar una variante como principal
   const handleAssignMain = ({ product_id, color }) => {
     assignMain({ product_id: product_id, color: color });
   };
 
+  // Función para obtener el avatar que indica si una variante es principal
   const getAvatarForMain = ({ is_main, index }) => {
-    
     if (Array.isArray(is_main) && is_main[0] === true) {
       return <Avatar sx={{ bgcolor: green[400] }}>P</Avatar>;
     } else if (index === 0 && is_main?.[0]) {
@@ -213,12 +239,14 @@ const VariantsAndPhotosShoes = () => {
     return null; // Maneja el caso en el que no se retorna un Avatar
   };
 
+  // Muestra una pantalla de carga si el producto está cargando
   if (loading) {
     return <LoadingScreenBlue />;
   }
 
   return (
     <>
+      {/* Botón para recargar el producto */}
       <Grid2
         container
         display={"flex"}
@@ -235,6 +263,8 @@ const VariantsAndPhotosShoes = () => {
           <Refresh /> Recargar
         </Button>
       </Grid2>
+
+      {/* Tarjeta principal que contiene las variantes */}
       <Card variant="elevation">
         <CardHeader
           title="Variantes y fotos (ropa y zapatos)"
@@ -251,9 +281,9 @@ const VariantsAndPhotosShoes = () => {
         <CardContent>
           <Grid2 container display={"flex"} gap={2} size={12}>
             {groupedArray.map((item, index) => {
-               const avatar = getAvatarForMain({ is_main: item.is_main, index })
+              const avatar = getAvatarForMain({ is_main: item.is_main, index });
               return (
-                <Grid2 size={{ xs: 3.8 }}  key={`${item.color}-${index}`}>
+                <Grid2 size={{ xs: 3.8 }} key={`${item.color}-${index}`}>
                   <Card variant="elevation">
                     <CardHeader
                       action={
@@ -274,7 +304,9 @@ const VariantsAndPhotosShoes = () => {
                     />
 
                     <CardContent>
+                      {/* Componente para mostrar imágenes de la variante */}
                       <SlideSwiperVariantImages images={item.images} />
+                      {/* Tabla para mostrar las tallas y acciones de la variante */}
                       <TableSizesActions
                         items={item.items}
                         handleOpenUpdate={handleOpenUpdate}
@@ -290,6 +322,8 @@ const VariantsAndPhotosShoes = () => {
         </CardContent>
       </Card>
 
+      {/* Modales para diferentes funcionalidades */}
+      {/* Modal para visualizar una imagen */}
       <Modal
         open={open.value}
         onClose={handleClose}
@@ -316,6 +350,8 @@ const VariantsAndPhotosShoes = () => {
           />
         </Box>
       </Modal>
+
+      {/* Modal para actualizar una variante */}
       <Modal
         open={openUpdateVariant.value}
         onClose={handleClose}
@@ -343,6 +379,7 @@ const VariantsAndPhotosShoes = () => {
         </Box>
       </Modal>
 
+      {/* Modal para actualizar el color de una variante */}
       <Modal
         open={openUpdateColor.value}
         onClose={handleCloseColor}
@@ -371,6 +408,7 @@ const VariantsAndPhotosShoes = () => {
         </Box>
       </Modal>
 
+      {/* Modal para actualizar imágenes de una variante */}
       <Modal
         open={openUpdateImages.value}
         onClose={handleCloseImages}
@@ -400,6 +438,7 @@ const VariantsAndPhotosShoes = () => {
         </Box>
       </Modal>
 
+      {/* Modal para agregar una nueva variante */}
       <Modal
         open={openAddVariant}
         onClose={handleCloseAddOneVariant}
@@ -424,6 +463,7 @@ const VariantsAndPhotosShoes = () => {
         </Box>
       </Modal>
 
+      {/* Modal para agregar una nueva talla */}
       <Modal
         open={openAddSize.value}
         onClose={handleCloseAddSize}
@@ -452,6 +492,8 @@ const VariantsAndPhotosShoes = () => {
           />
         </Box>
       </Modal>
+
+      {/* Menú contextual para acciones sobre variantes */}
       <Menu
         anchorEl={anchorEl.value}
         id="variant-menu"
@@ -498,7 +540,7 @@ const VariantsAndPhotosShoes = () => {
         </MenuItem>
         <Divider />
         <MenuItem onClick={() => handleOpenImages(groupedArray)}>
-          Editar imagenes
+          Editar imágenes
         </MenuItem>
         <Divider />
         <MenuItem onClick={() => handleOpenAddSize(groupedArray, product)}>

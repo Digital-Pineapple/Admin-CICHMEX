@@ -26,6 +26,7 @@ import { useStoreHouse } from "../../hooks/useStoreHouse";
 import AddButton2 from "../../components/Buttons/AddButton2";
 import { orange } from "@mui/material/colors";
 
+// Componente de paginación personalizada para el DataGrid
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -42,42 +43,48 @@ function Pagination({ page, onPageChange, className }) {
     />
   );
 }
+
+// Icono personalizado para indicar orden descendente
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
 
+// Icono personalizado para indicar orden ascendente
 export function SortedAscendingIcon() {
   return <ExpandLessIcon className="icon" />;
 }
 
+// Icono personalizado para indicar que no hay orden aplicado
 export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación personalizada que utiliza el componente Pagination
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
 const MyStockProducts = () => {
   const {
-    loadStockProducts,
-    loadNoStockProducts,
-    rowsStockProducts,
-    navigate,
-    rowsOutOfStockProducts,
+    loadStockProducts, // Función para cargar productos en stock
+    loadNoStockProducts, // Función para cargar productos sin stock
+    rowsStockProducts, // Datos de productos en stock
+    navigate, // Función para navegar entre rutas
+    rowsOutOfStockProducts, // Datos de productos sin stock
   } = useProducts();
-  const { createStockProduct } = useStoreHouse();
+  const { createStockProduct } = useStoreHouse(); // Función para crear un producto en el almacén
 
   useEffect(() => {
-    loadStockProducts();
-    loadNoStockProducts();
+    loadStockProducts(); // Carga los productos en stock al montar el componente
+    loadNoStockProducts(); // Carga los productos sin stock al montar el componente
   }, []);
 
-  const rowsWithIds = rowsStockProducts;
+  const rowsWithIds = rowsStockProducts; // Asigna los productos en stock a una variable
   const createProduct = () => {
-    navigate("/auth/CrearProducto");
+    navigate("/auth/CrearProducto"); // Navega a la página para crear un nuevo producto
   };
 
+  // Función para exportar los datos de productos a un archivo Excel
   const exportToExcel = () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Stock de productos");
@@ -114,10 +121,12 @@ const MyStockProducts = () => {
       saveAs(blob, "productos.xlsx");
     });
   };
+
+  // Barra de herramientas personalizada para el DataGrid
   function CustomToolbar() {
     const apiRef = useGridApiContext();
 
-    const handleGoToPage1 = () => apiRef.current.setPage(1);
+    const handleGoToPage1 = () => apiRef.current.setPage(1); // Función para regresar a la primera página
 
     return (
       <GridToolbarContainer sx={{ justifyContent: "space-between" }}>
@@ -128,7 +137,7 @@ const MyStockProducts = () => {
           startIcon={<Download />}
           disableElevation
           sx={{ color: "secondary" }}
-          onClick={exportToExcel}
+          onClick={exportToExcel} // Llama a la función para exportar a Excel
         >
           Descargar Excel
         </Button>
@@ -137,7 +146,8 @@ const MyStockProducts = () => {
   }
 
   return (
-    <Grid container  maxWidth={'85vw'} >
+    <Grid container maxWidth={'85vw'}>
+      {/* Título principal */}
       <Grid
         item
         marginTop={{ xs: "-30px" }}
@@ -153,19 +163,21 @@ const MyStockProducts = () => {
           Stock
         </Typography>
       </Grid>
+
+      {/* Tabla de productos sin stock */}
       {rowsOutOfStockProducts.length > 0 ? (
         <Grid item xs={6} lg={5} mr={1}>
           <Typography
-          bgcolor={orange[900]}
-          variant="h3"
-          color={"#fff"}
-          borderRadius={2}
-          marginY={2}
-          textAlign={"center"}
-          fontSize={"30px"}
-        >
-          Productos sin almacen
-        </Typography>
+            bgcolor={orange[900]}
+            variant="h3"
+            color={"#fff"}
+            borderRadius={2}
+            marginY={2}
+            textAlign={"center"}
+            fontSize={"30px"}
+          >
+            Productos sin almacen
+          </Typography>
           <DataGrid
             sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
             columns={[
@@ -232,6 +244,8 @@ const MyStockProducts = () => {
       ) : (
         ""
       )}
+
+      {/* Tabla de productos en stock */}
       <Grid item xs={12} lg={rowsOutOfStockProducts.length > 0 ? 6 : 12}>
         <Typography
           bgcolor={orange[900]}
@@ -279,21 +293,6 @@ const MyStockProducts = () => {
               flex: 1,
               align: "center",
             },
-            
-            // {
-            //   field: "Opciones",
-            //   headerName: "Opciones",
-            //   align: "center",
-            //   flex: 1,
-            //   sortable: false,
-            //   type: "actions",
-            //   getActions: (params) => [
-            //     <AddButton2
-            //       title={`Agregar`}
-            //       product={params?.row}
-            //     />,
-            //   ],
-            // },
           ]}
           rows={rowsWithIds}
           pagination

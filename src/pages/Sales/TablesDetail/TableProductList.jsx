@@ -9,8 +9,10 @@ import { Typography } from "@mui/material";
 import noImage from '../../../assets/Images/CHMX/Imagotipo Cuadrado CHMX.png'
 
 const TableProductList = ({ products, shippingCost, discount, handleOpen }) => {
-  if (!products) return null; // Evita errores si no hay usuario
+  // Verifica si no hay productos y retorna null para evitar errores
+  if (!products) return null;
 
+  // Calcula el subtotal sumando el precio de cada producto multiplicado por su cantidad
   const subTotal = products.reduce(
     (sum, i) =>
       sum +
@@ -19,7 +21,10 @@ const TableProductList = ({ products, shippingCost, discount, handleOpen }) => {
         : i.item.price * i.quantity),
     0
   );
+
+  // Calcula el total sumando el subtotal y el costo de envío
   const total = (subTotal + shippingCost).toFixed(2);
+
   return (
     <TableContainer
       variant="outlined"
@@ -54,12 +59,14 @@ const TableProductList = ({ products, shippingCost, discount, handleOpen }) => {
                   maxWidth: "250px",
                 }}
               >
+                {/* Muestra la imagen del producto o una imagen por defecto si no hay */}
                 <img
                   src={
                     product.variant
                       ? product.variant.images[0]?.url
-                      : product.item.images[0]?.url ?
-                      product.item.images[0]?.url : noImage
+                      : product.item.images[0]?.url
+                      ? product.item.images[0]?.url
+                      : noImage
                   }
                   alt={index}
                   style={{
@@ -69,8 +76,14 @@ const TableProductList = ({ products, shippingCost, discount, handleOpen }) => {
                     objectFit: "cover",
                     borderRadius: "10px",
                   }}
-                  onClick={()=>handleOpen(product.variant ? product.variant.images : product.item.images)}
+                  // Abre el modal con las imágenes del producto
+                  onClick={() =>
+                    handleOpen(
+                      product.variant ? product.variant.images : product.item.images
+                    )
+                  }
                 />
+                {/* Muestra el nombre del producto y sus atributos (color y tamaño) */}
                 <Typography
                   sx={{
                     p: 1,
@@ -86,13 +99,16 @@ const TableProductList = ({ products, shippingCost, discount, handleOpen }) => {
                   }`}
                 </Typography>
               </TableCell>
+              {/* Muestra la cantidad del producto */}
               <TableCell>{product.quantity}</TableCell>
+              {/* Muestra el precio unitario del producto */}
               <TableCell>
                 $
                 {product.variant?.price
                   ? product.variant.price.toFixed(2)
                   : product.item?.price?.toFixed(2) || "0.00"}
               </TableCell>
+              {/* Muestra el monto total por producto (precio unitario * cantidad) */}
               <TableCell>
                 $
                 {product.variant?.price
@@ -102,28 +118,33 @@ const TableProductList = ({ products, shippingCost, discount, handleOpen }) => {
               </TableCell>
             </TableRow>
           ))}
+          {/* Fila del subtotal */}
           <TableRow>
             <TableCell rowSpan={4} />
             <TableCell colSpan={2}>Subtotal</TableCell>
             <TableCell align="right">{`$${(subTotal || 0).toFixed(2)}`}</TableCell>
           </TableRow>
+          {/* Fila del descuento */}
           <TableRow>
             <TableCell colSpan={2}>Descuento</TableCell>
             <TableCell align="right">
               {discount ? `$${discount.toFixed(2)}` : "-"}
             </TableCell>
           </TableRow>
+          {/* Fila del costo de envío */}
           <TableRow>
             <TableCell colSpan={2}>Envío</TableCell>
             <TableCell align="right">{`$${(shippingCost || 0).toFixed(2)}`}</TableCell>
           </TableRow>
+          {/* Fila del total */}
           <TableRow>
             <TableCell colSpan={2}>Total</TableCell>
-            <TableCell align="right">{`$${(total)}`}</TableCell>
+            <TableCell align="right">{`$${total}`}</TableCell>
           </TableRow>
         </TableBody>
       </Table>
     </TableContainer>
   );
 };
+
 export default TableProductList;

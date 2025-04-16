@@ -1,3 +1,4 @@
+// Importación de íconos y componentes necesarios
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SortIcon from "@mui/icons-material/Sort";
@@ -41,6 +42,7 @@ import { useCategories } from "../../hooks/useCategories";
 import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 import { esES } from "@mui/x-data-grid/locales";
 
+// Componente de paginación personalizada
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -57,6 +59,8 @@ function Pagination({ page, onPageChange, className }) {
     />
   );
 }
+
+// Íconos personalizados para ordenamiento de columnas
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
@@ -69,10 +73,12 @@ export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación personalizada para DataGrid
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
+// Estilo para los modales
 const style = {
   position: "absolute",
   top: "50%",
@@ -85,19 +91,26 @@ const style = {
   borderRadius: "10px",
 };
 
+// Componente principal de Subcategorías
 const SubCategories = () => {
+  // Hooks personalizados para cargar datos de subcategorías y categorías
   const { loadSubCategories, deleteSubCategory, subCategories, loading } =
     useSubCategories();
   const { loadCategories, categories } = useCategories();
   const { user } = useAuthStore();
+
+  // Callback para cargar categorías y subcategorías
   const callBackCategories = useCallback(() => {
     loadCategories();
     loadSubCategories();
   }, [user]);
 
+  // Efecto para cargar datos al montar el componente
   useEffect(() => {
     callBackCategories();
   }, [callBackCategories]);
+
+  // Estados para manejar modales de creación, edición y visualización
   const [open, setOpen] = useState({ value: false, subCategory: null });
   const [openCreate, setOpenCreate] = useState({
     value: false,
@@ -109,6 +122,7 @@ const SubCategories = () => {
     categories: null,
   });
 
+  // Funciones para abrir y cerrar los modales
   const handleOpen = async (data) => {
     setOpen({ value: true, subCategory: data });
   };
@@ -130,6 +144,8 @@ const SubCategories = () => {
       setOpenUpdate({ value: false, subCategory: null, categories: null });
     }
   };
+
+  // Barra de herramientas personalizada para el DataGrid
   function CustomToolbar() {
     return (
       <GridToolbarContainer sx={{ justifyContent: "center" }}>
@@ -138,20 +154,24 @@ const SubCategories = () => {
     );
   }
 
+  // Transformación de datos para las filas del DataGrid
   const rowsSubCategories = (data) =>
     data.map((i, _id) => ({
       id: _id.toString(),
       ...i,
     }));
 
+  // Mostrar pantalla de carga si los datos aún no están disponibles
   if (loading) {
     return <LoadingScreenBlue />;
   }
 
+  // Rutas para el componente de breadcrumb
   const paths = [{ path: `/mi-almacen/subcategorias`, name: "Subcategorías" }];
 
   return (
     <Grid2 paddingX={{ xs: 0, lg: 10 }} gap={2}>
+      {/* Encabezado de la página */}
       <Grid2
         size={12}
         paddingRight={15}
@@ -165,6 +185,8 @@ const SubCategories = () => {
           <strong>Subcategorías</strong>
         </Typography>
       </Grid2>
+
+      {/* Breadcrumb y botón para agregar subcategorías */}
       <Grid2 size={12} m={2} display={"flex"} justifyContent={"space-between"}>
         <BreadcrumbCustom paths={paths} />
         <Fab
@@ -177,6 +199,7 @@ const SubCategories = () => {
         </Fab>
       </Grid2>
 
+      {/* Tabla de subcategorías */}
       <DataGrid
         sx={{
           fontSize: "12px",
@@ -270,6 +293,8 @@ const SubCategories = () => {
         }}
         style={{ fontFamily: "sans-serif", fontSize: "15px" }}
       />
+
+      {/* Modal para ver detalles de una subcategoría */}
       <Modal open={open.value} onClose={handleClose}>
         <Card sx={style} variant="outlined">
           <CardHeader
@@ -288,6 +313,8 @@ const SubCategories = () => {
           />
         </Card>
       </Modal>
+
+      {/* Modal para crear una nueva subcategoría */}
       <Modal open={openCreate.value} onClose={handleCloseCreate}>
         <Box sx={style}>
           <CreateSubCategory
@@ -296,6 +323,8 @@ const SubCategories = () => {
           />
         </Box>
       </Modal>
+
+      {/* Modal para editar una subcategoría existente */}
       <Modal open={openUpdate.value} onClose={handleCloseUpdate}>
         <Box sx={style}>
           <EditSubcategory

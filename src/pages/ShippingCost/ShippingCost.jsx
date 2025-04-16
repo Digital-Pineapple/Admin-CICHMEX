@@ -34,6 +34,7 @@ import UpdateShippingCost from '../../pages/ShippingCost/Edit'
 import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 import { esES } from "@mui/x-data-grid/locales";
 
+// Estilo para los modales
 const style = {
   position: 'absolute',
   top: '50%',
@@ -46,6 +47,7 @@ const style = {
   p: 2,
 };
 
+// Componente de paginación personalizada
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -62,6 +64,8 @@ function Pagination({ page, onPageChange, className }) {
     />
   );
 }
+
+// Iconos personalizados para ordenamiento
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
@@ -74,6 +78,7 @@ export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación personalizada para la tabla
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
@@ -82,6 +87,7 @@ const ShippingCost = () => {
   const { loadShippingCosts, deleteShippingCost, rowsShippingCosts, loading } = useShippingCost();
   const {user, navigate} = useAuthStore()
 
+  // Estado para controlar los modales de agregar y actualizar
   const [open, setOpen] = React.useState({openAdd: false, openUpdate:false, SC:{}});
   const handleOpenAdd = () => setOpen({openAdd:true});
   const handleOpenUpdate = (values) => setOpen({openUpdate:true,SC:values});
@@ -96,10 +102,12 @@ const ShippingCost = () => {
     }
   }
 
+  // Cargar los costos de envío al montar el componente
   useEffect(() => {
     loadShippingCosts()
   }, [user]);
   
+  // Función para exportar los datos a un archivo Excel
   const exportToExcel = () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Productos");
@@ -130,6 +138,7 @@ const ShippingCost = () => {
     });
   };
 
+  // Barra de herramientas personalizada para la tabla
   function CustomToolbar() {
     const apiRef = useGridApiContext();
   
@@ -142,6 +151,7 @@ const ShippingCost = () => {
     );
   }
 
+  // Mostrar pantalla de carga si los datos están cargando
   if (loading) {
     return(<LoadingScreenBlue/>)
   }
@@ -152,6 +162,7 @@ const ShippingCost = () => {
 
   return (
     <Grid2 container paddingX={{ xs: 0, lg: 10 }} display={"flex"} gap={2} >
+      {/* Encabezado de la página */}
       <Grid2
                 size={12}
                 paddingRight={15}
@@ -170,6 +181,7 @@ const ShippingCost = () => {
                 <Fab onClick={()=>handleOpenAdd()} sx={{top: 10, right:20}} title="Agregar" color="secondary"> <Add/></Fab>
             </Grid2>
     
+      {/* Tabla de datos */}
       <DataGrid
        sx={{
                            fontSize: "12px",
@@ -257,7 +269,9 @@ const ShippingCost = () => {
           },
         }}
       />
-        <Modal
+      
+      {/* Modal para agregar un costo de envío */}
+      <Modal
         open={open.openAdd}
         onClose={handleCloseAdd}
         aria-labelledby="modal-modal-title"
@@ -267,6 +281,8 @@ const ShippingCost = () => {
           <CreateShippingCost handleCloseModal={handleCloseAdd} />
         </Box>
       </Modal>
+
+      {/* Modal para actualizar un costo de envío */}
       <Modal
         open={open.openUpdate}
         onClose={handleOpenUpdate}
@@ -280,6 +296,5 @@ const ShippingCost = () => {
     </Grid2>
   );
 }
-
 
 export default ShippingCost

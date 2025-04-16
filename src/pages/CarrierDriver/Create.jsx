@@ -1,3 +1,4 @@
+// Importación de componentes y librerías necesarias
 import {
   TextField,
   Button,
@@ -29,7 +30,9 @@ import {
 import { matchIsValidTel, MuiTelInput } from "mui-tel-input";
 import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 
+// Componente principal para crear un transportista
 const CreateCarrier = () => {
+  // Configuración del formulario con valores predeterminados
   const {
     control,
     handleSubmit,
@@ -51,24 +54,31 @@ const CreateCarrier = () => {
     },
   });
 
+  // Hooks personalizados para cargar almacenes, regiones y usuarios
   const { StoreHouses, loadStoreHouse } = useStoreHouse();
   const { user, navigate } = useAuthStore();
   const { addCarrier, loading } = useUsers();
   const { loadAllRegions, regions } = useRegions();
+
+  // Estados locales para manejar regiones seleccionadas
   const [watchRegions, setWatchRegions] = useState([]);
   const [selectedRegions, setSelectedRegions] = useState([]);
 
+  // Función para crear un transportista
   const createOneCarrier = useCallback((values) => {
      addCarrier(values); 
   }, [addCarrier]);
 
+  // Observador para el campo de almacén
   const watchField = watch("employee_detail.store_house", false);
 
+  // Carga inicial de almacenes y regiones
   useEffect(() => {
     loadStoreHouse();
     loadAllRegions();
   }, [user]);
 
+  // Manejo del cambio en las regiones seleccionadas
   const handleRegionChange = useCallback((e) => {
     const regionIds = e.target.value;
     setSelectedRegions(regionIds);
@@ -79,9 +89,11 @@ const CreateCarrier = () => {
     });
   }, [regions, setValue]);
 
+  // Estilos para el mapa de Google
   const __mapMandatoryStyles = useMemo(() => ({ width: "100%", height: "700px" }), []);
   const googleMapsApiKey = import.meta.env.VITE_REACT_APP_MAP_KEY;
 
+  // Cálculo del centro de una región en el mapa
   const calculateCenter = useCallback((path) => {
     const latLngs = path.map(
       (point) => new window.google.maps.LatLng(point.lat, point.lng)
@@ -91,10 +103,12 @@ const CreateCarrier = () => {
     return bounds.getCenter().toJSON();
   }, []);
 
+  // Carga del script de Google Maps
   const { isLoaded } = useLoadScript({
     googleMapsApiKey,
   });
 
+  // Agrega el centro calculado a una región
   const regionWithCenter = useCallback((region) => {
     return {
       ...region,
@@ -102,11 +116,13 @@ const CreateCarrier = () => {
     };
   }, [calculateCenter]);
 
+  // Rutas para el componente de breadcrumb
   const paths = useMemo(() => [
     { path: `/usuarios/transportistas`, name: "Transportistas" },
     { path: `/usuarios/agregar-transportista`, name: "Crear transportista" },
   ], []);
 
+  // Muestra una pantalla de carga si los datos aún no están disponibles
   if (loading) {
     return <LoadingScreenBlue />;
   }
@@ -115,9 +131,10 @@ const CreateCarrier = () => {
     return <div>Cargando mapa...</div>;
   }
   
-
+  // Renderizado del formulario principal
   return (
     <Grid2 container paddingX={{ xs: 10 }}>
+      {/* Título de la página */}
       <Grid2
         size={12}
         paddingRight={15}
@@ -131,9 +148,11 @@ const CreateCarrier = () => {
           <strong>Crear transportista</strong>
         </Typography>
       </Grid2>
+      {/* Componente de breadcrumb */}
       <Grid2 size={12}>
         <BreadcrumbCustom paths={paths} />
       </Grid2>
+      {/* Formulario para crear transportista */}
       <Grid2
         onSubmit={handleSubmit(createOneCarrier)}
         component={"form"}
@@ -147,6 +166,7 @@ const CreateCarrier = () => {
           borderRadius: '20px'
         }}
       >
+        {/* Campos del formulario */}
         {renderTextField(control, errors, "fullname", "Nombre completo", /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/)}
         {renderTextField(control, errors, "email", "Correo", /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/)}
         {renderTextField(control, errors, "password", "Contraseña", /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)}
@@ -155,6 +175,7 @@ const CreateCarrier = () => {
         {renderTextField(control, errors, "employee_detail.sales_commission_porcent", "Comisiones", /^(\d|[1-9]\d)$/, { endAdornment: <PercentIcon /> })}
         {renderStoreHouseField(control, errors, "employee_detail.store_house", StoreHouses, watchField)}
         {renderRegionsField(control, errors, "employee_detail.operationRegions", regions, selectedRegions, handleRegionChange, watchRegions, regionWithCenter, __mapMandatoryStyles)}
+        {/* Botones de acción */}
         <Grid2 gap={2} container size={{ xs: 12 }}>
           <Grid2 size={{ xs: 12, md: 5.8 }}>
             <Button
@@ -177,6 +198,7 @@ const CreateCarrier = () => {
   );
 };
 
+// Renderiza un campo de texto genérico
 const renderTextField = (control, errors, name, label, pattern, InputProps) => (
   <Grid2 size={{ xs: 12, lg: 5.8 }}>
     <Controller
@@ -202,6 +224,7 @@ const renderTextField = (control, errors, name, label, pattern, InputProps) => (
   </Grid2>
 );
 
+// Renderiza un campo de teléfono
 const renderPhoneField = (control, errors, name, setValue) => (
   <Grid2 size={{ xs: 12, lg: 5.8 }}>
     <Controller
@@ -229,6 +252,7 @@ const renderPhoneField = (control, errors, name, setValue) => (
   </Grid2>
 );
 
+// Renderiza el campo de almacén
 const renderStoreHouseField = (control, errors, name, StoreHouses, watchField) => (
   <Grid2 size={{ xs: 12, sm: 12 }}>
     <Controller
@@ -265,6 +289,7 @@ const renderStoreHouseField = (control, errors, name, StoreHouses, watchField) =
   </Grid2>
 );
 
+// Renderiza el campo de regiones y el mapa asociado
 const renderRegionsField = (control, errors, name, regions, selectedRegions, handleRegionChange, watchRegions, regionWithCenter, __mapMandatoryStyles) => (
   <Grid2 container size={12} gap={1} display={"flex"} justifyContent={"center"}>
     <Controller

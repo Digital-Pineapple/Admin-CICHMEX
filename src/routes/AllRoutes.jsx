@@ -220,8 +220,9 @@ export const AllRoutes = [
 
   { id: 140, element: <Warehouseman /> },
   { id: 141, element: <CreateWarehouseman /> },
-  { id: 142, element: <EditWarehouseman /> },
+  { id: 95, element: <EditWarehouseman /> },
 
   { id: 200, element: <WarehouseManagement /> },
+  // { id: 210, element: <WarehouseManagement /> },
   { id: 201, element: <ArrangeProducts /> },
 ];

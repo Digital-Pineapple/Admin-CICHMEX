@@ -11,6 +11,7 @@ const config = {
   },
 };    
 
+// Carga todas las membresías desde el servidor y las almacena en el estado global
 export const startLoadMemberships = () => {
     return async dispatch => {
         try {
@@ -22,6 +23,7 @@ export const startLoadMemberships = () => {
     }
 }
 
+// Obtiene la información de una membresía específica por su ID y la almacena en el estado global
 export const getOneMembership = (_id) =>
     async dispatch => {
         try {
@@ -32,6 +34,7 @@ export const getOneMembership = (_id) =>
         }
     }
 
+// Elimina una membresía específica por su ID y actualiza el estado global
 export const deleteOneMembership = (_id) =>
     async dispatch => {
         try {
@@ -45,49 +48,48 @@ export const deleteOneMembership = (_id) =>
         }
     }
 
-    export const editOneMembership = (_id, values) => {
-        return async (dispatch) => {
-            try {
-              const formData = new FormData();
-              formData.append('name', values.name );
-              formData.append('description',values.description);
-            const { data } = await instanceApi.patch(
-                `/memberships/${_id}`,formData, config);
-            dispatch(editMembership(_id, data.data));
-            enqueueSnackbar('Editado con éxito', {variant:'success', anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right'
-            }})
-            } catch (error) {
-              console.log(error);
-              enqueueSnackbar(`Error ${error.response.data.message | ''}`,
-               {variant:'error', anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right'
-              }})
-            }
-        };
-    
-    };
-    export const addOneMembership = (values, navigate) => async (dispatch) => {
+// Edita una membresía específica por su ID con los valores proporcionados y actualiza el estado global
+export const editOneMembership = (_id, values) => {
+    return async (dispatch) => {
         try {
-          const { data } = await instanceApi.post(`/memberships/`, values, headerConfig);
-          dispatch(onAddNewMembership(data.data));
-          enqueueSnackbar(`${data.message}`, {variant:'success', anchorOrigin: {
+          const formData = new FormData();
+          formData.append('name', values.name );
+          formData.append('description',values.description);
+        const { data } = await instanceApi.patch(
+            `/memberships/${_id}`,formData, config);
+        dispatch(editMembership(_id, data.data));
+        enqueueSnackbar('Editado con éxito', {variant:'success', anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right'
+        }})
+        } catch (error) {
+          console.log(error);
+          enqueueSnackbar(`Error ${error.response.data.message | ''}`,
+           {variant:'error', anchorOrigin: {
             vertical: 'top',
             horizontal: 'right'
           }})
-          navigate('/auth/Membresias', {replace:true})
-        } catch (error) {
-          console.log(error);
-          enqueueSnackbar(`${error.response.data?.message}`,
-          {variant:'error', anchorOrigin: {
-           vertical: 'top',
-           horizontal: 'right'
-         }})
         }
-      };
-      
-    
+    };
 
-   
+};
+
+// Agrega una nueva membresía con los valores proporcionados, actualiza el estado global y redirige al usuario
+export const addOneMembership = (values, navigate) => async (dispatch) => {
+    try {
+      const { data } = await instanceApi.post(`/memberships/`, values, headerConfig);
+      dispatch(onAddNewMembership(data.data));
+      enqueueSnackbar(`${data.message}`, {variant:'success', anchorOrigin: {
+        vertical: 'top',
+        horizontal: 'right'
+      }})
+      navigate('/auth/Membresias', {replace:true})
+    } catch (error) {
+      console.log(error);
+      enqueueSnackbar(`${error.response.data?.message}`,
+      {variant:'error', anchorOrigin: {
+       vertical: 'top',
+       horizontal: 'right'
+     }})
+    }
+};

@@ -105,7 +105,7 @@ const VariantsAndPhotos = () => {
         price: variant?.price || 0,
         porcentDiscount: variant?.porcentDiscount || 0,
         discountPrice: variant?.discountPrice || 0,
-        stock: variant?.stock || null,
+        // stock: variant?.stock || null,
         tag: variant?.tag || null,
         is_main: variant.is_main || null,
         purchase_price: variant.purchase_price || null,
@@ -163,7 +163,7 @@ const VariantsAndPhotos = () => {
       price: '',
       porcentDiscount: '',
       discountPrice: '',
-      stock: null,
+      // stock: null,
       purchase_price: null,
     };
     setValue(`variants[${currentVariants+1}]`, newVariant )
@@ -600,7 +600,7 @@ const VariantsAndPhotos = () => {
                         />
                       </Grid2>
 
-                      {isUUID(item.id) ? (
+                      {/* {isUUID(item.id) ? (
                         <Grid2 size={4}>
                           <Controller
                             control={control}
@@ -629,7 +629,7 @@ const VariantsAndPhotos = () => {
                         </Grid2>
                       ) : (
                         ""
-                      )}
+                      )} */}
 
                       <Grid2 size={4}>
                         <Controller

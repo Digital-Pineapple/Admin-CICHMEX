@@ -11,7 +11,7 @@ import { enqueueSnackbar } from "notistack";
 import { green, red } from "@mui/material/colors";
 import { Box, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fab, TextField, Tooltip } from "@mui/material";
 
-
+// Componente principal que representa un botón para verificar o rechazar documentos
 const VerifyButton = ({ pathFile }) => {
   const { varifyDocumentation } = useDocumentations();
   const [validate, setValidate] = useState('');
@@ -21,14 +21,17 @@ const VerifyButton = ({ pathFile }) => {
   const [message, setMessage] = useState('')
   const timer = useRef();
 
+  // Abre el diálogo para ingresar el motivo de rechazo
   const handleClickOpen = () => {
     setOpen(true);
   };
 
+  // Cierra el diálogo de rechazo
   const handleClose = () => {
     setOpen(false);
   };
 
+  // Estilo para el botón de verificación
   const styleVerify = {
     ...(validate && {
       bgcolor: green[500],
@@ -37,6 +40,8 @@ const VerifyButton = ({ pathFile }) => {
       },
     }),
   }
+
+  // Estilo para el botón de rechazo
   const styleRefused = {
     ...(!validate && {
       bgcolor: red[500],
@@ -45,11 +50,14 @@ const VerifyButton = ({ pathFile }) => {
       },
     }),
   }
+
+  // Efecto que actualiza el estado de validación cuando cambia el archivo
   useEffect(() => {
     setValidate(pathFile?.verify)
     clearTimeout(timer.current);
   }, [pathFile]);
 
+  // Función para manejar la validación del documento
   const validation = () => {
     if (!loading) {
       setLoading(true);
@@ -57,7 +65,7 @@ const VerifyButton = ({ pathFile }) => {
         setLoading(false)
         setValidate(true)
         try {
-         varifyDocumentation(pathFile._id, true);
+          varifyDocumentation(pathFile._id, true);
           return enqueueSnackbar("Se verificó con exito", {
             variant: "success",
             anchorOrigin: {
@@ -79,6 +87,8 @@ const VerifyButton = ({ pathFile }) => {
       }, 2000);
     }
   };
+
+  // Función para manejar el rechazo del documento
   const refused = () => {
     if (!loading2) {
       setLoading2(true);
@@ -112,6 +122,7 @@ const VerifyButton = ({ pathFile }) => {
 
   return (
     <>
+      {/* Botón para aceptar/verificar el documento */}
       <Tooltip title="Aceptar">
         <Box sx={{ m: 2, position: "relative" }}>
           <Fab
@@ -136,6 +147,8 @@ const VerifyButton = ({ pathFile }) => {
           )}
         </Box>
       </Tooltip>
+
+      {/* Botón para rechazar el documento */}
       <Tooltip title="Rechazar">
         <Box sx={{ m: 2, position: "relative" }}>
           <Fab
@@ -160,6 +173,8 @@ const VerifyButton = ({ pathFile }) => {
           )}
         </Box>
       </Tooltip>
+
+      {/* Diálogo para ingresar el motivo de rechazo */}
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Motivo de rechazo</DialogTitle>
         <DialogContent>
@@ -167,27 +182,27 @@ const VerifyButton = ({ pathFile }) => {
             Describe el motivo de rechazo del documento
           </DialogContentText>
           <form onSubmit={refused}>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="message"
-            name="message"
-            label=""
-            type="text"
-            fullWidth
-            variant='filled'
-            value={message}
-            onChange={(e) => {
-              setMessage(e.target.value);
-          }}
-          />
+            <TextField
+              autoFocus
+              margin="dense"
+              id="message"
+              name="message"
+              label=""
+              type="text"
+              fullWidth
+              variant='filled'
+              value={message}
+              onChange={(e) => {
+                setMessage(e.target.value);
+              }}
+            />
           </form>
         </DialogContent>
         <DialogActions>
-          <Button onClick={refused}  >Rechazar</Button>
+          <Button onClick={refused}>Rechazar</Button>
           <Button onClick={handleClose}>Cancelar</Button>
         </DialogActions>
-      </Dialog> 
+      </Dialog>
     </>
   );
 };

@@ -38,6 +38,7 @@ import { usePayments } from "../../hooks/usePayments";
 import { orange, purple } from "@mui/material/colors";
 import { esES } from "@mui/x-data-grid/locales";
 
+// Componente de paginación personalizada
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -55,43 +56,50 @@ function Pagination({ page, onPageChange, className }) {
   );
 }
 
+// Icono para orden descendente
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
 
+// Icono para orden ascendente
 export function SortedAscendingIcon() {
   return <ExpandLessIcon className="icon" />;
 }
 
+// Icono para columna sin ordenar
 export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación personalizada para DataGrid
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
+// Barra de herramientas personalizada para DataGrid
 function CustomToolbar() {
   const apiRef = useGridApiContext();
 
-
   return (
     <GridToolbarContainer sx={{ justifyContent: "center" }}>
-      <GridToolbarQuickFilter placeholder="Buscar" variant="outlined"  />
+      <GridToolbarQuickFilter placeholder="Buscar" variant="outlined" />
     </GridToolbarContainer>
   );
 }
 
+// Componente principal de la página de transferencias de ventas
 const SalesTransfer = () => {
   const { loadPendingTransferPO, navigate, productOrders, loading } =
     useProductOrder();
   const { user } = useAuthStore();
-  const {loadValidateExpiredPayments} = usePayments()
+  const { loadValidateExpiredPayments } = usePayments();
 
+  // Cargar las órdenes de productos pendientes al montar el componente
   useEffect(() => {
     loadPendingTransferPO();
   }, [user]);
 
+  // Transformar los datos de las órdenes de productos para adaptarlos al DataGrid
   const rowsWithIds = productOrders.map((item, index) => {
     const quantities = item.products.map((i) => i.quantity);
     const suma = quantities.reduce((valorAnterior, valorActual) => {
@@ -108,40 +116,38 @@ const SalesTransfer = () => {
     };
   });
 
-  
-
+  // Renderizar el icono de opciones basado en el estado del pago
   const renderIcon = (values) => {
-    
     if (values.row.payment?.verification) {
       return (
         <>
-        <IconButton
-          sx={{ borderRadius:'2px' }}
-          aria-label="Autorizar"
-          color="success"
-          title="Autorizar"
-          onClick={() => navigate(`/contaduria/venta-detalle/${values.row._id}`)}
-        >
-          <Check />
-        </IconButton> 
-        
+          <IconButton
+            sx={{ borderRadius: "2px" }}
+            aria-label="Autorizar"
+            color="success"
+            title="Autorizar"
+            onClick={() => navigate(`/contaduria/venta-detalle/${values.row._id}`)}
+          >
+            <Check />
+          </IconButton>
         </>
       );
-    } else  {
+    } else {
       return (
         <IconButton
-        sx={{ display: {} }}
-        aria-label="Ver detalle"
-        color="primary"
-        title="Ver detalle"
-        onClick={() => navigate(`/contaduria/venta-detalle/${values.row._id}`)}
-      >
-        <MoreHoriz />
-      </IconButton> 
+          sx={{ display: {} }}
+          aria-label="Ver detalle"
+          color="primary"
+          title="Ver detalle"
+          onClick={() => navigate(`/contaduria/venta-detalle/${values.row._id}`)}
+        >
+          <MoreHoriz />
+        </IconButton>
       );
     }
   };
 
+  // Renderizar un chip basado en si el pago tiene ticket o no
   const renderChip = (values) => {
     if (!!values.row.payment.verification?.payment_vouchers) {
       return (
@@ -168,20 +174,27 @@ const SalesTransfer = () => {
     }
   };
 
+  // Mostrar pantalla de carga si los datos aún no están disponibles
   if (loading) {
     return <LoadingScreenBlue />;
   }
 
+  // Renderizar el DataGrid con las órdenes de productos
   return (
     <Grid2 container>
-      <Grid2 size={12} display={'flex'} padding={2} justifyContent={'flex-end'}>
-        <Button variant="contained" onClick={()=>loadValidateExpiredPayments()} color="primary">
+      {/* Botón para limpiar pagos expirados */}
+      <Grid2 size={12} display={"flex"} padding={2} justifyContent={"flex-end"}>
+        <Button
+          variant="contained"
+          onClick={() => loadValidateExpiredPayments()}
+          color="primary"
+        >
           Limpiar pagos expirados
         </Button>
       </Grid2>
       <Grid2 size={12}>
         <DataGrid
-         localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+          localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           sx={{
             fontSize: "12px",
             fontFamily: "sans-serif",

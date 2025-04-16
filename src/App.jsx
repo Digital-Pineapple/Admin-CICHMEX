@@ -3,18 +3,19 @@ import { useAuthStore } from "./hooks";
 import LoadingScreenBlue from "./components/ui/LoadingScreenBlue";
 import RoutesContainer from "./routes/RoutesContainer";
 import { addNotification } from "./store/reducer/notificationsReducer";
-import  io  from "socket.io-client";
+import io from "socket.io-client";
 import { enqueueSnackbar } from "notistack";
 import { useDispatch } from "react-redux";
-
 
 const App = () => {
   const { RevalidateToken, logged, user } = useAuthStore();
   const [loader, setLoader] = useState(false);
-  let token = localStorage.getItem('token') || null
+  let token = localStorage.getItem('token') || null;
   const dispatch = useDispatch();
   const [socket, setSocket] = useState(null);
 
+  // Este efecto verifica si el usuario está autenticado y configura el socket para recibir notificaciones.
+  // Si el usuario no está autenticado, se desconecta el socket.
   // useEffect(() => {
   //   if (logged) {
   //     const newSocket = io.connect(import.meta.env.VITE_SOCKET_URL);
@@ -22,7 +23,7 @@ const App = () => {
   //     setSocket(newSocket);
 
   //     const handleReceiveEvent = (data) => {
-  //       // console.log(data, "xd");
+  //       // Muestra una notificación cuando se recibe un evento desde el servidor.
   //       enqueueSnackbar(`${data.message}`, {
   //         autoHideDuration: 2000,
   //         anchorOrigin: { horizontal: "right", vertical: "top" },
@@ -45,23 +46,26 @@ const App = () => {
   //   }
   // }, [logged]);
 
-  
- 
-
+  // Este efecto se ejecuta al cargar la aplicación y verifica si hay un token en el almacenamiento local.
+  // Si existe un token, intenta revalidarlo para mantener la sesión activa.
   useEffect(() => {
-   async function check (){
-    setLoader(true)
-      if(!!token)
-       await RevalidateToken();
-      setLoader(false)
+    async function check() {
+      setLoader(true); // Activa el estado de carga.
+      if (!!token) {
+        await RevalidateToken(); // Revalida el token si existe.
       }
-      check();
-  }, [token])
+      setLoader(false); // Desactiva el estado de carga.
+    }
+    check();
+  }, [token]);
 
+  // Si la aplicación está en estado de carga, muestra una pantalla de carga.
   if (loader) {
     return <LoadingScreenBlue />;
   }
-   return (<RoutesContainer logged={logged} user={user} />);
+
+  // Si no está cargando, renderiza el contenedor de rutas con la información del usuario.
+  return <RoutesContainer logged={logged} user={user} />;
 };
 
 export default App;

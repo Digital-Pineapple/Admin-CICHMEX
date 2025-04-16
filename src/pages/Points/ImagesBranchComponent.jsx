@@ -18,6 +18,7 @@ import AddIcon from "@mui/icons-material/Add";
 import ImageSearchIcon from "@mui/icons-material/ImageSearch";
 import useImages from "../../hooks/useImages";
 
+// Componente personalizado para el estilo del Badge
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
     right: 19,
@@ -25,6 +26,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
+// Estilo para el modal
 const style = {
   position: "absolute",
   top: "50%",
@@ -39,13 +41,17 @@ const style = {
 };
 
 const ImagesBranchComponent = () => {
+  // Estado para controlar la apertura y cierre del modal
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  // Hook personalizado para manejar las imágenes
   const { images, handleImageChange, deleteImage } = useImages();
 
   return (
     <>
+      {/* Contenedor principal para agregar imágenes */}
       <Grid
         item
         xs={6}
@@ -58,8 +64,9 @@ const ImagesBranchComponent = () => {
         height={"300px"}
         borderRadius={"5px"}
       >
+        {/* Ícono de filtro */}
         <FilterIcon style={{ fontSize: "40px", alignSelf: "center" }} />
-        {/* <Typography>Agrega imagenes de tu sucursal</Typography> */}
+        {/* Botón para abrir el modal */}
         <Button
           sx={{ alignSelf: "center", marginTop: "10px" }}
           color="primary"
@@ -69,7 +76,8 @@ const ImagesBranchComponent = () => {
           Agrega Fotos
         </Button>
       </Grid>
-      {/* Modal para seleccionar y subir imagenes */}
+
+      {/* Modal para seleccionar y subir imágenes */}
       <Modal
         open={open}
         onClose={handleClose}
@@ -78,6 +86,7 @@ const ImagesBranchComponent = () => {
       >
         <Box sx={style}>
           <Grid container>
+            {/* Botón para cerrar el modal */}
             <Grid
               className="close-modal"
               item
@@ -89,6 +98,8 @@ const ImagesBranchComponent = () => {
                 <ClearIcon style={{ fontSize: "20px" }} />
               </IconButton>
             </Grid>
+
+            {/* Mensaje en el modal */}
             <Grid
               item
               xs={6}
@@ -106,6 +117,7 @@ const ImagesBranchComponent = () => {
               </Typography>
             </Grid>
 
+            {/* Botón para agregar imágenes */}
             <Grid
               item
               className="add-image-modal"
@@ -128,6 +140,7 @@ const ImagesBranchComponent = () => {
               </label>
             </Grid>
 
+            {/* Contenedor para mostrar las imágenes seleccionadas */}
             <Grid
               item
               container
@@ -144,21 +157,23 @@ const ImagesBranchComponent = () => {
                   justifyContent={"flex-start"}
                   padding={"6px"}
                 >
+                  {/* Mapeo de las imágenes seleccionadas */}
                   {images.map(({ id, filePreview }) => (
                     <Grid item xs={6} key={id}>
                       <StyledBadge
                         badgeContent={
+                          // Botón para eliminar una imagen
                           <IconButton
                             sx={{ backgroundColor: "black", color: "black" }}
                             onClick={() => deleteImage(id)}
                           >
-                            {" "}
                             <DeleteIcon
                               sx={{ color: "white", fontSize: "20px" }}
-                            />{" "}
+                            />
                           </IconButton>
                         }
                       >
+                        {/* Vista previa de la imagen */}
                         <Avatar
                           src={filePreview}
                           variant="square"
@@ -169,6 +184,7 @@ const ImagesBranchComponent = () => {
                   ))}
                 </Grid>
               ) : (
+                // Botón para explorar imágenes si no hay ninguna seleccionada
                 <Box
                   sx={{
                     height: "250px",
@@ -193,12 +209,15 @@ const ImagesBranchComponent = () => {
               )}
             </Grid>
 
+            {/* Botones en el pie del modal */}
             <Grid className="footer-buttons" item xs={12} display={"flex"}>
+              {/* Botón "Listo" */}
               <Grid item xs={6} display={"flex"} justifyContent={"flex-start"}>
                 <Button variant="text" size="medium">
                   Listo
                 </Button>
               </Grid>
+              {/* Botón "Guardar" habilitado solo si hay 3 imágenes */}
               <Grid item xs={6} display={"flex"} justifyContent={"flex-end"}>
                 <Button
                   variant="contained"

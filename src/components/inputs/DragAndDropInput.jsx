@@ -9,20 +9,27 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { Delete, UploadFileRounded } from "@mui/icons-material";
 import { orange } from "@mui/material/colors";
 
+// Componente principal para manejar la funcionalidad de arrastrar y soltar imágenes
 const DragAndDropInput = ({ name, setValueForm, description, width_image = 1920, height_image = 1080, image_value, fileInputRef }) => {
+  // Estado para manejar el nombre del input
   const [inputName, setInputName] = useState(name);
 
+  // Actualiza el nombre del input cuando cambia la prop `name`
   useEffect(() => {
     console.log("Actualizando name en DragAndDropInput:", name);
     setInputName(name);
-  }, [name])
+  }, [name]);
 
-
+  // Estado para manejar si el área de arrastrar está activa
   const [isDragging, setIsDragging] = useState(false);
+  // Estado para manejar errores relacionados con el archivo
   const [fileError, setFileError] = useState(null);
+  // Estado para manejar la URL de vista previa de la imagen
   const [previewUrl, setPreviewUrl] = useState(null);
+  // Tipos de archivos permitidos
   const allowedTypes = ["image/png", "image/jpeg", "image/webp"];
 
+  // Efecto para generar una URL de vista previa cuando se proporciona una imagen
   useEffect(() => {
     if (image_value) {
       const objectUrl = URL.createObjectURL(image_value);
@@ -31,6 +38,7 @@ const DragAndDropInput = ({ name, setValueForm, description, width_image = 1920,
     }
   }, [image_value]);
 
+  // Función para validar el tamaño de la imagen
   const validateImageSize = useCallback((file) => {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -48,10 +56,12 @@ const DragAndDropInput = ({ name, setValueForm, description, width_image = 1920,
     });
   }, [width_image, height_image]);
 
+  // Maneja el cambio de imagen cuando se selecciona un archivo
   const onChangeImage = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
+    // Verifica si el tipo de archivo es válido
     if (!allowedTypes.includes(file.type)) {
       setFileError("Tipo de archivo no permitido. Usa JPEG, PNG o WEBP.");
       setValueForm(inputName, null);
@@ -60,9 +70,9 @@ const DragAndDropInput = ({ name, setValueForm, description, width_image = 1920,
     console.log(inputName, file);
 
     try {
+      // Valida el tamaño de la imagen
       await validateImageSize(file);
       setFileError(null);
-      
       setValueForm(inputName, file);
     } catch (error) {
       setFileError(error);
@@ -70,11 +80,13 @@ const DragAndDropInput = ({ name, setValueForm, description, width_image = 1920,
     }
   };
 
+  // Maneja los eventos de arrastrar y soltar
   const handleDragEvents = (event, isOver) => {
     event.preventDefault();
     setIsDragging(isOver);
   };
 
+  // Maneja el evento de soltar un archivo en el área de arrastrar
   const handleDrop = (event) => {
     event.preventDefault();
     setIsDragging(false);
@@ -83,11 +95,13 @@ const DragAndDropInput = ({ name, setValueForm, description, width_image = 1920,
     }
   };
 
+  // Elimina la imagen seleccionada
   const removeImage = () => {
     setValueForm(inputName, null);
     setPreviewUrl(null);
   };
 
+  // Estilos para el área de arrastrar y soltar
   const dropZoneStyles = {
     position: "relative",
     backgroundColor: isDragging ? "secondary.main" : orange[200],
@@ -107,6 +121,7 @@ const DragAndDropInput = ({ name, setValueForm, description, width_image = 1920,
 
   return (
     <Grid2 container sx={{ width: "100%", margin: "auto", display: 'flex', justifyContent: 'center' }}>
+      {/* Área de arrastrar y soltar */}
       <Grid2
         container
         direction="column"
@@ -126,6 +141,7 @@ const DragAndDropInput = ({ name, setValueForm, description, width_image = 1920,
             <br />
             {description || ' Sube tu imagen en JPEG, PNG o WEBP, mínimo 50px de tamaño y hasta 10MB.'}
           </Typography>
+          {/* Input oculto para seleccionar archivos */}
           <input
             id="imageInput"
             type="file"
@@ -137,6 +153,7 @@ const DragAndDropInput = ({ name, setValueForm, description, width_image = 1920,
         </Box>
       </Grid2>
 
+      {/* Vista previa de la imagen seleccionada */}
       {previewUrl && (
         <Grid2 container justifyContent="center" sx={{ mt: 2 }}>
           <Box
@@ -157,6 +174,7 @@ const DragAndDropInput = ({ name, setValueForm, description, width_image = 1920,
                 objectFit: "cover",
               }}
             />
+            {/* Botón para eliminar la imagen */}
             <IconButton
               size="small"
               sx={{
@@ -174,6 +192,7 @@ const DragAndDropInput = ({ name, setValueForm, description, width_image = 1920,
           </Box>
         </Grid2>
       )}
+      {/* Mensaje de error si ocurre algún problema */}
       {fileError && (
         <FormHelperText error sx={{ textAlign: "center", mt: 1 }}>
           {fileError}

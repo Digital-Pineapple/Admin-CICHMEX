@@ -27,10 +27,13 @@ import LoadingVideoUpload from "../../../components/ui/LoadingVideoUpload";
 const DescriptionAndVideosEdit = () => {
   const { loading, product, loadProduct, updateDescription } = useProducts();
   const { id } = useParams();
+
+  // Cargar el producto al montar el componente
   useEffect(() => {
     loadProduct(id);
   }, [id]);
 
+  // Valores por defecto para los campos del formulario
   const DefaultValues = (data) => ({
     fields: [
       {
@@ -61,14 +64,15 @@ const DescriptionAndVideosEdit = () => {
     watch,
     formState: { errors },
   } = useForm({ defaultValues: DefaultValues(product) });
-  const { error, deleteVideoDetail, isLoading, handleSubmitVideo } =
-    useVideos();
+
+  const { error, deleteVideoDetail, isLoading, handleSubmitVideo } = useVideos();
 
   const fieldValues = watch("fields");
   const chips = watch("fields[2].values") || [];
-  const videos = product?.videos || []
+  const videos = product?.videos || [];
   const [inputValue, setInputValue] = useState("");
 
+  // Manejar la adición de palabras clave SEO al presionar Enter
   const handleKeyPress = (event) => {
     if (event.key === "Enter" && inputValue.trim()) {
       event.preventDefault();
@@ -78,24 +82,25 @@ const DescriptionAndVideosEdit = () => {
     }
   };
 
+  // Manejar la eliminación de palabras clave SEO
   const handleDelete = (chipToDelete) => () => {
     const newChips = chips.filter((chip) => chip !== chipToDelete);
     setValue("fields[2].values", newChips);
   };
 
+  // Manejar el envío del formulario
   const onSubmit = (data) => {
     const info = () => {
       let newValues = {};
       data.fields.forEach((i) => {
-
         if (i.id === "description") {
-          newValues.description = i.textInput; // Asignación correcta
+          newValues.description = i.textInput;
         }
         if (i.id === "shortDescription") {
-          newValues.shortDescription = i.textInput; // Asignación correcta
+          newValues.shortDescription = i.textInput;
         }
         if (i.id === "seoKeywords") {
-          newValues.keywords = i.values; // Asignación correcta
+          newValues.keywords = i.values;
         }
       });
       return newValues;
@@ -103,9 +108,11 @@ const DescriptionAndVideosEdit = () => {
     updateDescription(id, info());
   };
 
+  // Filtrar videos por tipo (vertical u horizontal)
   const videoVertical = videos.filter((i) => i.type === "vertical");
   const videoHorizontal = videos.filter((i) => i.type === "horizontal");
 
+  // Mostrar pantalla de carga si el producto está cargando
   if (loading) {
     return <LoadingScreenBlue />;
   }
@@ -115,10 +122,12 @@ const DescriptionAndVideosEdit = () => {
       <CardHeader title="Descripción y video" />
       <CardContent>
         <Grid container gap={2} padding={2}>
+          {/* Renderizar los campos del formulario */}
           {fieldValues?.map((field, index) => (
             <Grid item xs={12} sm={3.5} key={index}>
               {index === 2 ? (
                 <>
+                  {/* Campo para palabras clave SEO */}
                   <TextField
                     value={inputValue}
                     size="small"
@@ -161,8 +170,8 @@ const DescriptionAndVideosEdit = () => {
                       fullWidth
                       size="small"
                       label={field.name}
-                      multiline // Permite convertirlo en un textarea
-                      rows={4} // Número de filas visibles en el textarea
+                      multiline
+                      rows={4}
                       error={!!errors.fields?.[index]?.textInput}
                       helperText={errors.fields?.[index]?.textInput?.message}
                       disabled={field.checkbox}
@@ -171,6 +180,7 @@ const DescriptionAndVideosEdit = () => {
                 />
               )}
 
+              {/* Checkbox para marcar como "No aplica" */}
               {field.checkbox && (
                 <Controller
                   name={`fields[${index}].checkbox`}
@@ -195,6 +205,7 @@ const DescriptionAndVideosEdit = () => {
           ))}
         </Grid>
 
+        {/* Sección para subir videos */}
         <Grid
           container
           padding={1}
@@ -204,6 +215,7 @@ const DescriptionAndVideosEdit = () => {
           justifyContent="center"
           width={"100%"}
         >
+          {/* Subir video vertical */}
           <Grid
             item
             display={!!videoVertical[0] ? "none" : "block"}
@@ -297,6 +309,7 @@ const DescriptionAndVideosEdit = () => {
             )}
           </Grid>
 
+          {/* Subir video horizontal */}
           <Grid
             item
             display={!!videoHorizontal[0] ? "none" : "block"}
@@ -396,6 +409,7 @@ const DescriptionAndVideosEdit = () => {
             )}
           </Grid>
 
+          {/* Mostrar video horizontal si ya existe */}
           <Grid
             item
             xs={6}
@@ -456,6 +470,7 @@ const DescriptionAndVideosEdit = () => {
             )}
           </Grid>
 
+          {/* Mostrar video vertical si ya existe */}
           <Grid
             item
             xs={6}
@@ -521,7 +536,7 @@ const DescriptionAndVideosEdit = () => {
         </Grid>
       </CardContent>
       <CardActions>
-        {/* <Button onClick={handleBack}>Cancelar</Button> */}
+        {/* Botón para guardar cambios */}
         <Button variant="contained" type="submit">
           Guardar cambios
         </Button>

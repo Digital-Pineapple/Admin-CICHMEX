@@ -33,10 +33,12 @@ const MainFeatures = ({ handleNext, handleBack, index, isLastStep }) => {
   const { categories, loadCategories } = useCategories();
   const { dataProduct, dataStep1 } = useProducts();
 
+  // Carga las categorías al montar el componente
   useEffect(() => {
     loadCategories();
   }, []);
 
+  // Función para definir los valores por defecto del formulario
   const DefaultValues = (data) => {
     return {
       fields: [
@@ -67,6 +69,7 @@ const MainFeatures = ({ handleNext, handleBack, index, isLastStep }) => {
     };
   };
 
+  // Configuración del formulario con react-hook-form
   const {
     control,
     handleSubmit,
@@ -75,13 +78,15 @@ const MainFeatures = ({ handleNext, handleBack, index, isLastStep }) => {
     formState: { errors },
   } = useForm({ defaultValues: DefaultValues(dataProduct) });
 
-  const fieldValues = watch("fields");
-  const selectedCategory = watch("category");
+  const fieldValues = watch("fields"); // Observa los valores de los campos dinámicos
+  const selectedCategory = watch("category"); // Observa la categoría seleccionada
 
+  // Maneja el envío del formulario
   const onSubmit = async (data) => {
     dataStep1(data, handleNext);
   };
 
+  // Maneja el cambio del checkbox para deshabilitar el campo correspondiente
   const handleCheckboxChange = (checked, index) => {
     if (checked) {
       setValue(`fields.${index}.textInput`, ""); // Borra el valor del input en el índice correspondiente
@@ -95,11 +100,13 @@ const MainFeatures = ({ handleNext, handleBack, index, isLastStep }) => {
       onSubmit={handleSubmit(onSubmit)}
       sx={{ paddingX: 2 }}
     >
+      {/* Encabezado del formulario */}
       <CardHeader
         title="Características principales"
         subheader="Completa estos datos con las especificaciones del la tienda"
       />
 
+      {/* Campos dinámicos */}
       <Grid2 container gap={2} padding={2}>
         {fieldValues?.map(
           (field, index) =>
@@ -274,28 +281,29 @@ const MainFeatures = ({ handleNext, handleBack, index, isLastStep }) => {
               : "Selecciona una subcategoría"}
           </FormHelperText>
         </FormControl>
+
+        {/* Campo para la clave SAT */}
         <Controller
-        
-        control={control}
-        rules={{
-          required: {value:true, message:'Campo requerido *'},
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextField
-            label='Clave SAT'
-            type="number"
-            size="small"
-            onBlur={onBlur}
-            onChange={onChange}
-            value={value}
-            error={errors.product_key ? true : false}
-            helperText={errors.product_key?.message ? errors.product_key.message : '' }
-           
-           
-          />
-        )}
-        name="product_key"
-      />
+          control={control}
+          rules={{
+            required: { value: true, message: "Campo requerido *" },
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextField
+              label="Clave SAT"
+              type="number"
+              size="small"
+              onBlur={onBlur}
+              onChange={onChange}
+              value={value}
+              error={errors.product_key ? true : false}
+              helperText={
+                errors.product_key?.message ? errors.product_key.message : ""
+              }
+            />
+          )}
+          name="product_key"
+        />
         <Link
           to={
             "https://www.sat.gob.mx/consultas/53693/catalogo-de-productos-y-servicios"
@@ -307,6 +315,7 @@ const MainFeatures = ({ handleNext, handleBack, index, isLastStep }) => {
         </Link>
       </Grid2>
 
+      {/* Botones de acción */}
       <CardActions>
         <Button
           disabled={index === 0}

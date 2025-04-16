@@ -6,14 +6,18 @@ import TableShoes from "../Products/StepNewProduct/TablesTypeProduct/TableShoes"
 import TableFoods from "../Products/StepNewProduct/TablesTypeProduct/TableFoods";
 
 const TableGuides = () => {
+  // Estado para manejar el valor seleccionado en el grupo de botones de radio
   const [value, setValue] = useState("clothes");
+
+  // Función para manejar el cambio de selección en el grupo de botones de radio
   const handleChange = (event) => {
     setValue(event.target.value);
   };
 
   return (
     <Grid container gap={2}>
-        <Grid
+      {/* Título principal de la página */}
+      <Grid
         item
         marginTop={{ xs: "-30px" }}
         xs={12}
@@ -25,12 +29,14 @@ const TableGuides = () => {
           variant="h1"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-         Agregar guia
+          Agregar guia
         </Typography>
       </Grid>
+
+      {/* Sección para seleccionar el tipo de producto */}
       <Grid item xs={12}>
         <FormControl fullWidth>
-          <FormLabel sx={{ fontSize: "18px", textAlign:'center' }} id="type Product">
+          <FormLabel sx={{ fontSize: "18px", textAlign: 'center' }} id="type Product">
             Seleccione el tipo de producto
           </FormLabel>
           <RadioGroup
@@ -41,6 +47,7 @@ const TableGuides = () => {
             onChange={(e) => handleChange(e)}
             sx={{ display: "flex", justifyContent: "center" }}
           >
+            {/* Opciones de tipo de producto */}
             <FormControlLabel
               value="clothes"
               control={<Radio />}
@@ -74,15 +81,16 @@ const TableGuides = () => {
           </RadioGroup>
         </FormControl>
       </Grid>
+
+      {/* Renderizado condicional de las tablas según el tipo de producto seleccionado */}
       <Grid item xs={12} display={'flex'} boxSizing={'border-box'}>
-      {value === "clothes" ? <TableClothes fromVariants={true} /> : ""}
-      {value === "Shoes" ? <TableShoes  fromVariants={true} /> : ""}
-      {value === "Other" ? <TableOthers  fromVariants={true}/>:""}
-      {value === "Food" ? <TableFoods  fromVariants={true}/>:""}
+        {value === "clothes" ? <TableClothes fromVariants={true} /> : ""}
+        {value === "Shoes" ? <TableShoes fromVariants={true} /> : ""}
+        {value === "Other" ? <TableOthers fromVariants={true} /> : ""}
+        {value === "Food" ? <TableFoods fromVariants={true} /> : ""}
       </Grid>
     </Grid>
   );
 };
 
-export default TableGuides
-
+export default TableGuides;

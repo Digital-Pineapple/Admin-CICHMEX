@@ -8,31 +8,35 @@ export const CarrierDriverReducer = createSlice({
     loading: false,
     optimizedRoutes: {},
     inRoute: false
-
   },
   reducers: {
-  
+    // Carga la lista completa de conductores de transportistas
     loadCarrierDrivers: (state, action) => {
       state.CarrierDrivers = action.payload;
     },
-    loadAllOptimizedRoutes:(state,{payload})=>{
-      state.optimizedRoutes = payload
-
+    // Carga todas las rutas optimizadas
+    loadAllOptimizedRoutes: (state, { payload }) => {
+      state.optimizedRoutes = payload;
     },
+    // Carga un conductor de transportista específico
     loadCarrierDriver: (state, { payload }) => {
       state.CarrierDriver = payload;
     },
+    // Elimina un conductor de transportista de la lista
     deleteCarrierDriver: (state, { payload }) => {
       state.CarrierDrivers = state.CarrierDrivers.filter(
         (i) => i._id !== payload._id
       );
     },
-    loadStartRoutes: (state)=>{
-      state.inRoute = true
+    // Marca el inicio de las rutas
+    loadStartRoutes: (state) => {
+      state.inRoute = true;
     },
-    loadStopRoutes: (state)=>{
-      state.inRoute = false
+    // Marca el fin de las rutas
+    loadStopRoutes: (state) => {
+      state.inRoute = false;
     },
+    // Edita la información de un conductor de transportista
     editcarrierDriver: (state, { payload }) => {
       state.CarrierDrivers = state.CarrierDrivers.map((i) => {
         if (i._id === payload._id) {

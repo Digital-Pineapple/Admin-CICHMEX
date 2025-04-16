@@ -24,6 +24,7 @@ import { esES } from "@mui/x-data-grid/locales";
 import { useEffect, useState } from "react";
 import useDateFormatter from "../../hooks/useFormattedDate";
 
+// Componente de paginación personalizada
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -41,6 +42,7 @@ function Pagination({ page, onPageChange, className }) {
   );
 }
 
+// Iconos personalizados para el ordenamiento de columnas
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
@@ -53,10 +55,12 @@ export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación personalizada para la tabla
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
+// Barra de herramientas personalizada con un filtro rápido
 function CustomToolbar() {
   return (
     <GridToolbarContainer sx={{ justifyContent: "center" }}>
@@ -65,20 +69,24 @@ function CustomToolbar() {
   );
 }
 
+// Componente principal que muestra las órdenes de productos pagados
 const PaidProductOrders = () => {
-  const isXs = useMediaQuery('(max-width:600px)');
+  const isXs = useMediaQuery('(max-width:600px)'); // Detecta si la pantalla es pequeña
 
-  const { loadProductOrdersPaid, navigate, productOrders, loading } = useProductOrder();
-  const { user } = useAuthStore();
+  const { loadProductOrdersPaid, navigate, productOrders, loading } = useProductOrder(); // Hook para manejar órdenes de productos
+  const { user } = useAuthStore(); // Hook para obtener información del usuario
 
+  // Estado para manejar la visibilidad de las columnas
   const [columnVisibilityModel, setColumnVisibilityModel] = useState({
     typeDelivery: !isXs,
   });
 
+  // Carga las órdenes de productos pagados al montar el componente o cuando cambia el usuario
   useEffect(() => {
     loadProductOrdersPaid();
   }, [user]);
 
+  // Actualiza la visibilidad de columnas según el tamaño de la pantalla
   useEffect(() => {
     setColumnVisibilityModel((prevModel) => ({
       ...prevModel,
@@ -86,14 +94,15 @@ const PaidProductOrders = () => {
     }));
   }, [isXs]);
 
+  // Mapea las órdenes de productos para agregar campos personalizados
   const rowsWithIds = productOrders.map((item, index) => {
-    const date = localDate(item.createdAt);
-    const quantities = item.products.map((i) => i.quantity);
+    const date = localDate(item.createdAt); // Convierte la fecha a formato local
+    const quantities = item.products.map((i) => i.quantity); // Obtiene las cantidades de los productos
     const suma = quantities.reduce((valorAnterior, valorActual) => {
       return valorAnterior + valorActual;
     }, 0);
 
-    const TD = item.branch ? "En Punto de entrega" : "A domicilio";
+    const TD = item.branch ? "En Punto de entrega" : "A domicilio"; // Determina el tipo de entrega
     return {
       quantityProduct: suma,
       typeDelivery: TD,
@@ -103,10 +112,12 @@ const PaidProductOrders = () => {
     };
   });
 
+  // Muestra una pantalla de carga mientras se obtienen los datos
   if (loading) {
     return <LoadingScreenBlue />;
   }
 
+  // Configuración de las columnas de la tabla
   const columns = [
     {
       field: "date",
@@ -114,9 +125,9 @@ const PaidProductOrders = () => {
       flex: 0.5,
       align: "center",
       renderCell: (params) => {
-        const date = localDateTable(params.row.createdAt)
-        const day = date.split("/")[0]
-        const month = date.split("/")[1]
+        const date = localDateTable(params.row.createdAt); // Convierte la fecha para mostrarla en la tabla
+        const day = date.split("/")[0];
+        const month = date.split("/")[1];
         return (
           <Typography variant="h6" fontSize={14} color="initial">
             {day} <br />
@@ -160,13 +171,14 @@ const PaidProductOrders = () => {
           }
         >
           <Tooltip title="Surtir pedido" arrow>
-          <TransferWithinAStation color="success"/>
+            <TransferWithinAStation color="success" />
           </Tooltip>
         </IconButton>
       ),
     },
   ];
 
+  // Renderiza la tabla con las órdenes de productos pagados
   return (
     <DataGrid
       sx={{
@@ -179,25 +191,25 @@ const PaidProductOrders = () => {
           borderBottom: "1px solid rgb(230, 223, 223)",
         },
       }}
-      rows={rowsWithIds}
-      columns={columns}
+      rows={rowsWithIds} // Filas de la tabla
+      columns={columns} // Columnas de la tabla
       autoHeight
       pagination
-      columnVisibilityModel={columnVisibilityModel}
-      onColumnVisibilityModelChange={setColumnVisibilityModel}
+      columnVisibilityModel={columnVisibilityModel} // Modelo de visibilidad de columnas
+      onColumnVisibilityModelChange={setColumnVisibilityModel} // Maneja cambios en la visibilidad de columnas
       slots={{
-        pagination: CustomPagination,
-        toolbar: CustomToolbar,
-        columnSortedDescendingIcon: SortedDescendingIcon,
-        columnSortedAscendingIcon: SortedAscendingIcon,
-        columnUnsortedIcon: UnsortedIcon,
-        noRowsOverlay: CustomNoRows,
+        pagination: CustomPagination, // Paginación personalizada
+        toolbar: CustomToolbar, // Barra de herramientas personalizada
+        columnSortedDescendingIcon: SortedDescendingIcon, // Icono de orden descendente
+        columnSortedAscendingIcon: SortedAscendingIcon, // Icono de orden ascendente
+        columnUnsortedIcon: UnsortedIcon, // Icono de sin orden
+        noRowsOverlay: CustomNoRows, // Componente para mostrar cuando no hay filas
       }}
       disableColumnFilter
       disableColumnMenu
       disableColumnSelector
       disableDensitySelector
-      localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+      localeText={esES.components.MuiDataGrid.defaultProps.localeText} // Traducción al español
       slotProps={{
         toolbar: {
           showQuickFilter: true,

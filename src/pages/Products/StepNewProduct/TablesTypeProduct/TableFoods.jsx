@@ -28,18 +28,20 @@ import {
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 
+// Componente para la barra de herramientas de edición
 function EditToolbar(props) {
   const { setRows, setRowModesModel } = props;
 
+  // Maneja el evento de agregar una nueva fila
   const handleClick = () => {
-    const id = randomId();
+    const id = randomId(); // Genera un ID único
     setRows((oldRows) => [
       ...oldRows,
-      { id, label: "", equivalence: "", isNew: true },
+      { id, label: "", equivalence: "", isNew: true }, // Agrega una nueva fila vacía
     ]);
     setRowModesModel((oldModel) => ({
       ...oldModel,
-      [id]: { mode: GridRowModes.Edit, fieldToFocus: "label" },
+      [id]: { mode: GridRowModes.Edit, fieldToFocus: "label" }, // Activa el modo de edición para la nueva fila
     }));
   };
 
@@ -58,38 +60,44 @@ function EditToolbar(props) {
   );
 }
 
+// Componente principal de la tabla
 const TableFoods = ({ initialRows = [], sizeGuide, fromVariants = false }) => {
-  
-  const [rows, setRows] = useState(initialRows);
-  const [rowModesModel, setRowModesModel] = useState({});
-  const { loadAddOneSizeGuide, updateSizeGuide } =
-    useSizeGuide();
-  const { id } = useParams();
-  const DefaultValues = (data)=>({
-      name : data?.name || "",
-      type : "foods",
-      typePackage : data?.typePackage || "",
-      dimensions : data?.dimensions|| [],
-  })
+  const [rows, setRows] = useState(initialRows); // Estado para las filas de la tabla
+  const [rowModesModel, setRowModesModel] = useState({}); // Estado para los modos de edición de las filas
+  const { loadAddOneSizeGuide, updateSizeGuide } = useSizeGuide(); // Hooks personalizados para manejar la lógica de negocio
+  const { id } = useParams(); // Obtiene parámetros de la URL
+
+  // Valores predeterminados para el formulario
+  const DefaultValues = (data) => ({
+    name: data?.name || "",
+    type: "foods",
+    typePackage: data?.typePackage || "",
+    dimensions: data?.dimensions || [],
+  });
+
+  // Configuración del formulario con react-hook-form
   const {
     control,
     formState: { errors },
     setValue,
     handleSubmit,
   } = useForm({
-    defaultValues: DefaultValues(sizeGuide) ,
+    defaultValues: DefaultValues(sizeGuide),
   });
 
+  // Actualiza el valor de "dimensions" en el formulario cuando cambian las filas
   useEffect(() => {
     setValue("dimensions", rows);
   }, [rows, setRows]);
 
+  // Maneja el evento de detener la edición de una fila
   const handleRowEditStop = (params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-      event.defaultMuiPrevented = true;
+      event.defaultMuiPrevented = true; // Evita que se detenga la edición automáticamente
     }
   };
 
+  // Activa el modo de edición para una fila específica
   const handleEditClick = (id) => {
     setRowModesModel((prevRowModes) => ({
       ...prevRowModes,
@@ -97,20 +105,23 @@ const TableFoods = ({ initialRows = [], sizeGuide, fromVariants = false }) => {
     }));
   };
 
+  // Valida los valores de las celdas editadas
   const handleProcessEditCellProps = async (params) => {
     const value = params.props?.value;
 
     if (!value || value.trim() === "") {
-      return { ...params.props, error: true };
+      return { ...params.props, error: true }; // Marca la celda como inválida si está vacía
     }
 
-    return { ...params.props, error: false };
+    return { ...params.props, error: false }; // Marca la celda como válida
   };
 
+  // Maneja el evento de eliminar una fila
   const handleDeleteClick = (id) => {
-    setRows(rows.filter((row) => row.id !== id));
+    setRows(rows.filter((row) => row.id !== id)); // Elimina la fila del estado
   };
 
+  // Maneja el evento de cancelar la edición de una fila
   const handleCancelClick = (id) => {
     setRowModesModel({
       ...rowModesModel,
@@ -119,20 +130,23 @@ const TableFoods = ({ initialRows = [], sizeGuide, fromVariants = false }) => {
 
     const editedRow = rows.find((row) => row.id === id);
     if (editedRow.isNew) {
-      setRows(rows.filter((row) => row.id !== id));
+      setRows(rows.filter((row) => row.id !== id)); // Elimina la fila si es nueva
     }
   };
 
+  // Actualiza una fila después de la edición
   const processRowUpdate = (newRow) => {
     const updatedRow = { ...newRow, isNew: false };
-    setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
+    setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row))); // Actualiza la fila en el estado
     return updatedRow;
   };
 
+  // Maneja los cambios en los modos de edición de las filas
   const handleRowModesModelChange = (newRowModesModel) => {
     setRowModesModel(newRowModesModel);
   };
 
+  // Componente personalizado para el pie de la tabla
   const CustomFooter = () => (
     <Button
       sx={{ margin: 4 }}
@@ -143,6 +157,8 @@ const TableFoods = ({ initialRows = [], sizeGuide, fromVariants = false }) => {
       Guardar
     </Button>
   );
+
+  // Definición de las columnas de la tabla
   const columns1 = [
     {
       field: "label",
@@ -213,15 +229,17 @@ const TableFoods = ({ initialRows = [], sizeGuide, fromVariants = false }) => {
     },
   ];
 
+  // Maneja el envío del formulario
   const submitForm = handleSubmit((data) => {
     if (!!id && fromVariants === false) {
-      updateSizeGuide(id, data);
+      updateSizeGuide(id, data); // Actualiza la guía de tallas si existe un ID
     } else if (fromVariants === true) {
-      loadAddOneSizeGuide(data);
-    }else{
-      loadAddOneSizeGuide(data);
+      loadAddOneSizeGuide(data); // Carga una nueva guía de tallas si es desde variantes
+    } else {
+      loadAddOneSizeGuide(data); // Carga una nueva guía de tallas
     }
   });
+
   return (
     <Box
       sx={{
@@ -231,6 +249,7 @@ const TableFoods = ({ initialRows = [], sizeGuide, fromVariants = false }) => {
       component="form"
       onSubmit={(e) => submitForm(e)}
     >
+      {/* Campo de texto para el nombre de la guía */}
       <Controller
         control={control}
         name="name"
@@ -250,37 +269,42 @@ const TableFoods = ({ initialRows = [], sizeGuide, fromVariants = false }) => {
           />
         )}
       />
-       <Controller
+
+      {/* Radio buttons para seleccionar el tipo de empaque */}
+      <Controller
         control={control}
-        rules={{ required:{ value: true , message: 'Campo requerido'}}}
+        rules={{ required: { value: true, message: "Campo requerido" } }}
         name="typePackage"
         render={({ field: { onChange, onBlur, value, ref } }) => (
           <FormControl error={!!errors.typePackage} variant="outlined">
-        <FormLabel id="type-package">Tipo de empaque</FormLabel>
-        <RadioGroup
-          row
-          aria-labelledby="radio-button-type-package"
-          ref={ref}
-           value={value}
-          onChange={onChange}
-          onBlur={onBlur}
-        >
-          <FormControlLabel
-           value="Granel"
-            control={<Radio />}
-             label="Granel" />
-          <FormControlLabel
-            value="Envasado"
-            control={<Radio />}
-            label="Envasado"
-          />
-        </RadioGroup>
-        <FormHelperText error={!!errors.typePackage} > {errors?.typePackage?.message} </FormHelperText>
-      </FormControl>
+            <FormLabel id="type-package">Tipo de empaque</FormLabel>
+            <RadioGroup
+              row
+              aria-labelledby="radio-button-type-package"
+              ref={ref}
+              value={value}
+              onChange={onChange}
+              onBlur={onBlur}
+            >
+              <FormControlLabel
+                value="Granel"
+                control={<Radio />}
+                label="Granel"
+              />
+              <FormControlLabel
+                value="Envasado"
+                control={<Radio />}
+                label="Envasado"
+              />
+            </RadioGroup>
+            <FormHelperText error={!!errors.typePackage}>
+              {errors?.typePackage?.message}
+            </FormHelperText>
+          </FormControl>
         )}
       />
-    
 
+      {/* Tabla de datos */}
       <DataGrid
         sx={{
           "& .actions": { color: "text.secondary" },
@@ -300,8 +324,8 @@ const TableFoods = ({ initialRows = [], sizeGuide, fromVariants = false }) => {
         onRowEditStop={handleRowEditStop}
         processRowUpdate={processRowUpdate}
         slots={{
-          toolbar: EditToolbar,
-          footer: CustomFooter,
+          toolbar: EditToolbar, // Barra de herramientas personalizada
+          footer: CustomFooter, // Pie de tabla personalizado
         }}
         slotProps={{
           toolbar: { setRows, setRowModesModel },

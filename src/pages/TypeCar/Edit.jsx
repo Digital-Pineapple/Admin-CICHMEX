@@ -27,21 +27,24 @@ import { useTypeCars } from "../../hooks/UseTypeCars";
 import AddImage from "../../../src/assets/Images/add.png";
 
 const Edit = () => {
-  const { id } = useParams();
-  const { loadTypeCar, editTypeCar, typeCar } = useTypeCars();
-  const navigate = useNavigate();
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [previewImage, setPreviewImage] = useState(null);
+  const { id } = useParams(); // Obtener el ID del tipo de auto desde los parámetros de la URL
+  const { loadTypeCar, editTypeCar, typeCar } = useTypeCars(); // Hook personalizado para manejar los datos de los tipos de autos
+  const navigate = useNavigate(); // Hook para navegar entre rutas
+  const [selectedFile, setSelectedFile] = useState(null); // Estado para almacenar el archivo seleccionado
+  const [previewImage, setPreviewImage] = useState(null); // Estado para almacenar la vista previa de la imagen
 
+  // Manejar la selección de una imagen y generar una vista previa
   const handleImage = ({ target }) => {
     setPreviewImage(URL.createObjectURL(target.files[0]));
     setSelectedFile(target.files[0]);
   };
 
+  // Cargar los datos del tipo de auto al montar el componente
   useEffect(() => {
     loadTypeCar(id);
   }, []);
 
+  // Actualizar los valores del formulario cuando se carguen los datos del tipo de auto
   useEffect(() => {
     formik.setValues({
       name: typeCar.name,
@@ -50,17 +53,18 @@ const Edit = () => {
     });
   }, [typeCar]);
 
+  // Configuración del formulario con Formik
   const formik = useFormik({
     initialValues: {
-      name: "",
-      status: true,
-      typeCar_image: "",
+      name: "", // Nombre del tipo de auto
+      status: true, // Estado del tipo de auto
+      typeCar_image: "", // Imagen del tipo de auto
     },
     onSubmit: (values) => {
       try {
-        values.typeCar_image = selectedFile;
-        editTypeCar(typeCar._id, values);
-        navigate("/auth/typeCar", { replace: true });
+        values.typeCar_image = selectedFile; // Asignar la imagen seleccionada al formulario
+        editTypeCar(typeCar._id, values); // Llamar a la función para editar el tipo de auto
+        navigate("/auth/typeCar", { replace: true }); // Navegar de regreso a la lista de tipos de autos
       } catch (error) {
         console.log(error);
         return enqueueSnackbar("Error al editar la categoria", {
@@ -74,12 +78,14 @@ const Edit = () => {
     },
   });
 
+  // Función para salir de la edición y regresar a la lista de tipos de autos
   const outEdit = () => {
     navigate("/auth/typeCar", { replace: true });
   };
 
   return (
     <Box component="form" onSubmit={formik.handleSubmit} marginX={"10%"}>
+      {/* Título del formulario */}
       <Titles name={<h2 align="center">Editar Tipo de auto</h2>} />
       <Grid
         color="#F7BFBF"
@@ -90,6 +96,7 @@ const Edit = () => {
         spacing={4}
       >
         <Grid item>
+          {/* Tarjeta para mostrar la imagen seleccionada o actual */}
           <Card sx={{ maxWidth: 345 }}>
             <CardContent>
               <CardMedia
@@ -111,6 +118,7 @@ const Edit = () => {
               </Typography>
             </CardContent>
             <CardActions>
+              {/* Input para seleccionar una imagen */}
               <input
                 type="file"
                 id="typeCar_image"
@@ -128,6 +136,7 @@ const Edit = () => {
           flexDirection={"column"}
           alignItems={"center"}
         >
+          {/* Campo de texto para el nombre del tipo de auto */}
           <TextField
             focused
             fullWidth
@@ -147,6 +156,7 @@ const Edit = () => {
             alignItems={"center"}
           >
             <Grid item sx={{ display: "flex", justifyContent: "center" }}>
+              {/* Botones para guardar o salir */}
               <Button type="submit" variant="contained">
                 Guardar
               </Button>

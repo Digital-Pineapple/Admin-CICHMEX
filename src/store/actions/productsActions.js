@@ -345,7 +345,6 @@ export const addOneProduct =
       thumbnail,
       seoKeywords,
       purchase_price,
-      // images,
     },
     images,
     navigate
@@ -412,10 +411,6 @@ export const addOneProduct =
           navigate("/mi-almacen/productos", { replace: true });
         }
       });
-      // navigate("/mi-almacen/productos", { replace: true });
-    // } catch (error) {
-      
-    //   navigate("/mi-almacen/productos", { replace: true });
     } catch (error) {
       enqueueSnackbar(
         
@@ -1143,6 +1138,8 @@ export const startAddVariantsProduct = (id, values, handleNext) => {
       // Avanzar al siguiente paso
       handleNext();
     } catch (error) {
+      console.log(error);
+      
       enqueueSnackbar(
         error.response?.data?.message || "Error al enviar las variantes",
         {

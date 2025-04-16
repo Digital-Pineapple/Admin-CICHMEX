@@ -34,6 +34,8 @@ import { useProductOrder } from "../../hooks/useProductOrder";
 import ScheduleSendIcon from '@mui/icons-material/ScheduleSend';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import Swal from "sweetalert2";
+
+// Componente de paginación personalizada para el DataGrid
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -50,33 +52,41 @@ function Pagination({ page, onPageChange, className }) {
     />
   );
 }
+
+// Icono para indicar orden descendente en las columnas
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
 
+// Icono para indicar orden ascendente en las columnas
 export function SortedAscendingIcon() {
   return <ExpandLessIcon className="icon" />;
 }
 
+// Icono para indicar que no hay orden en las columnas
 export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación personalizada que utiliza el componente Pagination
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
-const PackagesSent = () => {
 
+const PackagesSent = () => {
+  // Hook personalizado para cargar datos y manejar navegación
   const {
     loadPackagesSent,
     navigate,
     productOrders,
   } = useProductOrder();
 
+  // Cargar los paquetes enviados al montar el componente
   useEffect(() => {
     loadPackagesSent();
   }, []);
 
+  // Procesar los datos de las órdenes de productos para adaptarlos al DataGrid
   const rowsWithIds = productOrders?.map((item, index) => {
     const quantities = item.products.map((i) => i.quantity);
     const suma = quantities.reduce((valorAnterior, valorActual) => {
@@ -84,7 +94,7 @@ const PackagesSent = () => {
     }, 0);
 
     const TD = item.branch ? "En Punto de entrega" : "A domicilio";
-    const statusRoute = item?.route_detail?.route_status ? item?.route_detail?.route_status:'No signado'
+    const statusRoute = item?.route_detail?.route_status ? item?.route_detail?.route_status : 'No signado';
     return {
       quantityProduct: suma,
       typeDelivery: TD,
@@ -93,6 +103,8 @@ const PackagesSent = () => {
       ...item,
     };
   });
+
+  // Función para exportar los datos a un archivo Excel
   const exportToExcel = () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Stock de productos");
@@ -130,6 +142,7 @@ const PackagesSent = () => {
     });
   };
 
+  // Barra de herramientas personalizada para el DataGrid
   function CustomToolbar() {
     const apiRef = useGridApiContext();
 
@@ -151,17 +164,17 @@ const PackagesSent = () => {
       </GridToolbarContainer>
     );
   }
-  const paymentValuate = (row)=>{
+
+  // Validar el estado de pago antes de navegar
+  const paymentValuate = (row) => {
     if (row.payment_status !== 'approved') {
-      Swal.fire('Pendiente de pago','','error')
+      Swal.fire('Pendiente de pago', '', 'error');
+    } else {
+      navigate(`/auth/surtir-orden/${row._id}`);
     }
-    else{
-      navigate(`/auth/surtir-orden/${row._id}`)
-    }
-  }
+  };
 
-
-
+  // Renderizar el ícono correspondiente según el estado del pedido
   const renderIcon = (values) => {
     if (!values.row.storeHouseStatus) {
       return (
@@ -169,7 +182,7 @@ const PackagesSent = () => {
           <Button
             aria-label="Surtir"
             color="success"
-            onClick={()=>paymentValuate(values.row)}
+            onClick={() => paymentValuate(values.row)}
             variant="outlined"
           >
             Surtir
@@ -183,26 +196,25 @@ const PackagesSent = () => {
             aria-label="Asignar ruta"
             color="info"
             variant="outlined"
-            onClick={() =>navigate(`/auth/asignar-ruta/${values.row._id}`)}
+            onClick={() => navigate(`/auth/asignar-ruta/${values.row._id}`)}
           >
             Enviar
           </Button>
         </Tooltip>
       );
-    } else if (!values.row.deliveryStatus)  {
+    } else if (!values.row.deliveryStatus) {
       return (
         <Tooltip title="Entregar">
           <IconButton
             aria-label="secondary"
             color="secondary"
-            onClick={()=>navigate(`/transportista/entregar/${values.row._id}`, {replace:true})}
+            onClick={() => navigate(`/transportista/entregar/${values.row._id}`, { replace: true })}
           >
             <VolunteerActivism />
           </IconButton>
         </Tooltip>
       );
-    }
-    else{
+    } else {
       return (
         <Tooltip title="Pedido entregado">
           <IconButton
@@ -215,6 +227,8 @@ const PackagesSent = () => {
       );
     }
   };
+
+  // Renderizar el componente principal con el DataGrid
   return (
     <Grid container style={{ marginLeft: "10%", height: "70%", width: "85%" }}>
       <Grid
@@ -229,7 +243,7 @@ const PackagesSent = () => {
           variant="h1"
           fontSize={{ xs: "20px", sm: "30px", lg: "40px" }}
         >
-         Entregar paquetes
+          Entregar paquetes
         </Typography>
       </Grid>
       <Grid item xs={12} marginY={2}>
@@ -255,7 +269,6 @@ const PackagesSent = () => {
               flex: 1,
               sortable: false,
             },
-
             {
               field: "Opciones",
               headerName: "Opciones",
@@ -295,5 +308,4 @@ const PackagesSent = () => {
   );
 };
 
-
-export default PackagesSent
+export default PackagesSent;

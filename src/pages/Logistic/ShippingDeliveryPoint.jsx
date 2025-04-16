@@ -36,6 +36,8 @@ import Swal from "sweetalert2";
 import { useAuthStore } from "../../hooks";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import CustomNoRows from "../../components/Tables/CustomNoRows";
+
+// Componente para la paginación personalizada
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -52,35 +54,43 @@ function Pagination({ page, onPageChange, className }) {
     />
   );
 }
+
+// Icono para indicar orden descendente
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
 
+// Icono para indicar orden ascendente
 export function SortedAscendingIcon() {
   return <ExpandLessIcon className="icon" />;
 }
 
+// Icono para indicar que no hay orden
 export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación personalizada para la tabla
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
+
+// Componente principal para gestionar los puntos de entrega de envíos
 const ShippingDeliveryPoint = () => {
-
   const {
-    loadPOPaidAndSuplyToPoint,
-    navigate,
-    productOrders,
-    loading,
+    loadPOPaidAndSuplyToPoint, // Carga los pedidos pagados y suministrados al punto de entrega
+    navigate, // Navegación entre rutas
+    productOrders, // Lista de pedidos de productos
+    loading, // Estado de carga
   } = useProductOrder();
-  const {user} = useAuthStore()
+  const { user } = useAuthStore();
 
+  // Efecto para cargar los pedidos al montar el componente
   useEffect(() => {
     loadPOPaidAndSuplyToPoint();
   }, [user]);
 
+  // Mapeo de los pedidos para agregar propiedades adicionales necesarias para la tabla
   const rowsWithIds = productOrders?.map((item, index) => {
     const quantities = item.products.map((i) => i.quantity);
     const suma = quantities.reduce((valorAnterior, valorActual) => {
@@ -88,7 +98,7 @@ const ShippingDeliveryPoint = () => {
     }, 0);
 
     const TD = item.branch ? "En Punto de entrega" : "A domicilio";
-    const statusRoute = item?.route_detail?.route_status ? item?.route_detail?.route_status:'No signado'
+    const statusRoute = item?.route_detail?.route_status ? item?.route_detail?.route_status : 'No signado';
     return {
       quantityProduct: suma,
       typeDelivery: TD,
@@ -97,6 +107,8 @@ const ShippingDeliveryPoint = () => {
       ...item,
     };
   });
+
+  // Función para exportar los datos a un archivo Excel
   const exportToExcel = () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Stock de productos");
@@ -134,6 +146,7 @@ const ShippingDeliveryPoint = () => {
     });
   };
 
+  // Barra de herramientas personalizada para la tabla
   function CustomToolbar() {
     const apiRef = useGridApiContext();
 
@@ -155,17 +168,17 @@ const ShippingDeliveryPoint = () => {
       </GridToolbarContainer>
     );
   }
-  const paymentValuate = (row)=>{
+
+  // Validación de pago antes de navegar a otra ruta
+  const paymentValuate = (row) => {
     if (row.payment_status !== 'approved') {
-      Swal.fire('Pendiente de pago','','error')
+      Swal.fire('Pendiente de pago', '', 'error');
+    } else {
+      navigate(`/auth/surtir-orden/${row._id}`);
     }
-    else{
-      navigate(`/auth/surtir-orden/${row._id}`)
-    }
-  }
+  };
 
-
-
+  // Renderizado de íconos según el estado del pedido
   const renderIcon = (values) => {
     if (!values.row.storeHouseStatus) {
       return (
@@ -173,7 +186,7 @@ const ShippingDeliveryPoint = () => {
           <Button
             aria-label="Surtir"
             color="success"
-            onClick={()=>paymentValuate(values.row)}
+            onClick={() => paymentValuate(values.row)}
             variant="outlined"
           >
             Surtir
@@ -187,13 +200,13 @@ const ShippingDeliveryPoint = () => {
             aria-label="Asignar ruta"
             color="info"
             variant="outlined"
-            onClick={() =>navigate(`/auth/asignar-ruta/${values.row._id}`)}
+            onClick={() => navigate(`/auth/asignar-ruta/${values.row._id}`)}
           >
             Enviar
           </Button>
         </Tooltip>
       );
-    } else if (!values.row.deliveryStatus)  {
+    } else if (!values.row.deliveryStatus) {
       return (
         <Tooltip title="En envio">
           <IconButton
@@ -204,8 +217,7 @@ const ShippingDeliveryPoint = () => {
           </IconButton>
         </Tooltip>
       );
-    }
-    else{
+    } else {
       return (
         <Tooltip title="Pedido entregado">
           <IconButton
@@ -219,12 +231,14 @@ const ShippingDeliveryPoint = () => {
     }
   };
 
+  // Mostrar pantalla de carga si los datos aún no están disponibles
   if (loading) {
-    return(<LoadingScreenBlue/>)
+    return (<LoadingScreenBlue />);
   }
+
+  // Renderizado principal del componente
   return (
-    <Grid container >
-     
+    <Grid container>
       <Grid item xs={12} marginY={2}>
         <DataGrid
           sx={{ fontSize: "14px", fontFamily: "sans-serif" }}
@@ -232,28 +246,23 @@ const ShippingDeliveryPoint = () => {
             {
               field: "createdAt",
               headerName: "Fecha de solicitud",
-              
               align: "center",
             },
             {
               field: "order_id",
               headerName: "Id de pedido",
-            
               align: "center",
             },
             {
               field: "status_route",
               hideable: false,
               headerName: "Estado de ruta",
-           
               sortable: false,
             },
-
             {
               field: "Opciones",
               headerName: "Opciones",
               align: "center",
-              
               sortable: false,
               type: "actions",
               getActions: (params) => [renderIcon(params)],
@@ -267,7 +276,7 @@ const ShippingDeliveryPoint = () => {
             columnSortedDescendingIcon: SortedDescendingIcon,
             columnSortedAscendingIcon: SortedAscendingIcon,
             columnUnsortedIcon: UnsortedIcon,
-            noRowsOverlay: CustomNoRows
+            noRowsOverlay: CustomNoRows,
           }}
           autoHeight
           disableColumnFilter
@@ -290,6 +299,4 @@ const ShippingDeliveryPoint = () => {
   );
 };
 
-
-
-export default ShippingDeliveryPoint
+export default ShippingDeliveryPoint;

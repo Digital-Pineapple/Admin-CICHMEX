@@ -40,6 +40,8 @@ import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import Swal from "sweetalert2";
 import LoadingScreenBlue from '../../components/ui/LoadingScreenBlue'
 import { useAuthStore } from "../../hooks";
+
+// Componente de paginación personalizada para la tabla
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -48,52 +50,59 @@ function Pagination({ page, onPageChange, className }) {
     <MuiPagination
       color="primary"
       className={className}
-      count={pageCount}
-      page={page + 1}
+      count={pageCount} // Número total de páginas
+      page={page + 1} // Página actual
       onChange={(event, newPage) => {
-        onPageChange(event, newPage - 1);
+        onPageChange(event, newPage - 1); // Cambiar página
       }}
     />
   );
 }
+
+// Icono para indicar orden descendente en las columnas
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
 
+// Icono para indicar orden ascendente en las columnas
 export function SortedAscendingIcon() {
   return <ExpandLessIcon className="icon" />;
 }
 
+// Icono para indicar que no hay orden aplicado en las columnas
 export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación personalizada que utiliza el componente Pagination
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
+// Componente principal que muestra la tabla de todas las órdenes
 const AllOrders = () => {
-
-
   return (
     <Grid container style={{ marginLeft: "10%", height: "70%", width: "85%" }}>
-     
+      {/* Contenedor principal de la tabla */}
       <Grid item xs={12} marginY={2}>
         <DataGrid
           sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
           columns={[
+            // Columna para mostrar la fecha de solicitud
             {
               field: "createdAt",
               headerName: "Fecha de solicitud",
               flex: 1,
               align: "center",
             },
+            // Columna para mostrar el código de pedido
             {
               field: "order_id",
               headerName: "Código de pedido",
               flex: 1,
               align: "center",
             },
+            // Columna para mostrar el tipo de envío
             {
               field: "typeDelivery",
               hideable: false,
@@ -101,6 +110,7 @@ const AllOrders = () => {
               flex: 1,
               sortable: false,
             },
+            // Columna para mostrar el estado del pago
             {
               field: "payment_status",
               headerName: "Status de pago",
@@ -127,6 +137,7 @@ const AllOrders = () => {
                   </>
                 ),
             },
+            // Columna para mostrar si la orden fue preparada
             {
               field: "storeHouseStatus",
               headerName: "Orden preparada",
@@ -153,6 +164,7 @@ const AllOrders = () => {
                   </>
                 ),
             },
+            // Columna para mostrar el estado de la ruta
             {
               field: "route_status",
               headerName: "Ruta",
@@ -179,6 +191,7 @@ const AllOrders = () => {
                   </>
                 ),
             },
+            // Columna para mostrar si la orden fue entregada
             {
               field: "deliveryStatus",
               headerName: "Entregado",
@@ -205,31 +218,29 @@ const AllOrders = () => {
                   </>
                 ),
             },
-
-            
           ]}
-          rows={rowsWithIds}
+          rows={rowsWithIds} // Datos de las filas
           pagination
           slots={{
-            pagination: CustomPagination,
-            toolbar: CustomToolbar,
-            columnSortedDescendingIcon: SortedDescendingIcon,
-            columnSortedAscendingIcon: SortedAscendingIcon,
-            columnUnsortedIcon: UnsortedIcon,
+            pagination: CustomPagination, // Componente de paginación personalizada
+            toolbar: CustomToolbar, // Barra de herramientas personalizada
+            columnSortedDescendingIcon: SortedDescendingIcon, // Icono de orden descendente
+            columnSortedAscendingIcon: SortedAscendingIcon, // Icono de orden ascendente
+            columnUnsortedIcon: UnsortedIcon, // Icono de columna sin orden
           }}
-          disableColumnFilter
-          disableColumnMenu
-          disableColumnSelector
-          disableDensitySelector
+          disableColumnFilter // Deshabilitar el filtro de columnas
+          disableColumnMenu // Deshabilitar el menú de columnas
+          disableColumnSelector // Deshabilitar el selector de columnas
+          disableDensitySelector // Deshabilitar el selector de densidad
           slotProps={{
             toolbar: {
-              showQuickFilter: true,
-              quickFilterProps: { debounceMs: 500 },
+              showQuickFilter: true, // Mostrar el filtro rápido
+              quickFilterProps: { debounceMs: 500 }, // Configuración del filtro rápido
             },
           }}
           printOptions={{
-            hideFooter: true,
-            hideToolbar: true,
+            hideFooter: true, // Ocultar pie de página al imprimir
+            hideToolbar: true, // Ocultar barra de herramientas al imprimir
           }}
         />
       </Grid>

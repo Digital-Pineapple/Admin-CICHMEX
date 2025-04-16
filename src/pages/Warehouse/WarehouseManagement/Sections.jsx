@@ -1,3 +1,4 @@
+// Importación de componentes y librerías necesarias
 import {
   Grid2,
   Typography,
@@ -23,13 +24,14 @@ import {
   Popover,
   MenuList,
 } from "@mui/material";
-import { useWarehouse } from "../../../hooks";
+import { useAuthStore, useWarehouse } from "../../../hooks";
 import { useCallback, useEffect, useState } from "react";
 import { Add, Delete, Edit, MoreVert, QrCode } from "@mui/icons-material";
 import { grey, teal } from "@mui/material/colors";
 import { Controller, useForm } from "react-hook-form";
 import { FilePdfFilled } from "@ant-design/icons";
 
+// Estilización personalizada de las celdas de la tabla
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: teal[700],
@@ -40,6 +42,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
+// Estilización personalizada de las filas de la tabla
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,
@@ -49,6 +52,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+// Estilo para el modal
 const style = {
   position: "absolute",
   top: "50%",
@@ -64,36 +68,50 @@ const style = {
 };
 
 const Sections = () => {
+  // Hooks personalizados para manejar datos y acciones relacionadas con las secciones
   const {
-    loadAllSections,
-    allSections,
-    rows,
-    loaderSections,
-    allAisles,
-    loadDeleteSection,
-    loadAddSection,
-    loadUpdateSection,
-    loadSectionPDF
+    loadAllSections, // Cargar todas las secciones
+    allSections, // Lista de todas las secciones
+    rows, // Transformar datos en filas
+    loaderSections, // Indicador de carga
+    allAisles, // Lista de pasillos
+    loadDeleteSection, // Eliminar una sección
+    loadAddSection, // Agregar una nueva sección
+    loadUpdateSection, // Actualizar una sección existente
+    loadSectionPDF, // Descargar PDF de una sección
   } = useWarehouse();
 
+  // Estados locales para manejar el modal y el popover
   const [open, setOpen] = useState({ value: false, section: {}, type: "" });
   const [openPopover, setOpenPopover] = useState(null);
 
+  // Controlador de formularios
   const { control, handleSubmit, reset } = useForm();
 
+  // Información del usuario autenticado
+  const { user } = useAuthStore();
+  const typeUser = user.type_user.role;
+
+  // Efecto para cargar las secciones al montar el componente
   useEffect(() => {
     loadAllSections();
   }, []);
 
+  // Transformar las secciones en filas para la tabla
   const rowsSections = rows(allSections) || [];
 
+  // Abrir el modal para agregar o editar una sección
   const handleOpen = (section = {}, type) => {
     setOpen({ value: true, section, type });
   };
+
+  // Cerrar el modal
   const handleClose = () => {
     setOpen({ value: false, section: {}, type: "" });
     reset();
   };
+
+  // Manejar el envío del formulario para agregar o actualizar una sección
   const OnSubmit = (data) => {
     if (open.type === "Add") {
       loadAddSection(data, handleClose);
@@ -103,21 +121,25 @@ const Sections = () => {
     }
   };
 
+  // Abrir el popover de opciones
   const handleOpenPopover = useCallback((event, row) => {
     setOpenPopover(event.currentTarget);
     setOpen((prev) => ({ ...prev, section: row }));
   }, []);
 
+  // Cerrar el popover de opciones
   const handleClosePopover = useCallback(() => {
     setOpenPopover(null);
   }, []);
 
+  // Mostrar un indicador de carga si los datos aún no están disponibles
   if (loaderSections) {
     return <Skeleton variant="rounded" width={"100%"} height={"100%"} />;
   }
 
   return (
     <Grid2 container>
+      {/* Encabezado con el título y botón para agregar secciones */}
       <Grid2
         size={12}
         flexGrow={1}
@@ -140,6 +162,7 @@ const Sections = () => {
         </Button>
       </Grid2>
 
+      {/* Tabla para mostrar las secciones */}
       <Grid2 size={12}>
         <TableContainer variant="elevation" component={Paper}>
           <Table sx={{ minWidth: 300 }} size="small">
@@ -147,6 +170,7 @@ const Sections = () => {
               <TableRow>
                 <StyledTableCell>Nombre</StyledTableCell>
                 <StyledTableCell>Pasillo</StyledTableCell>
+                <StyledTableCell>Cedis</StyledTableCell>
                 <StyledTableCell align="right">Opciones</StyledTableCell>
               </TableRow>
             </TableHead>
@@ -157,6 +181,11 @@ const Sections = () => {
                     {row.name}
                   </StyledTableCell>
                   <StyledTableCell>{row.aisle.name}</StyledTableCell>
+                  {typeUser.includes("SUPER-ADMIN") || typeUser.includes("ADMIN") ? (
+                    <StyledTableCell component="th" scope="row">
+                      {row.storehouse.name}
+                    </StyledTableCell>
+                  ) : null}
                   <StyledTableCell align="right">
                     <IconButton onClick={(e) => handleOpenPopover(e, row)}>
                       <MoreVert />
@@ -169,6 +198,7 @@ const Sections = () => {
         </TableContainer>
       </Grid2>
 
+      {/* Modal para agregar o editar secciones */}
       <Modal open={open.value} onClose={handleClose}>
         <Grid2
           container
@@ -180,6 +210,7 @@ const Sections = () => {
             {open.type === "Add" ? "Agregar sección" : "Editar sección"}
           </Typography>
 
+          {/* Campo para seleccionar el pasillo */}
           <Controller
             name="aisle"
             control={control}
@@ -200,6 +231,7 @@ const Sections = () => {
             )}
           />
 
+          {/* Campo para ingresar el nombre de la sección */}
           <Controller
             name="name"
             control={control}
@@ -218,6 +250,7 @@ const Sections = () => {
             )}
           />
 
+          {/* Botones para cancelar o guardar */}
           <Grid2 display="flex" gap={1} size={12}>
             <Button
               fullWidth
@@ -234,6 +267,7 @@ const Sections = () => {
         </Grid2>
       </Modal>
 
+      {/* Popover con opciones para cada sección */}
       <Popover
         open={!!openPopover}
         anchorEl={openPopover}
@@ -251,7 +285,8 @@ const Sections = () => {
             flexDirection: "column",
           }}
         >
-           <MenuItem
+          {/* Opción para descargar el código QR */}
+          <MenuItem
             onClick={() => {
               handleClosePopover();
               loadSectionPDF(open.section._id);
@@ -259,6 +294,7 @@ const Sections = () => {
           >
             <QrCode fontSize="small" color="warning" /> Código
           </MenuItem>
+          {/* Opción para editar la sección */}
           <MenuItem
             onClick={() => {
               handleClosePopover();
@@ -267,6 +303,7 @@ const Sections = () => {
           >
             <Edit fontSize="small" color="info" /> Editar
           </MenuItem>
+          {/* Opción para eliminar la sección */}
           <MenuItem
             onClick={() => {
               handleClosePopover();
@@ -275,7 +312,6 @@ const Sections = () => {
           >
             <Delete fontSize="small" color="warning" /> Eliminar
           </MenuItem>
-         
         </MenuList>
       </Popover>
     </Grid2>

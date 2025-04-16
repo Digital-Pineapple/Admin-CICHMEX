@@ -153,134 +153,160 @@ const DetailImagesUpdateField = ({ idProduct, imagesProduct, onSubmit, onDelete 
   }
   
   return (
-   
     <div>
-    <Card sx={{ padding: 2 }} variant="elevation">
-      <CardMedia sx={{ display: "flex", justifyContent: "center" }}>
-        {open ? (
-          <Skeleton variant="rectangular" width={200} height={"300px"} />
-        ) : images.length > 0 ? (
-          <ImageList sx={{ msxWidth: 200, maxHeight: 200 }}>
-            {images?.map((item, index) => (
-              <ImageListItem key={index}>
-                <img src={`${item.filePreview}`} alt={index} />
-              </ImageListItem>
-            ))}
-          </ImageList>
-        ) : (
-          <img src={noImage} alt="No image available" />
-        )}
-      </CardMedia>
-      <CardActions>
-        <Button
-          component="label"
-          role={undefined}
-          variant="contained"
-          tabIndex={-1}
-          startIcon={images ? <Edit /> : <CloudUpload />}
-          onClick={() => setOpen(true)}
-          fullWidth
-        >
-          {images ? "Editar imagenes" : "Subir"}
-        </Button>
-      </CardActions>
-    </Card>
-
-    <Modal
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>
-        <Grid container display={"flex"} justifyContent={"end"} spacing={0}>
-          <Fab
-            color="primary"
-            aria-label="Cancelar"
-            sx={{ alignContent: "flex-end" }}
-            title="Cancelar"
-            onClick={handleClose}
-          >
-            <Close />
-          </Fab>
-        </Grid>
-        <Card sx={{ padding: 2 }} variant="elevation">
-          <CardMedia sx={{ display: "flex", justifyContent: "center" }}>
-            <ImageList sx={{ width: "100%", height: 400 }}>
-              {images.map((item, index) => (
-                <ImageListItem  key={item.id}>
-                  <img src={`${item.filePreview}`} alt={index} style={{width:'100%', objectFit:'contain', height:'200px', display:'flex', justifyContent:'center'}} />
-                  <Grid container justifyContent="center"  mt={1}>
-                    <ButtonGroup>
-                      <Button
-                        onClick={() => moveImage(index, -1)}
-                        disabled={index === 0}
-                      >
-                        <NavigateBefore />
-                      </Button>
-                      <Button
-                        onClick={() => moveImage(index, 1)}
-                        disabled={index === images.length - 1}
-                      >
-                        <NavigateNext />
-                      </Button>
-                    </ButtonGroup>
-                    <Button
-                      onClick={() => deleteImage(item.id)}
-                      variant="contained"
-                      color="warning"
-                      sx={{marginX:1}}
-                    >
-                      Eliminar
-                    </Button>
-                    <Chip
-                      label={
-                        mainImageId === item.id ? "Principal" : "Hacer Principal"
-                      }
-                      color={mainImageId === item.id ? "primary" : "default"}
-                      onClick={() => handleSelectMainImage(item.id)}
-                      clickable
-                    />
-                  </Grid>
+      {/* Tarjeta principal que muestra las imágenes o un placeholder si no hay imágenes */}
+      <Card sx={{ padding: 2 }} variant="elevation">
+        <CardMedia sx={{ display: "flex", justifyContent: "center" }}>
+          {open ? (
+            // Esqueleto de carga mientras se cargan las imágenes
+            <Skeleton variant="rectangular" width={200} height={"300px"} />
+          ) : images.length > 0 ? (
+            // Lista de imágenes si existen
+            <ImageList sx={{ msxWidth: 200, maxHeight: 200 }}>
+              {images?.map((item, index) => (
+                <ImageListItem key={index}>
+                  <img src={`${item.filePreview}`} alt={index} />
                 </ImageListItem>
               ))}
             </ImageList>
-          </CardMedia>
-          <CardActions>
-            <Button
-              component="label"
-              role={undefined}
-              variant="contained"
-              tabIndex={-1}
-              startIcon={<CloudUpload />}
-              fullWidth
-              color='primary'
+          ) : (
+            // Imagen de marcador de posición si no hay imágenes
+            <img src={noImage} alt="No image available" />
+          )}
+        </CardMedia>
+        <CardActions>
+          {/* Botón para abrir el modal y editar o subir imágenes */}
+          <Button
+            component="label"
+            role={undefined}
+            variant="contained"
+            tabIndex={-1}
+            startIcon={images ? <Edit /> : <CloudUpload />}
+            onClick={() => setOpen(true)}
+            fullWidth
+          >
+            {images ? "Editar imagenes" : "Subir"}
+          </Button>
+        </CardActions>
+      </Card>
+
+      {/* Modal para gestionar las imágenes */}
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          {/* Botón para cerrar el modal */}
+          <Grid container display={"flex"} justifyContent={"end"} spacing={0}>
+            <Fab
+              color="primary"
+              aria-label="Cancelar"
+              sx={{ alignContent: "flex-end" }}
+              title="Cancelar"
+              onClick={handleClose}
             >
-              Agregar
-              <VisuallyHiddenInput
-                type="file"
-                accept="image/png, image/jpeg "
-                onChange={(e) => handleSubmitImage(e)}
-              />
-            </Button>
-            <Button
-              component="label"
-              role={undefined}
-              variant="contained"
-              tabIndex={-1}
-              startIcon={<Save />}
-              fullWidth
-              color="success"
-              onClick={(e)=>handleSaveChanges(e)}
-            >
-              Guardar cambios de imagenes
-             
-            </Button>
-          </CardActions>
-        </Card>
-      </Box>
-    </Modal>
-  </div>
+              <Close />
+            </Fab>
+          </Grid>
+          <Card sx={{ padding: 2 }} variant="elevation">
+            <CardMedia sx={{ display: "flex", justifyContent: "center" }}>
+              {/* Lista de imágenes dentro del modal */}
+              <ImageList sx={{ width: "100%", height: 400 }}>
+                {images.map((item, index) => (
+                  <ImageListItem key={item.id}>
+                    {/* Imagen con estilo */}
+                    <img
+                      src={`${item.filePreview}`}
+                      alt={index}
+                      style={{
+                        width: "100%",
+                        objectFit: "contain",
+                        height: "200px",
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
+                    />
+                    {/* Controles para mover, eliminar y seleccionar imagen principal */}
+                    <Grid container justifyContent="center" mt={1}>
+                      <ButtonGroup>
+                        {/* Botón para mover la imagen hacia la izquierda */}
+                        <Button
+                          onClick={() => moveImage(index, -1)}
+                          disabled={index === 0}
+                        >
+                          <NavigateBefore />
+                        </Button>
+                        {/* Botón para mover la imagen hacia la derecha */}
+                        <Button
+                          onClick={() => moveImage(index, 1)}
+                          disabled={index === images.length - 1}
+                        >
+                          <NavigateNext />
+                        </Button>
+                      </ButtonGroup>
+                      {/* Botón para eliminar la imagen */}
+                      <Button
+                        onClick={() => deleteImage(item.id)}
+                        variant="contained"
+                        color="warning"
+                        sx={{ marginX: 1 }}
+                      >
+                        Eliminar
+                      </Button>
+                      {/* Chip para marcar o seleccionar la imagen principal */}
+                      <Chip
+                        label={
+                          mainImageId === item.id
+                            ? "Principal"
+                            : "Hacer Principal"
+                        }
+                        color={mainImageId === item.id ? "primary" : "default"}
+                        onClick={() => handleSelectMainImage(item.id)}
+                        clickable
+                      />
+                    </Grid>
+                  </ImageListItem>
+                ))}
+              </ImageList>
+            </CardMedia>
+            <CardActions>
+              {/* Botón para agregar una nueva imagen */}
+              <Button
+                component="label"
+                role={undefined}
+                variant="contained"
+                tabIndex={-1}
+                startIcon={<CloudUpload />}
+                fullWidth
+                color="primary"
+              >
+                Agregar
+                <VisuallyHiddenInput
+                  type="file"
+                  accept="image/png, image/jpeg "
+                  onChange={(e) => handleSubmitImage(e)}
+                />
+              </Button>
+              {/* Botón para guardar los cambios realizados en las imágenes */}
+              <Button
+                component="label"
+                role={undefined}
+                variant="contained"
+                tabIndex={-1}
+                startIcon={<Save />}
+                fullWidth
+                color="success"
+                onClick={(e) => handleSaveChanges(e)}
+              >
+                Guardar cambios de imagenes
+              </Button>
+            </CardActions>
+          </Card>
+        </Box>
+      </Modal>
+    </div>
   );
 };
 

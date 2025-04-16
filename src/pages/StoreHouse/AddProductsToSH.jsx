@@ -25,6 +25,7 @@ import { Workbook } from "exceljs";
 import { useProducts } from "../../hooks/useProducts";
 import { useStoreHouse } from "../../hooks/useStoreHouse";
 
+// Componente de paginación personalizada
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -41,6 +42,8 @@ function Pagination({ page, onPageChange, className }) {
     />
   );
 }
+
+// Iconos personalizados para el ordenamiento
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
@@ -53,29 +56,28 @@ export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación personalizada para DataGrid
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
 const AddProductsToSH = () => {
   const { loadProducts, products, navigate } = useProducts();
-  const {loadAllStock, rowsStocks}=useStoreHouse()
+  const { loadAllStock, rowsStocks } = useStoreHouse();
   const [openModal, setOpenModal] = useState(false);
-  const {createStockProduct}= useStoreHouse()
+  const { createStockProduct } = useStoreHouse();
 
+  const [info, setinfo] = useState('');
+  const [quantity, setQuantity] = useState('');
+  const { id } = useParams();
 
- 
-  const [info, setinfo] = useState('')
-  const [quantity, setQuantity] = useState('')
-  const { id } = useParams()
+  // Cargar productos y stock al montar el componente
   useEffect(() => {
-    loadProducts()
-    loadAllStock(id)
-    
+    loadProducts();
+    loadAllStock(id);
   }, [id]);
 
-
-
+  // Estilo para el modal
   const style = {
     position: 'absolute',
     top: '50%',
@@ -88,10 +90,12 @@ const AddProductsToSH = () => {
     p: 4,
   };
 
+  // Navegar a la página anterior
   const Out = () => {
-    navigate(`/auth/Almacenes/${id}`)
-  }
-  
+    navigate(`/auth/Almacenes/${id}`);
+  };
+
+  // Exportar datos a un archivo Excel
   const exportToExcel = () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet(`Productos en almacen: ${StoreHouse?.name}`);
@@ -120,50 +124,53 @@ const AddProductsToSH = () => {
     });
   };
 
-  const addProductInBranch = (quantity,values ) =>{
-createStockProduct(id,{stock:quantity, product_id:values._id} )
-   handleClose()
-  }
-  const handleOpen = (values) => {
-    setinfo(values)
-    setOpenModal(true)
-  
-  }
+  // Agregar un producto al almacén
+  const addProductInBranch = (quantity, values) => {
+    createStockProduct(id, { stock: quantity, product_id: values._id });
+    handleClose();
+  };
 
+  // Abrir el modal para agregar producto
+  const handleOpen = (values) => {
+    setinfo(values);
+    setOpenModal(true);
+  };
+
+  // Cerrar el modal
   const handleClose = () => setOpenModal(false);
 
-  
-
+  // Barra de herramientas personalizada para DataGrid
   function CustomToolbar() {
     const apiRef = useGridApiContext();
-  
+
     const handleGoToPage1 = () => apiRef.current.setPage(1);
-  
+
     return (
-      <GridToolbarContainer sx={{justifyContent:'space-between'}}>
+      <GridToolbarContainer sx={{ justifyContent: 'space-between' }}>
         <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-        <GridToolbarQuickFilter/>
+        <GridToolbarQuickFilter />
         <Button
-        variant="text"
-        startIcon={<Download/>}
-        disableElevation
-        sx={{ color: "secondary" }}
-        onClick={exportToExcel}
-      >
-        Descargar Excel
-      </Button>
+          variant="text"
+          startIcon={<Download />}
+          disableElevation
+          sx={{ color: "secondary" }}
+          onClick={exportToExcel}
+        >
+          Descargar Excel
+        </Button>
       </GridToolbarContainer>
     );
   }
-  console.log(rowsStocks);
 
+  console.log(rowsStocks);
 
   return (
     <div style={{ marginLeft: "10%", height: "70%", width: "80%" }}>
-     
-      <Button onClick={()=>Out()} variant="contained" color="primary">
+      {/* Botón para regresar */}
+      <Button onClick={() => Out()} variant="contained" color="primary">
         regresar
       </Button>
+      {/* Tabla de datos */}
       <DataGrid
         sx={{ fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
@@ -188,7 +195,6 @@ createStockProduct(id,{stock:quantity, product_id:values._id} )
             flex: 2,
             sortable: false,
           },
-        
           {
             field: "Opciones",
             headerName: "Opciones",
@@ -198,16 +204,14 @@ createStockProduct(id,{stock:quantity, product_id:values._id} )
             type: "actions",
             getActions: (params) => [
               <>
-              
-              <Button  key={params.row._id} onClick={()=>{handleOpen(params.row);}} variant="outlined" color="primary">
-                Agregar
-              </Button>
+                {/* Botón para abrir el modal y agregar producto */}
+                <Button key={params.row._id} onClick={() => { handleOpen(params.row); }} variant="outlined" color="primary">
+                  Agregar
+                </Button>
               </>
-                             
             ],
           },
         ]}
-        
         rows={rowsStocks}
         pagination
         slots={{
@@ -218,7 +222,6 @@ createStockProduct(id,{stock:quantity, product_id:values._id} )
           columnUnsortedIcon: UnsortedIcon,
         }}
         disableColumnFilter
-        
         disableColumnMenu
         disableColumnSelector
         disableDensitySelector
@@ -233,7 +236,7 @@ createStockProduct(id,{stock:quantity, product_id:values._id} )
           hideToolbar: true,
         }}
       />
-        
+      {/* Modal para agregar producto */}
       <Modal
         keepMounted
         open={openModal}
@@ -244,7 +247,7 @@ createStockProduct(id,{stock:quantity, product_id:values._id} )
             Agregar producto: {info.name}
           </Typography>
           <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
-           Cantidad:
+            Cantidad:
           </Typography>
           <TextField
             id="quantity"
@@ -253,17 +256,15 @@ createStockProduct(id,{stock:quantity, product_id:values._id} )
             margin="none"
             sizes="small"
             value={quantity}
-            onChange={(e)=>setQuantity(e.target.value)}
+            onChange={(e) => setQuantity(e.target.value)}
           />
-          <Button onClick={()=>addProductInBranch(quantity, info)} variant="contained" color="primary">
+          <Button onClick={() => addProductInBranch(quantity, info)} variant="contained" color="primary">
             Guardar
           </Button>
         </Box>
       </Modal>
-    
     </div>
-    
   );
 }
 
-export default AddProductsToSH
+export default AddProductsToSH;

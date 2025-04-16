@@ -25,9 +25,11 @@ import { blueGrey } from "@mui/material/colors";
 
 const shippingCompanies = ["Fedex", "DHL", "Estafeta", "Paquete Express"];
 
+// Componente que muestra la información de la orden y la dirección de entrega o sucursal
 const CardComponent = ({ info }) => {
   return (
     <>
+      {/* Información básica de la orden */}
       <Grid2 size={{xs:12, sm:5.7}}>
         <Card sx={{ height: "100%" }} variant="outlined">
           <CardHeader title={`Id de orden:${info?.order_id}`} />
@@ -38,6 +40,7 @@ const CardComponent = ({ info }) => {
           </CardContent>
         </Card>
       </Grid2>
+      {/* Información de la sucursal o dirección de entrega */}
       <Grid2 size={{xs:12, sm:6}} >
         <Card variant="outlined">
           <CardContent>
@@ -76,6 +79,7 @@ const CardComponent = ({ info }) => {
   );
 };
 
+// Componente para subir archivos PDF (guía de envío)
 const FileUploadComponent = ({ control, errors, onChangePDF, isDragging, handleDragOver, handleDragLeave, document }) => {
   return (
     <Controller
@@ -90,19 +94,20 @@ const FileUploadComponent = ({ control, errors, onChangePDF, isDragging, handleD
           component="label"
           htmlFor="guide_pdf"
           sx={{ cursor: "pointer" }}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver} // Maneja el evento de arrastrar sobre el área
+          onDragLeave={handleDragLeave} // Maneja el evento de salir del área de arrastre
           onDrop={(e) => {
             e.preventDefault();
             setIsDragging(false);
             const droppedFiles = e.dataTransfer.files;
             if (droppedFiles.length) {
-              onChangePDF(droppedFiles[0]);
+              onChangePDF(droppedFiles[0]); // Actualiza el archivo seleccionado
             }
           }}
         >
           {document?.filePreview ? (
             <Grid2 size={12} >
+              {/* Vista previa del archivo PDF */}
               <object
                 data={document?.filePreview}
                 type="application/pdf"
@@ -140,7 +145,7 @@ const FileUploadComponent = ({ control, errors, onChangePDF, isDragging, handleD
                       id="guide_pdf"
                       onBlur={onBlur}
                       name={name}
-                      onChange={(e) => onChangePDF(e.target.files[0])}
+                      onChange={(e) => onChangePDF(e.target.files[0])} // Cambia el archivo seleccionado
                     />
                   </Button>
                 )}
@@ -165,6 +170,7 @@ const FileUploadComponent = ({ control, errors, onChangePDF, isDragging, handleD
                 },
               }}
             >
+              {/* Mensaje para subir archivo */}
               <Typography variant="body2" color="inherit">
                 <UploadFile style={{ color: "#42a5f5" }} />{" "}
                 <strong style={{ color: "#42a5f5" }}>Seleccionar o arrastrar archivo aquí</strong>
@@ -184,7 +190,7 @@ const FileUploadComponent = ({ control, errors, onChangePDF, isDragging, handleD
                     id="guide_pdf"
                     onBlur={onBlur}
                     name={name}
-                    onChange={(e) => onChangePDF(e.target.files[0])}
+                    onChange={(e) => onChangePDF(e.target.files[0])} // Cambia el archivo seleccionado
                   />
                 )}
               />
@@ -199,6 +205,7 @@ const FileUploadComponent = ({ control, errors, onChangePDF, isDragging, handleD
   );
 };
 
+// Componente de navegación inferior para cambiar entre "Compañía" y "Usuario"
 const NavigationComponent = ({ valueNav, setValueNav, reset, updateGuide, updateUser }) => {
   return (
     <Paper
@@ -220,8 +227,8 @@ const NavigationComponent = ({ valueNav, setValueNav, reset, updateGuide, update
         }}
         value={valueNav}
         onChange={(event, newValue) => {
-          setValueNav(newValue);
-          reset();
+          setValueNav(newValue); // Cambia la pestaña activa
+          reset(); // Reinicia el formulario
         }}
       >
         {updateGuide && (
@@ -239,6 +246,7 @@ const NavigationComponent = ({ valueNav, setValueNav, reset, updateGuide, update
   );
 };
 
+// Componente principal para asignar rutas, compañía de envío o usuario
 const AssignRoute = ({ productOrder, handleClose, carrierDrivers = [], updateUser = false, updateGuide = false }) => {
   const info = productOrder.data;
   const { loading, loadAssignRoute } = useProductOrder();
@@ -262,32 +270,33 @@ const AssignRoute = ({ productOrder, handleClose, carrierDrivers = [], updateUse
 
   const handleDragOver = useCallback((event) => {
     event.preventDefault();
-    setIsDragging(true);
+    setIsDragging(true); // Activa el estado de arrastre
   }, []);
 
   const handleDragLeave = useCallback(() => {
-    setIsDragging(false);
+    setIsDragging(false); // Desactiva el estado de arrastre
   }, []);
 
   const onChangePDF = useCallback((file) => {
     if (!file) return;
     const current = watch("guide_pdf") || [];
     if (current.length >= 2) return;
-    const filePreview = URL.createObjectURL(file);
+    const filePreview = URL.createObjectURL(file); // Genera una vista previa del archivo
     setValue("guide_pdf.filePreview", filePreview);
     setValue("guide_pdf.file", file);
   }, [setValue, watch]);
 
   const handleSubmitForm = useCallback((data) => {
-    loadAssignRoute(data, handleClose);
+    loadAssignRoute(data, handleClose); // Envía los datos del formulario
   }, [loadAssignRoute, handleClose]);
 
   if (loading) {
-    return <LoadingScreenBlue />;
+    return <LoadingScreenBlue />; // Muestra una pantalla de carga si está cargando
   }
 
   return (
     <Grid2>
+      {/* Componente de navegación */}
       <NavigationComponent
         valueNav={valueNav}
         setValueNav={setValueNav}
@@ -316,9 +325,10 @@ const AssignRoute = ({ productOrder, handleClose, carrierDrivers = [], updateUse
             </Typography>
           </Grid2>
 
-
+          {/* Componente de información de la orden */}
           <CardComponent info={info} />
 
+          {/* Componente para subir archivo PDF */}
           <Grid2 size={{xs:12, md:6}}>
           <FileUploadComponent
             control={control}
@@ -331,9 +341,7 @@ const AssignRoute = ({ productOrder, handleClose, carrierDrivers = [], updateUse
           />
           </Grid2>
 
-
-
-
+          {/* Selección de compañía de envío y número de guía */}
           <Grid2 size={{ xs: 12, sm: 5.7 }}>
             <Controller
               name="shipping_company"
@@ -381,10 +389,10 @@ const AssignRoute = ({ productOrder, handleClose, carrierDrivers = [], updateUse
                 </FormControl>
               )}
             />
-
           </Grid2>
+
+          {/* Botones de acción */}
           <Grid2
-            
             size={12}
             display="flex"
             gap={2}
@@ -433,6 +441,7 @@ const AssignRoute = ({ productOrder, handleClose, carrierDrivers = [], updateUse
               Asignar usuario
             </Typography>
           </Grid2>
+          {/* Selección de usuario */}
           <Controller
             name="user"
             control={control}
@@ -453,8 +462,8 @@ const AssignRoute = ({ productOrder, handleClose, carrierDrivers = [], updateUse
               </FormControl>
             )}
           />
+          {/* Botones de acción */}
           <Grid2
-            
             size={12}
             display="flex"
             gap={2}

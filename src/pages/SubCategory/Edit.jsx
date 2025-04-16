@@ -1,4 +1,3 @@
-
 import TextField from "@mui/material/TextField";
 import {
   Button,
@@ -22,9 +21,11 @@ import { useState } from "react";
 import { orange } from "@mui/material/colors";
 import { name } from "dayjs/locale/es";
 import { useSubCategories } from "../../hooks/useSubCategories";
-const Edit = ({handleClose, subCategory, categories = []}) => {
-  const { editSubCategory } = useSubCategories()
+
+const Edit = ({ handleClose, subCategory, categories = [] }) => {
+  const { editSubCategory } = useSubCategories();
   
+  // Configuración del formulario con valores predeterminados
   const {
     formState: { errors },
     control,
@@ -32,7 +33,7 @@ const Edit = ({handleClose, subCategory, categories = []}) => {
     setValue,
     watch,
   } = useForm({
-    defaultValues:{
+    defaultValues: {
       name: subCategory?.name || '',
       category_id: subCategory?.category_id || '',
       image: {
@@ -42,27 +43,29 @@ const Edit = ({handleClose, subCategory, categories = []}) => {
     }
   });
   
-
+  // Función para cerrar el formulario
   const outCreate = () => {
-   handleClose()
+    handleClose();
   };
 
+  // Función para manejar el envío del formulario
   const onSubmit = (e) => {
-   if (e.image.filePreview.startsWith('https://')) {
-   editSubCategory(subCategory._id, {name: e.name, subCategory_image: e.image.filePreview, category_id: e.category_id}, handleClose)
-   
-   }else{
-    editSubCategory(subCategory._id,{name: e.name, subCategory_image: e.image.file, category_id: e.category_id}, handleClose)
-   }
+    if (e.image.filePreview.startsWith('https://')) {
+      editSubCategory(subCategory._id, { name: e.name, subCategory_image: e.image.filePreview, category_id: e.category_id }, handleClose);
+    } else {
+      editSubCategory(subCategory._id, { name: e.name, subCategory_image: e.image.file, category_id: e.category_id }, handleClose);
+    }
   };
 
+  // Observa el valor actual de la imagen
   const currentImage = watch("image.filePreview");
 
+  // Maneja el cambio de la imagen seleccionada
   const onChangeImage = (event) => {
     const file = event.target.files[0];
     if (!file) return;
-  
-    // Validación básica
+
+    // Validación básica del archivo
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
       alert("El formato de imagen no es válido");
       return;
@@ -71,16 +74,16 @@ const Edit = ({handleClose, subCategory, categories = []}) => {
       alert("La imagen debe ser menor a 10MB");
       return;
     }
-  
+
     const filePreview = URL.createObjectURL(file);
     setValue("image.filePreview", filePreview);
     setValue("image.file", file);
   };
   
+  // Elimina la imagen seleccionada
   const removeImage = () => {
-    setValue('image.filePreview',null)
+    setValue('image.filePreview', null);
   };
-  
 
   return (
     <Grid2
@@ -90,16 +93,18 @@ const Edit = ({handleClose, subCategory, categories = []}) => {
       style={{ display: "flex", justifyContent: "center" }}
       gap={1}
     >
+      {/* Título del formulario */}
       <Grid2 size={12} minHeight={"80px"} className="Titles">
         <Typography
           textAlign={"center"}
           variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg:'40px' }}
+          fontSize={{ xs: "20px", sm: "30px", lg: '40px' }}
         >
-          Editar {subCategory.name ? subCategory.name :''} 
+          Editar {subCategory.name ? subCategory.name : ''} 
         </Typography>
       </Grid2>
 
+      {/* Campo para el nombre de la subcategoría */}
       <Grid2 size={12}>
         <Controller
           control={control}
@@ -121,6 +126,7 @@ const Edit = ({handleClose, subCategory, categories = []}) => {
         />
       </Grid2>
 
+      {/* Campo para seleccionar la categoría */}
       <Grid2 size={12}>
         <Controller
           control={control}
@@ -147,14 +153,13 @@ const Edit = ({handleClose, subCategory, categories = []}) => {
                   </MenuItem>
                 ))}
               </Select>
-              <FormHelperText sx={{color:'error.main'}} >{errors?.category_id?.message}</FormHelperText>
+              <FormHelperText sx={{ color: 'error.main' }}>{errors?.category_id?.message}</FormHelperText>
             </FormControl>
-            
           )}
         />
       </Grid2>
 
-
+      {/* Campo para subir o arrastrar una imagen */}
       <Grid2 display={"flex"} size={12}>
         <Grid2
           container
@@ -256,6 +261,7 @@ const Edit = ({handleClose, subCategory, categories = []}) => {
             />
           </Grid2>
 
+          {/* Vista previa de la imagen seleccionada */}
           <Grid2
             size={12}
             display={currentImage ? "flex" : "none"}
@@ -302,9 +308,10 @@ const Edit = ({handleClose, subCategory, categories = []}) => {
         </Grid2>
       </Grid2>
 
+      {/* Botones para salir o guardar */}
       <Grid2 display={"flex"} gap={2} size={6}>
         <Button
-          onClick={()=>outCreate()}
+          onClick={() => outCreate()}
           variant="contained"
           fullWidth
           size="large"

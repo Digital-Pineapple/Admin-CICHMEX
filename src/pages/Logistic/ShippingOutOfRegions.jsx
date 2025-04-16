@@ -30,6 +30,7 @@ import { useAuthStore } from "../../hooks";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import CustomNoRows from "../../components/Tables/CustomNoRows";
 
+// Componente de paginación personalizada para el DataGrid
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -47,26 +48,34 @@ function Pagination({ page, onPageChange, className }) {
   );
 }
 
+// Icono personalizado para orden descendente
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
 
+// Icono personalizado para orden ascendente
 export function SortedAscendingIcon() {
   return <ExpandLessIcon className="icon" />;
 }
 
+// Icono personalizado para columna sin ordenar
 export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación que utiliza el componente de paginación personalizada
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
+// Barra de herramientas personalizada para el DataGrid
 function CustomToolbar() {
   const apiRef = useGridApiContext();
 
+  // Función para regresar a la primera página
   const handleGoToPage1 = () => apiRef.current.setPage(1);
+
+  // Función para exportar los datos a un archivo Excel
   const exportToExcel = () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Pedidos");
@@ -92,7 +101,7 @@ function CustomToolbar() {
       ]);
     });
 
-    // Crear un Blob con el archivo Excel y guardarlo
+    // Crear un archivo Excel y descargarlo
     workbook.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -118,20 +127,21 @@ function CustomToolbar() {
   );
 }
 
+// Componente principal que muestra los pedidos fuera de las regiones
 const ShippingOutOfRegions = () => {
   const {
-    loadPOOutOfRegions,
-    navigate,
-    readyToPoint,
-    loading
+    loadPOOutOfRegions, // Carga los pedidos fuera de las regiones
+    navigate, // Navegación entre rutas
+    readyToPoint, // Datos listos para mostrar
+    loading // Estado de carga
   } = useProductOrder();
 
+  // Efecto para cargar los pedidos al montar el componente
   useEffect(() => {
     loadPOOutOfRegions();
   }, []);
 
-  
-
+  // Procesar los datos para agregar información adicional a las filas
   const rowsWithIds = readyToPoint.map((item, index) => {
     const quantities = item.products.map((i) => i.quantity);
     const suma = quantities.reduce((valorAnterior, valorActual) => {
@@ -147,8 +157,7 @@ const ShippingOutOfRegions = () => {
     };
   });
 
- 
-
+  // Validar el estado de pago y redirigir según corresponda
   const paymentValuate = (row) => {
     if (row.payment_status !== 'approved') {
       Swal.fire('Pendiente de pago', '', 'error');
@@ -157,6 +166,7 @@ const ShippingOutOfRegions = () => {
     }
   };
 
+  // Renderizar iconos según el estado de la orden
   const renderIcon = (values) => {
     if (!values.row.storeHouseStatus) {
       return (
@@ -209,6 +219,7 @@ const ShippingOutOfRegions = () => {
     }
   };
 
+  // Mostrar pantalla de carga si los datos aún no están listos
   if (loading) {
     return <LoadingScreenBlue />;
   }
@@ -247,16 +258,16 @@ const ShippingOutOfRegions = () => {
               getActions: (params) => [renderIcon(params)],
             },
           ]}
-          rows={rowsWithIds}
+          rows={rowsWithIds} // Filas procesadas con datos adicionales
           autoHeight
           pagination
           slots={{
-            pagination: CustomPagination,
-            toolbar: CustomToolbar,
-            columnSortedDescendingIcon: SortedDescendingIcon,
-            columnSortedAscendingIcon: SortedAscendingIcon,
-            columnUnsortedIcon: UnsortedIcon,
-            noRowsOverlay: CustomNoRows,
+            pagination: CustomPagination, // Paginación personalizada
+            toolbar: CustomToolbar, // Barra de herramientas personalizada
+            columnSortedDescendingIcon: SortedDescendingIcon, // Icono para orden descendente
+            columnSortedAscendingIcon: SortedAscendingIcon, // Icono para orden ascendente
+            columnUnsortedIcon: UnsortedIcon, // Icono para columna sin ordenar
+            noRowsOverlay: CustomNoRows, // Componente personalizado para cuando no hay filas
           }}
           disableColumnFilter
           disableColumnMenu
@@ -278,4 +289,4 @@ const ShippingOutOfRegions = () => {
   );
 };
 
-export default ShippingOutOfRegions
+export default ShippingOutOfRegions;

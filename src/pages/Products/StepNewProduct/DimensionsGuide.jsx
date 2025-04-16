@@ -22,6 +22,7 @@ import { startSelectSizeGuide } from "../../../store/actions/sizeGuideActions";
 import TableGuides from "../../SizeDimensions/TableGuides";
 import { Close } from "@mui/icons-material";
 
+// Estilo para el modal
 const style = {
   position: 'absolute',
   top: '50%',
@@ -36,19 +37,25 @@ const style = {
 };
 
 const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
+  // Hook personalizado para manejar las guías de tallas
   const { loadSizeGuides, sizeGuides, navigate, dispatch } = useSizeGuide();
   const [stateAddNewGuide, setStateAddNewGuide] = useState(false);
   const { dataStep3, dataProduct } = useProducts();
 
-
+  // Estado para manejar la apertura y cierre del modal
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => {setOpen(false), loadSizeGuides()};
+  const handleClose = () => {
+    setOpen(false);
+    loadSizeGuides(); // Recargar las guías de tallas al cerrar el modal
+  };
 
+  // Cargar las guías de tallas al montar el componente o cuando cambia el estado `stateAddNewGuide`
   useEffect(() => {
     loadSizeGuides();
   }, [stateAddNewGuide]);
 
+  // Configuración del formulario con react-hook-form
   const {
     control,
     formState: { errors },
@@ -56,15 +63,15 @@ const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
     setValue,
   } = useForm({
     defaultValues: {
-      size_guide: dataProduct?.size_guide || "",
+      size_guide: dataProduct?.size_guide || "", // Valor inicial del campo `size_guide`
     },
   });
 
+  // Función para manejar el envío del formulario
   const onAddSizeGuide = (values) => {
-    dataStep3( dataProduct._id,values, handleNext);
-    const info = sizeGuides?.filter((i) => i._id === values.size_guide);
-    dispatch(startSelectSizeGuide(info));
-  
+    dataStep3(dataProduct._id, values, handleNext); // Guardar los datos y avanzar al siguiente paso
+    const info = sizeGuides?.filter((i) => i._id === values.size_guide); // Buscar la guía seleccionada
+    dispatch(startSelectSizeGuide(info)); // Guardar la guía seleccionada en el estado global
   };
 
   return (
@@ -74,7 +81,7 @@ const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
           item
           xs={12}
           component={"form"}
-          onSubmit={handleSubmit(onAddSizeGuide)}
+          onSubmit={handleSubmit(onAddSizeGuide)} // Manejar el envío del formulario
         >
           <Card variant="elevation">
             <CardHeader
@@ -83,9 +90,7 @@ const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
                   variant="contained"
                   color="secondary"
                   size="small"
-                  onClick={() =>
-                    handleOpen()
-                  }
+                  onClick={() => handleOpen()} // Abrir el modal para agregar una nueva guía
                 >
                   Agregar nueva guia
                 </Button>
@@ -112,7 +117,7 @@ const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
                   <FormControl
                     fullWidth
                     color="info"
-                    error={!!errors.size_guide}
+                    error={!!errors.size_guide} // Mostrar error si el campo no es válido
                   >
                     <FormLabel>Guia de medidas</FormLabel>
 
@@ -123,7 +128,7 @@ const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
                       rules={{
                         required: {
                           value: true,
-                          message: "Campo requerido",
+                          message: "Campo requerido", // Mensaje de error si el campo está vacío
                         },
                       }}
                       render={({ field }) => (
@@ -136,7 +141,7 @@ const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
                         >
                           {sizeGuides.map((i) => (
                             <MenuItem key={i._id} value={i._id}>
-                              {i.name}
+                              {i.name} {/* Mostrar el nombre de cada guía */}
                             </MenuItem>
                           ))}
                         </Select>
@@ -145,7 +150,7 @@ const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
 
                     <FormHelperText>
                       {errors.size_guide
-                        ? errors.size_guide.message
+                        ? errors.size_guide.message // Mostrar mensaje de error si existe
                         : "Seleccione una guia"}{" "}
                     </FormHelperText>
                   </FormControl>
@@ -154,31 +159,28 @@ const DimensionsGuide = ({ handleNext, handleBack, index, isLastStep }) => {
             </CardContent>
             <CardActions>
               <Button variant="contained" type="submit" sx={{ mt: 1, mr: 1 }}>
-                {isLastStep ? "Guardar" : "Continuar"}
+                {isLastStep ? "Guardar" : "Continuar"} {/* Texto dinámico según el paso */}
               </Button>
             </CardActions>
           </Card>
         </Grid>
       </Grid>
       <div>
-     
-      <Modal
-        open={open}
-        onClose={handleClose}
-      >
-        <Box sx={style}>
-         <Fab
-           color="primary"
-           sx={{top:0, left:'90%'}}
-           onClick={handleClose}
-         >
-           <Close/>
-         </Fab>
-        <TableGuides/>
-          
-        </Box>
-      </Modal>
-    </div>
+        {/* Modal para agregar una nueva guía */}
+        <Modal open={open} onClose={handleClose}>
+          <Box sx={style}>
+            {/* Botón para cerrar el modal */}
+            <Fab
+              color="primary"
+              sx={{ top: 0, left: '90%' }}
+              onClick={handleClose}
+            >
+              <Close />
+            </Fab>
+            <TableGuides /> {/* Tabla de guías de dimensiones */}
+          </Box>
+        </Modal>
+      </div>
     </>
   );
 };

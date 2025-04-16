@@ -25,6 +25,7 @@ import { Workbook } from "exceljs";
 import DeleteAlert from "../../components/ui/DeleteAlert";
 import EditButton from "../../components/Buttons/EditButton";
 
+// Componente de paginación personalizada para el DataGrid
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -41,36 +42,44 @@ function Pagination({ page, onPageChange, className }) {
     />
   );
 }
+
+// Icono personalizado para orden descendente
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
 
+// Icono personalizado para orden ascendente
 export function SortedAscendingIcon() {
   return <ExpandLessIcon className="icon" />;
 }
 
+// Icono personalizado para columnas no ordenadas
 export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación personalizada para el DataGrid
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
 
 const Services = () => {
-  const { loadServices, deleteService  } = useServices();
-  const { services } = useSelector((state) => state.services);
-  const navigate = useNavigate();
+  const { loadServices, deleteService } = useServices(); // Hook personalizado para cargar y eliminar servicios
+  const { services } = useSelector((state) => state.services); // Selector para obtener los servicios del estado global
+  const navigate = useNavigate(); // Hook para navegar entre rutas
 
+  // Cargar servicios al montar el componente
   useEffect(() => {
     loadServices();
   }, []);
 
+  // Agregar un ID único a cada fila de datos
   const rowsWithIds = services.map((service, _id) => ({
     id: _id.toString(),
     ...service,
   }));
-  
+
+  // Función para exportar los datos a un archivo Excel
   const exportToExcel = () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Servicios");
@@ -90,7 +99,7 @@ const Services = () => {
       worksheet.addRow([row._id, row.name, row.description]);
     });
 
-    // Crear un Blob con el archivo Excel y guardarlo
+    // Crear un archivo Excel y descargarlo
     workbook.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer], {
         type:
@@ -100,32 +109,34 @@ const Services = () => {
     });
   };
 
+  // Barra de herramientas personalizada para el DataGrid
   function CustomToolbar() {
     const apiRef = useGridApiContext();
-  
+
+    // Función para regresar a la página 1
     const handleGoToPage1 = () => apiRef.current.setPage(1);
-  
+
     return (
-      <GridToolbarContainer sx={{justifyContent:'space-between'}}>
+      <GridToolbarContainer sx={{ justifyContent: 'space-between' }}>
         <Button onClick={handleGoToPage1}>Regresa a la pagina 1</Button>
-        <GridToolbarQuickFilter/>
+        <GridToolbarQuickFilter />
         <Button
-        variant="text"
-        startIcon={<Download/>}
-        disableElevation
-        sx={{ color: "secondary" }}
-        onClick={exportToExcel}
-      >
-        Descargar Excel
-      </Button>
+          variant="text"
+          startIcon={<Download />}
+          disableElevation
+          sx={{ color: "secondary" }}
+          onClick={exportToExcel}
+        >
+          Descargar Excel
+        </Button>
       </GridToolbarContainer>
     );
   }
 
-
   return (
     <Grid maxWidth={'85vw'} container>
-       <Grid
+      {/* Título principal */}
+      <Grid
         item
         marginTop={{ xs: "-30px" }}
         xs={12}
@@ -140,9 +151,10 @@ const Services = () => {
           Servicios Globales
         </Typography>
       </Grid>
-      
+
+      {/* Tabla de datos con DataGrid */}
       <DataGrid
-        sx={{ marginTop:5, fontSize: "20px", fontFamily: "BikoBold" }}
+        sx={{ marginTop: 5, fontSize: "20px", fontFamily: "BikoBold" }}
         columns={[
           {
             field: "name",
@@ -165,21 +177,21 @@ const Services = () => {
             sortable: false,
             type: "actions",
             getActions: (params) => [
-             <DeleteAlert title={`¿Quieres eliminar ${params.row.name}?`} callbackToDeleteItem={()=>deleteService(params.row._id)} />,
-             <EditButton title={`¿Quieres editar ${params.row.name}?`} callbackToEdit={()=>navigate(`/auth/servicios/${params.row._id}`)}  />
-                             
+              // Botón para eliminar un servicio
+              <DeleteAlert title={`¿Quieres eliminar ${params.row.name}?`} callbackToDeleteItem={() => deleteService(params.row._id)} />,
+              // Botón para editar un servicio
+              <EditButton title={`¿Quieres editar ${params.row.name}?`} callbackToEdit={() => navigate(`/auth/servicios/${params.row._id}`)} />
             ],
           },
         ]}
-        
         rows={rowsWithIds}
         pagination
         slots={{
-          pagination: CustomPagination,
-          toolbar: CustomToolbar,
-          columnSortedDescendingIcon: SortedDescendingIcon,
-          columnSortedAscendingIcon: SortedAscendingIcon,
-          columnUnsortedIcon: UnsortedIcon,
+          pagination: CustomPagination, // Paginación personalizada
+          toolbar: CustomToolbar, // Barra de herramientas personalizada
+          columnSortedDescendingIcon: SortedDescendingIcon, // Icono de orden descendente
+          columnSortedAscendingIcon: SortedAscendingIcon, // Icono de orden ascendente
+          columnUnsortedIcon: UnsortedIcon, // Icono de columna no ordenada
         }}
         disableColumnFilter
         disableColumnMenu
@@ -200,4 +212,4 @@ const Services = () => {
   );
 }
 
-export default Services
+export default Services;

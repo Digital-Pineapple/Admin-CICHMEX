@@ -1,101 +1,107 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
-import Button from "@mui/material/Button";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { IconButton } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import { useAuthStore } from "../../hooks";
-import { Links } from "../../routes/Links";
-
 
 export default function MenuDrawerSmall() {
-    const [state, setState] = React.useState({
-      top: false,
-      left: false,
-      bottom: false,
-      right: false,
-    });
+  // Estado local para controlar la apertura y cierre del Drawer
+  const [state, setState] = React.useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+  });
   
-    const toggleDrawer = (anchor, open) => (event) => {
-      if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-        return;
-      }
+  // Función para alternar la visibilidad del Drawer
+  const toggleDrawer = (anchor, open) => (event) => {
+    // Evita que se active en eventos de teclado específicos
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+    return;
+    }
   
-      setState({ ...state, [anchor]: open });
-    };
+    // Actualiza el estado para abrir o cerrar el Drawer
+    setState({ ...state, [anchor]: open });
+  };
   
-    const list = (anchor) => (
-      <Box
-        sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250 }}
-        role="presentation"
-        onClick={toggleDrawer(anchor, false)}
-        onKeyDown={toggleDrawer(anchor, false)}
-      >
-        <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-      </Box>
-    );
+  // Función que genera la lista de elementos dentro del Drawer
+  const list = (anchor) => (
+    <Box
+    sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250 }}
+    role="presentation"
+    onClick={toggleDrawer(anchor, false)} // Cierra el Drawer al hacer clic
+    onKeyDown={toggleDrawer(anchor, false)} // Cierra el Drawer al presionar una tecla
+    >
+    <List>
+      {/* Genera una lista de elementos con íconos */}
+      {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+      <ListItem key={text} disablePadding>
+        <ListItemButton>
+        <ListItemIcon>
+          {/* Alterna entre dos íconos según el índice */}
+          {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+        </ListItemIcon>
+        <ListItemText primary={text} />
+        </ListItemButton>
+      </ListItem>
+      ))}
+    </List>
+    <Divider /> {/* Línea divisoria entre listas */}
+    <List>
+      {/* Genera otra lista de elementos con íconos */}
+      {['All mail', 'Trash', 'Spam'].map((text, index) => (
+      <ListItem key={text} disablePadding>
+        <ListItemButton>
+        <ListItemIcon>
+          {/* Alterna entre dos íconos según el índice */}
+          {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+        </ListItemIcon>
+        <ListItemText primary={text} />
+        </ListItemButton>
+      </ListItem>
+      ))}
+    </List>
+    </Box>
+  );
 
   return (
     <Box
-      sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250 }}
-      role="presentation"
-      onClick={toggleDrawer(anchor, false)}
-      onKeyDown={toggleDrawer(anchor, false)}
+    sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250 }}
+    role="presentation"
+    onClick={toggleDrawer(anchor, false)} // Cierra el Drawer al hacer clic
+    onKeyDown={toggleDrawer(anchor, false)} // Cierra el Drawer al presionar una tecla
     >
-      <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
+    <List>
+      {/* Genera una lista de elementos con íconos */}
+      {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+      <ListItem key={text} disablePadding>
+        <ListItemButton>
+        <ListItemIcon>
+          {/* Alterna entre dos íconos según el índice */}
+          {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+        </ListItemIcon>
+        <ListItemText primary={text} />
+        </ListItemButton>
+      </ListItem>
+      ))}
+    </List>
+    <Divider /> {/* Línea divisoria entre listas */}
+    <List>
+      {/* Genera otra lista de elementos con íconos */}
+      {['All mail', 'Trash', 'Spam'].map((text, index) => (
+      <ListItem key={text} disablePadding>
+        <ListItemButton>
+        <ListItemIcon>
+          {/* Alterna entre dos íconos según el índice */}
+          {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+        </ListItemIcon>
+        <ListItemText primary={text} />
+        </ListItemButton>
+      </ListItem>
+      ))}
+    </List>
     </Box>
   );
 }

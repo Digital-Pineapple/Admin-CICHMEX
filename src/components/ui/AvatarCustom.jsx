@@ -15,44 +15,61 @@ import { useAuthStore } from '../../hooks';
 import { Person } from '@mui/icons-material';
 
 export default function AvatarCustom() {
+  // Estado para manejar el anclaje del menú desplegable
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const {user, loadLogout, navigate} = useAuthStore()
-  const open = Boolean(anchorEl);
+  const { user, loadLogout, navigate } = useAuthStore(); // Hook personalizado para manejar la autenticación
+  const open = Boolean(anchorEl); // Determina si el menú está abierto
+
+  // Maneja el evento de clic en el botón del avatar para abrir el menú
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
+  // Cierra el menú desplegable
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  // Llama a la función de logout del hook de autenticación
   const handleLogout = () => {
-    loadLogout()
-  }
+    loadLogout();
+  };
+
+  // Navega a la página "Mi cuenta" del usuario actual
   const handleNavigateMyAccount = () => {
-    setAnchorEl(null);
-    navigate(`/mi-cuenta/${user._id}`)
-  }
+    setAnchorEl(null); // Cierra el menú antes de navegar
+    navigate(`/mi-cuenta/${user._id}`);
+  };
+
   return (
     <React.Fragment>
+      {/* Contenedor para el avatar y el botón del menú */}
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+        {/* Tooltip para mostrar información adicional al pasar el cursor */}
         <Tooltip title="Account settings">
           <IconButton
-            onClick={handleClick}
+            onClick={handleClick} // Abre el menú al hacer clic
             size="small"
             sx={{ ml: 2 }}
             aria-controls={open ? 'account-menu' : undefined}
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-            <Avatar sx={{ width: 45, height: 45 }} src={user.profile_image}>M</Avatar>
+            {/* Avatar del usuario con imagen de perfil o inicial */}
+            <Avatar sx={{ width: 45, height: 45 }} src={user.profile_image}>
+              M
+            </Avatar>
           </IconButton>
         </Tooltip>
       </Box>
+
+      {/* Menú desplegable para opciones de cuenta */}
       <Menu
-        anchorEl={anchorEl}
+        anchorEl={anchorEl} // Elemento al que está anclado el menú
         id="account-menu"
-        open={open}
-        onClose={handleClose}
-        onClick={handleClose}
+        open={open} // Estado de apertura del menú
+        onClose={handleClose} // Cierra el menú al hacer clic fuera
+        onClick={handleClose} // Cierra el menú al seleccionar una opción
         slotProps={{
           paper: {
             elevation: 0,
@@ -84,18 +101,21 @@ export default function AvatarCustom() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
+        {/* Opción para mostrar el correo del usuario */}
         <MenuItem onClick={handleClose}>
           <Avatar /> {user?.email}
         </MenuItem>
-        <Divider />
+        <Divider /> {/* Separador visual entre opciones */}
+        {/* Opción para navegar a "Mi cuenta" */}
         <MenuItem onClick={handleNavigateMyAccount}>
           <ListItemIcon>
             <Person fontSize="small" />
           </ListItemIcon>
           Mi cuenta
         </MenuItem>
-        <MenuItem onClick={()=>handleLogout()}>
-          <ListItemIcon >
+        {/* Opción para cerrar sesión */}
+        <MenuItem onClick={() => handleLogout()}>
+          <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
           Cerrar sesión

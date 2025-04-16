@@ -144,7 +144,7 @@ const VariantsClothesAndShoes = ({
       porcentDiscount: "",
       purchase_price: "",
       discountPrice: "",
-      stock: null,
+      // stock: null,
     };
 
     // Actualiza el array de tallas
@@ -918,7 +918,7 @@ const VariantsClothesAndShoes = ({
                                       />
                                     </Grid2>
 
-                                    <Grid2 size={3}>
+                                    {/* <Grid2 size={3}>
                                       <Controller
                                         control={control}
                                         rules={{
@@ -951,7 +951,7 @@ const VariantsClothesAndShoes = ({
                                           />
                                         )}
                                       />
-                                    </Grid2>
+                                    </Grid2> */}
 
                                     <Grid2 size={2.9}>
                                       <Controller

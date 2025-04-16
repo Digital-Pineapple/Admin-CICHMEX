@@ -10,7 +10,9 @@ import { AttachMoney, Percent } from "@mui/icons-material";
 import { lightGreen } from "@mui/material/colors";
 
 const EditWarehouseman = () => {
+  // Obtiene los almacenes y funciones relacionadas
   const { StoreHouses, loadStoreHouse } = useStoreHouse();
+  // Obtiene los datos del almacenista y funciones relacionadas
   const {
     oneWarehouseman,
     loading,
@@ -19,8 +21,10 @@ const EditWarehouseman = () => {
     loadUpdateWarehouseman
   } = useUsers();
  
+  // Obtiene el parámetro `id` de la URL
   const { id } = useParams();
 
+  // Configuración inicial del formulario con valores predeterminados
   const { control, handleSubmit, setValue, watch, reset } = useForm({
     defaultValues: {
       fullname: "",
@@ -34,6 +38,7 @@ const EditWarehouseman = () => {
     },
   });
 
+  // Carga los almacenes y los datos del almacenista al montar el componente
   useEffect(() => {
     if (!StoreHouses.length) {
       loadStoreHouse();
@@ -41,6 +46,7 @@ const EditWarehouseman = () => {
     loadWarehouseman(id);
   }, [id]);
 
+  // Actualiza los valores del formulario cuando se obtienen los datos del almacenista
   useEffect(() => {
     if (oneWarehouseman) {
       reset({
@@ -59,21 +65,26 @@ const EditWarehouseman = () => {
   }, [oneWarehouseman, reset]);
  
 
+  // Maneja el envío del formulario para actualizar los datos del almacenista
   const onSubmit = (data) => {
       loadUpdateWarehouseman(id, data);
   };
 
+  // Tipos de usuario disponibles
   const TypesUser = [
     { value: "WAREHOUSE-MANAGER", name: "Encargado de almacén" },
     { value: "WAREHOUSEMAN", name: "Almacenista" },
   ]; 
 
+  // Muestra una pantalla de carga mientras se obtienen los datos
   if (loading) {
     return <LoadingScreenBlue />;
   }
 
+  // Observa el campo de almacén seleccionado
   const watchField = watch("employee_detail.store_house", false);
 
+  // Rutas para el componente de breadcrumb
   const paths = [
     { path: `/usuarios/almacenistas`, name: "Mis almacenistas" },
     { path: `/usuarios/almacenistas/editar/:id`, name: "Editar almacenista" },
@@ -81,6 +92,7 @@ const EditWarehouseman = () => {
 
   return (
     <Grid2 container paddingX={{ xs: 10 }}>
+      {/* Título de la página */}
       <Grid2
         size={12}
         paddingRight={15}
@@ -94,9 +106,13 @@ const EditWarehouseman = () => {
           <strong>Editar almacenista</strong>
         </Typography>
       </Grid2>
+
+      {/* Componente de breadcrumb */}
       <Grid2 size={12}>
         <BreadcrumbCustom paths={paths} />
       </Grid2>
+
+      {/* Formulario principal */}
       <Grid2
         component={"form"}
         container
@@ -110,6 +126,7 @@ const EditWarehouseman = () => {
         textAlign={"center"}
         onSubmit={handleSubmit(onSubmit)}
       >
+        {/* Campo para el nombre completo */}
         <Grid2 size={{xs:12, lg:6}} >
           <Controller
             name="fullname"
@@ -137,6 +154,7 @@ const EditWarehouseman = () => {
           />
         </Grid2>
 
+        {/* Campo para el correo electrónico */}
         <Grid2 size={{xs:12, lg:5.8}}>
           <Controller
             name="email"
@@ -165,6 +183,7 @@ const EditWarehouseman = () => {
           />
         </Grid2>
 
+        {/* Campo para el salario */}
         <Grid2 size={{xs:12, lg:6}} >
           <Controller
             name="employee_detail.salary"
@@ -197,6 +216,7 @@ const EditWarehouseman = () => {
           />
         </Grid2>
 
+        {/* Campo para las comisiones */}
         <Grid2 size={{xs:12, lg:5.8}}>
           <Controller
             name="employee_detail.sales_commission_porcent"
@@ -232,6 +252,7 @@ const EditWarehouseman = () => {
           />
         </Grid2>
 
+        {/* Campo para seleccionar el almacén */}
         <Grid2 size={12}>
           <Controller
             name="employee_detail.store_house"
@@ -266,6 +287,7 @@ const EditWarehouseman = () => {
               </TextField>
             )}
           />
+          {/* Muestra el almacén seleccionado */}
           {watchField.name ? (
             <Card
               sx={{ bgcolor: lightGreen[200], marginTop: 2 }}
@@ -282,6 +304,7 @@ const EditWarehouseman = () => {
           )}
         </Grid2>
 
+        {/* Campo para seleccionar el tipo de usuario */}
         <Grid2
           container
           size={12}
@@ -312,6 +335,7 @@ const EditWarehouseman = () => {
           />
         </Grid2>
 
+        {/* Botones de acción */}
         <Grid2 size={12} display={'flex'} gap={1}>
           
             <Button

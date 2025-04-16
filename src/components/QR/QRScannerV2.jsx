@@ -4,18 +4,28 @@ import { Button, Modal, Box, Typography } from "@mui/material";
 import Swal from "sweetalert2";
 import QrCodeIcon from "@mui/icons-material/QrCode";
 
+// Componente principal QRScannerV2
+// Props:
+// - setValueQR: función para enviar el valor escaneado al componente padre
+// - label: texto del botón para abrir el escáner (por defecto "Escanear QR")
+// - title: título que se muestra en el modal
 const QRScannerV2 = ({ setValueQR, label = "Escanear QR", title = "" }) => {
+  // Estado para controlar si el modal está abierto o cerrado
   const [isOpen, setIsOpen] = useState(false);
 
+  // Función para manejar el resultado del escaneo
   const handleScan = useCallback(
     (result) => {
+      // Verifica si el resultado contiene un valor válido
       if (!result?.[0]?.rawValue) return;
 
       try {
+        // Intenta parsear el resultado como JSON
         const parsedResult = JSON.parse(result[0].rawValue);
-        setValueQR(parsedResult); // Enviar el valor al padre
-        setIsOpen(false); // Cerrar modal
+        setValueQR(parsedResult); // Enviar el valor al componente padre
+        setIsOpen(false); // Cerrar el modal
       } catch (error) {
+        // Mostrar un mensaje de error si el código no es válido
         Swal.fire("Error", "El código escaneado no es válido", "error");
       }
     },
@@ -24,6 +34,7 @@ const QRScannerV2 = ({ setValueQR, label = "Escanear QR", title = "" }) => {
 
   return (
     <>
+      {/* Botón para abrir el modal del escáner */}
       <Button
         startIcon={<QrCodeIcon />}
         variant="contained"
@@ -35,9 +46,10 @@ const QRScannerV2 = ({ setValueQR, label = "Escanear QR", title = "" }) => {
         {label}
       </Button>
 
+      {/* Modal que contiene el escáner QR */}
       <Modal
         open={isOpen}
-        onClose={() => setIsOpen(false)}
+        onClose={() => setIsOpen(false)} // Cierra el modal al hacer clic fuera
         aria-labelledby="qr-scanner-modal"
       >
         <Box
@@ -54,9 +66,12 @@ const QRScannerV2 = ({ setValueQR, label = "Escanear QR", title = "" }) => {
             borderRadius: "15px",
           }}
         >
+          {/* Título del modal */}
           <Typography textAlign={"center"} variant="h5">
             {title}
           </Typography>
+
+          {/* Botón para cerrar el modal */}
           <Button
             variant="contained"
             onClick={() => setIsOpen(false)}
@@ -65,14 +80,16 @@ const QRScannerV2 = ({ setValueQR, label = "Escanear QR", title = "" }) => {
           >
             Cerrar
           </Button>
+
+          {/* Contenedor del escáner QR */}
           <Box padding={4}>
-          <Scanner
-            paused={!isOpen}
-            allowMultiple={false}
-            components={{finder:true}}
-            scanDelay={200}
-            onScan={handleScan}
-          />
+            <Scanner
+              paused={!isOpen} // Pausa el escáner si el modal está cerrado
+              allowMultiple={false} // No permite escanear múltiples códigos
+              components={{ finder: true }} // Muestra el componente de búsqueda
+              scanDelay={200} // Tiempo de espera entre escaneos
+              onScan={handleScan} // Llama a la función handleScan al escanear
+            />
           </Box>
         </Box>
       </Modal>

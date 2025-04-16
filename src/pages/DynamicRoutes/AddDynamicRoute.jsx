@@ -31,6 +31,7 @@ import { useDynamicRoutes } from "../../hooks/useDynamicRoutes";
 import { enqueueSnackbar } from "notistack";
 import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 
+// Configuración de las propiedades del menú desplegable
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -42,6 +43,7 @@ const MenuProps = {
   },
 };
 
+// Función para aplicar estilos a los roles seleccionados
 function getStyles(name, rolesAllowed, theme) {
   return {
     fontWeight:
@@ -50,6 +52,8 @@ function getStyles(name, rolesAllowed, theme) {
         : theme.typography.fontWeightMedium,
   };
 }
+
+// Esquema de validación para el formulario usando Yup
 const validationSchema = Yup.object({
   name: Yup.string().required("El nombre es obligatorio"),
   path: Yup.string().required("La ruta es obligatoria"),
@@ -60,26 +64,28 @@ const validationSchema = Yup.object({
 });
 
 const AddDynamicRoute = () => {
-  const theme = useTheme();
-  const { navigate, loading } = useAuthStore();
-  const { addRoute } = useDynamicRoutes();
+  const theme = useTheme(); // Hook para acceder al tema de Material-UI
+  const { navigate, loading } = useAuthStore(); // Hook personalizado para autenticación
+  const { addRoute } = useDynamicRoutes(); // Hook personalizado para manejar rutas dinámicas
 
+  // Configuración del formulario con Formik
   const formik = useFormik({
     initialValues: {
-      name: "",
-      path: "",
-      component: "",
-      rolesAllowed: [],
-      authRequired: "",
-      redirectTo: "",
-      system: "",
+      name: "", // Título de la ruta
+      path: "", // Ruta del componente
+      component: "", // Nombre del componente
+      rolesAllowed: [], // Roles permitidos
+      authRequired: "", // Indica si la ruta requiere autenticación
+      redirectTo: "", // Redirección en caso de no autenticación
+      system: "", // Sistema al que pertenece la ruta
     },
-    validationSchema,
+    validationSchema, // Esquema de validación
     onSubmit: (values) => {
-      addRoute(values);
+      addRoute(values); // Llama a la función para agregar una nueva ruta
     },
   });
 
+  // Lista de roles disponibles
   const roles = [
     "SUPER-ADMIN",
     "ADMIN",
@@ -88,9 +94,12 @@ const AddDynamicRoute = () => {
     "SELLER",
   ];
 
+  // Muestra una pantalla de carga si el estado de carga está activo
   if (loading) {
     return <LoadingScreenBlue />;
   }
+
+  // Rutas para el componente de breadcrumb
   const paths = [
     { path: `/url`, name: "Todas mis url's" },
     { path: `/url/agregar`, name: "Crear url" },
@@ -99,12 +108,13 @@ const AddDynamicRoute = () => {
   return (
     <Grid2
       component="form"
-      onSubmit={formik.handleSubmit}
+      onSubmit={formik.handleSubmit} // Maneja el envío del formulario
       display="flex"
       container
       gap={2}
       paddingX={{ xs: 0, md: 10 }}
     >
+      {/* Encabezado del formulario */}
       <Grid2
         size={12}
         paddingRight={15}
@@ -118,6 +128,8 @@ const AddDynamicRoute = () => {
           <strong>Crear url</strong>
         </Typography>
       </Grid2>
+
+      {/* Breadcrumb para navegación */}
       <Grid2
         size={12}
         display={"flex"}
@@ -126,6 +138,8 @@ const AddDynamicRoute = () => {
       >
         <BreadcrumbCustom paths={paths} />
       </Grid2>
+
+      {/* Contenedor principal del formulario */}
       <Grid2
         container
         sx={{
@@ -136,6 +150,7 @@ const AddDynamicRoute = () => {
           gap: 2,
         }}
       >
+        {/* Campo para el título de la ruta */}
         <Grid2 size={{ xs: 12, lg: 4 }}>
           <TextField
             size="small"
@@ -150,6 +165,8 @@ const AddDynamicRoute = () => {
             error={formik.touched.name && Boolean(formik.errors.name)}
             helperText={formik.touched.name && formik.errors.name}
           />
+
+          {/* Campo para la ruta */}
           <TextField
             fullWidth
             size="small"
@@ -164,6 +181,8 @@ const AddDynamicRoute = () => {
             error={formik.touched.path && Boolean(formik.errors.path)}
             helperText={formik.touched.path && formik.errors.path}
           />
+
+          {/* Campo para el componente */}
           <TextField
             fullWidth
             size="small"
@@ -178,6 +197,8 @@ const AddDynamicRoute = () => {
             helperText={formik.touched.component && formik.errors.component}
           />
         </Grid2>
+
+        {/* Selección de si la ruta es privada */}
         <Grid2
           size={{ xs: 12, lg: 4 }}
           display={"flex"}
@@ -199,6 +220,8 @@ const AddDynamicRoute = () => {
             </RadioGroup>
           </FormGroup>
         </Grid2>
+
+        {/* Selección del sistema */}
         <Grid2
           size={{ xs: 12, md: 3.6 }}
           display={"flex"}
@@ -209,9 +232,9 @@ const AddDynamicRoute = () => {
             <RadioGroup
               id="system"
               name="system"
-              value={formik.values.system} // Asume que formik.values.system es una cadena
+              value={formik.values.system}
               onChange={(e) => {
-                formik.setFieldValue("system", e.target.value); // Actualiza el valor de "system" en Formik
+                formik.setFieldValue("system", e.target.value);
               }}
             >
               <FormControlLabel
@@ -233,6 +256,7 @@ const AddDynamicRoute = () => {
           </FormGroup>
         </Grid2>
 
+        {/* Selección de roles permitidos */}
         <Grid2 size={12}>
           <FormControl
             sx={{ m: 1, width: 300 }}
@@ -286,9 +310,10 @@ const AddDynamicRoute = () => {
         </Grid2>
       </Grid2>
 
+      {/* Botones de acción */}
       <Grid2 size={12} display={"flex"} gap={2} justifyContent={"center"}>
         <Button
-          onClick={() => navigate("/url", { replace: true })}
+          onClick={() => navigate("/url", { replace: true })} // Navega a la lista de URLs
           variant="contained"
           color="warning"
           fullWidth

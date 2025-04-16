@@ -1,4 +1,3 @@
-
 import TextField from "@mui/material/TextField";
 import {
   Button,
@@ -18,9 +17,10 @@ import {
 import { useState } from "react";
 import { orange } from "@mui/material/colors";
 import { name } from "dayjs/locale/es";
-const Edit = ({handleClose, category}) => {
+
+const Edit = ({ handleClose, category }) => {
   const { navigate, dispatch, editCategory } = useCategories();
-  
+
   const {
     formState: { errors },
     control,
@@ -28,7 +28,7 @@ const Edit = ({handleClose, category}) => {
     setValue,
     watch,
   } = useForm({
-    defaultValues:{
+    defaultValues: {
       name: category?.name || '',
       image: {
         filePreview: category?.category_image || '',
@@ -36,29 +36,32 @@ const Edit = ({handleClose, category}) => {
       },
     }
   });
-  
 
+  // Función para cerrar el formulario
   const outCreate = () => {
-   handleClose()
+    handleClose();
   };
 
+  // Función para manejar el envío del formulario
   const onSubmit = (e) => {
-    
-   if (e.image.filePreview.startsWith('https://')) {
-   editCategory(category._id, {name: e.name, category_image: e.image.filePreview}, handleClose)
-   
-   }else{
-    editCategory(category._id,{name: e.name, category_image: e.image.file}, handleClose)
-   }
+    if (e.image.filePreview.startsWith('https://')) {
+      // Editar categoría con imagen existente
+      editCategory(category._id, { name: e.name, category_image: e.image.filePreview }, handleClose);
+    } else {
+      // Editar categoría con nueva imagen
+      editCategory(category._id, { name: e.name, category_image: e.image.file }, handleClose);
+    }
   };
 
+  // Observa el valor actual de la imagen
   const currentImage = watch("image.filePreview");
 
+  // Función para manejar el cambio de imagen
   const onChangeImage = (event) => {
     const file = event.target.files[0];
     if (!file) return;
-  
-    // Validación básica
+
+    // Validación básica del archivo
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
       alert("El formato de imagen no es válido");
       return;
@@ -67,35 +70,38 @@ const Edit = ({handleClose, category}) => {
       alert("La imagen debe ser menor a 10MB");
       return;
     }
-  
+
+    // Generar una vista previa de la imagen
     const filePreview = URL.createObjectURL(file);
     setValue("image.filePreview", filePreview);
     setValue("image.file", file);
   };
-  
+
+  // Función para eliminar la imagen seleccionada
   const removeImage = () => {
-    setValue('image.filePreview',null)
+    setValue('image.filePreview', null);
   };
-  
 
   return (
     <Grid2
       container
       component="form"
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit)} // Maneja el envío del formulario
       style={{ display: "flex", justifyContent: "center" }}
       gap={1}
     >
+      {/* Título del formulario */}
       <Grid2 size={12} minHeight={"80px"} className="Titles">
         <Typography
           textAlign={"center"}
           variant="h1"
-          fontSize={{ xs: "20px", sm: "30px", lg:'40px' }}
+          fontSize={{ xs: "20px", sm: "30px", lg: '40px' }}
         >
-          Editar {category.name ? category.name :''} 
+          Editar {category.name ? category.name : ''}
         </Typography>
       </Grid2>
 
+      {/* Campo de texto para el nombre */}
       <Grid2 size={12}>
         <Controller
           control={control}
@@ -117,6 +123,7 @@ const Edit = ({handleClose, category}) => {
         />
       </Grid2>
 
+      {/* Sección para subir o mostrar la imagen */}
       <Grid2 display={"flex"} size={12}>
         <Grid2
           container
@@ -135,6 +142,7 @@ const Edit = ({handleClose, category}) => {
               render={({ field: { name, ref, onBlur } }) => {
                 const [isDragging, setIsDragging] = useState(false);
 
+                // Manejo de arrastrar y soltar archivos
                 const handleDragOver = (event) => {
                   event.preventDefault();
                   setIsDragging(true);
@@ -155,7 +163,7 @@ const Edit = ({handleClose, category}) => {
 
                 return (
                   <Grid2
-                    display={!currentImage ? "flex" : "none"}
+                    display={!currentImage ? "flex" : "none"} // Mostrar solo si no hay imagen actual
                     flexDirection="column"
                     alignItems="center"
                     component="label"
@@ -165,6 +173,7 @@ const Edit = ({handleClose, category}) => {
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
                   >
+                    {/* Área para subir imagen */}
                     <Box
                       sx={{
                         position: "relative",
@@ -218,9 +227,10 @@ const Edit = ({handleClose, category}) => {
             />
           </Grid2>
 
+          {/* Vista previa de la imagen seleccionada */}
           <Grid2
             size={12}
-            display={currentImage ? "flex" : "none"}
+            display={currentImage ? "flex" : "none"} // Mostrar solo si hay imagen actual
             alignContent={"center"}
             flexDirection={"row"}
           >
@@ -241,6 +251,7 @@ const Edit = ({handleClose, category}) => {
                 }}
               />
 
+              {/* Botón para eliminar la imagen */}
               <Box display="flex" justifyContent="space-between" mt={1}>
                 <IconButton
                   size="small"
@@ -264,9 +275,10 @@ const Edit = ({handleClose, category}) => {
         </Grid2>
       </Grid2>
 
+      {/* Botones de acción */}
       <Grid2 display={"flex"} gap={2} size={6}>
         <Button
-          onClick={()=>outCreate()}
+          onClick={() => outCreate()} // Botón para salir del formulario
           variant="contained"
           fullWidth
           size="large"

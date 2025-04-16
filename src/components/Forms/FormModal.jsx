@@ -12,12 +12,7 @@ import {
   CardActions,
   CardContent,
   CardMedia,
-  FormControl,
-  FormHelperText,
-  FormLabel,
   Grid,
-  MenuItem,
-  Select,
   Typography,
 } from "@mui/material";
 import * as Yup from "yup";
@@ -25,12 +20,16 @@ import { LoadingButton } from "@mui/lab";
 import { Save } from "@mui/icons-material";
 
 const FormModal = ({ setValuesCar, id, setReload }) => {
+  // Estado para controlar si el modal está abierto o cerrado
   const [open, setOpen] = useState(false);
+  // Estado para almacenar el archivo seleccionado
   const [selectedFile, setSelectedFile] = useState(null);
+  // Estado para almacenar la vista previa de la imagen seleccionada
   const [previewImage, setPreviewImage] = useState(null);
-  const [loading, setLoading] = useState(false)
+  // Estado para controlar el estado de carga del botón
+  const [loading, setLoading] = useState(false);
 
-
+  // Esquema de validación para el formulario utilizando Yup
   const ValidateSchema = Yup.object().shape({
     plate_number: Yup.string()
       .min(7, "Introduce una placa valida")
@@ -38,56 +37,64 @@ const FormModal = ({ setValuesCar, id, setReload }) => {
       .required("Informacion requerida"),
   });
 
+  // Maneja la selección de la imagen y genera una vista previa
   const handleImage = ({ target }) => {
     setPreviewImage(URL.createObjectURL(target.files[0]));
     setSelectedFile(target.files[0]);
   };
 
+  // Abre el modal
   const handleClickOpen = () => {
     setOpen(true);
   };
 
+  // Cierra el modal
   const handleClose = () => {
     setOpen(false);
   };
+
+  // Configuración de Formik para manejar el formulario
   const formik = useFormik({
     initialValues: {
-      customer_id: id,
-      plate_number: "",
-      carDetail_image: "",
-      status: true,
+      customer_id: id, // ID del cliente
+      plate_number: "", // Número de placa
+      carDetail_image: "", // Imagen del auto
+      status: true, // Estado del auto
     },
-    validationSchema: ValidateSchema,
+    validationSchema: ValidateSchema, // Validación del formulario
     onSubmit: (values) => {
       try {
+        // Asigna el archivo seleccionado al campo correspondiente
         values.carDetail_image = selectedFile;
-        setLoading(true);
+        setLoading(true); // Activa el estado de carga
         setTimeout(() => {
-          setLoading(false)
-          setOpen(false)
-          setValuesCar(values)
-          setReload(true)
-        }, 2000)
-
+          setLoading(false); // Desactiva el estado de carga
+          setOpen(false); // Cierra el modal
+          setValuesCar(values); // Actualiza los valores del auto
+          setReload(true); // Indica que se debe recargar la lista
+        }, 2000);
       } catch (error) {
-        console.log(error);
+        console.log(error); // Manejo de errores
       }
     },
   });
 
   return (
     <div>
-
+      {/* Botón para abrir el modal */}
       <Button variant="outlined" onClick={handleClickOpen}>
         Agregar Auto
       </Button>
+      {/* Modal de diálogo */}
       <Dialog open={open} onClose={handleClose}>
+        {/* Formulario dentro del modal */}
         <form onSubmit={formik.handleSubmit}>
           <DialogTitle>Agregar auto</DialogTitle>
           <DialogContent>
             <DialogContentText>
               Llena todos los campos para agregar tu auto
             </DialogContentText>
+            {/* Contenedor principal del formulario */}
             <Grid
               color="#F7BFBF"
               borderRadius={5}
@@ -96,6 +103,7 @@ const FormModal = ({ setValuesCar, id, setReload }) => {
               container
               spacing={4}
             >
+              {/* Contenedor para los campos del formulario */}
               <Grid
                 item
                 sm={8}
@@ -103,9 +111,11 @@ const FormModal = ({ setValuesCar, id, setReload }) => {
                 flexDirection={"column"}
                 alignItems={"center"}
               >
+                {/* Tarjeta para mostrar la imagen seleccionada */}
                 <Grid item>
                   <Card sx={{ maxWidth: 345 }}>
                     <CardContent>
+                      {/* Vista previa de la imagen */}
                       <CardMedia
                         sx={{ height: 140 }}
                         image={previewImage ? previewImage : ""}
@@ -113,15 +123,16 @@ const FormModal = ({ setValuesCar, id, setReload }) => {
                           selectedFile ? selectedFile.name : "Selecciona imagen"
                         }
                       />
-
+                      {/* Título de la tarjeta */}
                       <Typography gutterBottom variant="h5" component="div">
                         {selectedFile
                           ? selectedFile.name
                           : previewImage
-                            ? "Cambiar imagen"
-                            : "Elige una imagen"}
+                          ? "Cambiar imagen"
+                          : "Elige una imagen"}
                       </Typography>
                     </CardContent>
+                    {/* Input para seleccionar la imagen */}
                     <CardActions>
                       <input
                         type="file"
@@ -133,6 +144,7 @@ const FormModal = ({ setValuesCar, id, setReload }) => {
                     </CardActions>
                   </Card>
                 </Grid>
+                {/* Campo de texto para el número de placa */}
                 <TextField
                   focused
                   fullWidth
@@ -144,22 +156,25 @@ const FormModal = ({ setValuesCar, id, setReload }) => {
                   value={formik.values.plate_number}
                   sx={{ margin: 2 }}
                   onChange={formik.handleChange}
-                  helperText={formik.errors.plate_number ? formik.errors.plate_number : ""}
+                  helperText={
+                    formik.errors.plate_number ? formik.errors.plate_number : ""
+                  }
                 />
               </Grid>
             </Grid>
           </DialogContent>
           <DialogActions>
+            {/* Botón de guardar con estado de carga */}
             <LoadingButton
               loading={loading}
               loadingPosition="start"
               startIcon={<Save />}
               variant="outlined"
-              type='submit'
-              
+              type="submit"
             >
               Guardar
             </LoadingButton>
+            {/* Botón para cerrar el modal */}
             <Button onClick={handleClose} variant="outlined" color="secondary">
               Salir
             </Button>

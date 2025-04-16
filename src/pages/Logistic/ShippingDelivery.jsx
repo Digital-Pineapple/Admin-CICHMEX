@@ -36,6 +36,8 @@ import Swal from "sweetalert2";
 import { useAuthStore } from "../../hooks";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
 import CustomNoRows from "../../components/Tables/CustomNoRows";
+
+// Componente de paginación personalizada para el DataGrid
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -52,35 +54,44 @@ function Pagination({ page, onPageChange, className }) {
     />
   );
 }
+
+// Icono para indicar orden descendente en las columnas
 export function SortedDescendingIcon() {
   return <ExpandMoreIcon className="icon" />;
 }
 
+// Icono para indicar orden ascendente en las columnas
 export function SortedAscendingIcon() {
   return <ExpandLessIcon className="icon" />;
 }
 
+// Icono para indicar que no hay orden en las columnas
 export function UnsortedIcon() {
   return <SortIcon className="icon" />;
 }
 
+// Componente de paginación personalizada que utiliza el componente Pagination
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
 }
+
+// Componente principal de la página de envíos y entregas
 const ShippingDelivery = () => {
 
   const {
-    loadPOPaidAndSuply,
-    navigate,
-    productOrders,
-    loading,
+    loadPOPaidAndSuply, // Función para cargar pedidos pagados y suministros
+    navigate, // Función para navegar entre rutas
+    productOrders, // Lista de pedidos de productos
+    loading, // Estado de carga
   } = useProductOrder();
-  const {user} = useAuthStore()
+  const {user} = useAuthStore(); // Información del usuario autenticado
 
+  // Efecto para cargar los pedidos al montar el componente o cuando cambia el usuario
   useEffect(() => {
     loadPOPaidAndSuply();
   }, [user]);
 
+  // Mapeo de los pedidos para agregar propiedades adicionales necesarias para el DataGrid
   const rowsWithIds = productOrders?.map((item, index) => {
     const quantities = item.products.map((i) => i.quantity);
     const suma = quantities.reduce((valorAnterior, valorActual) => {
@@ -88,7 +99,7 @@ const ShippingDelivery = () => {
     }, 0);
 
     const TD = item.branch ? "En Punto de entrega" : "A domicilio";
-    const statusRoute = item?.route_detail?.route_status ? item?.route_detail?.route_status:'No signado'
+    const statusRoute = item?.route_detail?.route_status ? item?.route_detail?.route_status:'No signado';
     return {
       quantityProduct: suma,
       typeDelivery: TD,
@@ -97,6 +108,8 @@ const ShippingDelivery = () => {
       ...item,
     };
   });
+
+  // Función para exportar los datos a un archivo Excel
   const exportToExcel = () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Stock de productos");
@@ -134,6 +147,7 @@ const ShippingDelivery = () => {
     });
   };
 
+  // Barra de herramientas personalizada para el DataGrid
   function CustomToolbar() {
     const apiRef = useGridApiContext();
 
@@ -155,17 +169,18 @@ const ShippingDelivery = () => {
       </GridToolbarContainer>
     );
   }
+
+  // Función para validar el estado de pago antes de realizar una acción
   const paymentValuate = (row)=>{
     if (row.payment_status !== 'approved') {
-      Swal.fire('Pendiente de pago','','error')
+      Swal.fire('Pendiente de pago','','error');
     }
     else{
-      navigate(`/almacenista/surtir-venta/${row._id}`)
+      navigate(`/almacenista/surtir-venta/${row._id}`);
     }
-  }
+  };
 
-
-
+  // Renderizado de los íconos de acción según el estado del pedido
   const renderIcon = (values) => {
     if (!values.row.storeHouseStatus) {
       return (
@@ -219,10 +234,12 @@ const ShippingDelivery = () => {
     }
   };
 
+  // Mostrar pantalla de carga si el estado de carga está activo
   if (loading) {
-    return (<LoadingScreenBlue/>)
+    return (<LoadingScreenBlue/>);
   }
 
+  // Renderizado principal del componente
   return (
     <Grid container >
       <Grid item xs={12} marginY={2}>
@@ -263,12 +280,12 @@ const ShippingDelivery = () => {
           autoHeight
           pagination
           slots={{
-            pagination: CustomPagination,
-            toolbar: CustomToolbar,
-            columnSortedDescendingIcon: SortedDescendingIcon,
-            columnSortedAscendingIcon: SortedAscendingIcon,
-            columnUnsortedIcon: UnsortedIcon,
-            noRowsOverlay: CustomNoRows,
+            pagination: CustomPagination, // Paginación personalizada
+            toolbar: CustomToolbar, // Barra de herramientas personalizada
+            columnSortedDescendingIcon: SortedDescendingIcon, // Icono de orden descendente
+            columnSortedAscendingIcon: SortedAscendingIcon, // Icono de orden ascendente
+            columnUnsortedIcon: UnsortedIcon, // Icono de columna sin ordenar
+            noRowsOverlay: CustomNoRows, // Componente personalizado para cuando no hay filas
           }}
           disableColumnFilter
           disableColumnMenu
@@ -290,5 +307,4 @@ const ShippingDelivery = () => {
   );
 };
 
-
-export default ShippingDelivery
+export default ShippingDelivery;
