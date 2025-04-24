@@ -110,10 +110,10 @@ export const startLoadAllProducts = (page, limit) => {
     }
   };
 };
-export const startLoadStockProducts = () => {
+export const startLoadStockProducts = (storehouse_id) => {
   return async (dispatch) => {
     try {
-      const { data } = await instanceApi.get(`/stock-StoreHouse/available/ok`, {
+      const { data } = await instanceApi.get(`/stock-StoreHouse/available/${storehouse_id}`, {
         headers: {
           "Content-type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -714,12 +714,12 @@ export const deleteOneProduct = (id) => {
   };
 };
 
-export const startAddMultipleEntries = (values, navigate) => {
+export const startAddMultipleEntries = (values,storehouse_id, navigate) => {
   return async (dispatch) => {
     try {
       const { data } = await instanceApi.post(
         `/stock-StoreHouse/add/multiple-entries`,
-        values,
+        { values:values, storehouse_id: storehouse_id},
         {
           headers: {
             "Content-type": "application/json",
@@ -745,7 +745,7 @@ export const startAddMultipleEntries = (values, navigate) => {
     }
   };
 };
-export const startAddMultipleOutputs = (values, navigate) => {
+export const startAddMultipleOutputs = (values, storehouse_id,  navigate) => {
   return async (dispatch) => {
     try {
       const { data } = await instanceApi.post(

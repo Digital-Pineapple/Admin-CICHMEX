@@ -88,7 +88,7 @@ export const useProducts = () => {
   const loadAllMovements = async () => dispatch(startLoadAllMovements());
 
   // Función para cargar productos en stock
-  const loadStockProducts = async () => dispatch(startLoadStockProducts());
+  const loadStockProducts = async (storehouse_id) => dispatch(startLoadStockProducts(storehouse_id));
 
   // Función para cargar productos sin stock
   const loadNoStockProducts = async () => dispatch(startLoadNonExistProduct());
@@ -105,8 +105,8 @@ export const useProducts = () => {
   };
 
   // Función para agregar múltiples entradas
-  const addMultipleEntries = async (values) => {
-    dispatch(startAddMultipleEntries(values, navigate));
+  const addMultipleEntries = async (values, storehouse_id) => {
+    dispatch(startAddMultipleEntries(values,storehouse_id , navigate));
   };
 
   // Función para agregar múltiples salidas

@@ -15,7 +15,7 @@ import {
 import { useEffect } from "react";
 import { useUI } from "../../hooks/useUi";
 import MuiPagination from "@mui/material/Pagination";
-import { Add, Close, Delete, Edit, Place } from "@mui/icons-material";
+import { Add, Close, Delete, Edit, KeyboardDoubleArrowDown, KeyboardDoubleArrowUp, Place } from "@mui/icons-material";
 import {
   Card,
   CardContent,
@@ -234,6 +234,18 @@ const StoreHouse = () => {
             sortable: false,
             type: "actions",
             getActions: (params) => [
+              <GridActionsCellItem
+              icon={<KeyboardDoubleArrowUp color="success" />}
+              onClick={() => navigate(`/mi_almacen/agregar_productos/${params.row._id}`)}
+              label="Agregar entrada de producto"
+              showInMenu
+            />,
+            <GridActionsCellItem
+            icon={<KeyboardDoubleArrowDown color="error" />}
+            onClick={() => navigate(`/mi_almacen/salida_productos/${params.row._id}`)}
+            label="Agregar salida de producto"
+            showInMenu
+          />,
               // Botón para ver la ubicación en el mapa
               <GridActionsCellItem
                 icon={<Place color="secondary" />}
@@ -255,6 +267,7 @@ const StoreHouse = () => {
                 label="Eliminar"
                 showInMenu
               />,
+              
             ],
           },
         ]}

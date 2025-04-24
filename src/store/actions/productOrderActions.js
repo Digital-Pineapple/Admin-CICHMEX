@@ -448,7 +448,7 @@ export const StartLoadResumeSales = () => {
   return async (dispatch) => {
     dispatch(startLoading());
     try {
-      const { data } = await instanceApi.get(`/product-order/resume`, {
+      const { data } = await instanceApi.get(`/product-order/resume/sales`, {
         headers: {
           "Content-type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,

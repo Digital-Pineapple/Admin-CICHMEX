@@ -17,10 +17,12 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import TableQuantity from "../../components/Tables/TableQuantity";
 import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
+import { useParams } from "react-router-dom";
 
 const AddOutputs = () => {
   const { loadStockProducts, addMultipleOutputs, navigate } = useProducts(); // Hooks personalizados para cargar productos, agregar salidas y navegar
   const { user } = useAuthStore(); // Hook para obtener información del usuario autenticado
+  const { storehouse_id } = useParams(); // Obtiene el ID del almacén de los parámetros de la URL
   const [product, setProduct] = useState(null); // Estado para almacenar el producto seleccionado
   const [allProducts, setAllProducts] = useState([]); // Estado para almacenar todos los productos seleccionados
   const {
@@ -56,7 +58,7 @@ const AddOutputs = () => {
 
   // Carga los productos del stock al montar el componente
   useEffect(() => {
-    loadStockProducts();
+    loadStockProducts(storehouse_id); // Carga los productos del stock
   }, [user]);
 
   // Agrega un producto al estado cuando se selecciona

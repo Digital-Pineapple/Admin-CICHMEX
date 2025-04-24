@@ -225,4 +225,7 @@ export const AllRoutes = [
   { id: 200, element: <WarehouseManagement /> },
   // { id: 210, element: <WarehouseManagement /> },
   { id: 201, element: <ArrangeProducts /> },
+
+  { id: 302, element: <AddOutputs /> },
+  { id: 303, element: <InputsByFolio /> },
 ];

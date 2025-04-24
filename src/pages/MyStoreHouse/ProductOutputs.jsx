@@ -129,14 +129,14 @@ const ProductOutputs = () => {
       {/* Breadcrumb y botón para agregar salidas */}
       <Grid2 size={12} display={"flex"} justifyContent={"space-between"}>
         <BreadcrumbCustom paths={paths} /> {/* Componente de breadcrumb */}
-        <Fab
+        {/* <Fab
           onClick={() => navigate("/mi-almacen/salida-productos")} // Navega a la página para agregar salidas
           color="secondary"
           aria-label="Agregar entrada"
           title="Agragar entradas"
         >
           <Add />
-        </Fab>
+        </Fab> */}
       </Grid2>
 
       {/* Tabla de datos */}

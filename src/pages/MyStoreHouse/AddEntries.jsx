@@ -20,12 +20,14 @@ import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 import TableQuantity from "../../components/Tables/TableQuantity";
 import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
+import { useParams } from "react-router-dom";
 
 const AddEntries = () => {
   // Hooks personalizados para manejar productos y autenticación
   const { loadAllProductsForSearch, addMultipleEntries, navigate, loadProduct, loading } =
     useProducts();
   const { user } = useAuthStore();
+  const { storehouse_id } = useParams()
 
   // Estados locales para manejar productos y variantes
   const [product, setProduct] = useState(null);
@@ -90,7 +92,7 @@ const AddEntries = () => {
     }
     setValue("products", allProducts); // Asignar productos al formulario
     const values = getValues(); // Obtener valores del formulario
-    addMultipleEntries(values); // Llamar a la función para agregar entradas
+    addMultipleEntries(values, storehouse_id); // Llamar a la función para agregar entradas
   };
 
   // Cargar todos los productos para la búsqueda al montar el componente
