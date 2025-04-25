@@ -52,18 +52,23 @@ const Products = () => {
   } = useProducts();
 
   const [openModal, setOpenModal] = useState(false); // Estado para abrir/cerrar el modal de detalles del producto
-
+  const [searchQuery, setSearchQuery] = useState(''); 
   const [paginationModel, setPaginationModel] = useState({
     page: 0, // Página actual
-    pageSize: 20, // Tamaño de página
+    pageSize: 30, // Tamaño de página
   });
 
   const [rows, setRows] = useState([]); // Filas de datos para la tabla
-
   // Efecto para cargar productos paginados cuando cambian la página o el usuario
   useEffect(() => {
-    loadProductsPaginate(paginationModel.page + 1, paginationModel.pageSize);
-  }, [paginationModel, user]);
+    if (searchQuery) {
+      // Si hay búsqueda, usar el endpoint de búsqueda con paginación
+      loadProductsBySearch(searchQuery, paginationModel.page + 1, paginationModel.pageSize);
+    } else {
+      // Si no hay búsqueda, cargar todos los productos
+      loadProductsPaginate(paginationModel.page + 1, paginationModel.pageSize);
+    }
+  }, [paginationModel, searchQuery]);
 
   // Efecto para actualizar las filas cuando se cargan los productos paginados
   useEffect(() => {
@@ -89,12 +94,9 @@ const Products = () => {
   // Función para buscar productos
   function searchProduct() {
     const search = value.trim();
-    if (search.length < 1) {
-      return;
-    }
-    loadProductsBySearch(search);
+    setSearchQuery(search); // Guardar el término de búsqueda
+    setPaginationModel(prev => ({ ...prev, page: 0 })); // Resetear a página 1
   }
-
   // Función para abrir el modal de detalles de un producto
   const handleOpen = async (id) => {
     await loadProduct(id);
@@ -171,7 +173,12 @@ const Products = () => {
         value={value}
         fullWidth
         placeholder="Buscar productos"
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => {
+          setValue(e.target.value);
+          if (e.target.value === '') {
+            setSearchQuery(''); 
+          }
+        }}
         onKeyUp={(e) => {
           if (e.key === "Enter") {
             searchProduct();

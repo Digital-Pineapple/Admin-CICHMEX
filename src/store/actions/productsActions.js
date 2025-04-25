@@ -1617,31 +1617,39 @@ export const startDeleteImageVariant = (variant_id , image_id) => {
   };
 }
 
-export const startSearchProducts = (value) => {
-
+export const startSearchProducts = (searchValue, page, limit) => {
   return async (dispatch) => {
     dispatch(startLoading());
     try {
-      
-      const { data } = await instanceApi.post(
-        `/product/search/ok`,
-        {search: value},
+      const { data } = await instanceApi.get(
+        '/product/paginate/search/products',
         {
           headers: {
-            "Content-Type":"application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
+          params: {  // Corregido: Usar params en lugar de queryParams
+            search: searchValue,
+            page,
+            limit,
+          }
         }
       );
-      dispatch(loadProductsPaginate({products:data.data.products, totalProducts: data.data.total}))
+
+      // Manejo seguro de la respuesta
+      if (data?.data) {
+        dispatch(loadProductsPaginate(data.data));
+      } else {
+        throw new Error('Formato de respuesta inválido');
+      }
+
     } catch (error) {
-      console.log(error);
-      
+      dispatch(setError(error.response?.data?.message || error.message));
+      console.error('Error en búsqueda de productos:', error);
     } finally {
       dispatch(stopLoading());
     }
   };
-}
+};
 
 export const startLoadProductsByCategory = (name) => {
 

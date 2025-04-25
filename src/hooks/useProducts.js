@@ -447,8 +447,9 @@ export const useProducts = () => {
   };
 
   // Función para buscar productos por un valor
-  const loadProductsBySearch = (value) => {
-    dispatch(startSearchProducts(value));
+  const loadProductsBySearch = (value, page, limit) => {
+
+    dispatch(startSearchProducts(value, page, limit));
   };
 
   return {
