@@ -55,26 +55,57 @@ export const startLogin = (email, password, captcha, navigate) => {
 // Función para revalidar el token del usuario
 export const startRevalidateToken = (navigate) => {
   return async (dispatch) => {
-    try {
-      const { data } = await instanceApi.get("/auth/user", {
-        headers: {
-          "Content-type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+    let attempts = 0;
+    const maxAttempts = 3;
+    let isSuccess = false;
 
-      // Obtiene las rutas dinámicas
-      await dispatch(fetchRoutes(data.data.token));
+    while (attempts < maxAttempts && !isSuccess) {
+      try {
+        const { data } = await instanceApi.get("/auth/user", {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
 
-      // Actualiza el estado con la información del usuario
-      dispatch(onLogin(data.data.user));
-    } catch (error) {
-      // Manejo de errores y cierre de sesión si el token no es válido
-      const errorMessage =
-        error.response?.data?.message ||
-        (error.response?.data?.errors?.[0]?.message) ||
-        'Ocurrió un error inesperado';
-      dispatch(onLogout(errorMessage));
+        await dispatch(fetchRoutes(data.data.token));
+        dispatch(onLogin(data.data.user));
+        isSuccess = true;
+        
+      } catch (error) {
+        // Si es error de autenticación (401), salimos inmediatamente
+        if (error.response?.status === 401) {
+          const errorMessage =
+          error.response?.data?.message ||
+          (error.response?.data?.errors?.[0]?.message) ||
+          'Ocurrió un error inesperado';
+        dispatch(onLogout(errorMessage));
+          break;
+        }
+
+        // Verificamos si es un error recuperable (red o servidor)
+        const isNetworkError = !error.response;
+        const isServerError = error.response?.status >= 500;
+        
+        if (isNetworkError || isServerError) {
+          attempts++;
+          if (attempts < maxAttempts) {
+            // Esperamos tiempo exponencial entre intentos (1s, 2s, 4s)
+            await new Promise(resolve => 
+              setTimeout(resolve, 1000 * Math.pow(2, attempts - 1)));
+          }
+        } else {
+          const errorMessage =
+          error.response?.data?.message ||
+          (error.response?.data?.errors?.[0]?.message) ||
+          'Ocurrió un error inesperado';
+        dispatch(onLogout(errorMessage));
+          break;
+        }
+      }
+    }
+
+    if (!isSuccess) {
       localStorage.clear();
       navigate('/login', { replace: true });
     }
