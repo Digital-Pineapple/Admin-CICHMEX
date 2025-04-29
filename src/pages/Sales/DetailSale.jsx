@@ -18,6 +18,7 @@ import {
   Grid,
   Avatar,
   Tooltip,
+  useTheme,
 } from "@mui/material";
 import {
   Close,
@@ -41,6 +42,7 @@ import TableDetail from "./TablesDetail/TableDetail";
 import TableProductList from "./TablesDetail/TableProductList";
 import { grey } from "@mui/material/colors";
 import { grid, height, width } from "@mui/system";
+import { EyeFilled } from "@ant-design/icons";
 
 const style = {
   position: "absolute",
@@ -128,6 +130,9 @@ const DetailSale = () => {
   const printPDF = (id) => {
     loadPrintPDFOrder(id);
   };
+  const paymentVouchers = productOrder?.payment?.verification?.payment_vouchers || [];
+
+  const theme = useTheme();
 
   if (loading) {
     return <LoadingScreenBlue />; // Muestra una pantalla de carga si está cargando
@@ -161,7 +166,7 @@ const DetailSale = () => {
 
       {/* Botones de descarga */}
       <Grid2 size={12} display={"flex"} justifyContent={"space-around"}>
-        {productOrder?.payment?.payment_status === "approved" ? (
+        {/* {productOrder?.payment?.payment_status === "approved" ? (
           <Button
             variant="contained"
             color="primary"
@@ -172,7 +177,7 @@ const DetailSale = () => {
           </Button>
         ) : (
           ""
-        )}
+        )} */}
 
         {productOrder.download_ticket ? (
           <Button
@@ -270,147 +275,140 @@ const DetailSale = () => {
         {/* Revisión de pagos */}
         <Grid2
           sx={{ gridArea: { sm: "3 / 1 / 4 / 2", lg: "1 / 4 / 5 / 6" } }}
-          justifyContent={"center"}
-          display={"flex"}
-          gap={1}
+
         >
-          {productOrder?.payment?.verification?.payment_vouchers
-            ? productOrder?.payment.verification.payment_vouchers.map(
-                (item, index) => {
-                  return (
-                    <Grid2 key={index} width={"100%"} height={"100%"}>
-                      <Card
-                        key={index}
-                        variant="outlined"
-                        sx={{
-                          bgcolor: (theme) => {
-                            if (item.status === "approved")
-                              return theme.palette.success.main;
-                            if (item.status === "rejected")
-                              return theme.palette.warning.main;
-                            return theme.palette.primary.contrastText;
-                          },
-                          color: (theme) => {
-                            if (item.status === "approved")
-                              return theme.palette.success.contrastText;
-                            if (item.status === "rejected")
-                              return theme.palette.warning.contrastText;
-                            return theme.palette.text.primary;
-                          },
-                          borderRadius: "25px",
-                        }}
-                      >
-                        <CardHeader
-                          avatar={
-                            <PriceCheck
-                              sx={{
-                                width: "50px",
-                                height: "50px",
-                                bgcolor: grey[100],
-                                borderRadius: "50%",
-                                padding: "10px",
-                              }}
-                            />
-                          }
-                          title={
-                            <Typography>
-                              <strong>Revisión de pago</strong>
-                            </Typography>
-                          }
-                          action={
-                            <Tooltip title={"Ver"}>
-                              <IconButton
-                                color="primary"
-                                sx={{
-                                  bgcolor: "#fff",
-                                  width: "50px",
-                                  height: "50px",
-                                }}
-                                size="small"
-                                aria-label="Open-Modal-Image-Ticket"
-                                onClick={() => handleOpenImageTicket(item)}
-                              >
-                                <OpenInFull />
-                              </IconButton>
-                            </Tooltip>
-                          }
-                        />
-                        <Typography
-                          variant="body1"
-                          fontSize={"25px"}
-                          textAlign={"center"}
-                          fontWeight={"Bold"}
-                        >
-                          Monto:{`$ ${productOrder.total.toFixed(2)}`}
-                        </Typography>
-                        <CardContent
-                          sx={{
-                            display: "flex",
-                            position: "relative",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <img
-                            src={item.url}
-                            width={"250px"}
-                            height={"250px"}
-                            style={{
-                              objectFit: "contain",
-                              borderRadius: "10px",
-                            }}
-                            alt="Imagen de la referencia"
-                          />
-                        </CardContent>
-                        <Typography
-                          variant="body1"
-                          color="#fff"
-                          textAlign={"center"}
-                        >
-                          {item?.notes
-                            ? `Motivo del rechazo:${item.notes}`
-                            : null}
-                        </Typography>
-                        <CardActions
-                          sx={{ display: "flex", justifyContent: "center" }}
-                        >
-                          {item.status === "pending" ? (
-                            <>
-                              <RejectedButton
-                                title={"Rechazar pago"}
-                                text={`Esta seguro de rechazar el ticket con referencia : ${item.reference}`}
-                                callbackAction={rejectTicket}
-                                values={{
-                                  id: productOrder.payment._id,
-                                  createdAt: item.createdAt,
-                                }}
-                                textButton={"Rechazar"}
-                                inputLabel={"Motivo de rechazo:"}
-                                inputText={
-                                  "Proporcione los motivos de rechazo"
-                                }
-                              />
-                              <SuccessButton
-                                title={"Autorizar pago"}
-                                text={`Esta seguro de autorizar el ticket con referencia : ${item.reference}`}
-                                callbackAction={() =>
-                                  validateSale({
-                                    id: productOrder.payment._id,
-                                    createdAt: item.createdAt,
-                                  })
-                                }
-                                textButton={"Autorizar"}
-                              />
-                            </>
-                          ) : (
-                            ""
-                          )}
-                        </CardActions>
-                      </Card>
-                    </Grid2>
-                  );
+         {paymentVouchers.length > 0 ? (
+        // Invertir el orden y mapear las tarjetas
+        [...paymentVouchers]
+          .reverse()
+          .map((item) => (
+            <Card
+              key={item.id} // Mejor usar item.id en lugar del índice
+              variant="outlined"
+              sx={{
+                margin: "10px",
+                bgcolor:
+                  item.status === "approved"
+                    ? theme.palette.success.main
+                    : item.status === "rejected"
+                    ? theme.palette.warning.main
+                    : theme.palette.background.paper,
+                color:
+                  item.status === "approved"
+                    ? theme.palette.success.contrastText
+                    : item.status === "rejected"
+                    ? theme.palette.warning.contrastText
+                    : theme.palette.text.primary,
+                borderRadius: "25px",
+              }}
+            >
+              <CardHeader
+                avatar={
+                  <PriceCheck
+                    sx={{
+                      width: "50px",
+                      height: "50px",
+                      bgcolor: grey[100],
+                      borderRadius: "50%",
+                      padding: "10px",
+                    }}
+                  />
                 }
-              )
-            : ""}
+                title={
+                  <Typography>
+                    <strong>Revisión de pago</strong>
+                  </Typography>
+                }
+                action={
+                  <Tooltip title="Ver">
+                    <IconButton
+                      color="error"
+                      sx={{
+                        bgcolor: "#fff",
+                        width: "50px",
+                        height: "50px",
+                      }}
+                      size="small"
+                      aria-label="Open-Modal-Image-Ticket"
+                      onClick={() => handleOpenImageTicket(item)}
+                    >
+                      <EyeFilled />
+                    </IconButton>
+                  </Tooltip>
+                }
+              />
+
+              <Typography
+                variant="body1"
+                fontSize="25px"
+                textAlign="center"
+                fontWeight="bold"
+              >
+                Monto: $ {productOrder.total.toFixed(2)}
+              </Typography>
+
+              <CardContent
+                sx={{
+                  display: "flex",
+                  position: "relative",
+                  justifyContent: "center",
+                }}
+              >
+                <img
+                  src={item.url}
+                  width="250px"
+                  height="250px"
+                  style={{
+                    objectFit: "contain",
+                    borderRadius: "10px",
+                  }}
+                  alt="Imagen de la referencia"
+                />
+              </CardContent>
+
+              {item.notes && (
+                <Typography variant="body1" color="#fff" textAlign="center">
+                  Motivo del rechazo: {item.notes}
+                </Typography>
+              )}
+
+              <CardActions sx={{ display: "flex", justifyContent: "center" }}>
+                {item.status === "pending" && (
+                  <>
+                    <RejectedButton
+                      title="Rechazar pago"
+                      text={`¿Está seguro de rechazar el ticket con referencia: ${item.reference}?`}
+                      callbackAction={rejectTicket}
+                      values={{
+                        id: productOrder.payment._id,
+                        createdAt: item.createdAt,
+                      }}
+                      textButton="Rechazar"
+                      inputLabel="Motivo de rechazo"
+                      inputText="Proporcione los motivos de rechazo"
+                    />
+                    <SuccessButton
+                      title="Autorizar pago"
+                      text={`¿Está seguro de autorizar el ticket con referencia: ${item.reference}?`}
+                      callbackAction={() =>
+                        validateSale({
+                          id: productOrder.payment._id,
+                          createdAt: item.createdAt,
+                        })
+                      }
+                      textButton="Autorizar"
+                    />
+                  </>
+                )}
+              </CardActions>
+            </Card>
+          ))
+      ) : (
+        <Typography variant="body1" textAlign="center" sx={{ mt: 2 }}>
+          No hay comprobantes de pago registrados.
+        </Typography>
+      )}
+
         </Grid2>
       </Grid2>
 

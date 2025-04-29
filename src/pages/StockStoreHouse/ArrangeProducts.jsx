@@ -286,7 +286,7 @@ const ArrangeProducts = () => {
                 <TableCell sx={{ color: "white" }}>Nombre</TableCell>
                 <TableCell sx={{ color: "white" }}>Cantidad</TableCell>
                 <TableCell sx={{ color: "white" }}>Cantidad recibida</TableCell>
-                <TableCell sx={{ color: "white" }}>En sección</TableCell>
+                <TableCell sx={{ color: "white" }}>Ubicación</TableCell>
                 <TableCell sx={{ color: "white" }}>Opciones</TableCell>
               </TableRow>
             </TableHead>
@@ -298,11 +298,7 @@ const ArrangeProducts = () => {
                   <TableCell>{product.product_detail?.quantity}</TableCell>
                   <TableCell>{product.quantity_received}</TableCell>
                   <TableCell>
-                    {product.in_section ? (
-                      <Chip label="En sección" color="success" />
-                    ) : (
-                      <Chip label="Pendiente" color="info" />
-                    )}
+                    {product.in_section ? 'direccion': 'no asignado'})
                   </TableCell>
                   <TableCell>
                     {/* Botón para buscar ubicación */}

@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import React, { useEffect } from "react";
 import renderStatus from "./RenderStatus";
+import { localDate } from "../../../Utils/ConvertIsoDate";
 
 // Componente principal que muestra los detalles de una tabla
 const TableDetail = ({ user, location, typeDelivery, status, date }) => {
@@ -48,7 +49,7 @@ const TableDetail = ({ user, location, typeDelivery, status, date }) => {
             {/* Fila que muestra la fecha */}
             <TableRow>
               <TableCell sx={{color:'gray'}} >Fecha</TableCell>
-              <TableCell>{date}</TableCell>
+              <TableCell>{localDate(date)}</TableCell>
             </TableRow>
             {/* Fila que muestra la dirección del cliente */}
             <TableRow>

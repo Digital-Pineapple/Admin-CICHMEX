@@ -18,8 +18,25 @@ dayjs.locale('es');
 dayjs.tz.setDefault('America/Mexico_City');
 
 // Convertir la fecha a formato local y formatearla
-export const localDate = (date) => 
-  dayjs(date).tz(dayjs.tz.guess()).format('dddd, D [de] MMMM [de] YYYY h:mm A');
+export const localDate = (date) => {
+  // Si el valor es nulo, undefined o no es una fecha válida, retornar el valor original
+  if (!date) return date;
 
+  // Verificar si es un objeto de fecha de MongoDB (ISODate) o un string ISO 8601
+  const isMongoDBDate =
+    (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/.test(date)) ||
+    (typeof date === 'object' && date instanceof Date);
+
+  // Si no es una fecha reconocible, retornar el valor original
+  if (!isMongoDBDate) return date;
+
+  // Convertir a formato local
+  try {
+    return dayjs(date).tz(dayjs.tz.guess()).format('dddd, D [de] MMMM [de] YYYY h:mm A');
+  } catch (error) {
+    console.error('Error al convertir la fecha:', error);
+    return date; // Si falla la conversión, retornar el valor original
+  }
+};
 export const localDateTable = (date) => 
   dayjs(date).tz(dayjs.tz.guess()).format('D/MMMM');
