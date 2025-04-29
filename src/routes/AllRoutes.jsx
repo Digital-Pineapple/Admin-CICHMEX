@@ -90,7 +90,7 @@ import WarehouseManagement from "../pages/Warehouse/WarehouseManagement/Warehous
 import ArrangeProducts from "../pages/StockStoreHouse/ArrangeProducts";
 import Warehouseman from "../pages/Warehouse/Warehouseman/Warehouseman";
 import CreateWarehouseman from "../pages/Warehouse/Warehouseman/Create";
-import EditWarehouseman from "../pages/Warehouse/Warehouseman/Edit";
+import EditWarehouseman from "../pages/Warehouse/Warehouseman/EditWarehouseman";
 import PackagesReady from "../pages/Logistic/DeliveryToPoint/PackagesReady";
 import PackagesDelivered from "../pages/Points/DeliveryPointOrders/PackagesDelivered";
 
@@ -220,7 +220,7 @@ export const AllRoutes = [
 
   { id: 140, element: <Warehouseman /> },
   { id: 141, element: <CreateWarehouseman /> },
-  { id: 95, element: <EditWarehouseman /> },
+  { id: 142, element: <EditWarehouseman /> },
 
   { id: 200, element: <WarehouseManagement /> },
   // { id: 210, element: <WarehouseManagement /> },

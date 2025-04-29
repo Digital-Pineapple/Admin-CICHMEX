@@ -113,10 +113,9 @@ const Warehouseman = () => {
                   />,
                   <EditButton
                     title={`Desea editar ${params.row.fullname}?`}
-                    callbackToEdit={() => {
-                      console.log(params.row._id),
-                        navigate(`/almacenistas/editar/${params.row._id}`, { replace: true });
-                    }} // Acción para editar
+                    callbackToEdit={() =>{
+                      navigate( `/almacenistas/editar/${params.row._id}` )}
+                    }
                   />,
                 ],
               },
