@@ -56,7 +56,7 @@ export const startLoadEntryReport = (folio) => {
 };
 
 // Función para autorizar entradas de productos
-export const startAuthorizeEntries = (entries, navigate) => {
+export const startAuthorizeEntries = (entries, navigate, folio) => {
   return async (dispatch) => {
     try {
       dispatch(startLoading());
@@ -74,7 +74,8 @@ export const startAuthorizeEntries = (entries, navigate) => {
         anchorOrigin: { horizontal: "center", vertical: "top" },
         variant: "success",
       });
-      navigate('/almacenista/entradas_de_producto', { replace: true });
+      
+      navigate(`/almacenista/entradas_de_producto/acomodar_producto/${folio}`, { replace: true });
     } catch (error) {
       enqueueSnackbar(`Error:${error.data.message}'`, {
         anchorOrigin: { horizontal: "center", vertical: "top" },

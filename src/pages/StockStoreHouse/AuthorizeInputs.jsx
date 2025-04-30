@@ -112,7 +112,7 @@ const AuthorizeInputs = () => {
 
   // Manejar el envío del formulario
   const onSubmit = (data) => {
-    loadAuthorizeEntries(data);
+    loadAuthorizeEntries(data, folio);
   };
 
   // Observar las notas actuales de un producto

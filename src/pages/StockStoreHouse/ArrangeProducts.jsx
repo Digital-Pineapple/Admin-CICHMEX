@@ -19,7 +19,7 @@ import {
   CardContent,
   Chip,
 } from "@mui/material";
-import { Close, Search } from "@mui/icons-material";
+import { AddLocation, Close, QrCode, Search } from "@mui/icons-material";
 import { teal } from "@mui/material/colors";
 import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
@@ -62,6 +62,7 @@ const ArrangeProducts = () => {
         Swal.fire({ title: "No coincide con sección", icon: "error" });
       }
     }
+    
   }, [valuate, openModal.section]);
 
   // Carga el reporte de entrada según el folio
@@ -143,6 +144,8 @@ const ArrangeProducts = () => {
   const responsible = EntryReport.responsible?.[0] || {};
   const { fullname, email, type_user } = responsible;
   const userReceived = EntryReport.user_received?.[0] || {};
+  console.log(EntryReport);
+  
 
   const TYPE_USERS = {
     "SUPER-ADMIN": "Super Administrador",
@@ -157,6 +160,8 @@ const ArrangeProducts = () => {
   const RenderName_r = TYPE_USERS[userReceived?.type_user?.role?.[0]] || defaultTypeUser;
 
   const renderSection = (sectionData) => {
+    console.log(sectionData, "sectionData");
+    
     if (Array.isArray(sectionData) && sectionData.length > 0) {
       const sec = sectionData[0];
       return (
@@ -180,7 +185,11 @@ const ArrangeProducts = () => {
           {sectionData?.name || "N/A"} <br />
           <strong>Pasillo:</strong>
           <br />
-          {sectionData?.aisle?.name || "N/A"} <br />
+          {sectionData?.aisleDetails?.name || "N/A"} <br />
+          <strong>Zona:</strong>
+          <br />
+          {sectionData?.zoneDetails?.name || "N/A"} <br />
+          
         </Typography>
       );
     }
@@ -298,27 +307,44 @@ const ArrangeProducts = () => {
                   <TableCell>{product.product_detail?.quantity}</TableCell>
                   <TableCell>{product.quantity_received}</TableCell>
                   <TableCell>
-                    {product.in_section ? 'direccion': 'no asignado'})
+                    {product.location? (
+                      <Typography>
+                        <strong>Zona:</strong> {product.location.zoneDetails?.name} <br />
+                        <strong>Pasillo:</strong> {product.location.aisleDetails?.name} <br />
+                        <strong>Sección:</strong> {product.location?.name}
+                      </Typography>
+                      ) : <Chip label="Sin ubicación" color="error" />}
                   </TableCell>
                   <TableCell>
-                    {/* Botón para buscar ubicación */}
-                    <Tooltip title="Buscar ubicación">
-                      <IconButton
-                        onClick={() =>
-                          searchProductSection(
-                            product.product_detail._id,
-                            setopenModalSection,
-                            product,
-                            setopenModal
-                          )
-                        }
-                        color="error"
-                        size="small"
-                        disabled={product.in_section}
-                      >
-                        <Search />
-                      </IconButton>
-                    </Tooltip>
+                    {
+                      product.location ? (
+                        <Tooltip title = 'Acomodar producto'>
+                          <IconButton
+                          onClick={()=>
+                            setopenModal({ value: true, data: product, section: product.location })
+                          }
+                          >
+                            <QrCode/>
+                          </IconButton>
+                        </Tooltip>
+
+                      ): (
+                        <Tooltip title="Asignar ubicación">
+                          <IconButton
+                          color="primary"
+                            onClick={() => {
+                              setopenModalSection({ value: true, data: product });
+                              setSection(null);
+                              setValuate(null);
+                              setValidation(false);
+                              
+                            }}
+                          >
+                            <AddLocation />
+                          </IconButton>
+                        </Tooltip>
+                      )
+                    }
                   </TableCell>
                 </TableRow>
               ))}

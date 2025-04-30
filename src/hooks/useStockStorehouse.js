@@ -21,8 +21,7 @@ export const useStockStorehouse = () => {
     const loadPDFReport = (folio) => dispatch(printPDFInputsReport(folio));
 
     // Función para autorizar entradas de productos
-    const loadAuthorizeEntries = ({ products }) => {
-        console.log(products);
+    const loadAuthorizeEntries = ({ products }, folio) => {
         // Mapea los productos para estructurarlos correctamente antes de enviarlos a la acción
         const info = products.map(i => ({
             _id: i._id,
@@ -36,7 +35,7 @@ export const useStockStorehouse = () => {
             notes: i.notes || null
         }));
         // Despacha la acción para autorizar las entradas y redirige con `navigate`
-        dispatch(startAuthorizeEntries(info, navigate));
+        dispatch(startAuthorizeEntries(info, navigate, folio));
     };
 
     // Función para transformar los datos en un formato adecuado para ser usados en tablas
