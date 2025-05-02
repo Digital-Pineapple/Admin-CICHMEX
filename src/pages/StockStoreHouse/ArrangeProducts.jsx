@@ -19,7 +19,7 @@ import {
   CardContent,
   Chip,
 } from "@mui/material";
-import { AddLocation, Close, QrCode, Search } from "@mui/icons-material";
+import { AddLocation, Check, Close, QrCode, Search } from "@mui/icons-material";
 import { teal } from "@mui/material/colors";
 import BreadcrumbCustom from "../../components/ui/BreadCrumbCustom";
 import LoadingScreenBlue from "../../components/ui/LoadingScreenBlue";
@@ -27,6 +27,7 @@ import { localDate } from "../../Utils/ConvertIsoDate";
 import { useWarehouse } from "../../hooks";
 import QRScannerV2 from "../../components/QR/QRScannerV2";
 import Swal from "sweetalert2";
+import { set } from "react-hook-form";
 
 const style = {
   position: "absolute",
@@ -44,25 +45,41 @@ const style = {
 
 const ArrangeProducts = () => {
   const { loadEntryReport, EntryReport, loading } = useStockStorehouse();
-  const { searchProductSection, getSection, section, addProductToSection, updateStock, navigate } = useWarehouse();
+  const {
+    getSection,
+    section,
+    addProductToSection,
+    updateStock,
+    navigate,
+  } = useWarehouse();
   const { folio } = useParams();
   const [section1, setSection] = useState(null);
   const [validation, setValidation] = useState(false);
   const [valuate, setValuate] = useState(null);
   const [active, setActive] = useState(false);
-  const [openModal, setopenModal] = useState({ value: false, data: {}, index: null, section: {} });
-  const [openModalSection, setopenModalSection] = useState({ value: false, data: {}, index: null });
+  const [openModal, setopenModal] = useState({
+    value: false,
+    data: {},
+    index: null,
+    section: {},
+  });
+  const [openModalSection, setopenModalSection] = useState({
+    value: false,
+    data: {},
+    index: null,
+  });
 
+  console.log(openModal,'openModal');
+  
   // Valida el QR escaneado comparándolo con la sección del modal
   useEffect(() => {
     if (valuate) {
       if (openModal.section._id === valuate) {
         setValidation(true);
       } else {
-        Swal.fire({ title: "No coincide con sección", icon: "error" });
+        Swal.fire({ title: "No coincide con ubicación", icon: "error" });
       }
     }
-    
   }, [valuate, openModal.section]);
 
   // Carga el reporte de entrada según el folio
@@ -105,7 +122,11 @@ const ArrangeProducts = () => {
   };
 
   const handleSaveProductToSection = () => {
-    const { product_detail: product, quantity_received: quantity, _id: inputId } = openModalSection.data;
+    const {
+      product_detail: product,
+      quantity_received: quantity,
+      _id: inputId,
+    } = openModalSection.data;
     const data = {
       product: { _id: product._id, product_id: product.product_id || null },
       quantity,
@@ -117,7 +138,11 @@ const ArrangeProducts = () => {
   };
 
   const handleSaveStockProduct = () => {
-    const { product_detail: product, quantity_received: quantity, _id: inputId } = openModal.data;
+    const {
+      product_detail: product,
+      quantity_received: quantity,
+      _id: inputId,
+    } = openModal.data;
     const data = {
       product: {
         _id: product._id,
@@ -133,7 +158,10 @@ const ArrangeProducts = () => {
 
   const paths = [
     { path: "/almacenista/entradas_de_producto", name: "Entradas de producto" },
-    { path: "/almacenista/entradas_de_producto/acomodar_producto", name: "Acomodar producto" },
+    {
+      path: "/almacenista/entradas_de_producto/acomodar_producto",
+      name: "Acomodar producto",
+    },
   ];
 
   if (loading) {
@@ -141,11 +169,9 @@ const ArrangeProducts = () => {
   }
 
   // Obtiene datos del responsable de la entrada y del encargado en almacén
-  const responsible = EntryReport.responsible?.[0] || {};
+  const responsible = EntryReport.responsible || {};
   const { fullname, email, type_user } = responsible;
-  const userReceived = EntryReport.user_received?.[0] || {};
-  console.log(EntryReport);
-  
+  const userReceived = EntryReport.user_received || {};
 
   const TYPE_USERS = {
     "SUPER-ADMIN": "Super Administrador",
@@ -157,13 +183,27 @@ const ArrangeProducts = () => {
 
   const defaultTypeUser = "no_data";
   const RenderName = TYPE_USERS[type_user?.role?.[0]] || defaultTypeUser;
-  const RenderName_r = TYPE_USERS[userReceived?.type_user?.role?.[0]] || defaultTypeUser;
+  const RenderName_r =
+    TYPE_USERS[userReceived?.type_user?.role?.[0]] || defaultTypeUser;
+
+  const ValuesLocation = (data) => {
+    if (data) {
+      const dataarray = data.name.split("_");
+      return (
+        <Typography>
+          <strong>Pasillo:</strong> {dataarray[0]} <br />
+          <strong>Sección:</strong> {dataarray[1]} <br />
+          <strong>Ubicación:</strong> {dataarray[2]} <br />
+        </Typography>
+      );
+    }
+    return <Typography>Sin ubicación</Typography>;
+  };
 
   const renderSection = (sectionData) => {
-    console.log(sectionData, "sectionData");
-    
     if (Array.isArray(sectionData) && sectionData.length > 0) {
       const sec = sectionData[0];
+      
       return (
         <Typography>
           <strong>Sección:</strong>
@@ -177,19 +217,13 @@ const ArrangeProducts = () => {
           {sec?.zone?.name || "N/A"} <br />
         </Typography>
       );
-    } else if (sectionData && typeof sectionData === "object") {
+    } else if (sectionData?.name !== undefined) {
+      const data = sectionData.name.split("_");
       return (
         <Typography>
-          <strong>Sección:</strong>
-          <br />
-          {sectionData?.name || "N/A"} <br />
-          <strong>Pasillo:</strong>
-          <br />
-          {sectionData?.aisleDetails?.name || "N/A"} <br />
-          <strong>Zona:</strong>
-          <br />
-          {sectionData?.zoneDetails?.name || "N/A"} <br />
-          
+         <strong>Pasillo:</strong> {data[0]}<br /> 
+          <strong>Sección:</strong>{data[1]} <br />
+          <strong>Ubicación:</strong> {data[2]} <br />
         </Typography>
       );
     }
@@ -234,7 +268,9 @@ const ArrangeProducts = () => {
     active && (
       <Button
         variant="contained"
-        onClick={() => navigate(`/almacenista/entradas_de_producto`, { replace: true })}
+        onClick={() =>
+          navigate(`/almacenista/entradas_de_producto`, { replace: true })
+        }
         size="small"
         sx={{ m: 1, width: "200px" }}
         color="success"
@@ -243,10 +279,64 @@ const ArrangeProducts = () => {
       </Button>
     );
 
+  const renderButtonActions = (product) => {
+    console.log(!!product.location);
+    
+    if (product.in_section === true) {
+      return (
+        <Tooltip title="Producto acomodado">
+          <IconButton disabled>
+            <QrCode />
+          </IconButton>
+        </Tooltip>
+      );
+    }
+    if (product.in_section === false && product.location === undefined ) {
+      return (
+        <Tooltip title="Asignar ubicación">
+          <IconButton
+            color="primary"
+            onClick={() => {
+              setopenModalSection({ value: true, data: product });
+              setSection(null);
+              setValuate(null);
+              setValidation(false);
+            }}
+          >
+            <AddLocation />
+          </IconButton>
+        </Tooltip>
+      );
+    }
+    if (product.in_section === false && !!product.location) {
+      return (
+        <Tooltip title="Terminar acomodado">
+          <IconButton
+            onClick={() =>
+              setopenModal({
+                value: true,
+                data: product,
+                section: product.location,
+              })
+            }
+          >
+            <Check/>
+          </IconButton>
+        </Tooltip>
+      );
+    }
+  };
   return (
     <Grid2 container paddingX={{ lg: 20 }} display="flex" gap={2}>
       {/* Encabezado con título y folio */}
-      <Grid2 size={12} paddingRight={15} flexGrow={1} display="flex" alignItems="center" justifyContent="space-between">
+      <Grid2
+        size={12}
+        paddingRight={15}
+        flexGrow={1}
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+      >
         <Typography variant="h4">
           <strong>Acomodo de producto</strong>
         </Typography>
@@ -261,7 +351,13 @@ const ArrangeProducts = () => {
       </Grid2>
 
       {/* Información del responsable de entrada */}
-      <Grid2 bgcolor="#fff" sx={{ boxShadow: "0px 0px 4px -1px #7a7a7a" }} padding={2} borderRadius="15px" size={{xs:12,lg:6}}>
+      <Grid2
+        bgcolor="#fff"
+        sx={{ boxShadow: "0px 0px 4px -1px #7a7a7a" }}
+        padding={2}
+        borderRadius="15px"
+        size={{ xs: 12, lg: 6 }}
+      >
         <Typography variant="body2" color="initial">
           <strong>Responsable de entrada</strong>
           <br />
@@ -269,19 +365,27 @@ const ArrangeProducts = () => {
           <strong>Correo:</strong> {email} <br />
           <strong>Tipo de usuario:</strong> {RenderName}
           <br />
-          <strong>Fecha de creación:</strong> {localDate(EntryReport?.createdAt?.[0])}
+          <strong>Fecha de creación:</strong>{" "}
+          {localDate(EntryReport?.createdAt?.[0])}
         </Typography>
       </Grid2>
 
       {/* Información del responsable en almacén */}
-      <Grid2 bgcolor="#fff" sx={{ boxShadow: "0px 0px 4px -1px #7a7a7a" }} padding={2} size={{xs:12, lg:5.7}} borderRadius="15px">
+      <Grid2
+        bgcolor="#fff"
+        sx={{ boxShadow: "0px 0px 4px -1px #7a7a7a" }}
+        padding={2}
+        size={{ xs: 12, lg: 5.7 }}
+        borderRadius="15px"
+      >
         <Typography variant="body2" color="initial">
           <strong>Responsable de entrada en almacén</strong>
           <br />
           <strong>Nombre:</strong> {userReceived?.fullname} <br />
           <strong>Correo:</strong> {userReceived?.email} <br />
           <strong>Tipo de usuario:</strong> {RenderName_r} <br />
-          <strong>Fecha de recepción:</strong> {localDate(EntryReport?.date_received?.[0])}
+          <strong>Fecha de recepción:</strong>{" "}
+          {localDate(EntryReport?.date_received?.[0])}
         </Typography>
       </Grid2>
 
@@ -296,7 +400,8 @@ const ArrangeProducts = () => {
                 <TableCell sx={{ color: "white" }}>Cantidad</TableCell>
                 <TableCell sx={{ color: "white" }}>Cantidad recibida</TableCell>
                 <TableCell sx={{ color: "white" }}>Ubicación</TableCell>
-                <TableCell sx={{ color: "white" }}>Opciones</TableCell>
+                <TableCell sx={{ color: "white" }}>Estado</TableCell>
+                <TableCell sx={{ color: "white" }}>Acciones</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -307,44 +412,23 @@ const ArrangeProducts = () => {
                   <TableCell>{product.product_detail?.quantity}</TableCell>
                   <TableCell>{product.quantity_received}</TableCell>
                   <TableCell>
-                    {product.location? (
+                    {product.location !== null ? (
                       <Typography>
-                        <strong>Zona:</strong> {product.location.zoneDetails?.name} <br />
-                        <strong>Pasillo:</strong> {product.location.aisleDetails?.name} <br />
-                        <strong>Sección:</strong> {product.location?.name}
+                        {ValuesLocation(product.location)}
                       </Typography>
-                      ) : <Chip label="Sin ubicación" color="error" />}
+                    ) : (
+                      <Chip label="Sin ubicación" color="error" />
+                    )}
                   </TableCell>
                   <TableCell>
-                    {
-                      product.location ? (
-                        <Tooltip title = 'Acomodar producto'>
-                          <IconButton
-                          onClick={()=>
-                            setopenModal({ value: true, data: product, section: product.location })
-                          }
-                          >
-                            <QrCode/>
-                          </IconButton>
-                        </Tooltip>
-
-                      ): (
-                        <Tooltip title="Asignar ubicación">
-                          <IconButton
-                          color="primary"
-                            onClick={() => {
-                              setopenModalSection({ value: true, data: product });
-                              setSection(null);
-                              setValuate(null);
-                              setValidation(false);
-                              
-                            }}
-                          >
-                            <AddLocation />
-                          </IconButton>
-                        </Tooltip>
-                      )
-                    }
+                    {product.in_section ? (
+                      <Chip label="Acomodado" color="success" />
+                    ) : (
+                      <Chip label="Sin acomodar" color="error" />
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {renderButtonActions(product)}
                   </TableCell>
                 </TableRow>
               ))}
@@ -368,13 +452,17 @@ const ArrangeProducts = () => {
             <Close />
           </IconButton>
           {/* Escáner QR para validar la sección */}
-          <QRScannerV2 label="Escanear QR de sección" title="Escanea el QR de la sección"  setValueQR={setValuate} />
+          <QRScannerV2
+            label="Escanear QR de la ubicación"
+            title="Escanea el QR de la ubicación"
+            setValueQR={setValuate}
+          />
           {/* Información del producto */}
-          <Card variant="outlined" sx={{width:'100%'}}>
+          <Card variant="outlined" sx={{ width: "100%" }}>
             <CardContent>{renderProduct(openModal.data)}</CardContent>
           </Card>
           {/* Información de la sección */}
-          <Card variant="outlined" sx={{width:'100%'}} >
+          <Card variant="outlined" sx={{ width: "100%" }}>
             <CardContent>{renderSection(openModal.section)}</CardContent>
           </Card>
           {/* Botón para asignar ubicación */}
@@ -395,17 +483,25 @@ const ArrangeProducts = () => {
             <Close />
           </IconButton>
           {/* Escáner QR para buscar sección */}
-          <QRScannerV2 setValueQR={setSection} title="Escanea el QR de la sección" />
+          <QRScannerV2
+            setValueQR={setSection}
+            title="Escanea el QR de la sección"
+          />
           {/* Información del producto */}
-          <Card variant="outlined" sx={{width:'100%'}} >
+          <Card variant="outlined" sx={{ width: "100%" }}>
             <CardContent>{renderProduct(openModalSection.data)}</CardContent>
           </Card>
           {/* Información de la sección */}
-          <Card variant="outlined" sx={{width:'100%'}} >
+          <Card variant="outlined" sx={{ width: "100%" }}>
             <CardContent>{renderSection(section)}</CardContent>
           </Card>
           {/* Botón para asignar ubicación */}
-          <Button variant="contained" onClick={handleSaveProductToSection} fullWidth color="success">
+          <Button
+            variant="contained"
+            onClick={handleSaveProductToSection}
+            fullWidth
+            color="success"
+          >
             Asignar ubicación
           </Button>
         </Grid2>

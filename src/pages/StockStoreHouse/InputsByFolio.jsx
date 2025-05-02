@@ -168,7 +168,7 @@ const InputsByFolio = () => {
         justifyContent={"space-between"}
       >
         <Typography variant="h4">
-          <strong>Entradas de producto</strong>
+          <strong>Autorización de entradas de producto al almacén</strong>
         </Typography>
       </Grid2>
 

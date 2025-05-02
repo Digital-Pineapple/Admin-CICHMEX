@@ -43,6 +43,7 @@ export const startLoadEntryReport = (folio) => {
           },
         }
       );
+      
       dispatch(loadEntryReport(data.data[0]));
     } catch (error) {
       enqueueSnackbar(`Error:${error.data.message}'`, {

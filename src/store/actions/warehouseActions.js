@@ -340,30 +340,32 @@ export const startLoadZones = () => async dispatch => {
 
   export const startUpdateStock = (values, handleClose, setSection, clearValuate) => async dispatch => {
     dispatch(startLoading());
+    console.log(values);
+    
     try {
-      const { data } = await instanceApi.patch(`/warehouse/section/update_stock`,values, {
-        headers: {
-          "Content-type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-       // Obtener información actualizada de la sección
-       const inSection = await instanceApi.patch(`/stock-StoreHouse/input/in_section/${values.input}`);
-       // Actualizar el estado en Redux
-       dispatch(onUpdateInput(inSection.data.data));
+      // const { data } = await instanceApi.patch(`/warehouse/location/update_stock`,values, {
+      //   headers: {
+      //     "Content-type": "application/json",
+      //     Authorization: `Bearer ${localStorage.getItem("token")}`,
+      //   },
+      // });
+      //  // Obtener información actualizada de la sección
+      //  const inSection = await instanceApi.patch(`/stock-StoreHouse/input/in_section/${values.input}`);
+      //  // Actualizar el estado en Redux
+      //  dispatch(onUpdateInput(inSection.data.data));
  
        // Cerrar modal/desactivar vista
        handleClose({ value: false, data: {} , section:{}});
        setSection(null)
-       clearValuate(null)
-       dispatch(onClearSection())
+      //  clearValuate(null)
+      //  dispatch(onClearSection())
  
-       // Mostrar mensaje de éxito
-       Swal.fire({
-         title: `${data.message}`,
-         text: `${inSection.data.message}`,
-         icon: 'success',
-       });
+      //  // Mostrar mensaje de éxito
+      //  Swal.fire({
+      //    title: `${data.message}`,
+      //    text: `${inSection.data.message}`,
+      //    icon: 'success',
+      //  });
     } catch (error) {
       console.log(error);      
       
@@ -490,8 +492,8 @@ export const startLoadZones = () => async dispatch => {
     }
   };
   export const startAddProductToSection = (values, handleClose, setSection, clearValuate) => {
-    return async (dispatch) => {
-      try {
+    return async (dispatch) => { 
+       try {
         dispatch(startLoading());
   
         // Enviar producto a la sección
@@ -506,19 +508,19 @@ export const startLoadZones = () => async dispatch => {
         );
   
         // Obtener información actualizada de la sección
-        const inSection = await instanceApi.patch(`/stock-StoreHouse/input/in_section/${values.input}`);
+        const inSection = await instanceApi.patch(`/stock-StoreHouse/input/in_location/${values.input}`);
         // Actualizar el estado en Redux
-        dispatch(onUpdateInput(inSection.data.data));
+        dispatch(onUpdateInput({data:inSection.data.data, location: data.data}));
   
         // Cerrar modal/desactivar vista
         handleClose({ value: false, data: {}, section:{} });
         setSection(null)
-        clearValuate(null)
-        Swal.fire({
-          title: `${data.message}`,
-          text: `${inSection.data.message}`,
-          icon: 'success',
-        });
+        // clearValuate(null)
+        // Swal.fire({
+        //   title: `${data.message}`,
+        //   text: `${inSection.data.message}`,
+        //   icon: 'success',
+        // });
   
       } catch (error) {
         console.error("Error al agregar el producto:", error);
