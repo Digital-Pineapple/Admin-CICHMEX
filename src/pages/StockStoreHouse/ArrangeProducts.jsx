@@ -69,8 +69,6 @@ const ArrangeProducts = () => {
     index: null,
   });
 
-  console.log(openModal,'openModal');
-  
   // Valida el QR escaneado comparándolo con la sección del modal
   useEffect(() => {
     if (valuate) {
@@ -137,23 +135,23 @@ const ArrangeProducts = () => {
     addProductToSection(data, setopenModalSection, setSection, setValuate);
   };
 
-  const handleSaveStockProduct = () => {
+  const handleSaveStockProduct = (product) => {
     const {
-      product_detail: product,
-      quantity_received: quantity,
-      _id: inputId,
-    } = openModal.data;
+      product_detail,
+      quantity_received,
+      _id,
+    } = product;
     const data = {
       product: {
-        _id: product._id,
-        product_id: product.product_id || null,
+        _id: product_detail._id,
+        product_id: product_detail.product_id || null,
         type: product.product_id ? "variant_product" : "unique_product",
       },
-      quantity,
-      section: openModal.section._id,
-      input: inputId,
+      quantity : quantity_received,
+      location: product.location_id,
+      input: _id,
     };
-    updateStock(data, setopenModal, setSection, setValuate);
+     updateStock(data, setSection);
   };
 
   const paths = [
@@ -280,8 +278,6 @@ const ArrangeProducts = () => {
     );
 
   const renderButtonActions = (product) => {
-    console.log(!!product.location);
-    
     if (product.in_section === true) {
       return (
         <Tooltip title="Producto acomodado">
@@ -313,11 +309,7 @@ const ArrangeProducts = () => {
         <Tooltip title="Terminar acomodado">
           <IconButton
             onClick={() =>
-              setopenModal({
-                value: true,
-                data: product,
-                section: product.location,
-              })
+              handleSaveStockProduct(product)
             }
           >
             <Check/>

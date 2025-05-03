@@ -217,12 +217,11 @@ export const AllRoutes = [
   { id: 120, element: <MyAccount /> },
   { id: 130, element: <InputsByFolio /> },
   { id: 131, element: <AuthorizeInputs /> },
+  { id: 132, element: <ArrangeProducts/>},
 
   { id: 140, element: <Warehouseman /> },
   { id: 141, element: <CreateWarehouseman /> },
   { id: 142, element: <EditWarehouseman /> },
 
   { id: 200, element: <WarehouseManagement /> },
-  // { id: 210, element: <WarehouseManagement /> },
-  { id: 201, element: <ArrangeProducts /> },
 ];

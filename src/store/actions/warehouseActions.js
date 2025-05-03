@@ -338,37 +338,32 @@ export const startLoadZones = () => async dispatch => {
   
 
 
-  export const startUpdateStock = (values, handleClose, setSection, clearValuate) => async dispatch => {
+  export const startUpdateStock = (values, setSection) => async dispatch => {
     dispatch(startLoading());
-    console.log(values);
-    
     try {
-      // const { data } = await instanceApi.patch(`/warehouse/location/update_stock`,values, {
-      //   headers: {
-      //     "Content-type": "application/json",
-      //     Authorization: `Bearer ${localStorage.getItem("token")}`,
-      //   },
-      // });
-      //  // Obtener información actualizada de la sección
-      //  const inSection = await instanceApi.patch(`/stock-StoreHouse/input/in_section/${values.input}`);
-      //  // Actualizar el estado en Redux
-      //  dispatch(onUpdateInput(inSection.data.data));
- 
-       // Cerrar modal/desactivar vista
-       handleClose({ value: false, data: {} , section:{}});
+       await instanceApi.patch(`/warehouse/location/update_stock`,values, {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+       // Obtener información actualizada de la sección
+       const inSection = await instanceApi.patch(`/stock-StoreHouse/input/in_location/${values.input}`);
+       // Actualizar el estado en Redux
+       dispatch(onUpdateInput({data:inSection.data.data}));
        setSection(null)
-      //  clearValuate(null)
-      //  dispatch(onClearSection())
- 
-      //  // Mostrar mensaje de éxito
-      //  Swal.fire({
-      //    title: `${data.message}`,
-      //    text: `${inSection.data.message}`,
-      //    icon: 'success',
-      //  });
-    } catch (error) {
-      console.log(error);      
-      
+      dispatch(onClearSection())
+       // Mostrar mensaje de éxito
+       Swal.fire({
+         title: `${inSection.data.message}`,
+         text: `${inSection.data.message}`,
+         icon: 'success',
+       });
+    } catch (error) {     
+      Swal.fire({
+        title: `${error.message? error.message : error.data.message}`,
+        icon: 'error',
+      });
     } finally {
       dispatch(stopLoading());
     }

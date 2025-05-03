@@ -92,6 +92,9 @@ const AddDynamicRoute = () => {
     "SUB-ADMIN",
     "CARRIER-DRIVER",
     "SELLER",
+    "WAREHOUSE-MANAGER",
+    "WAREHOUSEMAN"
+
   ];
 
   // Muestra una pantalla de carga si el estado de carga está activo
