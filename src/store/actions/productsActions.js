@@ -733,7 +733,7 @@ export const startAddMultipleEntries = (values, navigate) => {
         icon: "success",
         confirmButtonColor: green[800],
       });
-      navigate("/mi-almacen/productos/entradas", { replace: true });
+      navigate("/almacen/productos/entradas", { replace: true });
     } catch (error) {
       enqueueSnackbar(`${error.response.data.message}`, {
         variant: "error",
@@ -764,7 +764,7 @@ export const startAddMultipleOutputs = (values, navigate) => {
         icon: "success",
         confirmButtonColor: green[800],
       });
-      navigate("/mi-almacen/productos/salidas", { replace: true });
+      navigate("/almacen/productos/salidas", { replace: true });
     } catch (error) {
 
       enqueueSnackbar(`${error.response.data.message}`, {

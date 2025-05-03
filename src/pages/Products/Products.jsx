@@ -110,9 +110,9 @@ const Products = () => {
     let variants = response.variants;
 
     if (variants && Array.isArray(variants) && variants.length > 0) {
-      navigate(`/mi-almacen/productos/variantes/editar/${id}`);
+      navigate(`/productos/variantes/editar/${id}`);
     } else {
-      navigate(`/mi-almacen/productos/editar/${id}`);
+      navigate(`/productos/editar/${id}`);
     }
   };
 
@@ -150,7 +150,7 @@ const Products = () => {
           sx={{ marginX: 2 }}
           variant="contained"
           color="success"
-          onClick={() => navigate("/mi-almacen/producto/agregar-variantes")}
+          onClick={() => navigate("/productos/agregar-variantes")}
         >
           Agregar con variantes
         </Button>
@@ -159,7 +159,7 @@ const Products = () => {
           startIcon={<Star />}
           variant="contained"
           color="error"
-          onClick={() => navigate("/mi-almacen/producto/agregar")}
+          onClick={() => navigate("/productos/agregar")}
         >
           Agregar sin variantes
         </Button>

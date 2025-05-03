@@ -106,7 +106,7 @@ const ProductOutputs = () => {
 
   // Rutas para el componente de breadcrumb
   const paths = [
-    { path: `/mi-almacen/productos/salidas`, name: "Todas mis salidas" },
+    { path: `/almacen/productos/salidas`, name: "Todas mis salidas" },
   ];
 
   return (
@@ -130,7 +130,7 @@ const ProductOutputs = () => {
       <Grid2 size={12} display={"flex"} justifyContent={"space-between"}>
         <BreadcrumbCustom paths={paths} /> {/* Componente de breadcrumb */}
         <Fab
-          onClick={() => navigate("/mi-almacen/salida-productos")} // Navega a la página para agregar salidas
+          onClick={() => navigate("/almacen/salida-productos")} // Navega a la página para agregar salidas
           color="secondary"
           aria-label="Agregar entrada"
           title="Agragar entradas"
@@ -187,8 +187,8 @@ const ProductOutputs = () => {
                 align: "center",
               },
               {
-                field: "nowStock",
-                headerName: "Stock actual",
+                field: "responsible",
+                headerName: "Responsable",
                 flex: 1,
                 align: "center",
               },

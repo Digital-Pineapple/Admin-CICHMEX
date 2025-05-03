@@ -76,7 +76,7 @@ export const startAuthorizeEntries = (entries, navigate, folio) => {
         variant: "success",
       });
       
-      navigate(`/almacenista/entradas_de_producto/acomodar_producto/${folio}`, { replace: true });
+      navigate(`/almacen/acomodar/${folio}`, { replace: true });
     } catch (error) {
       enqueueSnackbar(`Error:${error.data.message}'`, {
         anchorOrigin: { horizontal: "center", vertical: "top" },

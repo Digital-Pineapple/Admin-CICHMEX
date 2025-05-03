@@ -267,7 +267,7 @@ const ArrangeProducts = () => {
       <Button
         variant="contained"
         onClick={() =>
-          navigate(`/almacenista/entradas_de_producto`, { replace: true })
+          navigate(`/almacen/autorizar_acomodar`, { replace: true })
         }
         size="small"
         sx={{ m: 1, width: "200px" }}

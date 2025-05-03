@@ -55,6 +55,7 @@ const FillOrder = () => {
     loadPrintPDFOrder, // Genera el PDF del pedido
     loading, // Estado de carga
     completeProductOrder, // Marca el pedido como completado
+    loadPOforSupply
   } = useProductOrder();
   const { searchProductFill, supplyProduct } = useWarehouse(); // Funciones relacionadas con el almacén
 
@@ -68,7 +69,7 @@ const FillOrder = () => {
   }); // Estado para abrir/cerrar el modal de detalles del producto
 
   useEffect(() => {
-    loadProductOrder(id); // Carga los detalles del pedido al montar el componente
+    loadPOforSupply(id); // Carga los detalles del pedido al montar el componente
   }, [id]);
 
   useEffect(() => {
@@ -216,20 +217,24 @@ const FillOrder = () => {
     return "";
   };
 
+  
+
   const lp = productOrder.products; // Lista de productos del pedido
   const values = productOrder.supply_detail?.map((i) => i.status); // Estado de surtido de cada producto
   const isValid = () => lp?.length === values?.length && values?.every(Boolean); // Valida si todos los productos están surtidos
 
   const paths = [
     // Rutas para el breadcrumb
-    { path: `/almacenista/mis-ventas`, name: "Pedidos" },
-    { path: `/almacenista/surtir-venta`, name: "Surtir pedido" },
+    { path: `/almacen/mis-ventas`, name: "Pedidos" },
+    { path: `/almacen/surtir-venta`, name: "Surtir pedido" },
   ];
 
   if (loading) {
     // Muestra una pantalla de carga si está cargando
     return <LoadingScreenBlue />;
   }
+  console.log("productOrder", productOrder);
+  
 
   return (
     <Grid2 container paddingX={{ xs: 0, lg: 10 }} display={"flex"} gap={2}>
@@ -258,17 +263,16 @@ const FillOrder = () => {
       {/* Contenido principal */}
       <Grid2
         sx={{
-          display: "grid",
-          gridTemplateColumns: { xs: "1fr", lg: "repeat(5, 1fr)" },
-          gridTemplateRows: { xs: "auto, auto, auto", lg: "repeat(6, 1fr)" },
-          gridColumnGap: "10px",
-          gridRowGap: "10px",
+          display: "flex",
+          flexDirection: "column" ,
+          gap: 2,
+          paddingX: { xs: 0, lg: 2 },
         }}
       >
         {/* Información general */}
         <Grid2
           size={{ xs: 12 }}
-          gridArea={{ xs: "3 / 1 / 4 / 6", lg: "1 / 4 / 7 / 6" }}
+          
         >
           <Typography
             paddingY={{ xs: 0, lg: 2 }}
@@ -289,22 +293,11 @@ const FillOrder = () => {
                 : productOrder?.deliveryLocation
             }
           />
-          <Button
-            variant="outlined"
-            fullWidth
-            size="small"
-            startIcon={<FilePdfFilled />}
-            onClick={() => printPDF(id)}
-            color="success"
-            sx={{ marginY: 2 }}
-          >
-            Imprimir PDF
-          </Button>
-          {RenderButtonAsignTotal(isValid())}
+        
         </Grid2>
 
         {/* Lista de productos */}
-        <Grid2 gridArea={{ xs: "2 / 1 / 3 / 6", lg: "1 / 1 / 4 / 4" }}>
+        <Grid2 xs={12} >
           <Typography
             paddingY={2}
             paddingX={2}
@@ -317,24 +310,24 @@ const FillOrder = () => {
             products={productOrder?.products}
             handleOpen={handleOpen}
             handleSearch={handleSearch}
+            shippingCost={productOrder?.shipping_cost}
+            discount={productOrder?.discount}
           />
         </Grid2>
-
-        {/* Detalle de surtido */}
-        <Grid2 gridArea={{ xs: "1 / 1 / 2 / 6", lg: "4 / 1 / 7 / 4" }}>
-          <Typography
-            paddingY={{ xs: 0, lg: 2 }}
-            paddingX={2}
-            variant="body1"
-            color="initial"
+        <Button
+            variant="outlined"
+            fullWidth
+            size="small"
+            startIcon={<FilePdfFilled />}
+            onClick={() => printPDF(id)}
+            color="success"
+            sx={{ marginY: 2 }}
           >
-            <strong>Detalle de surtido</strong>
-          </Typography>
-          <TableDetailSupply
-            supply_detail={productOrder.supply_detail}
-            products={productOrder.products}
-          />
-        </Grid2>
+            Imprimir PDF
+          </Button>
+          {RenderButtonAsignTotal(isValid())}
+
+       
       </Grid2>
 
       {/* Modal de imágenes */}

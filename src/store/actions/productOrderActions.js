@@ -388,6 +388,34 @@ export const LoadOneProductOrder = (id) => {
     }
   };
 };
+export const LoadOnePOforSupply = (id) => {
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      const { data } = await instanceApi.get(
+        `/product-order/for_supply/${id}`,
+        {
+          headers: {
+            "Content-type": "application/json",
+             "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        }
+      );
+      dispatch(loadProductOrder(data.data));
+    } catch (error) {
+      enqueueSnackbar(
+        `${error.response.data.message}|| 'Error al consultar información'`,
+        {
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+          variant: "error",
+        }
+      );
+      dispatch(stopLoading());
+    }finally{
+      dispatch(stopLoading());
+    }
+  };
+};
 
 export const startLoadReadyToPoint = () => {
   return async (dispatch) => {

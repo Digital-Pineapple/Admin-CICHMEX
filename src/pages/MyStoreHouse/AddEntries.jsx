@@ -113,8 +113,8 @@ const AddEntries = () => {
 
   // Rutas para el componente de breadcrumb
   const paths = [
-    { path: `/mi-almacen/productos/entradas`, name: "Todas mis entradas" },
-    { path: `/mi-almacen/agregar-entrada`, name: "Crear entrada de producto" },
+    { path: `/almacen/productos/entradas`, name: "Todas mis entradas" },
+    { path: `/almacen/agregar-entrada`, name: "Crear entrada de producto" },
   ];
 
   return (

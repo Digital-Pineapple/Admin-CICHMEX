@@ -83,7 +83,12 @@ export const addOneCategory =
 // Elimina una categoría específica por su ID y actualiza el estado global
 export const deleteOneCategory = (category_id) => async (dispatch) => {
   try {
-    await instanceApi.delete(`/category/${category_id}`, headerConfig);
+    await instanceApi.delete(`/category/${category_id}`, {
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
     dispatch(deleteCategory(category_id));
   } catch (error) {
     enqueueSnackbar(`Ocurrió un error al eliminar la categoria + ${error}`, {
