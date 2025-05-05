@@ -106,7 +106,7 @@ const InputsByFolio = () => {
 
   // Rutas para el breadcrumb
   const paths = [
-    { path: "/almacenista/entradas_de_producto", name: "Entradas de producto" },
+    { path: "/almacen/autorizar_acomodar", name: "Autorizar y acomodar productos de almacén" },
   ];
 
   // Cerrar el modal
@@ -116,13 +116,11 @@ const InputsByFolio = () => {
   function CustomToolbar() {
     const apiRef = useGridApiContext();
 
-    const handleGoToPage1 = () => apiRef.current.setPage(1);
-
     return (
       <GridToolbarContainer sx={{ justifyContent: "space-evenly" }}>
         <GridToolbarQuickFilter
           size="small"
-          placeholder="Buscar"
+          placeholder="Buscar folio"
           variant="outlined"
         />
       </GridToolbarContainer>
@@ -168,7 +166,7 @@ const InputsByFolio = () => {
         justifyContent={"space-between"}
       >
         <Typography variant="h4">
-          <strong>Entradas de producto</strong>
+          <strong>Autorizar y acomodar productos de almacén</strong>
         </Typography>
       </Grid2>
 
@@ -207,7 +205,7 @@ const InputsByFolio = () => {
           },
           {
             field: "in_storehouse",
-            headerName: "En almacén",
+            headerName: "Estado",
             hideable: false,
             flex: 0.5,
             renderCell: (params) => RenderChip(params.row.in_storehouse),
@@ -220,8 +218,8 @@ const InputsByFolio = () => {
             renderCell: (params) => RenderChip2(params.row.in_section),
           },
           {
-            field: "Opciones",
-            headerName: "Opciones",
+            field: "Acciones",
+            headerName: "Acciones",
             align: "center",
             flex: 0.5,
             sortable: false,
@@ -230,7 +228,7 @@ const InputsByFolio = () => {
               // Acción para autorizar entrada
               <GridActionsCellItem
                 icon={<Check color="success" />}
-                onClick={() => navigate(`autorizar_entradas/${params.row._id}`)}
+                onClick={() => navigate(`/almacen/autorizar_entrada/${params.row._id}`, {replace:true})}
                 label="Autorizar entrada"
                 showInMenu
                 disabled={params.row.in_storehouse}
@@ -238,7 +236,7 @@ const InputsByFolio = () => {
               // Acción para acomodar producto
               <GridActionsCellItem
                 icon={<Mediation color="success" />}
-                onClick={() => navigate(`acomodar_producto/${params.row._id}`)}
+                onClick={() => navigate(`/almacen/acomodar/${params.row._id}`, {replace: true})}
                 label="Acomodar producto"
                 showInMenu
                 disabled={
@@ -252,7 +250,7 @@ const InputsByFolio = () => {
               <GridActionsCellItem
                 icon={<FilePdfFilled color="success" />}
                 onClick={() => loadPDFReport(params.row._id)}
-                label="Imprimir reporte"
+                label="Reporte de entrada"
                 showInMenu
                 disabled={!params.row.in_storehouse}
               />,

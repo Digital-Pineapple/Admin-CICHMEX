@@ -117,7 +117,7 @@ const ProductEntries = () => {
       <Grid2 size={12} display={"flex"} justifyContent={"space-between"}>
         <BreadcrumbCustom paths={paths} />
         <Fab
-          onClick={() => navigate("/mi-almacen/agregar-entrada")} // Navegar a la página para agregar una entrada
+          onClick={() => navigate("/almacen/agregar-entrada", { replace: true})} // Navegar a la página para agregar una entrada
           color="secondary"
           aria-label="Agregar entrada"
           title="Agragar entradas"

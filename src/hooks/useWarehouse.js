@@ -67,8 +67,8 @@ export const useWarehouse = () => {
   const getSection = (id) => dispatch(startGetSection(id)); // Obtener detalles de una sección
   const addProductToSection = (data, handleClose, setSection, clearValuate) =>
     dispatch(startAddProductToSection(data, handleClose, setSection, clearValuate)); // Agregar un producto a una sección
-  const updateStock = (data, handleClose, setSection, clearValuate) =>
-    dispatch(startUpdateStock(data, handleClose, setSection, clearValuate)); // Actualizar el stock de un producto en una sección
+  const updateStock = (data, setSection) =>
+    dispatch(startUpdateStock(data, setSection)); // Actualizar el stock de un producto en una sección
 
   // Función para buscar un producto y abrir un modal con los resultados
   const searchProductFill = async ({ id, product, setOpenModal }) => {

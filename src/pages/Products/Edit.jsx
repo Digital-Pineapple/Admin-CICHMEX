@@ -188,7 +188,7 @@ const Edit = () => {
   };
 
 
-  const outEdit = () => navigate("/mi-almacen/productos", { replace: true });
+  const outEdit = () => navigate("/almacen/productos", { replace: true });
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault(); // Previene que el Enter envíe el formulario
@@ -239,7 +239,7 @@ const Edit = () => {
           <Button
             startIcon={<ViewModule />}
             onClick={() =>
-              navigate(`/mi-almacen/productos/variantes/editar/${id}`)
+              navigate(`/productos/variantes/editar/${id}`)
             }
             variant="contained"
             color="secondary"

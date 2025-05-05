@@ -19,8 +19,10 @@ export const stockStorehouseReducer = createSlice({
     onUpdateInput: (state, { payload }) => {
       if (!state.EntryReport?.inputs) return;
       state.EntryReport.inputs = state.EntryReport.inputs.map((i) =>
-        i._id === payload._id ? { ...i, ...payload } : i
-      );
+        i._id === payload.data._id
+          ? { ...i, ...payload.data, location: payload.location }
+          : i
+      );      
     },
   },
 })

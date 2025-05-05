@@ -41,7 +41,7 @@ const WarehouseManagement = () => {
       {/* Encabezado con el título y el breadcrumb */}
       <Grid2 gridArea={'1/1/2/4'}>
         <Typography variant="h4">
-          <strong>Administración de almacén </strong>
+          <strong>Zonas pasillos y secciones</strong>
         </Typography>
         <BreadcrumbCustom paths={paths} />
       </Grid2>

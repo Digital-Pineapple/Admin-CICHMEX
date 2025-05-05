@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
+  LoadOnePOforSupply,
   LoadOneProductOrder,
   StartCompleteProductOrder,
   StartLoadResumeSales,
@@ -70,6 +71,8 @@ export const useProductOrder = () => {
 
   // Cargar una orden de producto específica por ID
   const loadProductOrder = async (id) => dispatch(LoadOneProductOrder(id));
+
+  const loadPOforSupply = async (id) => dispatch(LoadOnePOforSupply(id));
 
   // Verificar un código QR
   const loadVerifyQR = async (values, callbackClose) => dispatch(StartLoadVerifyQr(values, callbackClose));
@@ -179,6 +182,7 @@ export const useProductOrder = () => {
     loadProductOrdersPaidAndFill,
     loadReadyToDelivery,
     readyToDelivery,
-    loadRoutesDelivery
+    loadRoutesDelivery,
+    loadPOforSupply
   };
 };

@@ -38,6 +38,7 @@ import {
   startLoadProductsBySubCategory,
   startLoadProductsForSearch,
   startLoadAllMovements,
+  startOutOfStock,
 } from "../store/actions/productsActions";
 import { useNavigate } from "react-router-dom";
 import {
@@ -71,6 +72,8 @@ export const useProducts = () => {
 
   // Función para cargar productos con paginación
   const loadProductsPaginate = async (page, limit) => dispatch(startLoadAllProducts(page, limit));
+
+  const loadProductsOutOfStock = async (page, limit, minNumber) => dispatch(startOutOfStock(page, limit, minNumber));
 
   // Función para cargar entradas de productos
   const loadEntriesProducts = async () => dispatch(startLoadEntriesProduct());
@@ -514,5 +517,6 @@ export const useProducts = () => {
     loadAllMovements,
     allMovements,
     isLoading,
+    loadProductsOutOfStock
   };
 };

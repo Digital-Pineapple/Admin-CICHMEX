@@ -74,8 +74,8 @@ const AddOutputs = () => {
 
   // Rutas para el componente de breadcrumb
   const paths = [
-    { path: `/mi-almacen/productos/salidas`, name: "Todas mis salidas" },
-    { path: `/mi-almacen/salida-productos`, name: "Crear salida" },
+    { path: `/almacen/productos/salidas`, name: "Todas mis salidas" },
+    { path: `/almacen/salida-productos`, name: "Crear salida" },
   ];
 
   return (

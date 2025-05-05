@@ -25,6 +25,8 @@ const style = {
 };
 
 const ModalDetailSale = ({ open, handleClose, sale = {} }) => {
+ 
+  
   return (
     <div>
       {/* Modal principal con transición */}
@@ -94,6 +96,7 @@ const ModalDetailSale = ({ open, handleClose, sale = {} }) => {
                   location={
                     sale?.branch ? sale.branch.location : sale?.deliveryLocation
                   }
+                  order_status={sale?.order_status}
                 />
               </Grid2>
 

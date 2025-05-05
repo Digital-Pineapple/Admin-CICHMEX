@@ -58,7 +58,7 @@ const AuthorizeInputs = () => {
   }, [folio]);
 
   // Extraer información del responsable de la entrada
-  const responsible = EntryReport.responsible?.[0];
+  const responsible = EntryReport.responsible;
   const { fullname, email, type_user } = responsible || {};
 
   // Mapeo de roles de usuario a nombres legibles
@@ -112,7 +112,7 @@ const AuthorizeInputs = () => {
 
   // Manejar el envío del formulario
   const onSubmit = (data) => {
-    loadAuthorizeEntries(data);
+    loadAuthorizeEntries(data, folio);
   };
 
   // Observar las notas actuales de un producto
