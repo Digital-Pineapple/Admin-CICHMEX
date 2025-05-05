@@ -136,8 +136,6 @@ export const DeliveryPointsOrder = () => {
   const SupplyPackage = () => {
     loadVerifyQR(valueQRSupply, handleCloseModalSupply);
   };
-  
-  
 
   return (
     <Grid2 container paddingX={{ xs: 0, lg: 10 }} display={"flex"} gap={2}>
@@ -177,6 +175,21 @@ export const DeliveryPointsOrder = () => {
             headerName: "Folio del pedido",
             flex: 2,
             sortable: false,
+          },
+          {
+            field: "user",
+            hideable: false,
+            headerName: "Nombre del cliente",
+            flex: 2,
+            sortable: false,
+            renderCell: (params) => {
+              return (
+                <Typography variant="body2">
+                  {params.row.user_id?.fullname} <br />
+                  {params.row.user_id?.email}
+                </Typography>
+              );
+            }
           },
           {
             field: "point_pickup_status",
@@ -268,7 +281,10 @@ export const DeliveryPointsOrder = () => {
       >
         <Box sx={style}>
           <Typography id="modal-modal-QR" variant="h6" component="h2">
-            Leer qr del paquete : <strong>{openModal.data?.order_id}</strong> 
+            Leer qr del paquete : <strong>{openModal.data?.order_id}</strong> <br />
+            Cliente: <strong>{openModal.data?.user_id.fullname}</strong> <br />
+            Correo del cliente: <strong>{openModal.data?.user_id.email}</strong> <br />
+           
           </Typography>
           {/* Componente de escaneo de QR */}
           <QRScannerV2 setValueQR={setValueQR}  title={`Paquete: ${openModal?.data?.order_id}`} />

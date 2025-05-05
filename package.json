@@ -7,6 +7,7 @@
     "dev": "vite --port 3003",
     "build": "vite build",
     "build:test": "vite build --mode test",
+    "deploy:test": "aws s3 sync dist/ s3://testadmin.cichmex.mx",
     "deploy-test": "npm run build:test && aws s3 sync dist/ s3://testadmin.cichmex.mx",
     "preview": "vite preview",
     "deploy": "aws s3 sync dist/ s3://admin.carwashymas.com"

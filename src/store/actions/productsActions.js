@@ -431,7 +431,7 @@ export const addOneProduct =
         /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {
           dispatch(onAddNewProduct(data.data))
-          navigate(`/mi-almacen/producto/agregar-video/${data.data._id}`, { replace: true });
+          navigate(`/producto/agregar-video/${data.data._id}`, { replace: true });
          
         } else if (result.isDenied) {
           navigate("/mi-almacen/productos", { replace: true });
