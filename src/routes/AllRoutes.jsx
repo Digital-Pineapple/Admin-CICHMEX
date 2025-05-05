@@ -93,6 +93,7 @@ import CreateWarehouseman from "../pages/Warehouse/Warehouseman/Create";
 import EditWarehouseman from "../pages/Warehouse/Warehouseman/EditWarehouseman";
 import PackagesReady from "../pages/Logistic/DeliveryToPoint/PackagesReady";
 import PackagesDelivered from "../pages/Points/DeliveryPointOrders/PackagesDelivered";
+import OutOfStock from "../pages/StockStoreHouse/OutOfStock";
 
 export const AllRoutes = [
   { id: 1000, element: <Login /> },
@@ -200,7 +201,7 @@ export const AllRoutes = [
   { id: 79, element: <AssignRoute /> },
   { id: 80, element: <MainToSend /> },
   { id: 81, element: <PackagesReady /> },
-  
+
   { id: 90, element: <CreateDeliveryPoint /> },
   { id: 91, element: <BranchOfficeEdit /> },
   { id: 92, element: <BranchOfficeDetail /> },
@@ -211,13 +212,14 @@ export const AllRoutes = [
   { id: 101, element: <UpdateDiscount /> },
   { id: 102, element: <CreateDiscount /> },
   { id: 110, element: <Banners /> },
-  
+
   { id: 111, element: <CreateSlider /> },
   { id: 112, element: <UpdateSlider /> },
   { id: 120, element: <MyAccount /> },
   { id: 130, element: <InputsByFolio /> },
   { id: 131, element: <AuthorizeInputs /> },
-  { id: 132, element: <ArrangeProducts/>},
+  { id: 132, element: <ArrangeProducts /> },
+  { id: 133, element: <OutOfStock /> },
 
   { id: 140, element: <Warehouseman /> },
   { id: 141, element: <CreateWarehouseman /> },

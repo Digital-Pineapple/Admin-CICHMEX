@@ -110,6 +110,32 @@ export const startLoadAllProducts = (page, limit) => {
     }
   };
 };
+export const startOutOfStock = (page, limit, minNumber) => {
+  return async (dispatch) => {
+    dispatch(startLoading());
+    try {
+      const { data } = await instanceApi.get(`/product/stock/paginate?page=${page}&limit=${limit}&minNumber=${minNumber}`, {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      dispatch(loadProductsPaginate(data.data));
+    } catch (error) {
+      enqueueSnackbar(
+        console.log(error)
+        
+        `${error.response.data.message}`,
+        {
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+          variant: "error",
+        }
+      );
+    }finally{
+      dispatch(stopLoading());
+    }
+  };
+};
 export const startLoadStockProducts = () => {
   return async (dispatch) => {
     try {
