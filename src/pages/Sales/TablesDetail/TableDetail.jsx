@@ -14,9 +14,10 @@ import {
 import React, { useEffect } from "react";
 import renderStatus from "./RenderStatus";
 import { localDate } from "../../../Utils/ConvertIsoDate";
+import renderStatusGlobal from "./RenderStatusGlobal";
 
 // Componente principal que muestra los detalles de una tabla
-const TableDetail = ({ user, location, typeDelivery, status, date }) => {
+const TableDetail = ({ user, location, typeDelivery, status, date, order_status }) => {
   
   // Si no hay información del usuario, no renderiza nada
   if (!user) return null;
@@ -75,8 +76,12 @@ const TableDetail = ({ user, location, typeDelivery, status, date }) => {
             </TableRow>
             {/* Fila que muestra el estado del pedido */}
             <TableRow>
-              <TableCell sx={{color:'gray'}} >Status</TableCell>
+              <TableCell sx={{color:'gray'}} >Status de pago</TableCell>
               <TableCell>{renderStatus(status)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell sx={{color:'gray'}} >Status de pedido</TableCell>
+              <TableCell>{renderStatusGlobal(order_status)}</TableCell>
             </TableRow>
           </TableBody>
         </Table>

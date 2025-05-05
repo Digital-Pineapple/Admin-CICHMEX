@@ -84,17 +84,7 @@ const FillOrder = () => {
   }, [valuate, openModal.section]);
 
   const handleSave = () => {
-    // Guarda el producto surtido en el almacén
-    const product = openModal.data;
-    const data = {
-      product_id: product.variant ? product.variant._id : product.item._id,
-      productStock: product.variant ? product.variant.product_id : null,
-      status: true,
-      section: openModal.section._id,
-      quantity: product.quantity,
-      type: product.variant ? "variant_product" : "unique_product",
-    };
-    supplyProduct(id, data, handleCloseModal);
+    supplyProduct(id);
   };
 
   const completeSupply = () => {
@@ -141,7 +131,10 @@ const FillOrder = () => {
     </Button>
   );
 
-  const RenderButtonAsignTotal = (disabled) => {
+  const RenderButtonAsignTotal = (status) => {
+    if (status === 3) {
+      return null
+    }
     // Botón para completar el surtido total del pedido
     if (productOrder.storeHouseStatus) {
       return null;
@@ -149,10 +142,9 @@ const FillOrder = () => {
     return (
       <Button
         variant="contained"
-        onClick={completeSupply}
+        onClick={()=>supplyProduct(id)}
         fullWidth
         color="success"
-        disabled={!disabled}
       >
         Terminar surtido
       </Button>
@@ -233,8 +225,6 @@ const FillOrder = () => {
     // Muestra una pantalla de carga si está cargando
     return <LoadingScreenBlue />;
   }
-  console.log("productOrder", productOrder);
-  
 
   return (
     <Grid2 container paddingX={{ xs: 0, lg: 10 }} display={"flex"} gap={2}>
@@ -249,7 +239,7 @@ const FillOrder = () => {
         marginBottom={2}
       >
         <Typography variant="h4" sx={{ fontSize: { xs: "16px", lg: "25px" } }}>
-          <strong>Surtir pedido</strong>
+          <strong>{productOrder?.order_status === 3 ? 'Detalle de pedido': 'SurtirPedido'}</strong>
           <br />
           {productOrder.order_id ? productOrder.order_id : ""}
         </Typography>
@@ -292,6 +282,7 @@ const FillOrder = () => {
                 ? productOrder.branch.location
                 : productOrder?.deliveryLocation
             }
+            order_status={productOrder.order_status}
           />
         
         </Grid2>
@@ -325,7 +316,7 @@ const FillOrder = () => {
           >
             Imprimir PDF
           </Button>
-          {RenderButtonAsignTotal(isValid())}
+          {RenderButtonAsignTotal(productOrder.order_status)}
 
        
       </Grid2>

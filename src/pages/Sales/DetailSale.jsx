@@ -235,6 +235,7 @@ const DetailSale = () => {
                 user={productOrder?.user_id}
                 status={productOrder?.payment_status}
                 typeDelivery={productOrder?.typeDelivery}
+                order_status={productOrder?.order_status}
               />
             </CardContent>
           </Card>

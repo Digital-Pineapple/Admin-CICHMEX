@@ -369,52 +369,22 @@ export const startLoadZones = () => async dispatch => {
     }
   };
 
-  export const startSupplyProduct = (id, values, handleCloseModal) => async (dispatch) => {
+  export const startSupplyProduct = (id) => async (dispatch) => {
     dispatch(startLoading());
-    try {
-      // Corregido el nombre del campo 'productStock' en 'valuesFill'
-      const valuesFill = {
-        productStock: values.productStock,
-        ...values
-      };
-  
+    try {  
       // Petición para llenar el producto en la orden
-      const { data } = await instanceApi.post(`/product-order/fill_one_product/${id}`, valuesFill, {
+      const { data } = await instanceApi.put(`/product-order/fill_order`,{_id:id} ,{
         headers: {
           "Content-type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-  
-      // Datos para actualizar el stock
-      const stockData = { 
-        product: {
-          _id: values.product_id,
-          product_id: values.productStock,
-          type: values.type
-        },
-        section: values.section,
-        quantity: -values.quantity
-      };
-  
-      // Petición para actualizar el stock de la sección
-      const updateStock = await instanceApi.patch(`/warehouse/section/update_stock`, stockData, {
-        headers: {
-          "Content-type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-
       Swal.fire({
         title: data.message,
-        text: updateStock.data.message,
         icon: 'success',
       });
-  
-      handleCloseModal();
-      dispatch(onUpdatePOSupply(data.data));  // Actualizar el estado global con la nueva data
+      dispatch(loadProductOrder(data.data));  // Actualizar el estado global con la nueva data
     } catch (error) {
-      console.error('Error al realizar el suministro del producto:', error);
       Swal.fire({
         title: "Error",
         text: error.response?.data?.message || "Hubo un problema al realizar el suministro del producto.",
