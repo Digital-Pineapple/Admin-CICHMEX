@@ -28,7 +28,7 @@ const style = {
 
 const LoadPackageModal = ({ openModal, handleClose, productOrder }) => {
   // Convierte la fecha ISO a un formato local legible
-  const date = localDate(productOrder?.supply_detail?.date);
+  const date = localDate(productOrder?.supply_detail[0]?.date);
 
   // Estado para almacenar el valor escaneado del código QR
   const [valueQr, setValueQr] = useState(null);
@@ -86,6 +86,8 @@ const LoadPackageModal = ({ openModal, handleClose, productOrder }) => {
       });
     }
   };
+  console.log("productOrder", productOrder);
+  
 
   // Coordenadas para el mapa de Google basadas en la ubicación de la sucursal o la dirección de entrega
   const coords = {

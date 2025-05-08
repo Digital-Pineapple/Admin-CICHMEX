@@ -41,7 +41,6 @@ const VerifyPackage = () => {
     // Inicia la verificación y el inicio de la ruta.
     loadVerifyStartRoute({ order_id: id, user: productOrder?.route_detail?.user });
   };
-
   return (
     <Grid
       container
