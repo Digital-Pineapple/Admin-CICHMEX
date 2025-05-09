@@ -26,6 +26,8 @@ import {
   ArrowDownward,
   ArrowUpward,
   Download,
+  Info,
+  Replay,
   Visibility,
 } from "@mui/icons-material";
 import AddButton2 from "../../components/Buttons/AddButton2";
@@ -193,12 +195,22 @@ const StockMovements = () => {
                         <ArrowUpward color="success" />
                       </Tooltip>
                     );
-                  } else {
+                  } else if (params.row.type === 'return') {
+                    return (
+                      <Tooltip title="Retorno">
+                        <Replay color="info" />
+                      </Tooltip>
+                    );
+                  } else if (params.row.type === 'output') {
                     return (
                       <Tooltip title="Baja">
                         <ArrowDownward color="warning" />
                       </Tooltip>
-                    );
+                    )
+                  } else {
+                    <Tooltip title="Sin información">
+                      <Info color="warning" />
+                    </Tooltip>
                   }
                 },
               },
@@ -219,17 +231,37 @@ const StockMovements = () => {
                 flex: 1,
                 align: "center",
               },
-              {
-                field: "nowStock",
-                headerName: "Existencia ahora",
-                flex: 1,
-                align: "center",
-              },
+              // {
+              //   field: "nowStock",
+              //   headerName: "Existencia ahora",
+              //   flex: 1,
+              //   align: "center",
+              // },
               {
                 field: "responsible",
                 headerName: "Responsable",
                 flex: 2,
                 align: "center",
+                renderCell: (params) => {
+                  const { responsible, type } = params.row;
+
+                  let displayText;
+
+                  if (responsible && ['input', 'output', 'return'].includes(type)) {
+                    displayText = responsible;
+                  } else {
+                    displayText =
+                      type === 'output' ? 'venta' :
+                        type === 'return' ? 'cancelación de pedido' :
+                          'sin información';
+                  }
+
+                  return (
+                    <Typography variant="body2">
+                      {displayText}
+                    </Typography>
+                  );
+                }
               },
             ]}
             rows={allMovements} // Datos de los movimientos de stock
